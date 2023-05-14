@@ -76,92 +76,42 @@ struct SchoolClassEditorContDup: View {
         GeometryReader { geometry in
 
             VStack {
-
-//               MARK: - Views
-
-//              View: Other View Top
-                SchoolClassDetailContent(schoolClass: $schoolClassCopy, isDeleted: $isDeleted, isNew: $isNew,schoolClassName: schoolClass.name, schoolClassDescription: schoolClass.description, selectedStudentsSaved: selectedStudentsSaved, selectedTeachersSaved: selectedTeachersSaved,  selectedTeachers: $selectedTeachers, selectedStudents: $selectedStudents)
-                    .frame(height: geometry.size.height * 0.25)
-
-//                View: Student List
-                List {
-                    Section {
-                        ForEach(selectedStudents.map({ id in
-                            usersViewModel.users.first(where: { $0.id == id })!
-                        }), id: \.id) { student in
-                            Text("\(student.firstName) \(student.lastName)")
-                                .foregroundColor(appWorkViewModel.doingEdit  ? .black : .gray)
-                        }
-                    } header: {
-                        HStack {
-                            Text("Students \(selectedStudents.count)")
-                                //                                .bold()
-                                .font(.title3)
-                                
-                            if appWorkViewModel.doingEdit || ( isNew == true && !schoolClassCopy.name.isEmpty ) {
-                                Spacer()
-                                Button {
-                                    Task {
-                                        do {
-                                            teacherIds = try await appWorkViewModel.getUsersInTeacherGroup() ?? []
-                                            passedItemSelected = selectedStudents
-                                            toShowStudentList.toggle()
-                                        } catch {
-                                                // Handle error
-                                        }
-                                    }
-                                } label: {
-                                    AddDeleteView() }
-                                Divider()
-                            }
-                        }
-                    } footer: {
-                        Text("Number of students: \(selectedStudents.count)")
-                    }.headerProminence(.standard)
-                }
-//                .frame(height: geometry.size.height * 0.35)
-                .listStyle(SidebarListStyle())
                 
-//                View: Teacher List
-                List {
-                    Section {
-                        ForEach(selectedTeachers.map({ id in
-                            usersViewModel.users.first(where: { $0.id == id })!
-                        }), id: \.id) { teacher in
-                            Text("\(teacher.firstName) \(teacher.lastName)")
-                        }
-                        .foregroundColor(appWorkViewModel.doingEdit  ? .black : .gray)
-                    } header: {
-                        HStack {
-                            Text("Teachers \(selectedTeachers.count)")
-                                //                                .bold()
-                                .font(.title3)
-                            if  appWorkViewModel.doingEdit ||  ( isNew == true && !schoolClassCopy.name.isEmpty ) {
-                                Spacer()
-                                Button {
-                                    Task {
-                                        do {
-                                            teacherIds = try await appWorkViewModel.getUsersInTeacherGroup() ?? []
-                                            passedItemSelected = selectedTeachers
-                                            toShowTeacherList.toggle()
-                                        } catch {
-                                                // Handle error
-                                        }
+                Form {
+                        Section("Class Information") {
+                            HStack {
+                                if appWorkViewModel.doingEdit {
+                                    if !schoolClass.name.isEmpty {
+                                        Text("Name: ")
                                     }
-                                } label: {
-                                    AddDeleteView()
-
+                                    TextField("Class Name", text: $schoolClass.name )
+                                        //                    .font(.headline)
+                                        .padding([.top, .bottom], 8)
+                                } else {
+                                    Text(schoolClass.name).foregroundColor(appWorkViewModel.doingEdit  ? .black : Color(.darkGray))
                                 }
-                                Divider()
+                            }
+                            HStack {
+                                if appWorkViewModel.doingEdit {
+                                    if !schoolClass.description.isEmpty {
+                                        Text("Description: ")
+                                    }
+                                    
+                                    TextField("Description", text: $schoolClass.description )
+                                        .font(.subheadline)
+                                        .padding([.top, .bottom], 8)
+                                } else {
+                                    Text(schoolClass.description).foregroundColor(appWorkViewModel.doingEdit  ? .black : Color("disabled"))
+                                }
+                                
                             }
                         }
-                    } footer: {
-                        Text("Number of teachers: \(selectedTeachers.count)")
-                    }.headerProminence(.standard)
-                }
-                .frame(height: geometry.size.height * 0.15)
-                .listStyle(SidebarListStyle())
+                    }
 
+//              MARK: - Views
+
+
+                
 //                View: Spacer View
                 Spacer(minLength: 60)
 
@@ -180,80 +130,12 @@ struct SchoolClassEditorContDup: View {
 //              View: Spacer View
                 Spacer()
                                     
-
 //               MARK: - PopupSheets
-
-//               Select Students Popup
-                .sheet(isPresented: $toShowStudentList) {
-                    
-                    let userFilter2: ((any ItemsToSelectRepresentable) -> Bool) = { usr in
-                        !teacherIds.contains(usr.id)
-                    }
-                    
-                    NavigationView {
-                        ItemListSelectView(passedItemSelected: $passedItemSelected,
-                                           itemsToList: usersViewModel.users,
-                                           itemFilter2: userFilter2,
-                                           listTitle: "Select the students for this class")
-                    }
-                    .onDisappear {
-                        selectedStudents = passedItemSelected
-                    }
-                }
-
-//               Select Teachers Popup
-                .sheet(isPresented: $toShowTeacherList) {
-                    let userFilter2: ((any ItemsToSelectRepresentable) -> Bool) = { usr in
-                        teacherIds.contains(usr.id)
-                    }
-                    
-                    NavigationView {
-                        ItemListSelectView(passedItemSelected: $passedItemSelected,
-                                           itemsToList:        usersViewModel.users,
-                                           itemFilter2:        userFilter2,
-                                           listTitle:          "Select the teachers for this class")
-                        
-                            //                     StudentTeacherListView(selectedStudents: $selectedStudents,  selectedTeachers: $selectedTeachers, personType: .teacher)
-                    }
-                    
-                    .onDisappear {
-                        print("🚘 it disappeared", selectedTeachers.count)
-                        selectedTeachers = passedItemSelected
-                        
-                    }
-                }
-                
                 
 //               MARK: - onChange onDisappear Global
-                .onDisappear {
-//                    // check if we should do the update process
-//
-//                    guard   isNew == false &&
-//                            isDeleted == false else {
-//                        return
-//                    } // doing a change
-//
-//                    guard   schoolClass_start   != schoolClass ||
-//                            selectedStudents    != selectedStudentsSaved ||
-//                            selectedTeachers    != selectedTeachersSaved else {
-//                        return
-//                    } // there was a change
-//
-//                    // do the update and leave
-//                    saveSelectedStudents()
-//                    saveSelectedTeachers()
-//                    Task {
-//                        print(schoolClass.description)
-//                        await ClassesViewModel.updateSchoolClass(schoolClass:schoolClass)
-//                    }
-//                    dismiss()
-                }
-
-
                 
 //               MARK: - Add Button
                 .toolbar(content: {
-                    
                     
                     ToolbarItem {
                         Button {
@@ -275,20 +157,6 @@ struct SchoolClassEditorContDup: View {
                     schoolClass_start = schoolClass
                 }
                 // not monitoring students and teachers
-                .onChange(of: appWorkViewModel.doingEdit) { currentValue in
-                    print("***** Current Value: \(currentValue)")
-                }
-                .onChange(of: schoolClassCopy){ _ in
-                    if !isDeleted {
-                        schoolClass = schoolClassCopy
-                    }
-                }
-                .onChange(of: appWorkViewModel.doingEdit) { newValue in
-                    if newValue == false {
-                        print("************* do the update")
-                        upDateClass()
-                    }
-                }
                 .onDisappear {
                         // check if we should do the update process
                     appWorkViewModel.doingEdit = false
@@ -323,90 +191,26 @@ struct SchoolClassEditorContDup: View {
             }
 
             // MARK: - Confirmation Dialog
-        
-            .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancel, titleVisibility: .visible) {
-                Button("Discard Changes - main", role: .destructive) {
-                        // Do something when the user confirms
-                    if isNew  {
-                        appWorkViewModel.doingEdit.toggle()
-                        dismiss()
-                    }
-                }
-                Button("Keep Editing", role: .cancel) {
-                        // Do something when the user cancels
-                }
-            }
-
-            .confirmationDialog("Are you sure you want to delete this class?", isPresented: $inDelete) {
-                Button("Delete Class", role: .destructive) {
-                    deleteClass()
-                }
-            }
+}
         
         }
-    }
+
 
 //   MARK: - function for sub processes
 extension SchoolClassEditorContDup {
     
     fileprivate func addClass() {
-        schoolClassCopy.locationId = appWorkViewModel.currentLocation.id
-        
-        Task {
-            do {
-                
-                let resposnseCreateaClassResponse: CreateaClassResponse = try await ApiManager.shared.getData(from: .createaClass(name: schoolClassCopy.name, description: schoolClassCopy.description, locationId:  String(appWorkViewModel.currentLocation.id)))
-                saveSelectedStudents()
-                saveSelectedTeachers()
-                schoolClassCopy.uuid = resposnseCreateaClassResponse.uuid
-                self.classesViewModel.schoolClasses.append(self.schoolClassCopy)
-                
-            } catch let error as ApiError {
-                    //  FIXME: -  put in alert that will display approriate error message
-                print(error)
-            }
-        }
     }
     
 
     
     fileprivate func upDateClass() {
-        guard   isNew == false &&
-                isDeleted == false else {
-            return
-        } // doing a change
-       
-        guard   schoolClass_start   != schoolClass ||
-                selectedStudents    != selectedStudentsSaved ||
-                selectedTeachers    != selectedTeachersSaved else {
-            return
-        } // there was a change
-        
-        // do the update and leave
-        saveSelectedStudents()
-        saveSelectedTeachers()
-        Task {
-            print(schoolClass.description)
-            await ClassesViewModel.updateSchoolClass(schoolClass:schoolClass)
-        }
+//        guard   isNew == false &&
 
     }
     
     fileprivate func deleteClass() {
-        print("we are about to delete the schoolClass \(schoolClass.id)")
-        isDeleted = true
-        Task {
-            do {
-                let response = try await ApiManager.shared.getDataNoDecode(from: .deleteaClass(uuid: schoolClass.uuid))
-                dump(response)
-                print("break")
-                classesViewModel.delete(schoolClass)
-            } catch let error as ApiError {
-                    //  FIXME: -  put in alert that will display approriate error message
-                print(error.description)
-            }
-        }
-        dismiss()
+
     }
     
     fileprivate func hideKeyboard() {
@@ -418,223 +222,33 @@ extension SchoolClassEditorContDup {
 //  MARK: -  funcs to save student and teachers updates to class
 extension SchoolClassEditorContDup {
     
-
-    // Update the students belonging to the class
+    
+        // Update the students belonging to the class
     fileprivate func saveSelectedStudents() {
         
-        /* See if any added or deleted */
         
-        // capture students added and removed
-        let selectedStudentsRemoved = Set(selectedStudentsSaved).subtracting(Set(selectedStudents))
-        let selectedStudentsAdded   = Set(selectedStudents).subtracting(Set(selectedStudentsSaved))
-        
-        // if there are students to remove then remove them
-        if !selectedStudentsRemoved.isEmpty {
-            
-            for studentToDelete in selectedStudentsRemoved {
-                    //get the student
-                
-                Task {
-                    do {
-                            // get the user that we need to update
-                        var userToUpdate: UserDetailResponse = try await ApiManager.shared.getData(from: .getaUser(id: studentToDelete))
-                        
-                            // eliminate the duplicates
-                        var groupIdsNoDups = userToUpdate.user.groupIds.removingDuplicates()
-                        
-                            // remove the group being deleted from
-                        guard let idx = groupIdsNoDups.firstIndex(of: schoolClass.userGroupId) else { fatalError("no match") }
-                        groupIdsNoDups.remove(at: idx)
-                        userToUpdate.user.groupIds = groupIdsNoDups
-                        
-                            // Update the user
-                        let responseFromUpdatingUser = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: userToUpdate.user.id,
-                                                                                                                      username:     userToUpdate.user.username,
-                                                                                                                      password:     "123456",
-                                                                                                                      email:        userToUpdate.user.email,
-                                                                                                                      firstName:    userToUpdate.user.firstName,
-                                                                                                                      lastName:     userToUpdate.user.lastName,
-                                                                                                                      notes:        userToUpdate.user.notes,
-                                                                                                                      locationId:   userToUpdate.user.locationId,
-                                                                                                                      groupIds:     userToUpdate.user.groupIds,
-                                                                                                                      teacherGroups: userToUpdate.user.teacherGroups))
-                    } catch let error as ApiError {
-                            //  FIXME: -  put in alert that will display approriate error message
-                        print(error.description)
-                    }
-                }
-            }
-            
-            selectedStudentsSaved = selectedStudents  // save as new starting point
-            
-        }
-        
-        // if there are students to add then add them
-        if !selectedStudentsAdded.isEmpty {
-                // do the api assign users to class
-            Task {
-                do {
-                    let z = try await ApiManager.shared.getDataNoDecode(from: .assignToClass(uuid: schoolClass.uuid, students: selectedStudents, teachers: []))
-                        //                    dump(z)
-                    
-                } catch let error as ApiError {
-                        //  FIXME: -  put in alert that will display approriate error message
-                    print(error.description)
-                }
-                
-                selectedStudentsSaved = selectedStudents  // save as new starting point
-            }
-        }
     }
     
-    // Update the teachers belonging to the class
+        // Update the teachers belonging to the class
     fileprivate func saveSelectedTeachers() {
         
-        /* See if any added or deleted */
-        
-        // capture teachers added and removed
-        let selectedTeachersRemoved  = Set(selectedTeachersSaved).subtracting(Set(selectedTeachers))
-        let selectedTeachersAdded    = Set(selectedTeachers).subtracting(Set(selectedTeachersSaved))
-        
-        // if there are teachers to remove then remove them
-        if !selectedTeachersRemoved.isEmpty {
-            
-            for teacherToDelete in selectedTeachersRemoved {
-                    //get the teacher
-                
-                Task {
-                    do {
-                            // get the user that we need to update
-                        var userToUpdate: UserDetailResponse = try await ApiManager.shared.getData(from: .getaUser(id: teacherToDelete))
-                        
-                            // eliminate the duplicates
-                        var groupIdsNoDups = userToUpdate.user.teacherGroups.removingDuplicates()
-                        
-                            // remove the group being deleted from
-                        guard let idx = groupIdsNoDups.firstIndex(of: schoolClass.userGroupId) else { fatalError("no match") }
-                        groupIdsNoDups.remove(at: idx)
-                        userToUpdate.user.teacherGroups = groupIdsNoDups
-                        
-                            // Update the user
-                        let responseFromUpdatingUser = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: userToUpdate.user.id,
-                                                                                                                      username:     userToUpdate.user.username,
-                                                                                                                      password:     "123456",
-                                                                                                                      email:        userToUpdate.user.email,
-                                                                                                                      firstName:    userToUpdate.user.firstName,
-                                                                                                                      lastName:     userToUpdate.user.lastName,
-                                                                                                                      notes:        userToUpdate.user.notes,
-                                                                                                                      locationId:   userToUpdate.user.locationId,
-                                                                                                                      groupIds:     userToUpdate.user.groupIds,
-                                                                                                                      teacherGroups: userToUpdate.user.teacherGroups))
-                    } catch let error as ApiError {
-                            //  FIXME: -  put in alert that will display approriate error message
-                        print(error.description)
-                    }
-                }
-            }
-            
-            selectedTeachersSaved = selectedTeachers  // save as new starting point
-            
-        }
-        
-        // if there are teachers to add then add them
-        if !selectedTeachersAdded.isEmpty {
-                // do the api assign users to class
-            Task {
-                do {
-                    let z = try await ApiManager.shared.getDataNoDecode(from: .assignToClass(uuid: schoolClass.uuid, students: [], teachers: selectedTeachers))
-                        //                    dump(z)
-                    
-                } catch let error as ApiError {
-                        //  FIXME: -  put in alert that will display approriate error message
-                    print(error.description)
-                }
-                
-                selectedTeachersSaved = selectedTeachers  // save as new starting point
-            }
-        }
-        
     }
-        
+    
     fileprivate func restoreSavedItems() {
         
-      /**
-       - only students in the view model
-       */
-        Task {
-            do {
-                // get the class info
-                let classDetailResponse: ClassDetailResponse = try await ApiManager.shared.getData(from: .getStudents(uuid: schoolClass.uuid))
-                
-                // retreive the students into View Model
-                self.classDetailViewModel.students = classDetailResponse.class.students
-                self.classDetailViewModel.teachers = classDetailResponse.class.teachers
-                
-                // put the ids into selected students array
-                selectedStudents = classDetailResponse.class.students.map({ std in
-                    std.id
-                })
-                
-                // initialize the saved list
-                selectedStudentsSaved = selectedStudents
-                
-                selectedTeachers = classDetailResponse.class.teachers.map({ std in
-                    std.id
-                })
-                
-                // initialize the saved list
-                selectedTeachersSaved = selectedTeachers
-                
-                dump(classDetailResponse.class.teachers)
-                print(classDetailResponse.class.teachers)
-                
-            } catch let error as ApiError {
-                    //  FIXME: -  put in alert that will display approriate error message
-                print(error.description)
-            }
-        }
-     }
-     
+        
+    }
+    
 }
 
 
-//    MARK: - Custom View
-//struct AddDeleteView: View {
-//    var body: some View {
-//        HStack {
-//            Image(systemName: "person.badge.minus")
-//                .resizable()
-//                .frame(width: 20, height: 20)
-//                .cornerRadius(4)
-//                .tint(Color.red)
-//                .offset(x: 5)
-//            Image(systemName: "person.badge.plus")
-//                .resizable()
-//                .frame(width: 20, height: 20)
-//                .cornerRadius(4)
-//                .tint(Color.green)
-//        }
-//        .padding([.top, .bottom, .trailing],10)
-//            //                                    .background(Color.white)
-//        .clipShape(RoundedRectangle(cornerRadius: 30))
-//        .overlay(RoundedRectangle(cornerRadius: 30)
-//            .strokeBorder(LinearGradient(gradient: Gradient(colors: [Color.green, Color.red]),
-//                                         startPoint: .leading,
-//                                         endPoint: .trailing), lineWidth: 0.4))
-//    }
-//}
-
-
-
-//struct SchoolClassEditorContDup_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SchoolClassEditorContent(schoolClass: .constant(SchoolClass.makeDefault()))
-//            .environmentObject(ClassesViewModel())
-//            .environmentObject(UsersViewModel())
-//            .environmentObject(ClassDetailViewModel())
-//            .environmentObject(AppWorkViewModel())
-//            .previewDevice("iPhone 12")
-//            .preferredColorScheme(.light)
-//    }
-//}
-
+struct SchoolClassEditorContDup_Previews: PreviewProvider {
+    static var previews: some View {
+        SchoolClassEditorContDup(schoolClass: SchoolClass.makeDefault())
+            .environmentObject(ClassesViewModel())
+            .environmentObject(UsersViewModel())
+            .environmentObject(ClassDetailViewModel())
+            .environmentObject(StudentPicStubViewModel())
+            .environmentObject(AppWorkViewModel())
+    }
+}
