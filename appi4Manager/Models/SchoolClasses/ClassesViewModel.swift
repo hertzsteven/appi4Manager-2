@@ -9,10 +9,10 @@ import SwiftUI
 
 @MainActor
 class ClassesViewModel: ObservableObject {
+
     @Published var schoolClasses = [SchoolClass]()
     @Published var isLoading = false
 
-    
     
     init() {
         Task {
@@ -27,6 +27,18 @@ class ClassesViewModel: ObservableObject {
         }
     }
 
+
+    func getSchoolClassesinLocation(_ locationId: Int, dummyPicClassToIgnore: String) -> Array<SchoolClass> {
+        var filteredClassesbyLocation = [SchoolClass]()
+        
+        filteredClassesbyLocation = schoolClasses.filter{ schoolClass in
+            schoolClass.locationId  == locationId &&
+            !(schoolClass.uuid      == dummyPicClassToIgnore)
+        }
+        
+        return filteredClassesbyLocation
+    }
+    
     
     func loadData() throws {
         guard !isLoading else { return }

@@ -60,8 +60,6 @@ struct SchoolListContent: View {
                     Image(systemName: "plus")
                 }
             }
-     
-        
       
             ToolbarItem(placement: .navigationBarLeading) {
                 Menu {

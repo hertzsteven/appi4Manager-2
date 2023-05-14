@@ -18,9 +18,8 @@ struct SchoolClass: Codable, Identifiable , Hashable {
     var uuid:         String
     var name:         String
     var description:  String
-//    var userGroupId:  Int
     var locationId:   Int
-    var userGroupId: Int
+    var userGroupId:  Int
     var id: String {
         uuid
     }

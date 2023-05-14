@@ -9,11 +9,11 @@ import SwiftUI
 
 @main
 struct list_the_usersApp: App {
-    @StateObject var appWorkViewModel       = AppWorkViewModel.instantiate()
-    @StateObject var usersViewModel         = UsersViewModel()
-    @StateObject var classDetailViewModel   = ClassDetailViewModel()
-    @StateObject var studentPicStubViewModel   = StudentPicStubViewModel()
-    @StateObject var classesViewModel       = ClassesViewModel()
+    @StateObject var appWorkViewModel           = AppWorkViewModel.instantiate()
+    @StateObject var usersViewModel             = UsersViewModel()
+    @StateObject var classDetailViewModel       = ClassDetailViewModel()
+    @StateObject var studentPicStubViewModel    = StudentPicStubViewModel()
+    @StateObject var classesViewModel           = ClassesViewModel()
 
     var body: some Scene {
         WindowGroup {
