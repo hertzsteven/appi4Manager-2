@@ -104,16 +104,57 @@ struct SchoolClassEditorContDup: View {
                                     Text(schoolClass.description).foregroundColor(appWorkViewModel.doingEdit  ? .black : Color("disabled"))
                                 }
                                 
+                            } // end of hstack
+                        } // end of section
+                          //                View: Student List
+                    
+
+                    }  // end of form
+                
+                List {
+                    Section {
+                        ForEach(selectedStudents.map({ id in
+                            usersViewModel.users.first(where: { $0.id == id })!
+                        }), id: \.id) { student in
+                            Text("\(student.firstName) \(student.lastName)")
+                                .foregroundColor(appWorkViewModel.doingEdit  ? .black : .gray)
+                        }
+                    } header: {
+                        HStack {
+                            Text("Students \(selectedStudents.count)")
+                                //                                .bold()
+                                .font(.title3)
+                            
+                            if appWorkViewModel.doingEdit || ( isNew == true && !schoolClassCopy.name.isEmpty ) {
+                                Spacer()
+                                Button {
+                                    Task {
+                                        do {
+                                            teacherIds = try await appWorkViewModel.getUsersInTeacherGroup() ?? []
+                                            passedItemSelected = selectedStudents
+                                            toShowStudentList.toggle()
+                                        } catch {
+                                                // Handle error
+                                        }
+                                    }
+                                } label: {
+                                    AddDeleteView() }
+                                Divider()
                             }
                         }
-                    }
+                    } footer: {
+                        Text("Number of students: \(selectedStudents.count)")
+                    }.headerProminence(.standard)
+                }
+                    //                .frame(height: geometry.size.height * 0.35)
+                .listStyle(SidebarListStyle())
 
 //              MARK: - Views
 
 
                 
 //                View: Spacer View
-                Spacer(minLength: 60)
+//                Spacer(minLength: 60)
 
 //              View: Delete Button
                 if !isNew {
@@ -166,6 +207,10 @@ struct SchoolClassEditorContDup: View {
             }
             .ignoresSafeArea(.keyboard)
             
+            // lets set up the navigatitle and properties
+            .navigationTitle("Edit Class")
+            .navigationBarTitleDisplayMode(.inline)
+            
     }
             
             .onTapGesture {
@@ -187,7 +232,8 @@ struct SchoolClassEditorContDup: View {
             }
             // this on appear happens first
             .onAppear {
-                restoreSavedItems()
+                getSchoolDetail()
+                saveSchoolDetailInfo()
             }
 
             // MARK: - Confirmation Dialog
@@ -234,21 +280,64 @@ extension SchoolClassEditorContDup {
         
     }
     
-    fileprivate func restoreSavedItems() {
+    
+    /*
+     Executes on appear.
+      - gets the school detail using the api
+      - save the info
+     */
+    fileprivate func getSchoolDetail() {
         
-        
+        Task {
+            do {
+                    // get the class info
+                let classDetailResponse: ClassDetailResponse = try await ApiManager.shared.getData(from: .getStudents(uuid: schoolClass.uuid))
+                
+                    // retreive the students into View Model
+                self.classDetailViewModel.students = classDetailResponse.class.students
+                self.classDetailViewModel.teachers = classDetailResponse.class.teachers
+                
+                saveSchoolDetailInfo()
+                
+                
+            } catch let error as ApiError {
+                    //  FIXME: -  put in alert that will display approriate error message
+                print(error.description)
+            }
+        }
     }
     
+    fileprivate func saveSchoolDetailInfo() {
+            // put the ids into selected students array
+        selectedStudents = self.classDetailViewModel.students.map({ std in
+            std.id
+        })
+        
+            // initialize the saved list
+        selectedStudentsSaved = selectedStudents
+        
+        
+        
+        selectedTeachers =  self.classDetailViewModel.teachers.map({ std in
+            std.id
+        })
+        
+            // initialize the saved list
+        selectedTeachersSaved = selectedTeachers
+    }
+
 }
 
 
 struct SchoolClassEditorContDup_Previews: PreviewProvider {
     static var previews: some View {
-        SchoolClassEditorContDup(schoolClass: SchoolClass.makeDefault())
-            .environmentObject(ClassesViewModel())
-            .environmentObject(UsersViewModel())
-            .environmentObject(ClassDetailViewModel())
-            .environmentObject(StudentPicStubViewModel())
-            .environmentObject(AppWorkViewModel())
+        NavigationStack {
+            SchoolClassEditorContDup(schoolClass: SchoolClass.makeDefault())
+                .environmentObject(ClassesViewModel())
+                .environmentObject(UsersViewModel())
+                .environmentObject(ClassDetailViewModel())
+                .environmentObject(StudentPicStubViewModel())
+                .environmentObject(AppWorkViewModel())
+        }
     }
 }

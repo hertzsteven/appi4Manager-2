@@ -561,35 +561,39 @@ extension SchoolClassEditorContent {
         
     fileprivate func restoreSavedItems() {
         
-      /**
-       - only students in the view model
-       */
         Task {
             do {
-                // get the class info
+                    // get the class info
                 let classDetailResponse: ClassDetailResponse = try await ApiManager.shared.getData(from: .getStudents(uuid: schoolClass.uuid))
                 
-                // retreive the students into View Model
+                    // retreive the students into View Model
                 self.classDetailViewModel.students = classDetailResponse.class.students
                 self.classDetailViewModel.teachers = classDetailResponse.class.teachers
                 
-                // put the ids into selected students array
+                
+                
+                    // put the ids into selected students array
                 selectedStudents = classDetailResponse.class.students.map({ std in
                     std.id
                 })
                 
-                // initialize the saved list
+                    // initialize the saved list
                 selectedStudentsSaved = selectedStudents
+                
+                
                 
                 selectedTeachers = classDetailResponse.class.teachers.map({ std in
                     std.id
                 })
                 
-                // initialize the saved list
+                    // initialize the saved list
                 selectedTeachersSaved = selectedTeachers
+                
                 
                 dump(classDetailResponse.class.teachers)
                 print(classDetailResponse.class.teachers)
+                
+                
                 
             } catch let error as ApiError {
                     //  FIXME: -  put in alert that will display approriate error message
