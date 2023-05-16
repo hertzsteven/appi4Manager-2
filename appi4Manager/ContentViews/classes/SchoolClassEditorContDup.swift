@@ -76,6 +76,7 @@ struct CollapsibleList: View {
                 usersViewModel.users.first(where: { $0.id == id })!
             }), id: \.id) { student in
                 Text("\(student.firstName) \(student.lastName)")
+                    .foregroundColor(itIsInEdit ? .black :  Color(.darkGray))
             }
           }
         }
@@ -165,7 +166,7 @@ struct SchoolClassEditorContDup: View {
                 Form {
                         Section("Class Information") {
                             HStack {
-                                if appWorkViewModel.doingEdit {
+                                if itIsInEdit {
                                     if !schoolClass.name.isEmpty {
                                         Text("Name: ")
                                     }
@@ -173,11 +174,11 @@ struct SchoolClassEditorContDup: View {
                                         //                    .font(.headline)
                                         .padding([.top, .bottom], 8)
                                 } else {
-                                    Text(schoolClass.name).foregroundColor(appWorkViewModel.doingEdit  ? .black : Color(.darkGray))
+                                    Text(schoolClass.name).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
                                 }
                             }
                             HStack {
-                                if appWorkViewModel.doingEdit {
+                                if itIsInEdit {
                                     if !schoolClass.description.isEmpty {
                                         Text("Description: ")
                                     }
@@ -186,7 +187,7 @@ struct SchoolClassEditorContDup: View {
                                         .font(.subheadline)
                                         .padding([.top, .bottom], 8)
                                 } else {
-                                    Text(schoolClass.description).foregroundColor(appWorkViewModel.doingEdit  ? .black : Color("disabled"))
+                                    Text(schoolClass.description).foregroundColor(itIsInEdit  ? .black : Color("disabled"))
                                 }
                                 
                             } // end of hstack
@@ -224,7 +225,7 @@ struct SchoolClassEditorContDup: View {
                             inDelete.toggle()
                         })
                         .listRowInsets(EdgeInsets())
-                        .disabled(itIsInEdit ? true : false)
+                        .disabled(!itIsInEdit ? true : false)
                     }
                     
 
@@ -282,7 +283,10 @@ struct SchoolClassEditorContDup: View {
                 .toolbar {
                     
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(!itIsInEdit ? "Edit" : "Done") {
+                        Button(!itIsInEdit ? "Edit" : "**Done**") {
+                            if itIsInEdit {
+                                upDateClass()
+                            }
                             mode = !itIsInEdit ? .active  : .inactive
                         }.frame(height: 96, alignment: .trailing)
                      }
@@ -290,7 +294,7 @@ struct SchoolClassEditorContDup: View {
                     ToolbarItem(placement: .navigationBarLeading) {
                         if itIsInEdit {
                             Button("Cancel") {
-                                mode = .inactive
+                                inCancel.toggle()
                             }.frame(height: 96, alignment: .trailing)
                         }
                     }
@@ -361,6 +365,23 @@ struct SchoolClassEditorContDup: View {
 
             // MARK: - Confirmation Dialog
         
+            .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancel, titleVisibility: .visible) {
+                Button("Discard Changes detail", role: .destructive) {
+                        // Do something when the user confirms
+                    if isNew  {
+//                        appWorkViewModel.doingEdit.toggle()
+//                        dismiss()
+                    } else {
+                        mode = .inactive
+                        selectedStudents        = selectedStudentsSaved
+                        selectedTeachers        = selectedTeachersSaved
+                        schoolClass.name        = schoolClassCopy.name
+                        schoolClass.description = schoolClassCopy.description
+                        dump(schoolClass)
+                    }
+                }
+            }
+            
             .confirmationDialog("Are you sure you want to delete this class?", isPresented: $inDelete) {
                 Button("Delete Class", role: .destructive) {
                     deleteClass()
@@ -380,7 +401,32 @@ extension SchoolClassEditorContDup {
 
     
     fileprivate func upDateClass() {
-//        guard   isNew == false &&
+
+        guard   isNew == false &&
+                isDeleted == false else {
+            return
+        } // doing a change
+       
+        guard   schoolClass_start   != schoolClass ||
+                selectedStudents    != selectedStudentsSaved ||
+                selectedTeachers    != selectedTeachersSaved else {
+            return
+        } // there was a change
+        
+        // do the update and leave
+        saveSelectedStudents()
+        saveSelectedTeachers()
+        Task {
+            print(schoolClass.description)
+            await ClassesViewModel.updateSchoolClass(schoolClass:schoolClass)
+        }
+        
+        let index = classesViewModel.schoolClasses.firstIndex { sc in
+            sc.uuid == schoolClass.uuid
+        }
+
+        classesViewModel.schoolClasses[index!] = schoolClass
+
 
     }
     
