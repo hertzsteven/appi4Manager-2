@@ -36,6 +36,8 @@ struct DeleteButtonView: View {
 
 struct CollapsibleList: View {
     @EnvironmentObject var usersViewModel: UsersViewModel
+            @Environment(\.editMode) var editMode
+
     
     @Binding var isListVisible: Bool
     @Binding var newItem: String
@@ -46,18 +48,24 @@ struct CollapsibleList: View {
     var title:      String
     
     var action: () -> Void
+    
+    var itIsInEdit: Bool {
+        editMode?.wrappedValue == .active
+    }
+    
     var body: some View {
         
         Section(header: HStack {
             TextField("Add new \(title)", text: $newItem)
             Spacer()
-            Button {
-                    // here should be the popUpaction and others
-                action()
-            } label: {
-                Image(systemName: "plus")
+            if itIsInEdit {
+                Button {
+                    action()
+                } label: {
+                    Image(systemName: "plus")
+                }
+                Divider()
             }
-            Divider()
             Button {
                 isListVisible.toggle()
             } label: {
@@ -83,6 +91,10 @@ struct SchoolClassEditorContDup: View {
     @State var newItem2: String = ""
     
     @State var mode: EditMode = .inactive
+
+    var itIsInEdit: Bool {
+        mode == .active
+    }
 
 
 
@@ -212,12 +224,11 @@ struct SchoolClassEditorContDup: View {
                             inDelete.toggle()
                         })
                         .listRowInsets(EdgeInsets())
-                        .disabled(mode == .active ? true : false)
+                        .disabled(itIsInEdit ? true : false)
                     }
                     
 
                     }  // end of form
-                .environment(\.editMode, $mode)
         
         
     //               MARK: - PopupSheets
@@ -261,7 +272,6 @@ struct SchoolClassEditorContDup: View {
                             
                         }
                     }
-                    .environment(\.editMode, $mode)
 
         
 //               MARK: - PopupSheets
@@ -272,10 +282,19 @@ struct SchoolClassEditorContDup: View {
                 .toolbar {
                     
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("set the mode active") {
-                            mode = .active
-                        }
+                        Button(!itIsInEdit ? "Edit" : "Done") {
+                            mode = !itIsInEdit ? .active  : .inactive
+                        }.frame(height: 96, alignment: .trailing)
                      }
+                    
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        if itIsInEdit {
+                            Button("Cancel") {
+                                mode = .inactive
+                            }.frame(height: 96, alignment: .trailing)
+                        }
+                    }
+
 
                     
                     ToolbarItem {
@@ -314,7 +333,6 @@ struct SchoolClassEditorContDup: View {
         
             .navigationBarBackButtonHidden(mode == .active ? true : false)
 
-            .environment(\.editMode, $mode)
             
 //    } // end geomotry
 //
