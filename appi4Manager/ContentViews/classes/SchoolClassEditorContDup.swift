@@ -10,13 +10,88 @@
 import SwiftUI
 
 
+struct DeleteButtonView: View {
+    var action: () -> Void
+    
+    var body: some View {
+        Button(role: .destructive) {
+            action()
+        }
+    label: {
+        Text("Delete")
+            .foregroundColor(.white)
+            .bold()
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.red)
+            .cornerRadius(10)
+    }
+    .buttonStyle(PlainButtonStyle())
+    .frame(maxWidth: .infinity)
+    .listRowInsets(EdgeInsets())
+    }
+}
+
+
+
+struct CollapsibleList: View {
+    @EnvironmentObject var usersViewModel: UsersViewModel
+    
+    @Binding var isListVisible: Bool
+    @Binding var newItem: String
+    
+
+    
+    @Binding var listData:   [Int]
+    var title:      String
+    
+    var action: () -> Void
+    var body: some View {
+        
+        Section(header: HStack {
+            TextField("Add new \(title)", text: $newItem)
+            Spacer()
+            Button {
+                    // here should be the popUpaction and others
+                action()
+            } label: {
+                Image(systemName: "plus")
+            }
+            Divider()
+            Button {
+                isListVisible.toggle()
+            } label: {
+                Image(systemName: isListVisible ? "chevron.down" : "chevron.right")
+            }
+        })  { if isListVisible {
+            ForEach(listData.map({ id in
+                usersViewModel.users.first(where: { $0.id == id })!
+            }), id: \.id) { student in
+                Text("\(student.firstName) \(student.lastName)")
+            }
+          }
+        }
+    }
+}
+
+
 struct SchoolClassEditorContDup: View {
+    
+    @State var isList1Visible: Bool = true
+    @State var newItem1: String = ""
+    @State var isList2Visible: Bool = true
+    @State var newItem2: String = ""
+    
+    @State var mode: EditMode = .inactive
+
+
+
     
     @State private var isSheetPresented = false
     @State private var inCancel = false
     @State private var showCustomBackButton = false
     
-    @Environment(\.editMode) var editMode
+//    @Environment(\.editMode) var editMode
     @State var enableEditingStudentTeachersMore: Bool = false
     
     @State var selectedStudentsSaved:   Array<Int> = []
@@ -73,9 +148,7 @@ struct SchoolClassEditorContDup: View {
  
     
     var body: some View {
-        GeometryReader { geometry in
-
-            VStack {
+//        GeometryReader { geometry in
                 
                 Form {
                         Section("Class Information") {
@@ -106,77 +179,104 @@ struct SchoolClassEditorContDup: View {
                                 
                             } // end of hstack
                         } // end of section
-                          //                View: Student List
+                    
+                    CollapsibleList(isListVisible: $isList1Visible, newItem: $newItem1, listData: $selectedStudents, title: "Students") {
+                        Task {
+                            do {
+                                teacherIds = try await appWorkViewModel.getUsersInTeacherGroup() ?? []
+                                passedItemSelected = selectedStudents
+                                toShowStudentList.toggle()
+                            } catch {
+                                    // Handle error
+                            }
+                        }
+                    }
+                    
+                    CollapsibleList(isListVisible: $isList2Visible, newItem: $newItem2, listData: $selectedTeachers, title: "Teachers") {
+                        Task {
+                            do {
+                                teacherIds = try await appWorkViewModel.getUsersInTeacherGroup() ?? []
+                                passedItemSelected = selectedTeachers
+                                toShowTeacherList.toggle()
+                            } catch {
+                                    // Handle error
+                            }
+                        }
+                    }
+ 
+                    
+//                    CollapsibleList(isListVisible: $isList2Visible, newItem: $newItem2, listData: selectedTeachers, title: "Teachers")
+  
+                    if !isNew {
+                        DeleteButtonView(action: {
+                            inDelete.toggle()
+                        })
+                        .listRowInsets(EdgeInsets())
+                        .disabled(mode == .active ? true : false)
+                    }
                     
 
                     }  // end of form
-                
-                List {
-                    Section {
-                        ForEach(selectedStudents.map({ id in
-                            usersViewModel.users.first(where: { $0.id == id })!
-                        }), id: \.id) { student in
-                            Text("\(student.firstName) \(student.lastName)")
-                                .foregroundColor(appWorkViewModel.doingEdit  ? .black : .gray)
+                .environment(\.editMode, $mode)
+        
+        
+    //               MARK: - PopupSheets
+
+    //               Select Students Popup
+                    .sheet(isPresented: $toShowStudentList) {
+                        
+                        let userFilter2: ((any ItemsToSelectRepresentable) -> Bool) = { usr in
+                            !teacherIds.contains(usr.id)
                         }
-                    } header: {
-                        HStack {
-                            Text("Students \(selectedStudents.count)")
-                                //                                .bold()
-                                .font(.title3)
+                        
+                        NavigationView {
+                            ItemListSelectView(passedItemSelected: $passedItemSelected,
+                                               itemsToList: usersViewModel.users,
+                                               itemFilter2: userFilter2,
+                                               listTitle: "Select the students for this class")
+                        }
+                        .onDisappear {
+                            selectedStudents = passedItemSelected
+                        }
+                    }
+
+    //               Select Teachers Popup
+                    .sheet(isPresented: $toShowTeacherList) {
+                        let userFilter2: ((any ItemsToSelectRepresentable) -> Bool) = { usr in
+                            teacherIds.contains(usr.id)
+                        }
+                        
+                        NavigationView {
+                            ItemListSelectView(passedItemSelected: $passedItemSelected,
+                                               itemsToList:        usersViewModel.users,
+                                               itemFilter2:        userFilter2,
+                                               listTitle:          "Select the teachers for this class")
                             
-                            if appWorkViewModel.doingEdit || ( isNew == true && !schoolClassCopy.name.isEmpty ) {
-                                Spacer()
-                                Button {
-                                    Task {
-                                        do {
-                                            teacherIds = try await appWorkViewModel.getUsersInTeacherGroup() ?? []
-                                            passedItemSelected = selectedStudents
-                                            toShowStudentList.toggle()
-                                        } catch {
-                                                // Handle error
-                                        }
-                                    }
-                                } label: {
-                                    AddDeleteView() }
-                                Divider()
-                            }
+                                //                     StudentTeacherListView(selectedStudents: $selectedStudents,  selectedTeachers: $selectedTeachers, personType: .teacher)
                         }
-                    } footer: {
-                        Text("Number of students: \(selectedStudents.count)")
-                    }.headerProminence(.standard)
-                }
-                    //                .frame(height: geometry.size.height * 0.35)
-                .listStyle(SidebarListStyle())
+                        
+                        .onDisappear {
+                            print("🚘 it disappeared", selectedTeachers.count)
+                            selectedTeachers = passedItemSelected
+                            
+                        }
+                    }
+                    .environment(\.editMode, $mode)
 
-//              MARK: - Views
-
-
-                
-//                View: Spacer View
-//                Spacer(minLength: 60)
-
-//              View: Delete Button
-                if !isNew {
-                    Button(role: .destructive, action: {
-                        inDelete.toggle()
-                    }, label: {
-                        Text("Delete the Class")
-                            .font(Font.custom("SF Pro", size: 17))
-                            .foregroundColor(appWorkViewModel.doingEdit ? Color(UIColor.systemRed) :  Color(UIColor.gray))
-                    })
-                    .disabled(!appWorkViewModel.doingEdit)
-                }
-                
-//              View: Spacer View
-                Spacer()
-                                    
+        
 //               MARK: - PopupSheets
                 
 //               MARK: - onChange onDisappear Global
                 
 //               MARK: - Add Button
-                .toolbar(content: {
+                .toolbar {
+                    
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("set the mode active") {
+                            mode = .active
+                        }
+                     }
+
                     
                     ToolbarItem {
                         Button {
@@ -190,7 +290,8 @@ struct SchoolClassEditorContDup: View {
                         }
                         .disabled(schoolClassCopy.name.isEmpty)
                     }
-                })
+                }
+                .environment(\.editMode, $mode)
                 
                 // this on appear happens second
                 .onAppear {
@@ -204,18 +305,22 @@ struct SchoolClassEditorContDup: View {
 //                    dismiss()
                 }
                 
-            }
+            // vstack end
             .ignoresSafeArea(.keyboard)
             
             // lets set up the navigatitle and properties
             .navigationTitle("Edit Class")
             .navigationBarTitleDisplayMode(.inline)
+        
+            .navigationBarBackButtonHidden(mode == .active ? true : false)
+
+            .environment(\.editMode, $mode)
             
-    }
-            
-            .onTapGesture {
-                 self.hideKeyboard()
-             }
+//    } // end geomotry
+//
+//            .onTapGesture {
+//                 self.hideKeyboard()
+//             }
         
             .navigationBarTitle("Edit Dup Class", displayMode: .inline)
             
@@ -237,6 +342,12 @@ struct SchoolClassEditorContDup: View {
             }
 
             // MARK: - Confirmation Dialog
+        
+            .confirmationDialog("Are you sure you want to delete this class?", isPresented: $inDelete) {
+                Button("Delete Class", role: .destructive) {
+                    deleteClass()
+                }
+            }
 }
         
         }
