@@ -43,7 +43,7 @@ struct DashboardView: View {
                 case "Users":
                     UserListContent(newUser: User.makeDefault())
                 case "SchoolListDup":
-                    SchoolListDup()
+                    SchoolListDup( newClass: SchoolClass.makeDefault())
 
                 default:
                     SchoolListContent(path: $path, newClass: SchoolClass.makeDefault())
