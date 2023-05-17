@@ -113,5 +113,165 @@
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "831741E7-B123-465B-B8BA-F6E592262107"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/classes/SchoolClassDetailContent.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "75"
+            endingLineNumber = "75"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2DA1D43E-64E1-4F32-B4C3-3B2C2093AA0E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "194"
+            endingLineNumber = "194"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "2DA1D43E-64E1-4F32-B4C3-3B2C2093AA0E - aef95195e9d9fae6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.Section&lt;SwiftUI.Text, SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI._ConditionalContent&lt;SwiftUI.TupleView&lt;(Swift.Optional&lt;SwiftUI.Text&gt;, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0)&gt;, SwiftUI.Text&gt;&gt;, SwiftUI.HStack&lt;SwiftUI._ConditionalContent&lt;SwiftUI.TupleView&lt;(Swift.Optional&lt;SwiftUI.Text&gt;, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0)&gt;, SwiftUI.Text&gt;&gt;)&gt;, SwiftUI.EmptyView&gt;, appi4Manager.CollapsibleList, appi4Manager.CollapsibleList, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.disabled(Swift.Bool) -&gt; some&gt;&gt;.0&gt;)&gt; in appi4Manager.SchoolClassEditorContDup.body.getter : some"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "194"
+                  endingLineNumber = "194"
+                  offsetFromSymbolStart = "140">
+               </Location>
+               <Location
+                  uuid = "2DA1D43E-64E1-4F32-B4C3-3B2C2093AA0E - e1174ab2a73db111"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable () async -&gt; () in closure #2 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.Section&lt;SwiftUI.Text, SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI._ConditionalContent&lt;SwiftUI.TupleView&lt;(Swift.Optional&lt;SwiftUI.Text&gt;, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0)&gt;, SwiftUI.Text&gt;&gt;, SwiftUI.HStack&lt;SwiftUI._ConditionalContent&lt;SwiftUI.TupleView&lt;(Swift.Optional&lt;SwiftUI.Text&gt;, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0)&gt;, SwiftUI.Text&gt;&gt;)&gt;, SwiftUI.EmptyView&gt;, appi4Manager.CollapsibleList, appi4Manager.CollapsibleList, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.disabled(Swift.Bool) -&gt; some&gt;&gt;.0&gt;)&gt; in appi4Manager.SchoolClassEditorContDup.body.getter : some"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "194"
+                  endingLineNumber = "194"
+                  offsetFromSymbolStart = "0">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "69C3BDAC-28EF-4855-9E5E-A6A8ED759725"
+            shouldBeEnabled = "No"
+            ignoreCount = "2"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "628"
+            endingLineNumber = "628"
+            landmarkName = "getSchoolDetail()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "69C3BDAC-28EF-4855-9E5E-A6A8ED759725 - 266d3baf719ea436"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "appi4Manager.SchoolClassEditorContDup.getSchoolDetail() -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "628"
+                  endingLineNumber = "628"
+                  offsetFromSymbolStart = "136">
+               </Location>
+               <Location
+                  uuid = "69C3BDAC-28EF-4855-9E5E-A6A8ED759725 - 3a40ac4a7ad9b785"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable () async throws -&gt; () in appi4Manager.SchoolClassEditorContDup.getSchoolDetail() -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "628"
+                  endingLineNumber = "628"
+                  offsetFromSymbolStart = "0">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "783A8662-D998-4E03-B4BF-6384B3064066"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "400"
+            endingLineNumber = "400"
+            landmarkName = "addClass()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "783A8662-D998-4E03-B4BF-6384B3064066 - 996cad352e2af1b7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "appi4Manager.SchoolClassEditorContDup.addClass() -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "400"
+                  endingLineNumber = "400"
+                  offsetFromSymbolStart = "728">
+               </Location>
+               <Location
+                  uuid = "783A8662-D998-4E03-B4BF-6384B3064066 - db06001b9982f38f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable () async throws -&gt; () in appi4Manager.SchoolClassEditorContDup.addClass() -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "400"
+                  endingLineNumber = "400"
+                  offsetFromSymbolStart = "0">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

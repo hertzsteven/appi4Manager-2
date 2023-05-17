@@ -11,6 +11,7 @@ import SwiftUI
 
 
 struct DeleteButtonView: View {
+    
     var action: () -> Void
     
     var body: some View {
@@ -33,19 +34,14 @@ struct DeleteButtonView: View {
 }
 
 
-
 struct CollapsibleList: View {
     @EnvironmentObject var usersViewModel: UsersViewModel
-            @Environment(\.editMode) var editMode
-
+    @Environment(\.editMode) var editMode
     
     @Binding var isListVisible: Bool
     @Binding var newItem: String
-    
-
-    
     @Binding var listData:   [Int]
-    var title:      String
+    let title:      String
     
     var action: () -> Void
     
@@ -56,8 +52,10 @@ struct CollapsibleList: View {
     var body: some View {
         
         Section(header: HStack {
+       
             TextField("Add new \(title)", text: $newItem)
             Spacer()
+       
             if itIsInEdit {
                 Button {
                     action()
@@ -66,11 +64,13 @@ struct CollapsibleList: View {
                 }
                 Divider()
             }
+       
             Button {
                 isListVisible.toggle()
             } label: {
                 Image(systemName: isListVisible ? "chevron.down" : "chevron.right")
             }
+       
         })  { if isListVisible {
             ForEach(listData.map({ id in
                 usersViewModel.users.first(where: { $0.id == id })!
@@ -97,16 +97,12 @@ struct SchoolClassEditorContDup: View {
         mode == .active
     }
     
-    
-    
-    
     @State private var isSheetPresented = false
     @State private var inCancelEdit = false
     @State private var inCancelAdd = false
     
     @State private var showCustomBackButton = false
     
-        //    @Environment(\.editMode) var editMode
     @State var enableEditingStudentTeachersMore: Bool = false
     
     @State var selectedStudentsSaved:   Array<Int> = []
@@ -163,8 +159,6 @@ struct SchoolClassEditorContDup: View {
     
     
     var body: some View {
-            //        GeometryReader { geometry in
-        
         Form {
             Section("Class Information") {
                 HStack {
@@ -193,6 +187,7 @@ struct SchoolClassEditorContDup: View {
                     }
                     
                 } // end of hstack
+
             } // end of section
             
             CollapsibleList(isListVisible: $isList1Visible, newItem: $newItem1, listData: $selectedStudents, title: "Students") {
@@ -218,10 +213,7 @@ struct SchoolClassEditorContDup: View {
                     }
                 }
             }
-            
-            
-                //                    CollapsibleList(isListVisible: $isList2Visible, newItem: $newItem2, listData: selectedTeachers, title: "Teachers")
-            
+                        
             if !isNew {
                 DeleteButtonView(action: {
                     inDelete.toggle()
@@ -230,13 +222,11 @@ struct SchoolClassEditorContDup: View {
                 .disabled(!itIsInEdit ? true : false)
             }
             
-            
         }  // end of form
         
+//      MARK: - PopupSheets
         
-            //               MARK: - PopupSheets
-        
-            //               Select Students Popup
+//       Select Students Popup
         .sheet(isPresented: $toShowStudentList) {
             
             let userFilter2: ((any ItemsToSelectRepresentable) -> Bool) = { usr in
@@ -254,7 +244,7 @@ struct SchoolClassEditorContDup: View {
             }
         }
         
-            //               Select Teachers Popup
+//       Select Teachers Popup
         .sheet(isPresented: $toShowTeacherList) {
             let userFilter2: ((any ItemsToSelectRepresentable) -> Bool) = { usr in
                 teacherIds.contains(usr.id)
@@ -270,25 +260,23 @@ struct SchoolClassEditorContDup: View {
             }
             
             .onDisappear {
-                print("🚘 it disappeared", selectedTeachers.count)
-                selectedTeachers = passedItemSelected
-                
+                selectedTeachers = passedItemSelected                
             }
         }
         
         
-            //               MARK: - PopupSheets
-        
-            //               MARK: - onChange onDisappear Global
+//       MARK: - onChange onDisappear Global
         .onAppear {
+            print("- - -  - 270 on appear")
             if isNew {
                 mode = .active
             }
         }
         
-            //               MARK: - Add Button
+//       MARK: - Add Button
+        
         .toolbar {
-            
+//         edit done toolbar button   
             ToolbarItem(placement: .navigationBarTrailing) {
                 if !isNew {
                     Button(!itIsInEdit ? "Edit" : "**Done**") {
@@ -300,7 +288,7 @@ struct SchoolClassEditorContDup: View {
                 }
             }
             
-                // Cancel button from editing not adding
+// 			Cancel button from editing not adding
             ToolbarItem(placement: .navigationBarLeading) {
                 if itIsInEdit && !isNew {
                     Button("Cancel") {
@@ -310,7 +298,7 @@ struct SchoolClassEditorContDup: View {
             }
             
             
-                // Cancel button from adding
+//		    Cancel button from adding
             ToolbarItem(placement: .cancellationAction) {
                 if isNew {
                     Button("Cancel") {
@@ -319,7 +307,7 @@ struct SchoolClassEditorContDup: View {
                 }
             }
             
-            
+//          Add button by new class
             ToolbarItem {
                 Button {
                     if isNew {
@@ -330,51 +318,49 @@ struct SchoolClassEditorContDup: View {
                 } label: {
                     Text(isNew ? "Add" : "")
                 }
-                .disabled(schoolClassCopy.name.isEmpty)
+                .disabled(schoolClass.name.isEmpty)
             }
         }
+        
         .environment(\.editMode, $mode)
         
-            // this on appear happens second
+        // this on appear happens second
         .onAppear {
-            schoolClassCopy = schoolClass
-            schoolClass_start = schoolClass
+            print("- - -  - 330 on appear")
+            if !isNew {
+                schoolClassCopy = schoolClass
+                schoolClass_start = schoolClass
+            }
         }
             // not monitoring students and teachers
         .onDisappear {
                 // check if we should do the update process
-            appWorkViewModel.doingEdit = false
+//            appWorkViewModel.doingEdit = false
+            mode = .inactive
                 //                    dismiss()
         }
         
-            // vstack end
         .ignoresSafeArea(.keyboard)
         
-            // lets set up the navigatitle and properties
+        // lets set up the navigatitle and properties
         .navigationTitle("Edit Class")
         .navigationBarTitleDisplayMode(.inline)
         
         .navigationBarBackButtonHidden(mode == .active ? true : false)
-        
-        
-            //    } // end geomotry
-            //
-            //            .onTapGesture {
-            //                 self.hideKeyboard()
-            //             }
-        
         .navigationBarTitle("Edit Dup Class", displayMode: .inline)
         
-            //    MARK: - Cancel button for Add
+        //    MARK: - Cancel button for Add
         
-            // this on appear happens first
+        // this on appear happens first
         .onAppear {
-            getSchoolDetail()
-            saveSchoolDetailInfo()
+            print("- - -  - 357 on appear")
+            if !isNew {
+                getSchoolDetail()
+                saveSchoolDetailInfo()
+            }
         }
         
-            // MARK: - Confirmation Dialog
-        
+//       MARK: - Confirmation Dialog
         
         .confirmationDialog("Are you sure you want to delete this class?", isPresented: $inDelete) {
             Button("Delete Class", role: .destructive) {
@@ -383,37 +369,21 @@ struct SchoolClassEditorContDup: View {
         }
         // from edit
         .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelEdit, titleVisibility: .visible) {
-            Button("Discard Changes 2e detail", role: .destructive) {
+            Button("Discard Changes edit ", role: .destructive) {
                     // Do something when the user confirms
-                if isNew  {
-                        //                        appWorkViewModel.doingEdit.toggle()
-                        //                        dismiss()
-                } else {
-                    mode = .inactive
+                     mode = .inactive
                     selectedStudents        = selectedStudentsSaved
                     selectedTeachers        = selectedTeachersSaved
                     schoolClass.name        = schoolClassCopy.name
                     schoolClass.description = schoolClassCopy.description
                     dump(schoolClass)
-                }
             }
         }
-        
         // from add
         .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelAdd, titleVisibility: .visible) {
-            Button("Discard Changes 2e detail", role: .destructive) {
+            Button("Discard Changes add ", role: .destructive) {
                     // Do something when the user confirms
-                if isNew  {
-                        //                        appWorkViewModel.doingEdit.toggle()
-                        //                        dismiss()
-                } else {
-                    mode = .inactive
-                    selectedStudents        = selectedStudentsSaved
-                    selectedTeachers        = selectedTeachersSaved
-                    schoolClass.name        = schoolClassCopy.name
-                    schoolClass.description = schoolClassCopy.description
-                    dump(schoolClass)
-                }
+                dismiss()
             }
         }
     }
