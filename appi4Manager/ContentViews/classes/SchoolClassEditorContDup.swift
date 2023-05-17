@@ -302,7 +302,11 @@ struct SchoolClassEditorContDup: View {
             ToolbarItem(placement: .cancellationAction) {
                 if isNew {
                     Button("Cancel") {
-                        inCancelAdd.toggle()
+                        if schoolClass.name.isEmpty {
+                            dismiss()
+                        } else {
+                            inCancelAdd.toggle()
+                        }
                     }.frame(height: 96, alignment: .trailing)
                 }
             }
@@ -395,27 +399,21 @@ extension SchoolClassEditorContDup {
     
     fileprivate func addClass() {
         
-        schoolClassCopy.locationId = appWorkViewModel.currentLocation.id
+        schoolClass.locationId = appWorkViewModel.currentLocation.id
          
          Task {
              do {
-                 
-                 let resposnseCreateaClassResponse: CreateaClassResponse = try await ApiManager.shared.getData(from: .createaClass(name: schoolClassCopy.name, description: schoolClassCopy.description, locationId:  String(appWorkViewModel.currentLocation.id)))
+                 let resposnseCreateaClassResponse: CreateaClassResponse = try await ApiManager.shared.getData(from: .createaClass(name: schoolClass.name, description: schoolClass.description, locationId:  String(schoolClass.locationId)))
                  saveSelectedStudents()
                  saveSelectedTeachers()
-                 schoolClassCopy.uuid = resposnseCreateaClassResponse.uuid
-                 self.classesViewModel.schoolClasses.append(self.schoolClassCopy)
-                 
+                 schoolClass.uuid = resposnseCreateaClassResponse.uuid
+                 self.classesViewModel.schoolClasses.append(self.schoolClass)
              } catch let error as ApiError {
                      //  FIXME: -  put in alert that will display approriate error message
                  print(error)
              }
          }
-
-        
     }
-    
-
     
     fileprivate func upDateClass() {
 
@@ -434,7 +432,6 @@ extension SchoolClassEditorContDup {
         saveSelectedStudents()
         saveSelectedTeachers()
         Task {
-            print(schoolClass.description)
             await ClassesViewModel.updateSchoolClass(schoolClass:schoolClass)
         }
         

@@ -187,8 +187,8 @@
             filePath = "appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "628"
-            endingLineNumber = "628"
+            startingLineNumber = "625"
+            endingLineNumber = "625"
             landmarkName = "getSchoolDetail()"
             landmarkType = "7">
             <Locations>
@@ -229,14 +229,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "783A8662-D998-4E03-B4BF-6384B3064066"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "400"
-            endingLineNumber = "400"
+            startingLineNumber = "404"
+            endingLineNumber = "404"
             landmarkName = "addClass()"
             landmarkType = "7">
             <Locations>
