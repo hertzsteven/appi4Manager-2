@@ -105,9 +105,7 @@ struct SchoolClassEditorContDup: View {
     
     @State var enableEditingStudentTeachersMore: Bool = false
     
-    @State var selectedStudentsSaved:   Array<Int> = []
-    @State var selectedTeachersSaved:   Array<Int> = []
-    
+
     @State var passedItemSelected:      Array<Int> = []
     
     @State var selectedStudents:        Array<Int> = []
@@ -129,8 +127,10 @@ struct SchoolClassEditorContDup: View {
     
     @State  var schoolClass: SchoolClass
     
-    @State private var schoolClass_start   = SchoolClass.makeDefault()  // this gets done by the update
-    @State private var schoolClassCopy     = SchoolClass.makeDefault()
+    @State private var schoolClassInitialValues   = SchoolClass.makeDefault()  // this gets done by the update
+    @State var selectedStudentsSaved:   Array<Int> = []
+    @State var selectedTeachersSaved:   Array<Int> = []
+    
     
     @State         var isNew = false
     @State private var isDeleted = false
@@ -147,7 +147,7 @@ struct SchoolClassEditorContDup: View {
     @Environment(\.dismiss) private var dismiss
     
     private var isSchoolClassDeleted: Bool {
-        !classesViewModel.exists(schoolClassCopy) && !isNew
+        !classesViewModel.exists(schoolClassInitialValues) && !isNew
     }
     
     @State var teacherIds: Array<Int> = []
@@ -328,15 +328,8 @@ struct SchoolClassEditorContDup: View {
         
         .environment(\.editMode, $mode)
         
-        // this on appear happens second
-        .onAppear {
-            print("- - -  - 330 on appear")
-            if !isNew {
-                schoolClassCopy = schoolClass
-                schoolClass_start = schoolClass
-            }
-        }
-            // not monitoring students and teachers
+
+        // not monitoring students and teachers
         .onDisappear {
                 // check if we should do the update process
 //            appWorkViewModel.doingEdit = false
@@ -378,8 +371,8 @@ struct SchoolClassEditorContDup: View {
                      mode = .inactive
                     selectedStudents        = selectedStudentsSaved
                     selectedTeachers        = selectedTeachersSaved
-                    schoolClass.name        = schoolClassCopy.name
-                    schoolClass.description = schoolClassCopy.description
+                    schoolClass.name        = schoolClassInitialValues.name
+                    schoolClass.description = schoolClassInitialValues.description
                     dump(schoolClass)
             }
         }
@@ -422,7 +415,7 @@ extension SchoolClassEditorContDup {
             return
         } // doing a change
        
-        guard   schoolClass_start   != schoolClass ||
+        guard   schoolClassInitialValues   != schoolClass ||
                 selectedStudents    != selectedStudentsSaved ||
                 selectedTeachers    != selectedTeachersSaved else {
             return
@@ -642,7 +635,11 @@ extension SchoolClassEditorContDup {
     }
     
     fileprivate func saveSchoolDetailInfo() {
-            // put the ids into selected students array
+    
+    	// save for restore and compare
+        schoolClassInitialValues = schoolClass
+
+        // put the ids into selected students array
         selectedStudents = self.classDetailViewModel.students.map({ std in
             std.id
         })
