@@ -128,8 +128,8 @@ struct SchoolClassEditorContDup: View {
     @State  var schoolClass: SchoolClass
     
     @State private var schoolClassInitialValues   = SchoolClass.makeDefault()  // this gets done by the update
-    @State var selectedStudentsSaved:   Array<Int> = []
-    @State var selectedTeachersSaved:   Array<Int> = []
+    @State var selectedStudentsInitialValues:   Array<Int> = []
+    @State var selectedTeachersInitialValues:   Array<Int> = []
     
     
     @State         var isNew = false
@@ -265,13 +265,13 @@ struct SchoolClassEditorContDup: View {
         }
         
         
-//       MARK: - onChange onDisappear Global
-        .onAppear {
-            print("- - -  - 270 on appear")
-            if isNew {
-                mode = .active
-            }
-        }
+////       MARK: - onChange onDisappear Global
+//        .onAppear {
+//            print("- - -  - 270 on appear")
+//            if isNew {
+//                mode = .active
+//            }
+//        }
         
 //       MARK: - Add Button
         
@@ -354,6 +354,8 @@ struct SchoolClassEditorContDup: View {
             if !isNew {
                 getSchoolDetail()
                 saveSchoolDetailInfo()
+            } else {
+                mode = .active
             }
         }
         
@@ -369,8 +371,8 @@ struct SchoolClassEditorContDup: View {
             Button("Discard Changes edit ", role: .destructive) {
                     // Do something when the user confirms
                      mode = .inactive
-                    selectedStudents        = selectedStudentsSaved
-                    selectedTeachers        = selectedTeachersSaved
+                    selectedStudents        = selectedStudentsInitialValues
+                    selectedTeachers        = selectedTeachersInitialValues
                     schoolClass.name        = schoolClassInitialValues.name
                     schoolClass.description = schoolClassInitialValues.description
                     dump(schoolClass)
@@ -416,8 +418,8 @@ extension SchoolClassEditorContDup {
         } // doing a change
        
         guard   schoolClassInitialValues   != schoolClass ||
-                selectedStudents    != selectedStudentsSaved ||
-                selectedTeachers    != selectedTeachersSaved else {
+                selectedStudents    != selectedStudentsInitialValues ||
+                selectedTeachers    != selectedTeachersInitialValues else {
             return
         } // there was a change
         
@@ -473,8 +475,8 @@ extension SchoolClassEditorContDup {
         /* See if any added or deleted */
         
         // capture students added and removed
-        let selectedStudentsRemoved = Set(selectedStudentsSaved).subtracting(Set(selectedStudents))
-        let selectedStudentsAdded   = Set(selectedStudents).subtracting(Set(selectedStudentsSaved))
+        let selectedStudentsRemoved = Set(selectedStudentsInitialValues).subtracting(Set(selectedStudents))
+        let selectedStudentsAdded   = Set(selectedStudents).subtracting(Set(selectedStudentsInitialValues))
         
         // if there are students to remove then remove them
         if !selectedStudentsRemoved.isEmpty {
@@ -513,7 +515,7 @@ extension SchoolClassEditorContDup {
                 }
             }
             
-            selectedStudentsSaved = selectedStudents  // save as new starting point
+            selectedStudentsInitialValues = selectedStudents  // save as new starting point
             
         }
         
@@ -530,7 +532,7 @@ extension SchoolClassEditorContDup {
                     print(error.description)
                 }
                 
-                selectedStudentsSaved = selectedStudents  // save as new starting point
+                selectedStudentsInitialValues = selectedStudents  // save as new starting point
             }
         }
         
@@ -543,8 +545,8 @@ extension SchoolClassEditorContDup {
         /* See if any added or deleted */
         
         // capture teachers added and removed
-        let selectedTeachersRemoved  = Set(selectedTeachersSaved).subtracting(Set(selectedTeachers))
-        let selectedTeachersAdded    = Set(selectedTeachers).subtracting(Set(selectedTeachersSaved))
+        let selectedTeachersRemoved  = Set(selectedTeachersInitialValues).subtracting(Set(selectedTeachers))
+        let selectedTeachersAdded    = Set(selectedTeachers).subtracting(Set(selectedTeachersInitialValues))
         
         // if there are teachers to remove then remove them
         if !selectedTeachersRemoved.isEmpty {
@@ -583,7 +585,7 @@ extension SchoolClassEditorContDup {
                 }
             }
             
-            selectedTeachersSaved = selectedTeachers  // save as new starting point
+            selectedTeachersInitialValues = selectedTeachers  // save as new starting point
             
         }
         
@@ -600,7 +602,7 @@ extension SchoolClassEditorContDup {
                     print(error.description)
                 }
                 
-                selectedTeachersSaved = selectedTeachers  // save as new starting point
+                selectedTeachersInitialValues = selectedTeachers  // save as new starting point
             }
         }
         
@@ -645,7 +647,7 @@ extension SchoolClassEditorContDup {
         })
         
             // initialize the saved list
-        selectedStudentsSaved = selectedStudents
+        selectedStudentsInitialValues = selectedStudents
         
         
         
@@ -654,7 +656,7 @@ extension SchoolClassEditorContDup {
         })
         
             // initialize the saved list
-        selectedTeachersSaved = selectedTeachers
+        selectedTeachersInitialValues = selectedTeachers
     }
 
 }
