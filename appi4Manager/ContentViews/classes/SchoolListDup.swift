@@ -30,7 +30,7 @@ struct SchoolListDup: View {
         }
         .sheet(isPresented: $isAddingNewSchoolClass) {
             NavigationView {
-                SchoolClassEditorContDup(schoolClass: newClass, isNew: true)
+                SchoolClassEditorContDup(schoolClass: newClass, isNew: true, idxIntoClassList: 0)
             }
        }
         .navigationTitle("Classes")
@@ -39,7 +39,9 @@ struct SchoolListDup: View {
             SchoolClassEditorContent(schoolClass: theClass)
         }
         .navigationDestination(for: SchoolClass.self) { theClass in
-            SchoolClassEditorContDup(schoolClass: theClass)
+            SchoolClassEditorContDup(schoolClass: theClass,
+                                     idxIntoClassList:  classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).firstIndex(of: theClass)!
+)
         }
 
         .toolbar {

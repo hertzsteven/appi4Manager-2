@@ -152,9 +152,16 @@ struct SchoolClassEditorContDup: View {
 
     @State private var inDelete = false
     
+    @State var idxIntoClassList: Int
+    
+    var numberOfClassesInList :     Int {
+        classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).count
+    }
+    
     
 //   MARK: - Body View
     
+
     var body: some View {
         Form {
             Section("Class Information") {
@@ -220,7 +227,7 @@ struct SchoolClassEditorContDup: View {
             }
             
         }  // end of form
-        .padding(.bottom, UIApplication.shared.windows.first?.safeAreaInsets.bottom)
+//        .padding(.bottom, UIApplication.shared.windows.first?.safeAreaInsets.bottom)
         
 
 //      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
@@ -332,23 +339,19 @@ struct SchoolClassEditorContDup: View {
                 }
             }
             
-//            ToolbarItem {
-//                Button("N") {
-//                    let index = classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
-//                                                                            dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).firstIndex(of: schoolClass)
-//                    schoolClass =  classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
-//                                                                               dummyPicClassToIgnore: appWorkViewModel.getpicClass() )[index! + 1]
-//                    toDoWithNewSchoolClassToProcess()
-//                }
-//            }
+            ToolbarItem {
+                Button("N") {
+                    getNextClassFromList()
+                }
+            }
             ToolbarItem(placement: .bottomBar) {
                 ControlGroup {
-                    Button(action: {}) {
+                    Button(action: getPrevClassFromList) {
                         Image(systemName: "chevron.backward.circle")
-                    }
-                    Button(action: {}) {
+                    }.disabled(idxIntoClassList == 0)
+                    Button(action: getNextClassFromList) {
                         Image(systemName: "chevron.forward.circle")
-                    }
+                    }.disabled((numberOfClassesInList - 1) == idxIntoClassList)
                 }
                 .controlGroupStyle(.navigation)
             }
@@ -460,7 +463,28 @@ struct SchoolClassEditorContDup: View {
 
 
 //   MARK: - function for sub processes
+
 extension SchoolClassEditorContDup {
+    
+    fileprivate func getNextClassFromList() {
+        idxIntoClassList = classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
+                                                                dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).firstIndex(of: schoolClass)!
+        idxIntoClassList += 1
+        schoolClass =  classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
+                                                                   dummyPicClassToIgnore: appWorkViewModel.getpicClass() )[idxIntoClassList]
+        print("showing number \(idxIntoClassList)")
+        toDoWithNewSchoolClassToProcess()
+    }
+    
+    fileprivate func getPrevClassFromList() {
+        
+        idxIntoClassList = classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).firstIndex(of: schoolClass)!
+        schoolClass =  classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,dummyPicClassToIgnore: appWorkViewModel.getpicClass() )[idxIntoClassList - 1]
+        idxIntoClassList -= 1
+        print("showing number \(idxIntoClassList)")
+        toDoWithNewSchoolClassToProcess()
+    }
+
     
     fileprivate func addClass() {
         
@@ -739,6 +763,18 @@ extension SchoolClassEditorContDup {
 
 }
 
+struct ToolBarStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .toolbar {
+           }
+    }
+}
+
+
+
+
+
 
 struct SchoolClassEditorContDup_Previews: PreviewProvider {
 
@@ -746,7 +782,7 @@ struct SchoolClassEditorContDup_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
 
-            SchoolClassEditorContDup(schoolClass: SchoolClass.makeDefault())
+            SchoolClassEditorContDup(schoolClass: SchoolClass.makeDefault(), idxIntoClassList: 0)
                 .environmentObject(ClassesViewModel())
                 .environmentObject(UsersViewModel())
                 .environmentObject(ClassDetailViewModel())
