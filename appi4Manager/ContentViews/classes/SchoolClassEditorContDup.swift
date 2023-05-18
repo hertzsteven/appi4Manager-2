@@ -101,10 +101,6 @@ struct SchoolClassEditorContDup: View {
     @State private var inCancelEdit = false
     @State private var inCancelAdd = false
     
-    @State private var showCustomBackButton = false
-    
-    @State var enableEditingStudentTeachersMore: Bool = false
-    
 
     @State var passedItemSelected:      Array<Int> = []
     
@@ -153,10 +149,11 @@ struct SchoolClassEditorContDup: View {
     @State var teacherIds: Array<Int> = []
     
     
-        //   MARK: - State Properties  for confirmation dialogues
-    
+
     @State private var inDelete = false
     
+    
+//   MARK: - Body View
     
     var body: some View {
         Form {
@@ -213,7 +210,7 @@ struct SchoolClassEditorContDup: View {
                     }
                 }
             }
-                        
+
             if !isNew {
                 DeleteButtonView(action: {
                     inDelete.toggle()
@@ -223,8 +220,10 @@ struct SchoolClassEditorContDup: View {
             }
             
         }  // end of form
+        .padding(.bottom, UIApplication.shared.windows.first?.safeAreaInsets.bottom)
         
-//      MARK: - PopupSheets
+
+//      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
         
 //       Select Students Popup
         .sheet(isPresented: $toShowStudentList) {
@@ -256,24 +255,46 @@ struct SchoolClassEditorContDup: View {
                                    itemFilter2:        userFilter2,
                                    listTitle:          "Select the teachers for this class")
                 
-                    //                     StudentTeacherListView(selectedStudents: $selectedStudents,  selectedTeachers: $selectedTeachers, personType: .teacher)
             }
             
             .onDisappear {
                 selectedTeachers = passedItemSelected                
             }
         }
+      
         
         
-////       MARK: - onChange onDisappear Global
-//        .onAppear {
-//            print("- - -  - 270 on appear")
-//            if isNew {
-//                mode = .active
-//            }
-//        }
+//       MARK: - Confirmation Dialog
         
-//       MARK: - Add Button
+        .confirmationDialog("Are you sure you want to delete this class?", isPresented: $inDelete) {
+            Button("Delete Class", role: .destructive) {
+                deleteClass()
+            }
+        }
+        // from edit
+        .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelEdit, titleVisibility: .visible) {
+            Button("Discard Changes edit ", role: .destructive) {
+                    // Do something when the user confirms
+                     mode = .inactive
+                    selectedStudents        = selectedStudentsInitialValues
+                    selectedTeachers        = selectedTeachersInitialValues
+                    schoolClass.name        = schoolClassInitialValues.name
+                    schoolClass.description = schoolClassInitialValues.description
+                    dump(schoolClass)
+            }
+        }
+        // from add
+        .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelAdd, titleVisibility: .visible) {
+            Button("Discard Changes add ", role: .destructive) {
+                    // Do something when the user confirms
+                dismiss()
+            }
+        }
+    
+        
+        
+        
+//      MARK: - Toolbar   * * * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
         
         .toolbar {
 //         edit done toolbar button   
@@ -311,79 +332,128 @@ struct SchoolClassEditorContDup: View {
                 }
             }
             
-//          Add button by new class
+//            ToolbarItem {
+//                Button("N") {
+//                    let index = classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
+//                                                                            dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).firstIndex(of: schoolClass)
+//                    schoolClass =  classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
+//                                                                               dummyPicClassToIgnore: appWorkViewModel.getpicClass() )[index! + 1]
+//                    toDoWithNewSchoolClassToProcess()
+//                }
+//            }
+            ToolbarItem(placement: .bottomBar) {
+                ControlGroup {
+                    Button(action: {}) {
+                        Image(systemName: "chevron.backward.circle")
+                    }
+                    Button(action: {}) {
+                        Image(systemName: "chevron.forward.circle")
+                    }
+                }
+                .controlGroupStyle(.navigation)
+            }
+            
+            ToolbarItemGroup(placement: .secondaryAction) {
+                Button(action: {
+                    print("Item 1 tapped")
+                }) {
+                    HStack(spacing: -10) {
+                        Image(systemName: "1.circle")
+                        Text("Item 1")
+                    }
+                }
+
+                Button(action: {
+                    print("Item 2 tapped")
+                }) {
+                    HStack(spacing: -10) {
+                        Image(systemName: "2.circle")
+                        Text("Item 2")
+                    }
+                }
+
+                Button(action: {
+                    print("Item 3 tapped")
+                }) {
+                    HStack(spacing: -10) {
+                        Image(systemName: "3.circle")
+                        Text("Item 3")
+                    }
+                }
+
+            }
+
+//
+                
+//              ToolbarItemGroup(placement: .secondaryAction) {
+//                  Button {
+//                      <#code#>
+//                  } label: {
+//                      <#code#>
+//                  }
+//
+//                  Button {
+//                      let index = classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
+//                                                                              dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).firstIndex(of: schoolClass)
+//                      schoolClass =  classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
+//                                                                                 dummyPicClassToIgnore: appWorkViewModel.getpicClass() )[index! + 1]
+//                      toDoWithNewSchoolClassToProcess()
+//
+//                  } label: {
+//                      Label("Next", image: Image(systemName: "chevron.forward.circle"))
+//                  }
+//
+//                  Button {
+//                      let index = classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
+//                                                                              dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).firstIndex(of: schoolClass)
+//                      schoolClass =  classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
+//                                                                                 dummyPicClassToIgnore: appWorkViewModel.getpicClass() )[index! - 1]
+//                      toDoWithNewSchoolClassToProcess()
+//
+//                  } label: {
+//                      Label("Next", image: Image(systemName: "chevron.forward.circle"))
+//                  }
+//              }
+
+            
+//          Add button New Class
             ToolbarItem {
-                Button {
+                Button(isNew ? "Add" : "") {
                     if isNew {
                         addClass()
                         dismiss()
                     }
-                    
-                } label: {
-                    Text(isNew ? "Add" : "")
                 }
                 .disabled(schoolClass.name.isEmpty)
             }
         }
         
         .environment(\.editMode, $mode)
-        
-
-        // not monitoring students and teachers
-        .onDisappear {
-                // check if we should do the update process
-//            appWorkViewModel.doingEdit = false
-            mode = .inactive
-                //                    dismiss()
-        }
-        
+                
         .ignoresSafeArea(.keyboard)
         
-        // lets set up the navigatitle and properties
+        
+//      MARK: - Navigation Bar  * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
+
         .navigationTitle("Edit Class")
         .navigationBarTitleDisplayMode(.inline)
         
         .navigationBarBackButtonHidden(mode == .active ? true : false)
-        .navigationBarTitle("Edit Dup Class", displayMode: .inline)
+//        .navigationBarTitle("Edit Dup Class", displayMode: .inline)
         
-        //    MARK: - Cancel button for Add
+            
+//      MARK: - Appear and Disappear   * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
         
-        // this on appear happens first
         .onAppear {
-            print("- - -  - 357 on appear")
             if !isNew {
-                getSchoolDetail()
-                saveSchoolDetailInfo()
+                toDoWithNewSchoolClassToProcess()
             } else {
                 mode = .active
             }
         }
-        
-//       MARK: - Confirmation Dialog
-        
-        .confirmationDialog("Are you sure you want to delete this class?", isPresented: $inDelete) {
-            Button("Delete Class", role: .destructive) {
-                deleteClass()
-            }
-        }
-        // from edit
-        .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelEdit, titleVisibility: .visible) {
-            Button("Discard Changes edit ", role: .destructive) {
-                    // Do something when the user confirms
-                     mode = .inactive
-                    selectedStudents        = selectedStudentsInitialValues
-                    selectedTeachers        = selectedTeachersInitialValues
-                    schoolClass.name        = schoolClassInitialValues.name
-                    schoolClass.description = schoolClassInitialValues.description
-                    dump(schoolClass)
-            }
-        }
-        // from add
-        .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelAdd, titleVisibility: .visible) {
-            Button("Discard Changes add ", role: .destructive) {
-                    // Do something when the user confirms
-                dismiss()
-            }
+
+        .onDisappear {
+            mode = .inactive
         }
     }
 }
@@ -615,7 +685,15 @@ extension SchoolClassEditorContDup {
       - gets the school detail using the api
       - save the info
      */
-    fileprivate func getSchoolDetail() {
+    
+    func toDoWithNewSchoolClassToProcess()  {
+        getSchoolClassDetail()
+        storeSchoolClassDetailStartingPoint()
+        mode = .inactive
+    }
+    
+    
+    fileprivate func getSchoolClassDetail() {
         
         Task {
             do {
@@ -626,7 +704,7 @@ extension SchoolClassEditorContDup {
                 self.classDetailViewModel.students = classDetailResponse.class.students
                 self.classDetailViewModel.teachers = classDetailResponse.class.teachers
                 
-                saveSchoolDetailInfo()
+                storeSchoolClassDetailStartingPoint()
                 
                 
             } catch let error as ApiError {
@@ -636,7 +714,7 @@ extension SchoolClassEditorContDup {
         }
     }
     
-    fileprivate func saveSchoolDetailInfo() {
+    fileprivate func storeSchoolClassDetailStartingPoint() {
     
     	// save for restore and compare
         schoolClassInitialValues = schoolClass
@@ -663,8 +741,11 @@ extension SchoolClassEditorContDup {
 
 
 struct SchoolClassEditorContDup_Previews: PreviewProvider {
+
+
     static var previews: some View {
-        NavigationStack {
+        NavigationView {
+
             SchoolClassEditorContDup(schoolClass: SchoolClass.makeDefault())
                 .environmentObject(ClassesViewModel())
                 .environmentObject(UsersViewModel())
@@ -674,3 +755,5 @@ struct SchoolClassEditorContDup_Previews: PreviewProvider {
         }
     }
 }
+
+
