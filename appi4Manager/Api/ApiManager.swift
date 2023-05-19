@@ -97,10 +97,10 @@ final class ApiManager {
         
         if let httpResponse = respnseOfNetworkCall.response as? HTTPURLResponse {
             switch httpResponse.statusCode {
+
             case 200...299:
                 print("Successful response - Code: \(httpResponse.statusCode)")
                  
-
             case 400:
                 throw ApiError.clientBadRequest(hTTPuRLResponse: httpResponse)
             case 401:

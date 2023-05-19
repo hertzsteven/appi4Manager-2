@@ -150,16 +150,25 @@ struct SchoolClassEditorContDup: View {
     
     
 
+    @State private var inUpdate = false
     @State private var inDelete = false
+    @State private var inAdd    = false
     
-    @State var idxIntoClassList: Int
+//    @State var idxIntoClassList: Int
     
-    var numberOfClassesInList :     Int {
+    var numberOfClassesInList :  Int {
         classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).count
     }
     
+    var listOfClasses: [SchoolClass]  {
+        classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() )
+    }
     
-//   MARK: - Body View
+    var idxLocationofClassInClassList: Int {
+             classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).firstIndex(of: schoolClass) ?? 0
+    }
+    
+//   MARK: - Body View   * * * * * * * * * * * * * * * * * * * * * * * * 
     
 
     var body: some View {
@@ -227,10 +236,11 @@ struct SchoolClassEditorContDup: View {
             }
             
         }  // end of form
+
 //        .padding(.bottom, UIApplication.shared.windows.first?.safeAreaInsets.bottom)
         
 
-//      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
+//      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * * 
         
 //       Select Students Popup
         .sheet(isPresented: $toShowStudentList) {
@@ -271,7 +281,7 @@ struct SchoolClassEditorContDup: View {
       
         
         
-//       MARK: - Confirmation Dialog
+//       MARK: - Confirmation Dialog  * * * * * * * * * * * * * * * * * * * * * * * * 
         
         .confirmationDialog("Are you sure you want to delete this class?", isPresented: $inDelete) {
             Button("Delete Class", role: .destructive) {
@@ -309,10 +319,24 @@ struct SchoolClassEditorContDup: View {
                 if !isNew {
                     Button(!itIsInEdit ? "Edit" : "**Done**") {
                         if itIsInEdit {
-                            upDateClass()
+                            if inUpdate {
+                                return
+                            }
+                            Task {
+                                do {
+                                    inUpdate = true
+                                    await upDateClass()
+                                    inUpdate = false
+                                    mode = !itIsInEdit ? .active  : .inactive
+                                } catch {
+                                    print("Failed in task")
+                                }
+                            }
+                        } else {
+                            mode = .active
                         }
-                        mode = !itIsInEdit ? .active  : .inactive
                     }.frame(height: 96, alignment: .trailing)
+                    
                 }
             }
             
@@ -339,19 +363,23 @@ struct SchoolClassEditorContDup: View {
                 }
             }
             
-            ToolbarItem {
-                Button("N") {
-                    getNextClassFromList()
-                }
-            }
             ToolbarItem(placement: .bottomBar) {
                 ControlGroup {
+                
                     Button(action: getPrevClassFromList) {
                         Image(systemName: "chevron.backward.circle")
-                    }.disabled(idxIntoClassList == 0)
+                    }
+                    .disabled(idxLocationofClassInClassList == 0 || itIsInEdit)
+                    
+                    if !isNew {
+                        Text(String(idxLocationofClassInClassList + 1))
+                    }
+                    
                     Button(action: getNextClassFromList) {
                         Image(systemName: "chevron.forward.circle")
-                    }.disabled((numberOfClassesInList - 1) == idxIntoClassList)
+                    }
+                    .disabled((numberOfClassesInList - 1) == idxLocationofClassInClassList || itIsInEdit)
+                
                 }
                 .controlGroupStyle(.navigation)
             }
@@ -386,45 +414,24 @@ struct SchoolClassEditorContDup: View {
 
             }
 
-//
-                
-//              ToolbarItemGroup(placement: .secondaryAction) {
-//                  Button {
-//                      <#code#>
-//                  } label: {
-//                      <#code#>
-//                  }
-//
-//                  Button {
-//                      let index = classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
-//                                                                              dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).firstIndex(of: schoolClass)
-//                      schoolClass =  classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
-//                                                                                 dummyPicClassToIgnore: appWorkViewModel.getpicClass() )[index! + 1]
-//                      toDoWithNewSchoolClassToProcess()
-//
-//                  } label: {
-//                      Label("Next", image: Image(systemName: "chevron.forward.circle"))
-//                  }
-//
-//                  Button {
-//                      let index = classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
-//                                                                              dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).firstIndex(of: schoolClass)
-//                      schoolClass =  classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
-//                                                                                 dummyPicClassToIgnore: appWorkViewModel.getpicClass() )[index! - 1]
-//                      toDoWithNewSchoolClassToProcess()
-//
-//                  } label: {
-//                      Label("Next", image: Image(systemName: "chevron.forward.circle"))
-//                  }
-//              }
-
             
 //          Add button New Class
             ToolbarItem {
                 Button(isNew ? "Add" : "") {
                     if isNew {
-                        addClass()
-                        dismiss()
+                        if inAdd {
+                            return
+                        }
+                        Task {
+                            do {
+                                inAdd = true
+                                await addClass()
+                                dismiss()
+                                inAdd = false
+                            } catch {
+                                print("Failed in task")
+                            }
+                        }
                     }
                 }
                 .disabled(schoolClass.name.isEmpty)
@@ -442,10 +449,9 @@ struct SchoolClassEditorContDup: View {
         .navigationBarTitleDisplayMode(.inline)
         
         .navigationBarBackButtonHidden(mode == .active ? true : false)
-//        .navigationBarTitle("Edit Dup Class", displayMode: .inline)
         
             
-//      MARK: - Appear and Disappear   * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
+//      MARK: - Appear and Disappear   * * * * * * * * * * * * * * * * * * * * * *  
         
         .onAppear {
             if !isNew {
@@ -462,52 +468,38 @@ struct SchoolClassEditorContDup: View {
 }
 
 
-//   MARK: - function for sub processes
+//   MARK: - function for sub processes   * * * * * * * * * * * * * * * * * * * * * * * * 
 
 extension SchoolClassEditorContDup {
     
     fileprivate func getNextClassFromList() {
-        idxIntoClassList = classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
-                                                                dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).firstIndex(of: schoolClass)!
-        idxIntoClassList += 1
-        schoolClass =  classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
-                                                                   dummyPicClassToIgnore: appWorkViewModel.getpicClass() )[idxIntoClassList]
-        print("showing number \(idxIntoClassList)")
+        let idxIntoClassList    = idxLocationofClassInClassList + 1
+        schoolClass         = listOfClasses[idxIntoClassList]
         toDoWithNewSchoolClassToProcess()
     }
     
     fileprivate func getPrevClassFromList() {
-        
-        idxIntoClassList = classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).firstIndex(of: schoolClass)!
-        schoolClass =  classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,dummyPicClassToIgnore: appWorkViewModel.getpicClass() )[idxIntoClassList - 1]
-        idxIntoClassList -= 1
-        print("showing number \(idxIntoClassList)")
+        let idxIntoClassList    = idxLocationofClassInClassList - 1
+        schoolClass         = listOfClasses[idxIntoClassList]
         toDoWithNewSchoolClassToProcess()
+
     }
 
-    
-    fileprivate func addClass() {
-        
-        schoolClass.locationId = appWorkViewModel.currentLocation.id
-         
-         Task {
-             do {
-                 let resposnseCreateaClassResponse: CreateaClassResponse = try await ApiManager.shared.getData(from: .createaClass(name: schoolClass.name, description: schoolClass.description, locationId:  String(schoolClass.locationId)))
-                 saveSelectedStudents()
-                 saveSelectedTeachers()
-                 schoolClass.uuid = resposnseCreateaClassResponse.uuid
-                 self.classesViewModel.schoolClasses.append(self.schoolClass)
-             } catch let error as ApiError {
-                     //  FIXME: -  put in alert that will display approriate error message
-                 print(error)
-             }
-         }
+    fileprivate func addClass() async {
+        do {
+            let x  = try await classesViewModel.addClass(schoolClass: schoolClass)
+            schoolClass.uuid = x  // maybe not needed
+            saveSelectedStudents()
+            saveSelectedTeachers()
+        } catch  {
+            print("Failed to create class: \(error)")
+        }
     }
     
-    fileprivate func upDateClass() {
 
-        guard   isNew == false &&
-                isDeleted == false else {
+    fileprivate func upDateClass() async {
+
+        guard   isNew == false &&  isDeleted == false else {
             return
         } // doing a change
        
@@ -517,21 +509,46 @@ extension SchoolClassEditorContDup {
             return
         } // there was a change
         
-        // do the update and leave
-        saveSelectedStudents()
-        saveSelectedTeachers()
-        Task {
-            await ClassesViewModel.updateSchoolClass(schoolClass:schoolClass)
-        }
         
-        let index = classesViewModel.schoolClasses.firstIndex { sc in
-            sc.uuid == schoolClass.uuid
+        do {
+            try await classesViewModel.updateSchoolClass2(schoolClass:schoolClass)
+
+                // do the update and leave
+            saveSelectedStudents()
+            saveSelectedTeachers()
+            
+            let index = classesViewModel.schoolClasses.firstIndex { sc in
+                sc.uuid == schoolClass.uuid
+            }
+
+            classesViewModel.schoolClasses[index!] = schoolClass
+        } catch {
+            print("Failed to update class: \(error)")
+
         }
-
-        classesViewModel.schoolClasses[index!] = schoolClass
-
 
     }
+
+    
+        //    fileprivate func addClassOld() {
+        //
+        //        schoolClass.locationId = appWorkViewModel.currentLocation.id
+        //
+        //         Task {
+        //             do {
+        //                 let resposnseCreateaClassResponse: CreateaClassResponse = try await ApiManager.shared.getData(from: .createaClass(name: schoolClass.name, description: schoolClass.description, locationId:  String(schoolClass.locationId)))
+        //                 saveSelectedStudents()
+        //                 saveSelectedTeachers()
+        //                 schoolClass.uuid = resposnseCreateaClassResponse.uuid
+        //
+        //                 self.classesViewModel.schoolClasses.append(self.schoolClass)
+        //             } catch let error as ApiError {
+        //                     //  FIXME: -  put in alert that will display approriate error message
+        //                 print(error)
+        //             }
+        //         }
+        //    }
+    
     
     fileprivate func deleteClass() {
 
@@ -559,7 +576,7 @@ extension SchoolClassEditorContDup {
     
 }
 
-//  MARK: -  funcs to save student and teachers updates to class
+//  MARK: -  funcs to save student and teachers updates to class   * * * * * * * * * * * * * * * * * * * * *
 extension SchoolClassEditorContDup {
     
     
@@ -782,7 +799,7 @@ struct SchoolClassEditorContDup_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
 
-            SchoolClassEditorContDup(schoolClass: SchoolClass.makeDefault(), idxIntoClassList: 0)
+            SchoolClassEditorContDup(schoolClass: SchoolClass.makeDefault())
                 .environmentObject(ClassesViewModel())
                 .environmentObject(UsersViewModel())
                 .environmentObject(ClassDetailViewModel())

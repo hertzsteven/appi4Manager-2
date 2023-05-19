@@ -26,8 +26,41 @@ class ClassesViewModel: ObservableObject {
             }
         }
     }
+    
+    
+    
+    
+    func addClass(schoolClass: SchoolClass) async throws -> String {
+        let responseCreateClassResponse: CreateaClassResponse = try await ApiManager.shared.getData(from: .createaClass(name: schoolClass.name, description: schoolClass.description, locationId:  String(schoolClass.locationId)))
+        var newSchoolClass = schoolClass
+        newSchoolClass.uuid = responseCreateClassResponse.uuid
+        self.schoolClasses.append(newSchoolClass)
+        return newSchoolClass.uuid
+    }
 
 
+     func updateSchoolClass2(schoolClass: SchoolClass) async throws {
+         try await ApiManager.shared.getDataNoDecode(from: .updateaClass(uuid: schoolClass.uuid, name: schoolClass.name, description: schoolClass.description))
+
+    }
+
+    
+    
+    static func updateSchoolClass(schoolClass: SchoolClass) async  {
+        do {
+            _ = try await ApiManager.shared.getDataNoDecode(from: .updateaClass(uuid: schoolClass.uuid, name: schoolClass.name, description: schoolClass.description))
+
+        } catch let error as ApiError {
+                //  FIXME: -  put in alert that will display approriate error message
+            print(error.description)
+        } catch {
+            print(error.localizedDescription)
+        }
+
+    }
+
+    
+    
     func getSchoolClassesinLocation(_ locationId: Int, dummyPicClassToIgnore: String) -> Array<SchoolClass> {
         var filteredClassesbyLocation = [SchoolClass]()
         
@@ -83,18 +116,6 @@ class ClassesViewModel: ObservableObject {
     }
     
     
-    static func updateSchoolClass(schoolClass: SchoolClass) async -> Void {
-        do {
-            _ = try await ApiManager.shared.getDataNoDecode(from: .updateaClass(uuid: schoolClass.uuid, name: schoolClass.name, description: schoolClass.description))
-
-        } catch let error as ApiError {
-                //  FIXME: -  put in alert that will display approriate error message
-            print(error.description)
-        } catch {
-            print(error.localizedDescription)
-        }
-
-    }
 
     
     func sortedClasses(nameFilter searchStr: String = "", selectedLocationID: Int) -> Binding<[SchoolClass]> {

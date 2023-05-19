@@ -16,6 +16,11 @@ class ClassDetailViewModel: ObservableObject {
     @Published var teachers = [Student]()
     
     @Published var isLoading = false
+    
+    
+    }
+    
+    
 
     //  FIXME:   Make this a throwing function
     /*
@@ -87,4 +92,4 @@ class ClassDetailViewModel: ObservableObject {
 //             }
 //         )
 //     }
-}
+
