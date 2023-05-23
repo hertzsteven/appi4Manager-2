@@ -22,22 +22,16 @@ struct SchoolListDup: View {
                                                          dummyPicClassToIgnore: appWorkViewModel.getpicClass() ))
         { schoolClass in
             SchoolClassRow(schoolClass: schoolClass)
-//            NavigationLink(value: schoolClass) {
-//                VStack(alignment: .leading, spacing: 6.0) {
-//                    Text(schoolClass.name).font(.headline)
-//                    Text(schoolClass.description).font(.caption)
-//                }
-//                .padding([.leading, .trailing], 12)
-//                .padding([.bottom], 16)
-//            }
         }
 
+        
 //      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * *
         .sheet(isPresented: $isAddingNewSchoolClass) {
             NavigationView {
                 SchoolClassEditorContDup(schoolClass: newClass, isNew: true)
             }
        }
+        
         
 //      MARK: - Navigation Bar  * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
         .navigationTitle("Classes")
@@ -51,9 +45,11 @@ struct SchoolListDup: View {
         .navigationDestination(for: SchoolClass.self) { theClass in
             SchoolClassEditorContDup(schoolClass: theClass)
         }
+        
 
 //      MARK: - Toolbar   * * * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
         .toolbar {
+ 
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     newClass = SchoolClass.makeDefault()
@@ -63,6 +59,7 @@ struct SchoolListDup: View {
                     Image(systemName: "plus")
                 }
             }
+
             ToolbarItem(placement: .navigationBarLeading) {
                 Menu {
                     Picker("Pick a location", selection: $appWorkViewModel.selectedLocationIdx) {
@@ -77,8 +74,8 @@ struct SchoolListDup: View {
                 }
                 .pickerStyle(.menu)
             }
-        }
-    
+
+        } // end if  .toolbar
     }
 }
 
