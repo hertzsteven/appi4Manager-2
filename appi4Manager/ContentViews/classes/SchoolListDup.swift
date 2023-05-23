@@ -15,26 +15,36 @@ struct SchoolListDup: View {
     @State var newClass: SchoolClass
     @State private var isAddingNewSchoolClass = false
 
+
+//   MARK: - Body View   * * * * * * * * * * * * * * * * * * * * * * * *
     var body: some View {
-        List(classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
+        List(classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
                                                          dummyPicClassToIgnore: appWorkViewModel.getpicClass() ))
         { schoolClass in
-            NavigationLink(value: schoolClass) {
-                VStack(alignment: .leading, spacing: 6.0) {
-                    Text(schoolClass.name).font(.headline)
-                    Text(schoolClass.description).font(.caption)
-                }
-                .padding([.leading, .trailing], 12)
-                .padding([.bottom], 16)
-            }
+            SchoolClassRow(schoolClass: schoolClass)
+//            NavigationLink(value: schoolClass) {
+//                VStack(alignment: .leading, spacing: 6.0) {
+//                    Text(schoolClass.name).font(.headline)
+//                    Text(schoolClass.description).font(.caption)
+//                }
+//                .padding([.leading, .trailing], 12)
+//                .padding([.bottom], 16)
+//            }
         }
+
+//      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * *
         .sheet(isPresented: $isAddingNewSchoolClass) {
             NavigationView {
                 SchoolClassEditorContDup(schoolClass: newClass, isNew: true)
             }
        }
-        .navigationTitle("Classes")
         
+//      MARK: - Navigation Bar  * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
+        .navigationTitle("Classes")
+        .navigationBarTitleDisplayMode(.inline)
+        
+
+//      MARK: - Navigation Destimation   * * * * * * * * * * * * * * * * * * * * * *
         .navigationDestination(for: Binding<SchoolClass>.self) { theClass in
             SchoolClassEditorContent(schoolClass: theClass)
         }
@@ -42,6 +52,7 @@ struct SchoolListDup: View {
             SchoolClassEditorContDup(schoolClass: theClass)
         }
 
+//      MARK: - Toolbar   * * * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
@@ -67,9 +78,23 @@ struct SchoolListDup: View {
                 .pickerStyle(.menu)
             }
         }
-        
-
     
+    }
+}
+
+
+//      MARK: - Extension  subView  school class row view in the list   * * * * * * * *
+struct SchoolClassRow : View  {
+    let schoolClass: SchoolClass
+    var body: some View {
+        NavigationLink(value: schoolClass) {
+            VStack(alignment: .leading, spacing: 6.0) {
+                Text(schoolClass.name).font(.headline)
+                Text(schoolClass.description).font(.caption)
+            }
+            .padding([.leading, .trailing], 12)
+            .padding([.bottom], 16)
+        }
     }
 }
 

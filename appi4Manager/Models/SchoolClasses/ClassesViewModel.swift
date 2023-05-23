@@ -27,8 +27,35 @@ class ClassesViewModel: ObservableObject {
         }
     }
     
+    func loadData() throws {
+        guard !isLoading else { return }
+        
+        isLoading = true
+        defer { isLoading = false }
+
+        Task {
+            let resposnse: SchoolClassResponse = try await ApiManager.shared.getData(from: .getSchoolClasses)
+            DispatchQueue.main.async {
+                self.schoolClasses = resposnse.classes
+            }
+        }
+    }
     
+
+    func loadData2() async throws {
+        guard !isLoading else { return }
+        
+        isLoading = true
+        defer { isLoading = false }
+        
+        let resposnse: SchoolClassResponse = try await ApiManager.shared.getData(from: .getSchoolClasses)
+        DispatchQueue.main.async {
+            self.schoolClasses = resposnse.classes
+        }
+        
+    }
     
+
     
     func addClass(schoolClass: SchoolClass) async throws -> String {
         let responseCreateClassResponse: CreateaClassResponse = try await ApiManager.shared.getData(from: .createaClass(name: schoolClass.name, description: schoolClass.description, locationId:  String(schoolClass.locationId)))
@@ -61,7 +88,7 @@ class ClassesViewModel: ObservableObject {
 
     
     
-    func getSchoolClassesinLocation(_ locationId: Int, dummyPicClassToIgnore: String) -> Array<SchoolClass> {
+    func filterSchoolClassesinLocation(_ locationId: Int, dummyPicClassToIgnore: String) -> Array<SchoolClass> {
         var filteredClassesbyLocation = [SchoolClass]()
         
         filteredClassesbyLocation = schoolClasses.filter{ schoolClass in
@@ -70,18 +97,6 @@ class ClassesViewModel: ObservableObject {
         }
         
         return filteredClassesbyLocation
-    }
-    
-    
-    func loadData() throws {
-        guard !isLoading else { return }
-        isLoading = true
-        Task {
-            let resposnse: SchoolClassResponse = try await ApiManager.shared.getData(from: .getSchoolClasses)
-            DispatchQueue.main.async {
-                self.schoolClasses = resposnse.classes
-            }
-        }
     }
     
 

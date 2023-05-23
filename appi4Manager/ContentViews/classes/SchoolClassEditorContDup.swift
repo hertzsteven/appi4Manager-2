@@ -157,15 +157,15 @@ struct SchoolClassEditorContDup: View {
 //    @State var idxIntoClassList: Int
     
     var numberOfClassesInList :  Int {
-        classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).count
+        classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).count
     }
     
     var listOfClasses: [SchoolClass]  {
-        classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() )
+        classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() )
     }
     
     var idxLocationofClassInClassList: Int {
-             classesViewModel.getSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).firstIndex(of: schoolClass) ?? 0
+             classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).firstIndex(of: schoolClass) ?? 0
     }
     
 //   MARK: - Body View   * * * * * * * * * * * * * * * * * * * * * * * * 
