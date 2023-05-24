@@ -60,7 +60,7 @@ struct CollapsibleList: View {
                 Button {
                     action()
                 } label: {
-                    Image(systemName: "plus")
+                    Image(systemName: "plusminus")
                 }
                 Divider()
             }
@@ -372,7 +372,7 @@ struct SchoolClassEditorContDup: View {
                     .disabled(idxLocationofClassInClassList == 0 || itIsInEdit)
                     
                     if !isNew {
-                        Text(String(idxLocationofClassInClassList + 1))
+                        Text("\(String(idxLocationofClassInClassList + 1)) of \(String(numberOfClassesInList)) classes")
                     }
                     
                     Button(action: getNextClassFromList) {
@@ -454,6 +454,8 @@ struct SchoolClassEditorContDup: View {
 //      MARK: - Appear and Disappear   * * * * * * * * * * * * * * * * * * * * * *  
         
         .onAppear {
+            classesViewModel.ignoreLoading = true
+
             if !isNew {
                 toDoWithNewSchoolClassToProcess()
             } else {

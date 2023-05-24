@@ -9,7 +9,7 @@ import Foundation
 
 
     /// Define your custom errors
-    enum ApiError: Error {
+    enum ApiError: LocalizedError {
         case invalidPath
         case clientBadRequest(hTTPuRLResponse: HTTPURLResponse)
         case clientUnauthorized(hTTPuRLResponse: HTTPURLResponse)
@@ -40,7 +40,10 @@ import Foundation
                 return "Unexpected Error code: \(hTTPuRLResponse)"
             case .decodingError(decodingStatus: let decodingStatus):
                 return "Decoding Error code: \(decodingStatus)"
-            }
+                
+            default:
+                return "Other error not defined"
+}
         }
 
     }

@@ -12,42 +12,51 @@ class ClassesViewModel: ObservableObject {
 
     @Published var schoolClasses = [SchoolClass]()
     @Published var isLoading = false
+    @Published var ignoreLoading = false
+
+    init(schoolClasses: [SchoolClass] = []) {
+         self.schoolClasses = schoolClasses
+     }
 
     
-    init() {
-        Task {
-            isLoading = true
-            do {
-                let resposnse: SchoolClassResponse = try await ApiManager.shared.getData(from: .getSchoolClasses)
-                self.schoolClasses = resposnse.classes
-                isLoading = false
-            } catch {
-                fatalError("lost")
-            }
-        }
-    }
+//    init() {
+//        Task {
+//            isLoading = true
+//            do {
+//                let resposnse: SchoolClassResponse = try await ApiManager.shared.getData(from: .getSchoolClasses)
+//                self.schoolClasses = resposnse.classes
+//                isLoading = false
+//            } catch {
+//                fatalError("lost")
+//            }
+//        }
+//    }
     
-    func loadData() throws {
-        guard !isLoading else { return }
-        
-        isLoading = true
-        defer { isLoading = false }
-
-        Task {
-            let resposnse: SchoolClassResponse = try await ApiManager.shared.getData(from: .getSchoolClasses)
-            DispatchQueue.main.async {
-                self.schoolClasses = resposnse.classes
-            }
-        }
-    }
+//    func loadData() throws {
+//        guard !isLoading else { return }
+//
+//        isLoading = true
+//        defer { isLoading = false }
+//
+//        Task {
+//            let resposnse: SchoolClassResponse = try await ApiManager.shared.getData(from: .getSchoolClasses)
+//            DispatchQueue.main.async {
+//                self.schoolClasses = resposnse.classes
+//            }
+//        }
+//    }
     
 
     func loadData2() async throws {
+        
+
         guard !isLoading else { return }
         
         isLoading = true
         defer { isLoading = false }
         
+        try await Task.sleep(nanoseconds: 3 * 1_000_000_000) // 1 second = 1_000_000_000 nanoseconds
+
         let resposnse: SchoolClassResponse = try await ApiManager.shared.getData(from: .getSchoolClasses)
         DispatchQueue.main.async {
             self.schoolClasses = resposnse.classes

@@ -12,16 +12,29 @@ struct SchoolListDup: View {
     @EnvironmentObject var classesViewModel: ClassesViewModel
     @EnvironmentObject var appWorkViewModel: AppWorkViewModel
     
-    @State var newClass: SchoolClass
-    @State private var isAddingNewSchoolClass = false
+    @State          var newClass: SchoolClass
+    @State private  var isAddingNewSchoolClass = false
+
+    @State private var hasError = false
+    @State private var error: ApiError?
 
 
 //   MARK: - Body View   * * * * * * * * * * * * * * * * * * * * * * * *
     var body: some View {
-        List(classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
-                                                         dummyPicClassToIgnore: appWorkViewModel.getpicClass() ))
-        { schoolClass in
-            SchoolClassRow(schoolClass: schoolClass)
+        ZStack {
+            
+            if classesViewModel.isLoading {
+                VStack {
+                    Text("Hello").font(.title3)
+                    ProgressView().controlSize(.large).scaleEffect(2)
+                }
+            } else {
+                List(classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
+                                                                    dummyPicClassToIgnore: appWorkViewModel.getpicClass() ))
+                { schoolClass in
+                    SchoolClassRow(schoolClass: schoolClass)
+                }
+            }
         }
 
         
@@ -32,7 +45,19 @@ struct SchoolListDup: View {
             }
        }
         
+//      MARK: -alerts  * * * * * * * * * * * * * * * * * * * * * * * *
+        .alert(isPresented: $hasError,
+               error: error) {
+            Button {
+                Task {
+                    await loadTheClasses()
+                }
+            } label: {
+                Text("Retry")
+            }
+        }
         
+         
 //      MARK: - Navigation Bar  * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
         .navigationTitle("Classes")
         .navigationBarTitleDisplayMode(.inline)
@@ -76,6 +101,20 @@ struct SchoolListDup: View {
             }
 
         } // end if  .toolbar
+       
+        
+//      MARK: - Task Modifier    * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
+        .task {
+            if classesViewModel.ignoreLoading {
+                classesViewModel.ignoreLoading = false
+                // Don't load the classes if ignoreLoading is true
+            } else {
+                // Load the classes if ignoreLoading is false
+                await loadTheClasses()
+                classesViewModel.ignoreLoading = false
+            }
+
+        }
     }
 }
 
@@ -89,14 +128,44 @@ struct SchoolClassRow : View  {
                 Text(schoolClass.name).font(.headline)
                 Text(schoolClass.description).font(.caption)
             }
-            .padding([.leading, .trailing], 12)
-            .padding([.bottom], 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+            .background(Color.gray.opacity(0.2), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+    //        .padding(.horizontal, 4)
+
+//            .padding([.leading, .trailing], 12)
+//            .padding([.bottom], 16)
         }
     }
 }
 
+private extension SchoolListDup {
+    func loadTheClasses() async {
+        do {
+            try await classesViewModel.loadData2()
+        } catch  {
+            if let xerror = error as? ApiError {
+                self.hasError   = true
+                self.error      = xerror
+            }
+        }
+    }
+    
+    
+}
+
 //struct SchoolListDup_Previews: PreviewProvider {
 //    static var previews: some View {
-//        SchoolListDup(, newClass: <#SchoolClass#>)
+//        // Create some mock SchoolClass objects
+//        let mockClasses = [
+//            SchoolClass(uuid: "001", name: "dldldlld", description: "kwkwkkw", locationId: 1, userGroupId: 10),
+//            SchoolClass(uuid: "002", name: "Morning", description: "Some data", locationId: 1, userGroupId: 8) // Other properties
+//            // Add more classes as needed
+//        ]
+//        let classesViewModel = ClassesViewModel(schoolClasses: mockClasses)
+//
+//        return SchoolListDup(newClass: SchoolClass.makeDefault())
+//            .environmentObject(classesViewModel)
+//            .environmentObject(AppWorkViewModel())
 //    }
 //}

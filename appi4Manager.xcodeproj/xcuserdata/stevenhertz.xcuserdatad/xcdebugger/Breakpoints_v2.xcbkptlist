@@ -155,8 +155,8 @@
             filePath = "appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "774"
-            endingLineNumber = "774"
+            startingLineNumber = "776"
+            endingLineNumber = "776"
             landmarkName = "storeSchoolClassDetailStartingPoint()"
             landmarkType = "7">
             <Locations>
