@@ -203,8 +203,8 @@
             filePath = "appi4Manager/ContentViews/User/UserEditorContent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "369"
-            endingLineNumber = "369"
+            startingLineNumber = "359"
+            endingLineNumber = "359"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -219,8 +219,8 @@
             filePath = "appi4Manager/ContentViews/User/UserEditorContent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "410"
-            endingLineNumber = "410"
+            startingLineNumber = "388"
+            endingLineNumber = "388"
             landmarkName = "restoreSavedItems()"
             landmarkType = "7">
          </BreakpointContent>

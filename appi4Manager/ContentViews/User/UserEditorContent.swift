@@ -15,12 +15,6 @@ struct UserEditorContent: View {
     @State private var userImage: Image? = nil
     @StateObject var imagePicker = ImagePicker()
     @State private var showDeleteAlert = false
-
-    @State private var hasError = false
-    @State private var error: ApiError?
-
-
-    
     
     
     @State var editMode = EditMode.inactive
@@ -341,11 +335,7 @@ struct UserEditorContent: View {
                         .disabled(userCopy.lastName.isEmpty || userCopy.firstName.isEmpty)
                     }
                 })
-            
-//                .task {
-//                    await loadTheClasses()
-//                }
-            
+                       
                 .onAppear {
                     userCopy = user
                     user_start = user
@@ -382,18 +372,6 @@ struct UserEditorContent: View {
     
 }
 
-private extension UserEditorContent {
-    func loadTheClasses() async {
-        do {
-            try await classesViewModel.loadData2()
-        } catch  {
-            if let xerror = error as? ApiError {
-                self.hasError   = true
-                self.error      = xerror
-            }
-        }
-    }
-}
 
 extension UserEditorContent {
     

@@ -49,12 +49,23 @@ struct DashboardView: View {
                         .task {
                             await loadTheClasses()
                         }
+                        .alert(isPresented: $hasError,
+                               error: error) {
+                            Button {
+                                Task {
+                                    await loadTheClasses()
+                                }
+                            } label: {
+                                Text("Retry")
+                            }
+                        }
+                    
                 case "SchoolListDup":
                     SchoolListDup( newClass: SchoolClass.makeDefault())
-
+                    
                 default:
                     SchoolListContent(path: $path, newClass: SchoolClass.makeDefault())
-                }            
+                }
             })
             .background(Color(.systemGray5))
             .edgesIgnoringSafeArea(.bottom)
