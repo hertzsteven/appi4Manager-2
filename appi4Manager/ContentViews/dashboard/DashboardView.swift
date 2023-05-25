@@ -10,6 +10,10 @@ import SwiftUI
 
 struct DashboardView: View {
 
+    @EnvironmentObject var classesViewModel: ClassesViewModel
+    @State private var hasError = false
+    @State private var error: ApiError?
+
     @State var path: NavigationPath = NavigationPath()
     
     let categories = [
@@ -42,6 +46,9 @@ struct DashboardView: View {
                 switch category.name {
                 case "Users":
                     UserListContent(newUser: User.makeDefault())
+                        .task {
+                            await loadTheClasses()
+                        }
                 case "SchoolListDup":
                     SchoolListDup( newClass: SchoolClass.makeDefault())
 
@@ -55,6 +62,20 @@ struct DashboardView: View {
             .navigationViewStyle(StackNavigationViewStyle())
         }
        
+    }
+}
+
+
+private extension DashboardView {
+    func loadTheClasses() async {
+        do {
+            try await classesViewModel.loadData2()
+        } catch  {
+            if let xerror = error as? ApiError {
+                self.hasError   = true
+                self.error      = xerror
+            }
+        }
     }
 }
 

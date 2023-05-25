@@ -30,7 +30,7 @@ struct SchoolListDup: View {
                 }
             } else {
                 List(classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
-                                                                    dummyPicClassToIgnore: appWorkViewModel.getpicClass() ))
+                                                                    dummyPicClassToIgnore: appWorkViewModel.getpicClass() ) )
                 { schoolClass in
                     SchoolClassRow(schoolClass: schoolClass)
                 }
@@ -110,7 +110,7 @@ struct SchoolListDup: View {
                 // Don't load the classes if ignoreLoading is true
             } else {
                 // Load the classes if ignoreLoading is false
-                await loadTheClasses()
+
                 classesViewModel.ignoreLoading = false
             }
 

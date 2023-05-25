@@ -7,8 +7,21 @@
 
 
 import SwiftUI
+import _PhotosUI_SwiftUI
 
 struct UserEditorContent: View {
+    
+    
+    @State private var userImage: Image? = nil
+    @StateObject var imagePicker = ImagePicker()
+    @State private var showDeleteAlert = false
+
+    @State private var hasError = false
+    @State private var error: ApiError?
+
+
+    
+    
     
     @State var editMode = EditMode.inactive
     
@@ -81,14 +94,163 @@ struct UserEditorContent: View {
             dismiss()
         }
     }
-    
+    fileprivate func deleteTheUser() {
+        print("we are about to delete the user \(user.id)")
+        isDeleted = true
+        
+        Task {
+            do {
+                usersViewModel.delete(user)
+                print("break")
+                let response = try await ApiManager.shared.getDataNoDecode(from: .deleteaUser(id: user.id))
+                dump(response)
+                
+                
+            } catch let error as ApiError {
+                    //  FIXME: -  put in alert that will display approriate error message
+                print(error.description)
+            }
+        }
+        dismiss()
+    }
+
     var body: some View {
         VStack {
-            UserDetailContent(user: $userCopy, isDeleted: $isDeleted, isNew: $isNew, urlPic: urlPic)
+            
+            Form {
+                Section(header: Text("Photo")) {
+                    VStack(alignment: .center) {
+                        
+                        HStack {
+                            
+                                // photo picker
+                            PhotosPicker(selection: $imagePicker.imageSelection,
+                                         matching: .images) {
+                                Text("Select a photo")
+                            }
+                                         .tint(.purple)
+                                         .controlSize(.large)
+                                         .buttonStyle(.borderedProminent)
+                                         .padding()
+                                         .onAppear {
+                                             imagePicker.studentId = user.id
+                                             imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
+                                         }
+                                         .onDisappear {
+                                             print("-- in disappear")
+                                             task {
+                                                 do {
+                                                     try await studentPicStubViewModel.reloadData(uuid: appWorkViewModel.getpicClass())
+                                                 } catch {
+                                                     print("ellelelell  Big error")
+                                                 }
+                                             }
+                                         }
+                            
+                                // delete button
+                            if userImage != nil {
+                                Button(action: {
+                                    self.userImage = nil
+                                }) {
+                                    Text("Delete Image")
+                                        .padding()
+                                        .background(Color.red)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(10)
+                                }
+                            }
+                            
+                            Spacer()
+                            
+                                // if an image exists
+                            if let image = imagePicker.image {
+                                image
+                                    .resizable()
+                                    .scaledToFit() // Display the loaded image
+                                    .clipShape(Circle())
+                                    .frame(width: 100, height: 100)
+                                    .overlay(
+                                        Circle()
+                                            .stroke(Color.primary.opacity(0.2), lineWidth: 2)
+                                    )
+                                    .onAppear {
+                                        appWorkViewModel.uniqueID = UUID()
+                                    }
+                            } else {
+                                AsyncImage(url: urlPic) { phase in
+                                    switch phase {
+                                    case .empty:
+                                        ProgressView() // Display a progress view while the image is loading
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .scaledToFit() // Display the loaded image
+                                            .clipShape(Circle())
+                                            .frame(width: 100, height: 100)
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(Color.primary.opacity(0.2), lineWidth: 2)
+                                            )
+                                        
+                                    case .failure:
+                                        Text("Failed to load image") // Display an error message if the image fails to load
+                                    @unknown default:
+                                        fatalError()
+                                    }
+                                }
+                            }
+                        } // Hstack end
+                    }
+                }
+                Section(header: Text("Name")) {
+                    TextField("First Name", text: $user.firstName )
+                        .padding([.top, .bottom], 8)
+                    TextField("Last Name", text: $user.lastName )
+                        .padding([.top, .bottom], 8)
+                }
+                Section(header: Text("Notes")) {
+                    TextField("Notes", text: $user.notes )
+                        .padding([.top, .bottom], 8)
+                }
+                Section(header: Text("email")) {
+                    TextField("email", text: $user.email )
+                        .padding([.top, .bottom], 8)
+                }
+                
+                .alert("Delete User?", isPresented: $showDeleteAlert) {
+                    Button(role: .destructive) {
+                        deleteTheUser()
+                    } label: {
+                        Text("Delete")
+                    }
+                } message: {
+                    Text("This will permanently delete the user.")
+                }
+                .textCase(nil)
+                
+                
+                if !isNew {
+                    Button(role: .destructive) {
+                        showDeleteAlert = true
+                    } label: {
+                        Text("Delete User")
+                            .font(Font.custom("SF Pro", size: 17))
+                            .foregroundColor(Color(UIColor.systemRed))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                }
+            }
+            
+            
+//            UserDetailContent(user: $userCopy, isDeleted: $isDeleted, isNew: $isNew, urlPic: urlPic)
             List {
                 Section {
+                    
                     ForEach(selectedStudentClasses.compactMap({ id in
-                        classesViewModel.schoolClasses.first(where: { $0.userGroupId == id })
+//                        classesViewModel.schoolClasses
+                        (classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
+                                                                                            dummyPicClassToIgnore: appWorkViewModel.getpicClass() ) )
+                            .first(where: { $0.userGroupId == id })
                     }), id: \.id) { schoolClass in
                         Text("\(schoolClass.name)")
                     }
@@ -98,9 +260,10 @@ struct UserEditorContent: View {
                         }
                         saveselectedStudentClasses()
                     }
+//                }
                 } header: {
                     HStack {
-                        Text("Classes \(selectedStudentClasses.count)")
+                        Text("Classes ")
                             //                                .bold()
                             .font(.title3)
                         if editMode == .active || ( isNew == true && !userCopy.lastName.isEmpty ) {
@@ -122,9 +285,11 @@ struct UserEditorContent: View {
                             Divider()
                         }
                     }
-                } footer: {
-                    Text("Number of classes: \(selectedStudentClasses.count)")
-                }.headerProminence(.standard)
+                }
+//            footer: {
+//                    Text("Number of classes: \(selectedStudentClasses.count)")
+//                }
+                .headerProminence(.standard)
             }
             .environment(\.editMode, $editMode)
             .listStyle(SidebarListStyle())
@@ -176,6 +341,11 @@ struct UserEditorContent: View {
                         .disabled(userCopy.lastName.isEmpty || userCopy.firstName.isEmpty)
                     }
                 })
+            
+//                .task {
+//                    await loadTheClasses()
+//                }
+            
                 .onAppear {
                     userCopy = user
                     user_start = user
@@ -212,7 +382,22 @@ struct UserEditorContent: View {
     
 }
 
+private extension UserEditorContent {
+    func loadTheClasses() async {
+        do {
+            try await classesViewModel.loadData2()
+        } catch  {
+            if let xerror = error as? ApiError {
+                self.hasError   = true
+                self.error      = xerror
+            }
+        }
+    }
+}
+
 extension UserEditorContent {
+    
+    
     
     fileprivate func restoreSavedItems() {
         dump(user)
