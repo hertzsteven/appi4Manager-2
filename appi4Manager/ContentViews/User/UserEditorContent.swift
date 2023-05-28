@@ -222,18 +222,8 @@ struct UserEditorContent: View {
                 }
                 .textCase(nil)
                 
-                
-                if !isNew {
-                    Button(role: .destructive) {
-                        showDeleteAlert = true
-                    } label: {
-                        Text("Delete User")
-                            .font(Font.custom("SF Pro", size: 17))
-                            .foregroundColor(Color(UIColor.systemRed))
-                    }
-                    .frame(maxWidth: .infinity, alignment: .center)
-                }
-            }
+
+//            }
             
             
 //            UserDetailContent(user: $userCopy, isDeleted: $isDeleted, isNew: $isNew, urlPic: urlPic)
@@ -259,7 +249,7 @@ struct UserEditorContent: View {
                     HStack {
                         Text("Classes ")
                             //                                .bold()
-                            .font(.title3)
+//                            .font(.title3)
                         if editMode == .active || ( isNew == true && !userCopy.lastName.isEmpty ) {
                             Spacer()
                             Button {
@@ -280,10 +270,23 @@ struct UserEditorContent: View {
                         }
                     }
                 }
-//            footer: {
-//                    Text("Number of classes: \(selectedStudentClasses.count)")
-//                }
-                .headerProminence(.standard)
+//           footer: {
+//                   Text("Number of classes: \(selectedStudentClasses.count)")
+//               }
+//                .headerProminence(.standard)
+            }
+                
+                
+                if !isNew {
+                    Button(role: .destructive) {
+                        showDeleteAlert = true
+                    } label: {
+                        Text("Delete User")
+                            .font(Font.custom("SF Pro", size: 17))
+                            .foregroundColor(Color(UIColor.systemRed))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                }
             }
             .environment(\.editMode, $editMode)
             .listStyle(SidebarListStyle())

@@ -43,7 +43,8 @@ struct UserListContent: View {
                 
                 LazyVGrid(columns: gridItems, spacing: 30) {
                     
-                    ForEach(usersViewModel.sortedUsers(lastNameFilter: searchText, selectedLocationID: appWorkViewModel.selectedLocationIdx) ) {  $theUser  in
+                    ForEach(usersViewModel.sortedUsers(lastNameFilter: searchText, selectedLocationID: appWorkViewModel.selectedLocationIdx) )
+                    {  $theUser  in
                         
                         let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: appWorkViewModel.uniqueID)
                         
