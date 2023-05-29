@@ -9,9 +9,11 @@ import SwiftUI
 
 @MainActor
 class UsersViewModel: ObservableObject {
+    
     @Published var users = [User]()
     @Published var isLoading = false
-    
+    @Published var ignoreLoading = false
+
     init() {
         Task {
             isLoading = true
@@ -37,7 +39,23 @@ class UsersViewModel: ObservableObject {
         }
     }
     
-    
+    func loadData2() async throws {
+        
+        guard !isLoading else { return }
+        
+        isLoading = true
+        defer { isLoading = false }
+        
+        try await Task.sleep(nanoseconds: 3 * 1_000_000_000) // 1 second = 1_000_000_000 nanoseconds
+
+        let resposnse: UserResponse = try await ApiManager.shared.getData(from: .getUsers)
+        DispatchQueue.main.async {
+            self.users = resposnse.users
+        }
+        
+    }
+ 
+
     func delete(_ user: User) {
         users.removeAll { $0.id == user.id }
     }

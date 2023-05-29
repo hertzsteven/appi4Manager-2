@@ -25,7 +25,6 @@ struct SchoolListDup: View {
             
             if classesViewModel.isLoading {
                 VStack {
-                    Text("Hello").font(.title3)
                     ProgressView().controlSize(.large).scaleEffect(2)
                 }
             } else {
@@ -110,7 +109,7 @@ struct SchoolListDup: View {
                 // Don't load the classes if ignoreLoading is true
             } else {
                 // Load the classes if ignoreLoading is false
-
+                await loadTheClasses()
                 classesViewModel.ignoreLoading = false
             }
 
@@ -149,9 +148,7 @@ private extension SchoolListDup {
                 self.error      = xerror
             }
         }
-    }
-    
-    
+    }   
 }
 
 //struct SchoolListDup_Previews: PreviewProvider {

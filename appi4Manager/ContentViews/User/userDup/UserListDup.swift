@@ -9,7 +9,8 @@ import SwiftUI
 
 
 struct UserListDup: View {
-    
+
+//   MARK: - Body View   * * * * * * * * * * * * * * * * * * * * * * * *
     @State private var searchText = ""
     
     @State private var presentAlertSw: Bool = false
@@ -36,6 +37,11 @@ struct UserListDup: View {
     }
     
     
+    @State private var hasError = false
+    @State private var error: ApiError?
+
+
+    
     var body: some View {
         
         ScrollView {
@@ -54,9 +60,11 @@ struct UserListDup: View {
                 } // end of for each
             } // end of list
         }
-        
-        
+
+
+//      MARK: - Toolbar   * * * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
         .toolbar {
+        // add user
             ToolbarItem {
                 Button {
                     newUser = User.makeDefault()
@@ -65,9 +73,9 @@ struct UserListDup: View {
                     Image(systemName: "plus")
                 }
             }
-        }
-        .toolbar {
+            
             ToolbarItem(placement: .navigationBarLeading , content: {
+                // select Location
                 Menu {
                     Picker("Pick a location", selection: $appWorkViewModel.selectedLocationIdx) {
                         ForEach(0..<appWorkViewModel.locations.count) { index in
@@ -100,37 +108,43 @@ struct UserListDup: View {
             })
         }
         
+        
+//      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * *
         .sheet(isPresented: $isAddingNewUser) {
             NavigationView {
                 UserEditorContent( user: $newUser, urlPic: URL(string: "https://developitsnfredu.jamfcloud.com/application/views/default/assets/image/avatar/avatar.png")!, isNew: true)
             }
         }
+        
+//      MARK: -alerts  * * * * * * * * * * * * * * * * * * * * * * * *
+        .alert(isPresented: $hasError,
+               error: error) {
+            Button {
+                Task {
+                    await loadTheUsers()
+                }
+            } label: {
+                Text("Retry")
+            }
+        }
+
         .alert(isPresented:$presentAlertSw) {
             getAlert()
         }
-            //                    .onAppear {
-            //                        try usersViewModel.loadData()
-            //                    }
-        .task {
-            print("🚘 In innerTask")
-            
-        }
-        
-            //         }
+
+
+//      MARK: - Navigation Bar  * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *        
         .navigationTitle("Students")
         .navigationBarTitleDisplayMode(.inline)
         
         
-            //      MARK: - Navigation Destimation   * * * * * * * * * * * * * * * * * * * * * *
+//      MARK: - Navigation Destimation   * * * * * * * * * * * * * * * * * * * * * *
         .navigationDestination(for: User.self) { theUser in
-            Text(theUser.lastName)
+            let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: appWorkViewModel.uniqueID)
+            UserEditorContDup(user: theUser, urlPic: imageURL)
         }
         
         
-        .onAppear{
-            dump(appWorkViewModel.locations)
-            print(appWorkViewModel.locations)
-        }
         .task {
             print("🚘 In outer task")
             if !usersAreLoaded {
@@ -153,7 +167,21 @@ struct UserListDup: View {
                 
             }
         }
+ //      MARK: - Task Modifier    * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
+        .task {
+            if usersViewModel.ignoreLoading {
+                usersViewModel.ignoreLoading = false
+                // Don't load the classes if ignoreLoading is true
+            } else {
+                // Load the users if ignoreLoading is false
+                await loadTheUsers()
+
+                usersViewModel.ignoreLoading = false
+            }
+
+        }
     }
+    
     func getAlert() -> Alert {
         return Alert(title: Text("This is a second alert"))
     }
@@ -164,9 +192,20 @@ struct UserListDup: View {
         return urlComponents?.url ?? photoURL
     }
     
-    
 }
 
+private extension UserListDup {
+    func loadTheUsers() async {
+        do {
+            try await usersViewModel.loadData2()
+        } catch  {
+            if let xerror = error as? ApiError {
+                self.hasError   = true
+                self.error      = xerror
+            }
+        }
+    }   
+}
 
 struct UserListDupView_Previews: PreviewProvider {
     static var previews: some View {
