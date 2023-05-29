@@ -11,7 +11,7 @@ import SwiftUI
 class UsersViewModel: ObservableObject {
     @Published var users = [User]()
     @Published var isLoading = false
-
+    
     init() {
         Task {
             isLoading = true
@@ -24,7 +24,7 @@ class UsersViewModel: ObservableObject {
             }
         }
     }
-
+    
     
     func loadData() throws {
         guard !isLoading else { return }
@@ -65,42 +65,59 @@ class UsersViewModel: ObservableObject {
                                                                                locationId: user.locationId,
                                                                                groupIds: user.groupIds,
                                                                                teacherGroups: user.teacherGroups))
-//                                                                              groupIds: user.groupIds))
-             
+                //                                                                              groupIds: user.groupIds))
+            
         } catch let error as ApiError {
                 //  FIXME: -  put in alert that will display approriate error message
             print(error.description)
         } catch {
             print(error.localizedDescription)
         }
-
+        
     }
     
     
-  func sortedUsers(lastNameFilter searchStr: String = "", selectedLocationID: Int) -> Binding<[User]> {
-         Binding<[User]>(
+    func sortedUsers(lastNameFilter searchStr: String = "", selectedLocationID: Int) -> Binding<[User]> {
+        Binding<[User]>(
             get: {
                 self.users
                     .sorted { $0.lastName < $1.lastName }
-               
+                
                     .filter({ usr in
-                      usr.locationId == selectedLocationID
+                        usr.locationId == selectedLocationID
                     })
                     .filter {
                         if searchStr.isEmpty  {
-                          return  true
+                            return  true
                         } else {
                             return  $0.lastName.lowercased().contains(searchStr.lowercased())
                         }
+                    }
+            },
+            set: { users in
+                for user in users {
+                    if let index = self.users.firstIndex(where: { $0.id == user.id }) {
+                        self.users[index] = user
+                    }
+                }
             }
-             },
-             set: { users in
-                 for user in users {
-                     if let index = self.users.firstIndex(where: { $0.id == user.id }) {
-                         self.users[index] = user
-                     }
-                 }
-             }
-         )
-     }
+        )
+    }
+    
+    func sortedUsersNonB(lastNameFilter searchStr: String = "", selectedLocationID: Int) -> [User] {
+        
+        self.users
+            .sorted { $0.lastName < $1.lastName }
+        
+            .filter({ usr in
+                usr.locationId == selectedLocationID
+            })
+            .filter {
+                if searchStr.isEmpty  {
+                    return  true
+                } else {
+                    return  $0.lastName.lowercased().contains(searchStr.lowercased())
+                }
+            }
+    }
 }

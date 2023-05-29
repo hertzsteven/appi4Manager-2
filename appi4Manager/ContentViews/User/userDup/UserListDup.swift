@@ -43,21 +43,28 @@ struct UserListDup: View {
                 
                 LazyVGrid(columns: gridItems, spacing: 30) {
                     
-                    ForEach(usersViewModel.sortedUsers(lastNameFilter: searchText, selectedLocationID: appWorkViewModel.selectedLocationIdx) )
-                    {  $theUser  in
+                    ForEach(usersViewModel.sortedUsersNonB(lastNameFilter: searchText, selectedLocationID: appWorkViewModel.selectedLocationIdx) )
+                    {  theUser  in
                         
                         let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: appWorkViewModel.uniqueID)
                         
-                        NavigationLink {
-                            UserEditorContent(user: $theUser, urlPic: imageURL)
-                        }
-                    label: {
-                        UserCardView(user: theUser, urlPic: imageURL)
+//                        NavigationLink(value: theUser) {
+                            UserCardVwDup(user: theUser, urlPic: imageURL)
+                                .foregroundColor(Color.primary)
+                                .font(.body)
+                                .padding([.top, .bottom],10)
+//                        }
                         
-                            .foregroundColor(Color.primary)
-                            .font(.body)
-                            .padding([.top, .bottom],10)
-                    } // end of label
+//                        NavigationLink {
+//                            UserEditorContent(user: $theUser, urlPic: imageURL)
+//                        }
+//                    label: {
+//                        UserCardView(user: theUser, urlPic: imageURL)
+//
+//                            .foregroundColor(Color.primary)
+//                            .font(.body)
+//                            .padding([.top, .bottom],10)
+//                    } // end of label
                   } // end of for each
                 } // end of list
                 
@@ -150,6 +157,15 @@ struct UserListDup: View {
         .navigationTitle("Students")
         .navigationBarTitleDisplayMode(.inline)
 
+        
+            //      MARK: - Navigation Destimation   * * * * * * * * * * * * * * * * * * * * * *
+                    .navigationDestination(for: User.self) { theUser in
+                        Text(theUser.lastName)
+                    }
+                    
+
+        
+        
         .onAppear{
             dump(appWorkViewModel.locations)
             print(appWorkViewModel.locations)

@@ -22,7 +22,7 @@ struct DashboardView: View {
         Category(name: "Apps", color: .red, image: Image(systemName: "apps.ipad"), count: 3),
         Category(name: "Classes", color: .purple, image: Image(systemName: "person.3.sequence.fill"), count: 8),
         Category(name: "SchoolListDup", color: .orange, image: Image(systemName: "airplane"), count: 2),
-        Category(name: "Stub", color: .yellow, image: Image(systemName: "dollarsign.circle.fill"), count: 6)
+        Category(name: "UserDup", color: .yellow, image: Image(systemName: "dollarsign.circle.fill"), count: 6)
     ]
 
     var body: some View {
@@ -60,7 +60,23 @@ struct DashboardView: View {
                             }
                         }
                     
-                case "SchoolListDup":
+                case "UserDup":
+                    UserListDup(newUser: User.makeDefault())
+                        .task {
+                            await loadTheClasses()
+                        }
+                        .alert(isPresented: $hasError,
+                               error: error) {
+                            Button {
+                                Task {
+                                    await loadTheClasses()
+                                }
+                            } label: {
+                                Text("Retry")
+                            }
+                        }
+                    
+               case "SchoolListDup":
                     SchoolListDup( newClass: SchoolClass.makeDefault())
                     
                 default:

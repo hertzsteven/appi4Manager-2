@@ -32,7 +32,7 @@ struct UserEditorContDup: View {
     @State private var toShowTeacherClassList:    Bool = false
 
     
-    @Binding var user: User
+    @State  var user: User
     var urlPic: URL
 
     @State private var user_start   = User.makeDefault()  // this gets done by the update
