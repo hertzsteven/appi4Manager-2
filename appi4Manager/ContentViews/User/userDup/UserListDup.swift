@@ -1,9 +1,9 @@
-//
-//  ContentView.swift
-//  list the users
-//
-//  Created by Steven Hertz on 2/8/23.
-//
+    //
+    //  ContentView.swift
+    //  list the users
+    //
+    //  Created by Steven Hertz on 2/8/23.
+    //
 
 import SwiftUI
 
@@ -15,106 +15,69 @@ struct UserListDup: View {
     @State private var presentAlertSw: Bool = false
     
     @EnvironmentObject var usersViewModel: UsersViewModel
-    @EnvironmentObject var studentPicStubViewModel: StudentPicStubViewModel   
+    @EnvironmentObject var studentPicStubViewModel: StudentPicStubViewModel
     @EnvironmentObject var appWorkViewModel: AppWorkViewModel
     
     @State var newUser: User
     @State private var isAddingNewUser = false
     
     @State var usersAreLoaded: Bool = false
-
+    
     @Environment(\.horizontalSizeClass)     var horizontalSizeClass
     @Environment(\.verticalSizeClass)         var verticalSizeClass
-
-
+    
+    
     private var gridItems: [GridItem] {
         Array(repeating: GridItem(.flexible(minimum: 100, maximum: .infinity)), count: numberOfColumns)
     }
-
+    
     private var numberOfColumns: Int {
-         return horizontalSizeClass == .compact ? 2 : 4
+        return horizontalSizeClass == .compact ? 2 : 4
     }
-
+    
     
     var body: some View {
-//        NavigationView {
-//            Section {
-            ScrollView {
+        
+        ScrollView {
+            
+            LazyVGrid(columns: gridItems, spacing: 30) {
                 
-                LazyVGrid(columns: gridItems, spacing: 30) {
+                ForEach(usersViewModel.sortedUsersNonB(lastNameFilter: searchText, selectedLocationID: appWorkViewModel.selectedLocationIdx) ) {  theUser  in
                     
-                    ForEach(usersViewModel.sortedUsersNonB(lastNameFilter: searchText, selectedLocationID: appWorkViewModel.selectedLocationIdx) )
-                    {  theUser  in
-                        
-                        let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: appWorkViewModel.uniqueID)
-                        
-//                        NavigationLink(value: theUser) {
-                            UserCardVwDup(user: theUser, urlPic: imageURL)
-                                .foregroundColor(Color.primary)
-                                .font(.body)
-                                .padding([.top, .bottom],10)
-//                        }
-                        
-//                        NavigationLink {
-//                            UserEditorContent(user: $theUser, urlPic: imageURL)
-//                        }
-//                    label: {
-//                        UserCardView(user: theUser, urlPic: imageURL)
-//
-//                            .foregroundColor(Color.primary)
-//                            .font(.body)
-//                            .padding([.top, .bottom],10)
-//                    } // end of label
-                  } // end of for each
-                } // end of list
-                
-            }
-        /*
-            List(usersViewModel.sortedUsers(lastNameFilter: searchText, selectedLocationID: appWorkViewModel.selectedLocationIdx)) { $theUser in
-                    NavigationLink {
-                        UserEditorContent(user: $theUser)
-                    } label: {
-                        HStack {
-                            Label("\(theUser.firstName) \(theUser.lastName)", systemImage: "person.circle")
-                                .labelStyle(CustomLabelStyle())
-                            Spacer()
-                        }
+                    let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: appWorkViewModel.uniqueID)
+                    
+                    UserCardVwDup(user: theUser, urlPic: imageURL)
                         .foregroundColor(Color.primary)
                         .font(.body)
                         .padding([.top, .bottom],10)
-                    }
-                }
-                .listStyle(.plain)
-                .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic))
-                .onAppear { print("🟢 OnAppear - list view") }
-                .onDisappear { print("🟢 OnDisappear - list view") }
-*/
-            
-//            end of list view
-
-//            }
-            .toolbar {
-                ToolbarItem {
-                    Button {
-                        newUser = User.makeDefault()
-                        isAddingNewUser = true
-                    } label: {
-                        Image(systemName: "plus")
-                    }
+                    
+                } // end of for each
+            } // end of list
+        }
+        
+        
+        .toolbar {
+            ToolbarItem {
+                Button {
+                    newUser = User.makeDefault()
+                    isAddingNewUser = true
+                } label: {
+                    Image(systemName: "plus")
                 }
             }
-            .toolbar {
-              ToolbarItem(placement: .navigationBarLeading , content: {
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading , content: {
                 Menu {
                     Picker("Pick a location", selection: $appWorkViewModel.selectedLocationIdx) {
                         ForEach(0..<appWorkViewModel.locations.count) { index in
                             Text(appWorkViewModel.locations[index].name)
                                 .tag(index)
                         }
-                  }
+                    }
                     .padding()
                     .onChange(of:  $appWorkViewModel.selectedLocationIdx) { value in
-                        // Execute your code here
+                            // Execute your code here
                         Task {
                             do {
                                 studentPicStubViewModel.reloadData(uuid: appWorkViewModel.getpicClass())
@@ -122,48 +85,46 @@ struct UserListDup: View {
                             } catch let error as ApiError {
                                 print(error.description)
                             }
+                            
+                        }
                         
-         }
-
                         print("--- Selected location: appWorkViewModel.locations[value].name")
                     }
-
-//                    .pickerStyle(.wheel)
+                    
+                        //                    .pickerStyle(.wheel)
                 } label: {
                     Text(appWorkViewModel.locations[appWorkViewModel.selectedLocationIdx].name).padding()
                 }
                 .pickerStyle(.menu)
                 
-              })
+            })
+        }
+        
+        .sheet(isPresented: $isAddingNewUser) {
+            NavigationView {
+                UserEditorContent( user: $newUser, urlPic: URL(string: "https://developitsnfredu.jamfcloud.com/application/views/default/assets/image/avatar/avatar.png")!, isNew: true)
             }
+        }
+        .alert(isPresented:$presentAlertSw) {
+            getAlert()
+        }
+            //                    .onAppear {
+            //                        try usersViewModel.loadData()
+            //                    }
+        .task {
+            print("🚘 In innerTask")
             
-            .sheet(isPresented: $isAddingNewUser) {
-                NavigationView {
-                    UserEditorContent( user: $newUser, urlPic: URL(string: "https://developitsnfredu.jamfcloud.com/application/views/default/assets/image/avatar/avatar.png")!, isNew: true)
-                }
-            }
-            .alert(isPresented:$presentAlertSw) {
-                getAlert()
-            }
-                //                    .onAppear {
-                //                        try usersViewModel.loadData()
-                //                    }
-            .task {
-                print("🚘 In innerTask")
-                
-            }
-            
-//         }
+        }
+        
+            //         }
         .navigationTitle("Students")
         .navigationBarTitleDisplayMode(.inline)
-
+        
         
             //      MARK: - Navigation Destimation   * * * * * * * * * * * * * * * * * * * * * *
-                    .navigationDestination(for: User.self) { theUser in
-                        Text(theUser.lastName)
-                    }
-                    
-
+        .navigationDestination(for: User.self) { theUser in
+            Text(theUser.lastName)
+        }
         
         
         .onAppear{
@@ -173,24 +134,24 @@ struct UserListDup: View {
         .task {
             print("🚘 In outer task")
             if !usersAreLoaded {
-
-
+                
+                
                 Task {
                     do {
                         studentPicStubViewModel.reloadData(uuid: appWorkViewModel.getpicClass())
-//                        let resposnse: UserResponse = try await ApiManager.shared.getData(from: .getUsers)
-//                        self.usersViewModel.users = resposnse.users
-//                        let classDetailResponse: ClassDetailResponse = try await ApiManager.shared.getData(from: .getStudents(uuid: ApiHelper.classuuid))
-//                        self.classDetailViewModel.students = classDetailResponse.class.students
-//                        self.usersAreLoaded.toggle()
+                            //                        let resposnse: UserResponse = try await ApiManager.shared.getData(from: .getUsers)
+                            //                        self.usersViewModel.users = resposnse.users
+                            //                        let classDetailResponse: ClassDetailResponse = try await ApiManager.shared.getData(from: .getStudents(uuid: ApiHelper.classuuid))
+                            //                        self.classDetailViewModel.students = classDetailResponse.class.students
+                            //                        self.usersAreLoaded.toggle()
                     } catch let error as ApiError {
                         print(error.description)
-//                        presentAlertSw.toggle()
+                            //                        presentAlertSw.toggle()
                     }
+                    
+                }
                 
- }
-
-             }
+            }
         }
     }
     func getAlert() -> Alert {
@@ -202,8 +163,8 @@ struct UserListDup: View {
         urlComponents?.queryItems = [URLQueryItem(name: "uniqueID", value: uniqueID.uuidString)]
         return urlComponents?.url ?? photoURL
     }
-
-
+    
+    
 }
 
 
