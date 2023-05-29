@@ -29,6 +29,8 @@
 		46584FE72993F0960025F539 /* ApiHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46584FE62993F0960025F539 /* ApiHelper.swift */; };
 		46584FE92993F0C40025F539 /* ApiError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46584FE82993F0C40025F539 /* ApiError.swift */; };
 		46584FEB2993F10F0025F539 /* ApiEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46584FEA2993F10F0025F539 /* ApiEndpoint.swift */; };
+		46786B762A24D97C000F6716 /* UserListDup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46786B752A24D97C000F6716 /* UserListDup.swift */; };
+		46786B782A24D9A6000F6716 /* UserEditorContDup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46786B772A24D9A6000F6716 /* UserEditorContDup.swift */; };
 		469420F229C7ED67004B8CB4 /* ExtensionsAndMore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 469420F129C7ED67004B8CB4 /* ExtensionsAndMore.swift */; };
 		46A80E192A1153A2008B936D /* SchoolClassEditorContDup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A80E182A1153A2008B936D /* SchoolClassEditorContDup.swift */; };
 		46AEA64129C8E57900D2B994 /* LocationsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46AEA64029C8E57900D2B994 /* LocationsResponse.swift */; };
@@ -76,6 +78,8 @@
 		46584FE62993F0960025F539 /* ApiHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiHelper.swift; sourceTree = "<group>"; };
 		46584FE82993F0C40025F539 /* ApiError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiError.swift; sourceTree = "<group>"; };
 		46584FEA2993F10F0025F539 /* ApiEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiEndpoint.swift; sourceTree = "<group>"; };
+		46786B752A24D97C000F6716 /* UserListDup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListDup.swift; sourceTree = "<group>"; };
+		46786B772A24D9A6000F6716 /* UserEditorContDup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditorContDup.swift; sourceTree = "<group>"; };
 		469420F129C7ED67004B8CB4 /* ExtensionsAndMore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsAndMore.swift; sourceTree = "<group>"; };
 		46A80E182A1153A2008B936D /* SchoolClassEditorContDup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolClassEditorContDup.swift; sourceTree = "<group>"; };
 		46AEA64029C8E57900D2B994 /* LocationsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsResponse.swift; sourceTree = "<group>"; };
@@ -338,10 +342,12 @@
 		46E76A0C29BE05BD00A85466 /* User */ = {
 			isa = PBXGroup;
 			children = (
+				46786B752A24D97C000F6716 /* UserListDup.swift */,
 				46584FCB2993E1040025F539 /* UserListContent.swift */,
 				463367062995251000CF5EA3 /* UserEditorContent.swift */,
 				463366FF299426A900CF5EA3 /* UserDetailContent.swift */,
 				46D3F1DA29EF434500D507F3 /* UserCardView.swift */,
+				46786B772A24D9A6000F6716 /* UserEditorContDup.swift */,
 			);
 			path = User;
 			sourceTree = "<group>";
@@ -438,6 +444,7 @@
 				46E56DBA2996B33800CB2512 /* ClassDetailResponse.swift in Sources */,
 				46E56DB729969F5600CB2512 /* UserDetailResponse.swift in Sources */,
 				46584FDB2993EAF40025F539 /* User.swift in Sources */,
+				46786B782A24D9A6000F6716 /* UserEditorContDup.swift in Sources */,
 				4609120229D0811B000337E8 /* DashboardView.swift in Sources */,
 				46E56DBD2996B42500CB2512 /* SchoolClassResponse.swift in Sources */,
 				46584FDD2993EB650025F539 /* UserResponse.swift in Sources */,
@@ -446,6 +453,7 @@
 				46A80E192A1153A2008B936D /* SchoolClassEditorContDup.swift in Sources */,
 				46E76A0929BB9AEF00A85466 /* ClassesViewModel.swift in Sources */,
 				46D2A9A429DB4D12007B134E /* ImagePicker.swift in Sources */,
+				46786B762A24D97C000F6716 /* UserListDup.swift in Sources */,
 				46E56DB12995E1C000CB2512 /* TestOutView.swift in Sources */,
 				46BDEEFA2A0E9421000B4950 /* Categories.swift in Sources */,
 				46AEA64129C8E57900D2B994 /* LocationsResponse.swift in Sources */,

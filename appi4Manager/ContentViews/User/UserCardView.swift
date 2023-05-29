@@ -13,63 +13,65 @@ struct UserCardView: View {
     var urlPic: URL
     
     var body: some View {
-        VStack {
-            AsyncImage(url: urlPic) { phase in
-                switch phase {
-                case .empty:
-                    ZStack {
+        NavigationLink(value: user) {
+            VStack {
+                AsyncImage(url: urlPic) { phase in
+                    switch phase {
+                    case .empty:
+                        ZStack {
+                            Image("personPic")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 100, height: 100)
+                            ProgressView()
+                        }
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFit() // Display the loaded image
+                            .clipShape(Circle())
+                            .frame(width: 100, height: 100)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.primary.opacity(0.2), lineWidth: 2)
+                            )
+                        
+                    case .failure:
                         Image("personPic")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 100, height: 100)
-                        ProgressView()
+                            .foregroundColor(.red)
+                            .tint(.red)
+                        
+                    @unknown default:
+                        fatalError()
                     }
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFit() // Display the loaded image
-                        .clipShape(Circle())
-                        .frame(width: 100, height: 100)
-                        .overlay(
-                            Circle()
-                                .stroke(Color.primary.opacity(0.2), lineWidth: 2)
-                        )
-
-                case .failure:
-                    Image("personPic")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 100, height: 100)
-                        .foregroundColor(.red)
-                        .tint(.red)
-
-                @unknown default:
-                    fatalError()
                 }
-            }
-           // .frame(width: 100, height: 100)
-//        }
-//            Image("1")
-//                .resizable()
-//                .scaledToFit()
-//                .clipShape(Circle())
-//                .frame(width: 100, height: 100)
-//                .overlay(
-//                    Circle()
-//                        .stroke(Color.primary.opacity(0.2), lineWidth: 2)
-//                )
-            VStack(alignment: .center, spacing: 0) {
-                Text(user.firstName)
-                Text(user.lastName)
-            }
-            .frame(width: 90)
-            .font(.body)
-            
-        } // end of VStack which is the label of Navigation Link
-        .padding(10)
-        .background(Color(.systemGray6))
-        .cornerRadius(10)
-        .shadow(radius: 10, x: 4, y: 4)
+                    // .frame(width: 100, height: 100)
+                    //        }
+                    //            Image("1")
+                    //                .resizable()
+                    //                .scaledToFit()
+                    //                .clipShape(Circle())
+                    //                .frame(width: 100, height: 100)
+                    //                .overlay(
+                    //                    Circle()
+                    //                        .stroke(Color.primary.opacity(0.2), lineWidth: 2)
+                    //                )
+                VStack(alignment: .center, spacing: 0) {
+                    Text(user.firstName)
+                    Text(user.lastName)
+                }
+                .frame(width: 90)
+                .font(.body)
+                
+            } // end of VStack which is the label of Navigation Link
+            .padding(10)
+            .background(Color(.systemGray6))
+            .cornerRadius(10)
+            .shadow(radius: 10, x: 4, y: 4)
+        }
     }
 }
 

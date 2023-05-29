@@ -8,7 +8,7 @@
 import SwiftUI
 
 
-struct UserListContent: View {
+struct UserListDup: View {
     
     @State private var searchText = ""
     
@@ -191,8 +191,8 @@ struct UserListContent: View {
 }
 
 
-struct UserListContentView_Previews: PreviewProvider {
+struct UserListDupView_Previews: PreviewProvider {
     static var previews: some View {
-        UserListContent(newUser: User.makeDefault())
+        UserListDup(newUser: User.makeDefault())
     }
 }
