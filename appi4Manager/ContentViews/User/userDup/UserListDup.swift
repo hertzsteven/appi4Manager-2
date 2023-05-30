@@ -43,22 +43,31 @@ struct UserListDup: View {
 
     
     var body: some View {
-        
-        ScrollView {
+        ZStack {
             
-            LazyVGrid(columns: gridItems, spacing: 30) {
+            if usersViewModel.isLoading {
+                VStack {
+                    ProgressView().controlSize(.large).scaleEffect(2)
+                }
+            } else {
                 
-                ForEach(usersViewModel.sortedUsersNonB(lastNameFilter: searchText, selectedLocationID: appWorkViewModel.selectedLocationIdx) ) {  theUser  in
+                ScrollView {
                     
-                    let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: appWorkViewModel.uniqueID)
-                    
-                    UserCardVwDup(user: theUser, urlPic: imageURL)
-                        .foregroundColor(Color.primary)
-                        .font(.body)
-                        .padding([.top, .bottom],10)
-                    
-                } // end of for each
-            } // end of list
+                    LazyVGrid(columns: gridItems, spacing: 30) {
+                        
+                        ForEach(usersViewModel.sortedUsersNonB(lastNameFilter: searchText, selectedLocationID: appWorkViewModel.selectedLocationIdx) ) {  theUser  in
+                            
+                            let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: appWorkViewModel.uniqueID)
+                            
+                            UserCardVwDup(user: theUser, urlPic: imageURL)
+                                .foregroundColor(Color.primary)
+                                .font(.body)
+                                .padding([.top, .bottom],10)
+                        }
+                        
+                    } // end of for each
+                } // end of list
+            }
         }
 
 
@@ -145,28 +154,23 @@ struct UserListDup: View {
         }
         
         
-        .task {
-            print("🚘 In outer task")
-            if !usersAreLoaded {
-                
-                
-                Task {
-                    do {
-                        studentPicStubViewModel.reloadData(uuid: appWorkViewModel.getpicClass())
-                            //                        let resposnse: UserResponse = try await ApiManager.shared.getData(from: .getUsers)
-                            //                        self.usersViewModel.users = resposnse.users
-                            //                        let classDetailResponse: ClassDetailResponse = try await ApiManager.shared.getData(from: .getStudents(uuid: ApiHelper.classuuid))
-                            //                        self.classDetailViewModel.students = classDetailResponse.class.students
-                            //                        self.usersAreLoaded.toggle()
-                    } catch let error as ApiError {
-                        print(error.description)
-                            //                        presentAlertSw.toggle()
-                    }
-                    
-                }
-                
-            }
-        }
+//        .task {
+//            print("🚘 In outer task")
+//            if !usersAreLoaded {
+//                
+//                
+//                Task {
+//                    do {
+//                        studentPicStubViewModel.reloadData(uuid: appWorkViewModel.getpicClass())
+//                    } catch let error as ApiError {
+//                        print(error.description)
+//                            //                        presentAlertSw.toggle()
+//                    }
+//                    
+//                }
+//                
+//            }
+//        }
  //      MARK: - Task Modifier    * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
         .task {
             if usersViewModel.ignoreLoading {
@@ -178,7 +182,19 @@ struct UserListDup: View {
 
                 usersViewModel.ignoreLoading = false
             }
-
+            
+            if !usersAreLoaded {
+                await reloadPicStub()
+//                Task {
+//                    do {
+//                        studentPicStubViewModel.reloadData(uuid: appWorkViewModel.getpicClass())
+//                    } catch let error as ApiError {
+//                        print(error.description)
+//                            //                        presentAlertSw.toggle()
+//                    }
+//
+//                }
+            }
         }
     }
     
@@ -195,6 +211,7 @@ struct UserListDup: View {
 }
 
 private extension UserListDup {
+    
     func loadTheUsers() async {
         do {
             try await usersViewModel.loadData2()
@@ -204,7 +221,19 @@ private extension UserListDup {
                 self.error      = xerror
             }
         }
-    }   
+    }
+    
+    func reloadPicStub() async {
+        do {
+            try await studentPicStubViewModel.reloadData2(uuid: appWorkViewModel.getpicClass())
+        } catch  {
+            if let xerror = error as? ApiError {
+                self.hasError   = true
+                self.error      = xerror
+            }
+        }
+    }
+
 }
 
 struct UserListDupView_Previews: PreviewProvider {

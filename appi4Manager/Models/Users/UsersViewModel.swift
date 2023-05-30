@@ -14,30 +14,33 @@ class UsersViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var ignoreLoading = false
 
-    init() {
-        Task {
-            isLoading = true
-            do {
-                let resposnse: UserResponse = try await ApiManager.shared.getData(from: .getUsers)
-                self.users = resposnse.users
-                isLoading = false
-            } catch {
-                fatalError("lost")
-            }
-        }
+//    init() {
+//        Task {
+//            isLoading = true
+//            do {
+//                let resposnse: UserResponse = try await ApiManager.shared.getData(from: .getUsers)
+//                self.users = resposnse.users
+//                isLoading = false
+//            } catch {
+//                fatalError("lost")
+//            }
+//        }
+//    }
+    
+    init(users: [User] = []) {
+        self.users = users
     }
     
-    
-    func loadData() throws {
-        guard !isLoading else { return }
-        isLoading = true
-        Task {
-            let resposnse: UserResponse = try await ApiManager.shared.getData(from: .getUsers)
-            DispatchQueue.main.async {
-                self.users = resposnse.users
-            }
-        }
-    }
+//    func loadData() throws {
+//        guard !isLoading else { return }
+//        isLoading = true
+//        Task {
+//            let resposnse: UserResponse = try await ApiManager.shared.getData(from: .getUsers)
+//            DispatchQueue.main.async {
+//                self.users = resposnse.users
+//            }
+//        }
+//    }
     
     func loadData2() async throws {
         

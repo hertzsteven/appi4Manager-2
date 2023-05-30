@@ -44,6 +44,7 @@ class StudentPicStubViewModel: ObservableObject {
 //        }
 //    }
     
+    
     func  reloadData(uuid: String)  {
         guard !isLoading else { return }
         print("in it")
@@ -60,6 +61,20 @@ class StudentPicStubViewModel: ObservableObject {
             } catch {
                 fatalError("lost")
             }
+        }
+    }
+    
+    func  reloadData2(uuid: String) async throws  {
+        guard !isLoading else { return }
+        
+        isLoading = true
+        defer { isLoading = false }
+        
+        let classDetailResponse: ClassDetailResponse = try await ApiManager.shared.getData(from: .getStudents(uuid: uuid))
+        
+        DispatchQueue.main.async {
+            self.students = classDetailResponse.class.students
+            self.name = classDetailResponse.class.name
         }
     }
 }
