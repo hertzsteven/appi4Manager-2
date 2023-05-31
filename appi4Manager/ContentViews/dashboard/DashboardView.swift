@@ -11,6 +11,7 @@ import SwiftUI
 struct DashboardView: View {
 
     @EnvironmentObject var classesViewModel: ClassesViewModel
+    @EnvironmentObject var usersViewModel:  UsersViewModel
     @State private var hasError = false
     @State private var error: ApiError?
 
@@ -77,7 +78,11 @@ struct DashboardView: View {
                         }
                     
                case "SchoolListDup":
+                    
                     SchoolListDup( newClass: SchoolClass.makeDefault())
+                        .task {
+                            await loadTheUsers()
+                       }
                     
                 default:
                     SchoolListContent(path: $path, newClass: SchoolClass.makeDefault())
@@ -97,6 +102,17 @@ private extension DashboardView {
     func loadTheClasses() async {
         do {
             try await classesViewModel.loadData2()
+        } catch  {
+            if let xerror = error as? ApiError {
+                self.hasError   = true
+                self.error      = xerror
+            }
+        }
+    }
+    
+    func loadTheUsers() async {
+        do {
+            try await usersViewModel.loadData2()
         } catch  {
             if let xerror = error as? ApiError {
                 self.hasError   = true

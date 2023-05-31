@@ -11,6 +11,18 @@ import _PhotosUI_SwiftUI
 
 struct UserEditorContDup: View {
     
+    @State private var inUpdate = false
+    @State private var inDelete = false
+    @State private var inAdd    = false
+    
+    @State var mode: EditMode = .inactive
+    
+    var itIsInEdit: Bool {
+        mode == .active
+    }
+    
+
+
     
     @State private var userImage: Image? = nil
     @StateObject var imagePicker = ImagePicker()
@@ -34,6 +46,15 @@ struct UserEditorContDup: View {
     
     @State  var user: User
     var urlPic: URL
+    
+    @State var userInitialValues: User
+    @State var selectedStudentsClassesInitialValues:   Array<Int> = []
+    @State var selectedTeachersClassesInitialValues:   Array<Int> = []
+    
+    @State private var isSheetPresented = false
+    @State private var inCancelEdit = false
+    @State private var inCancelAdd = false
+
 
     @State private var user_start   = User.makeDefault()  // this gets done by the update
     @State private var userCopy     = User.makeDefault()
@@ -50,7 +71,7 @@ struct UserEditorContDup: View {
     @Environment(\.dismiss) private var dismiss
 
     private var isUserDeleted: Bool {
-        !usersViewModel.exists(userCopy) && !isNew
+        !usersViewModel.exists(userInitialValues) && !isNew
     }
     
     fileprivate func addTheUser() {
@@ -107,6 +128,7 @@ struct UserEditorContDup: View {
         }
         dismiss()
     }
+
 
     var body: some View {
         VStack {
@@ -196,19 +218,81 @@ struct UserEditorContDup: View {
                         } // Hstack end
                     }
                 }
+                
+                
+                   
+ 
                 Section(header: Text("Name")) {
-                    TextField("First Name", text: $user.firstName )
-                        .padding([.top, .bottom], 8)
-                    TextField("Last Name", text: $user.lastName )
-                        .padding([.top, .bottom], 8)
+                    
+                    HStack {
+                        if itIsInEdit {
+                            if !user.firstName.isEmpty {
+                                Text("First Name: ")
+                            }
+                            TextField("First Name", text: $user.firstName )
+                                 .padding([.top, .bottom], 8)
+                        } else {
+                            Text(user.firstName).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
+                        }
+                    }
+                    
+                    HStack {
+                        if itIsInEdit {
+                            if !user.lastName.isEmpty {
+                                Text("Last Name: ")
+                            }
+                            TextField("Last Name", text: $user.lastName )
+                                 .padding([.top, .bottom], 8)
+                        } else {
+                            Text(user.lastName).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
+                        }
+                    }
+                    
+//                    TextField("First Name", text: $user.firstName )
+//                        .padding([.top, .bottom], 8)
+//
+//
+//                    TextField("Last Name", text: $user.lastName )
+//                        .padding([.top, .bottom], 8)
+//
+                    
                 }
                 Section(header: Text("Notes")) {
-                    TextField("Notes", text: $user.notes )
-                        .padding([.top, .bottom], 8)
+                    
+                    HStack {
+                        if itIsInEdit {
+                            if !user.notes.isEmpty {
+                                Text("notes: ")
+                            }
+                            TextField("notes", text: $user.notes )
+                                 .padding([.top, .bottom], 8)
+                        } else {
+                            Text(user.notes).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
+                        }
+                    }
+
+//                    TextField("Notes", text: $user.notes )
+//                        .padding([.top, .bottom], 8)
+
+
                 }
                 Section(header: Text("email")) {
-                    TextField("email", text: $user.email )
-                        .padding([.top, .bottom], 8)
+                    
+                    HStack {
+                        if itIsInEdit {
+                            if !user.email.isEmpty {
+                                Text("email: ")
+                            }
+                            TextField("email", text: $user.email )
+                                 .padding([.top, .bottom], 8)
+                        } else {
+                            Text(user.email).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
+                        }
+                    }
+                    
+//                    TextField("email", text: $user.email )
+//                        .padding([.top, .bottom], 8)
+                    
                 }
                 
                 .alert("Delete User?", isPresented: $showDeleteAlert) {
@@ -222,6 +306,7 @@ struct UserEditorContDup: View {
                 }
                 .textCase(nil)
                 
+                .environment(\.editMode, $mode)
 
 //            }
             
@@ -288,9 +373,122 @@ struct UserEditorContDup: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
-            .environment(\.editMode, $editMode)
+            
+            
+            .environment(\.editMode, $mode)
             .listStyle(SidebarListStyle())
-            .onDisappear {
+            
+ 
+
+//      MARK: - toolbar   * * * * * * * * * * * * * * * * * * * * * *
+			.toolbar(content: {
+			    ToolbarItem(placement: .navigationBarTrailing) {
+                if !isNew {
+                    Button(!itIsInEdit ? "Edit" : "**Done**") {
+                        if itIsInEdit {
+                            if inUpdate {
+                                return
+                            }
+                            Task {
+                                do {
+                                    inUpdate = true
+                                    await upDateUser()
+                                    inUpdate = false
+                                    mode = !itIsInEdit ? .active  : .inactive
+                                } catch {
+                                    print("Failed in task")
+                                }
+                            }
+                        } else {
+                            mode = .active
+                        }
+                    }.frame(height: 96, alignment: .trailing)
+                    
+                }
+            }
+            // 			Cancel button from editing not adding
+            ToolbarItem(placement: .navigationBarLeading) {
+                if itIsInEdit && !isNew {
+                    Button("Cancel") {
+                        inCancelEdit.toggle()
+                    }.frame(height: 96, alignment: .trailing)
+                }
+            }
+            
+            
+				ToolbarItem(placement: .cancellationAction) {
+					if isNew {
+						Button("Cancel") {
+							dismiss()
+						}
+					}
+				}
+				ToolbarItem {
+					Button {
+						addTheUser()
+					} label: {
+						Text(isNew ? "Add" : "")
+					}
+					.disabled(userCopy.lastName.isEmpty || userCopy.firstName.isEmpty)
+				}
+			})
+			
+//      MARK: - Navigation Bar  * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
+            .navigationBarBackButtonHidden(mode == .active ? true : false)
+
+
+//       MARK: - Confirmation Dialog  * * * * * * * * * * * * * * * * * * * * * * * * 
+        
+        .confirmationDialog("Are you sure you want to delete this class?", isPresented: $inDelete) {
+            Button("Delete Class", role: .destructive) {
+               // deleteClass()
+            }
+        }
+        // from edit
+        .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelEdit, titleVisibility: .visible) {
+            Button("Discard Changes edit ", role: .destructive) {
+                    // Do something when the user confirms
+                     mode = .inactive
+//                    selectedStudents        = selectedStudentsInitialValues
+//                    selectedTeachers        = selectedTeachersInitialValues
+                user.lastName        = userInitialValues.lastName
+                user.firstName        = userInitialValues.firstName
+                user.notes           = userInitialValues.notes
+
+//                    schoolClass.description = schoolClassInitialValues.description
+//                    dump(schoolClass)
+            }
+        }
+        // from add
+        .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelAdd, titleVisibility: .visible) {
+            Button("Discard Changes add ", role: .destructive) {
+                    // Do something when the user confirms
+                dismiss()
+            }
+        }
+    
+        
+
+
+
+
+
+//      MARK: - Appear and Disappear   * * * * * * * * * * * * * * * * * * * * * *                        
+				.onAppear {
+					usersViewModel.ignoreLoading = true
+
+					if !isNew {
+						toDoWithNewUserToProcess()
+					} else {
+						mode = .active
+					}
+				}
+
+				.onDisappear {
+					mode = .inactive
+				}
+
+           .onDisappear {
                 // We are about to update
                 if isNew == false && isDeleted == false {
                     print("🚘 In on disAppear -UserEditorContDup zero \(user.firstName) ")
@@ -320,47 +518,11 @@ struct UserEditorContDup: View {
                     }
                 }
              }
-
-                .toolbar(content: {
-                    ToolbarItem(placement: .cancellationAction) {
-                        if isNew {
-                            Button("Cancel") {
-                                dismiss()
-                            }
-                        }
-                    }
-                    ToolbarItem {
-                        Button {
-                            addTheUser()
-                        } label: {
-                            Text(isNew ? "Add" : "")
-                        }
-                        .disabled(userCopy.lastName.isEmpty || userCopy.firstName.isEmpty)
-                    }
-                })
-                       
-                .onAppear {
-                    userCopy = user
-                    user_start = user
-                    print("🚘 In on Appear - UserEditorContDup ")
-                }
-                .onChange(of: userCopy){ _ in
-                    if !isDeleted {
-                        user = userCopy
-                    }
-                }
-                .onDisappear {
-//                    print("🚘 In on disAppear -UserEditorContDup first \(user.firstName) ")
-                }
-            
-
-        }
-        .onDisappear {
-            print("🚴‍♂️ In on disAppear -UserEditorContDup second \(user.firstName)")
-        }
-        .onAppear {
-            print("🚴‍♂️ In on appear -UserEditorContDup second \(user.firstName)")
-           restoreSavedItems()
+//               .onChange(of: userCopy){ _ in
+//                    if !isDeleted {
+//                        user = userCopy
+//                    }
+//                }
         }
 
         .overlay(alignment: .center) {
@@ -375,9 +537,67 @@ struct UserEditorContDup: View {
     
 }
 
+extension UserEditorContDup {
+    
+    func toDoWithNewUserToProcess()  {
+        getUserDetail()
+        storeUserDetailStartingPoint()
+        mode = .inactive
+    }
+
+    
+    fileprivate func getUserDetail() {
+    
+/*
+ - Seems that all the User information is already retreived and no further retrevila is required,
+ - this is different from the class detail where we needed o retreive class detail info
+ - the only question is the picture
+ */
+        
+        storeUserDetailStartingPoint()
+        
+//        Task {
+//            do {
+//                    // get the class info
+//                let classDetailResponse: ClassDetailResponse = try await ApiManager.shared.getData(from: .getStudents(uuid: schoolClass.uuid))
+//
+//                    // retreive the students into View Model
+//                self.classDetailViewModel.students = classDetailResponse.class.students
+//                self.classDetailViewModel.teachers = classDetailResponse.class.teachers
+//
+//                storeUserDetailStartingPoint()
+//
+//
+//            } catch let error as ApiError {
+//                    //  FIXME: -  put in alert that will display approriate error message
+//                print(error.description)
+//            }
+//        }
+    }
+    
+    fileprivate func storeUserDetailStartingPoint() {
+    
+        // save for restore and compare
+        userInitialValues = user
+
+        // put the ids into selected students array
+        selectedStudentClasses = user.groupIds
+        selectedTeacherClasses = user.teacherGroups
+    }
+
+}
+
+    
+
+
 
 extension UserEditorContDup {
     
+    fileprivate func upDateUser() async {
+
+        
+
+    }
     
     
     fileprivate func restoreSavedItems() {
