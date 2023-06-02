@@ -9,6 +9,32 @@
 import SwiftUI
 import _PhotosUI_SwiftUI
 
+struct AnimateTextField: View {
+    @Binding var textField: String
+    @Binding var mode : EditMode
+    var itIsInEdit: Bool {
+        mode == .active
+    }
+    let label: String
+    
+    var body: some View {
+        
+        HStack {
+            if !textField.isEmpty {
+                Text("\(label): ")
+            }
+            
+            ZStack(alignment: .leading) {
+                TextField(label, text: $textField)
+                    .opacity(itIsInEdit ? 1 : 0)
+                Text(textField)
+                    .opacity(itIsInEdit ? 0 : 1)
+                    .foregroundColor(Color(.darkGray))
+            }
+        }
+    }
+}
+
 struct UserEditorContDup: View {
     
     @State private var inUpdate = false
@@ -144,6 +170,7 @@ struct UserEditorContDup: View {
                                          matching: .images) {
                                 Text("Select a photo")
                             }
+                                         .disabled(!itIsInEdit ? true : false)
                                          .tint(.purple)
                                          .controlSize(.large)
                                          .buttonStyle(.borderedProminent)
@@ -222,73 +249,100 @@ struct UserEditorContDup: View {
                 
                    
  
+//                Section(header: Text("Name")) {
+//
+//                    HStack {
+//                        if itIsInEdit {
+//                            if !user.firstName.isEmpty {
+//                                Text("First Name: ")
+//                            }
+//                            TextField("First Name", text: $user.firstName )
+//                                 .padding([.top, .bottom], 8)
+//                        } else {
+//                            Text(user.firstName).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
+//                        }
+//                    }
+//
+//                    HStack {
+//                        if itIsInEdit {
+//                            if !user.lastName.isEmpty {
+//                                Text("Last Name: ")
+//                            }
+//                            TextField("Last Name", text: $user.lastName )
+//                                 .padding([.top, .bottom], 8)
+//                        } else {
+//                            Text(user.lastName).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
+//                        }
+//                    }
+//
+////                    TextField("First Name", text: $user.firstName )
+////                        .padding([.top, .bottom], 8)
+////
+////
+////                    TextField("Last Name", text: $user.lastName )
+////                        .padding([.top, .bottom], 8)
+////
+//
+//                }
+//                Section(header: Text("Notes")) {
+//
+//                    HStack {
+//                        if itIsInEdit {
+//                            if !user.notes.isEmpty {
+//                                Text("notes: ")
+//                            }
+//                            TextField("notes", text: $user.notes )
+//                                 .padding([.top, .bottom], 8)
+//                        } else {
+//                            Text(user.notes).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
+//                        }
+//                    }
+//
+////                    TextField("Notes", text: $user.notes )
+////                        .padding([.top, .bottom], 8)
+//
+//
+//                }
                 Section(header: Text("Name")) {
-                    
-                    HStack {
-                        if itIsInEdit {
-                            if !user.firstName.isEmpty {
-                                Text("First Name: ")
-                            }
-                            TextField("First Name", text: $user.firstName )
-                                 .padding([.top, .bottom], 8)
-                        } else {
-                            Text(user.firstName).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
-                        }
-                    }
-                    
-                    HStack {
-                        if itIsInEdit {
-                            if !user.lastName.isEmpty {
-                                Text("Last Name: ")
-                            }
-                            TextField("Last Name", text: $user.lastName )
-                                 .padding([.top, .bottom], 8)
-                        } else {
-                            Text(user.lastName).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
-                        }
-                    }
-                    
-//                    TextField("First Name", text: $user.firstName )
-//                        .padding([.top, .bottom], 8)
-//
-//
-//                    TextField("Last Name", text: $user.lastName )
-//                        .padding([.top, .bottom], 8)
-//
-                    
+                    AnimateTextField(textField: $user.firstName, mode: $mode, label: "First Name")
+                    AnimateTextField(textField: $user.lastName, mode: $mode, label: "Last Name")
                 }
+                
                 Section(header: Text("Notes")) {
-                    
-                    HStack {
-                        if itIsInEdit {
-                            if !user.notes.isEmpty {
-                                Text("notes: ")
-                            }
-                            TextField("notes", text: $user.notes )
-                                 .padding([.top, .bottom], 8)
-                        } else {
-                            Text(user.notes).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
-                        }
-                    }
-
-//                    TextField("Notes", text: $user.notes )
-//                        .padding([.top, .bottom], 8)
-
-
+                    AnimateTextField(textField: $user.notes, mode: $mode, label: "notes")
                 }
+
                 Section(header: Text("email")) {
+                    AnimateTextField(textField: $user.email, mode: $mode, label: "email")
+//                    HStack {
+//                        if !user.email.isEmpty {
+//                            Text("email: ")
+//                        }
+//                        ZStack(alignment: .leading) {
+//                            TextField("email", text: $user.email)
+//                                .opacity(itIsInEdit ? 1 : 0)
+//
+//                            Text(user.email)
+//                                .foregroundColor(Color(.darkGray))
+//                                .opacity(itIsInEdit ? 0 : 1)
+//                        }
+//                    }
                     
-                    HStack {
-                        if itIsInEdit {
-                            if !user.email.isEmpty {
-                                Text("email: ")
-                            }
-                            TextField("email", text: $user.email )
-                                 .padding([.top, .bottom], 8)
-                        } else {
-                            Text(user.email).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
-                        }
-                    }
+
+
+                
+
+//                    HStack {
+//                        if itIsInEdit {
+//                            if !user.email.isEmpty {
+//                                Text("email: ")
+//                            }
+//                            TextField("email", text: $user.email )
+//                                 .padding([.top, .bottom], 8)
+//                        } else {
+//                            Text(user.email).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
+//                        }
+//                    }
                     
 //                    TextField("email", text: $user.email )
 //                        .padding([.top, .bottom], 8)
@@ -323,12 +377,14 @@ struct UserEditorContDup: View {
                     }), id: \.id) { schoolClass in
                         Text("\(schoolClass.name)")
                     }
+                    /*
                     .onDelete { offsets in
                         for offSet in offsets {
                             selectedStudentClasses.remove(at: offSet)
                         }
                         saveselectedStudentClasses()
                     }
+                     */
 //                }
                 } header: {
                     HStack {
@@ -361,17 +417,24 @@ struct UserEditorContDup: View {
 //                .headerProminence(.standard)
             }
                 
-                
                 if !isNew {
-                    Button(role: .destructive) {
-                        showDeleteAlert = true
-                    } label: {
-                        Text("Delete User")
-                            .font(Font.custom("SF Pro", size: 17))
-                            .foregroundColor(Color(UIColor.systemRed))
-                    }
-                    .frame(maxWidth: .infinity, alignment: .center)
+                    DeleteButtonView(action: {
+                        inDelete.toggle()
+                    })
+                    .listRowInsets(EdgeInsets())
+                    .disabled(!itIsInEdit ? true : false)
                 }
+                
+//                if !isNew {
+//                    Button(role: .destructive) {
+//                        showDeleteAlert = true
+//                    } label: {
+//                        Text("Delete User")
+//                            .font(Font.custom("SF Pro", size: 17))
+//                            .foregroundColor(Color(UIColor.systemRed))
+//                    }
+//                    .frame(maxWidth: .infinity, alignment: .center)
+//                }
             }
             
             
@@ -394,13 +457,19 @@ struct UserEditorContDup: View {
                                     inUpdate = true
                                     await upDateUser()
                                     inUpdate = false
-                                    mode = !itIsInEdit ? .active  : .inactive
+                                    if !itIsInEdit {
+                                        updateModeWithAnimation()
+                                    } else {
+                                        updateModeWithAnimation(switchTo: .inactive)
+                                    }
+//                                    mode = !itIsInEdit ? .active  : .inactive
                                 } catch {
                                     print("Failed in task")
                                 }
                             }
                         } else {
-                            mode = .active
+                            updateModeWithAnimation()
+//                            mode = .active
                         }
                     }.frame(height: 96, alignment: .trailing)
                     
@@ -452,8 +521,10 @@ struct UserEditorContDup: View {
 //                    selectedStudents        = selectedStudentsInitialValues
 //                    selectedTeachers        = selectedTeachersInitialValues
                 user.lastName        = userInitialValues.lastName
-                user.firstName        = userInitialValues.firstName
+                user.firstName       = userInitialValues.firstName
                 user.notes           = userInitialValues.notes
+                user.email           = userInitialValues.email
+
 
 //                    schoolClass.description = schoolClassInitialValues.description
 //                    dump(schoolClass)
@@ -488,6 +559,7 @@ struct UserEditorContDup: View {
 					mode = .inactive
 				}
 
+/* 
            .onDisappear {
                 // We are about to update
                 if isNew == false && isDeleted == false {
@@ -518,6 +590,7 @@ struct UserEditorContDup: View {
                     }
                 }
              }
+ */
 //               .onChange(of: userCopy){ _ in
 //                    if !isDeleted {
 //                        user = userCopy
@@ -538,6 +611,13 @@ struct UserEditorContDup: View {
 }
 
 extension UserEditorContDup {
+    
+    fileprivate func updateModeWithAnimation(switchTo theMode: EditMode = .active) {
+        withAnimation(.easeInOut(duration: 1.0)) {
+            mode = theMode
+        }
+    }
+
     
     func toDoWithNewUserToProcess()  {
         getUserDetail()
@@ -595,7 +675,16 @@ extension UserEditorContDup {
     
     fileprivate func upDateUser() async {
 
+        await usersViewModel.updateUser2(user: user)
         
+        let index = usersViewModel.users.firstIndex { usr in
+            usr.id == user.id
+        }
+
+
+        usersViewModel.users[index!] = user
+        
+        storeUserDetailStartingPoint()
 
     }
     

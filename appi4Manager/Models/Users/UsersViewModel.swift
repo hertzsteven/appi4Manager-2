@@ -49,7 +49,7 @@ class UsersViewModel: ObservableObject {
         isLoading = true
         defer { isLoading = false }
         
-        try await Task.sleep(nanoseconds: 3 * 1_000_000_000) // 1 second = 1_000_000_000 nanoseconds
+        try await Task.sleep(nanoseconds: 1 * 1_000_000_000) // 1 second = 1_000_000_000 nanoseconds
 
         let resposnse: UserResponse = try await ApiManager.shared.getData(from: .getUsers)
         DispatchQueue.main.async {
@@ -86,7 +86,29 @@ class UsersViewModel: ObservableObject {
                                                                                locationId: user.locationId,
                                                                                groupIds: user.groupIds,
                                                                                teacherGroups: user.teacherGroups))
-                //                                                                              groupIds: user.groupIds))
+            
+        } catch let error as ApiError {
+                //  FIXME: -  put in alert that will display approriate error message
+            print(error.description)
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+    }
+    
+    
+    func updateUser2(user: User) async -> Void {
+        do {
+            _ = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: user.id,
+                                                                               username: user.username,
+                                                                               password: "123456" ,
+                                                                               email: user.email,
+                                                                               firstName: user.firstName,
+                                                                               lastName: user.lastName,
+                                                                               notes: user.notes,
+                                                                               locationId: user.locationId,
+                                                                               groupIds: user.groupIds,
+                                                                               teacherGroups: user.teacherGroups))
             
         } catch let error as ApiError {
                 //  FIXME: -  put in alert that will display approriate error message

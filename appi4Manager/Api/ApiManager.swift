@@ -37,9 +37,9 @@ final class ApiManager {
                             filePathKey: String,
                             data: Data,
                             boundary: String)
-        throws -> Data {
+    throws -> Data {
         var body = Data()
-
+        
         let fileName = UUID().uuidString.components(separatedBy: "-").first! + ".jpg"
         print("this is the file name just generated: \(fileName)")
         
