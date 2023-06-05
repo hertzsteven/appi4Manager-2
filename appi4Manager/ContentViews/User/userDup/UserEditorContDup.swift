@@ -247,43 +247,6 @@ struct UserEditorContDup: View {
                 }
                 
                 
-                   
- 
-//                Section(header: Text("Name")) {
-//
-//                    HStack {
-//                        if itIsInEdit {
-//                            if !user.firstName.isEmpty {
-//                                Text("First Name: ")
-//                            }
-//                            TextField("First Name", text: $user.firstName )
-//                                 .padding([.top, .bottom], 8)
-//                        } else {
-//                            Text(user.firstName).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
-//                        }
-//                    }
-//
-//                    HStack {
-//                        if itIsInEdit {
-//                            if !user.lastName.isEmpty {
-//                                Text("Last Name: ")
-//                            }
-//                            TextField("Last Name", text: $user.lastName )
-//                                 .padding([.top, .bottom], 8)
-//                        } else {
-//                            Text(user.lastName).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
-//                        }
-//                    }
-//
-////                    TextField("First Name", text: $user.firstName )
-////                        .padding([.top, .bottom], 8)
-////
-////
-////                    TextField("Last Name", text: $user.lastName )
-////                        .padding([.top, .bottom], 8)
-////
-//
-//                }
 //                Section(header: Text("Notes")) {
 //
 //                    HStack {
@@ -314,38 +277,6 @@ struct UserEditorContDup: View {
 
                 Section(header: Text("email")) {
                     AnimateTextField(textField: $user.email, mode: $mode, label: "email")
-//                    HStack {
-//                        if !user.email.isEmpty {
-//                            Text("email: ")
-//                        }
-//                        ZStack(alignment: .leading) {
-//                            TextField("email", text: $user.email)
-//                                .opacity(itIsInEdit ? 1 : 0)
-//
-//                            Text(user.email)
-//                                .foregroundColor(Color(.darkGray))
-//                                .opacity(itIsInEdit ? 0 : 1)
-//                        }
-//                    }
-                    
-
-
-                
-
-//                    HStack {
-//                        if itIsInEdit {
-//                            if !user.email.isEmpty {
-//                                Text("email: ")
-//                            }
-//                            TextField("email", text: $user.email )
-//                                 .padding([.top, .bottom], 8)
-//                        } else {
-//                            Text(user.email).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
-//                        }
-//                    }
-                    
-//                    TextField("email", text: $user.email )
-//                        .padding([.top, .bottom], 8)
                     
                 }
                 
@@ -675,15 +606,19 @@ extension UserEditorContDup {
     
     fileprivate func upDateUser() async {
 
+    	// update user in JAMF
         await usersViewModel.updateUser2(user: user)
         
+        // update user in array of users being shown
         let index = usersViewModel.users.firstIndex { usr in
             usr.id == user.id
         }
-
-
         usersViewModel.users[index!] = user
         
+        // update the student Pic
+//        imagePicker.updateTheImage()
+        
+        // do housekeeping - start a new starting point
         storeUserDetailStartingPoint()
 
     }
