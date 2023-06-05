@@ -37,6 +37,8 @@ struct AnimateTextField: View {
 
 struct UserEditorContDup: View {
     
+    @State var isBlocking = false
+    
     @State private var inUpdate = false
     @State private var inDelete = false
     @State private var inAdd    = false
@@ -157,77 +159,62 @@ struct UserEditorContDup: View {
 
 
     var body: some View {
-        VStack {
-            
-            Form {
-                Section(header: Text("Photo")) {
-                    VStack(alignment: .center) {
-                        
-                        HStack {
-                            
-                                // photo picker
-                            PhotosPicker(selection: $imagePicker.imageSelection,
-                                         matching: .images) {
-                                Text("Select a photo")
-                            }
-                                         .disabled(!itIsInEdit ? true : false)
-                                         .tint(.purple)
-                                         .controlSize(.large)
-                                         .buttonStyle(.borderedProminent)
-                                         .padding()
-                                         .onAppear {
-                                             imagePicker.studentId = user.id
-                                             imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
-                                             imagePicker.imageSelection = nil
-                                             imagePicker.image = nil
-                                             imagePicker.theUIImage = nil
-                                         }
-                                         .onDisappear {
-                                             print("-- in disappear")
-                                             task {
-                                                 do {
-                                                     try await studentPicStubViewModel.reloadData(uuid: appWorkViewModel.getpicClass())
-                                                 } catch {
-                                                     print("ellelelell  Big error")
-                                                 }
-                                             }
-                                         }
-                            
-                                // delete button
-                            if userImage != nil {
-                                Button(action: {
-                                    self.userImage = nil
-                                }) {
-                                    Text("Delete Image")
-                                        .padding()
-                                        .background(Color.red)
-                                        .foregroundColor(.white)
-                                        .cornerRadius(10)
-                                }
-                            }
-                            
-                            Spacer()
-                            
-                                // if an image exists
-                            if let image = imagePicker.image {
-                                image
-                                    .resizable()
-                                    .scaledToFit() // Display the loaded image
-                                    .clipShape(Circle())
-                                    .frame(width: 100, height: 100)
-                                    .overlay(
-                                        Circle()
-                                            .stroke(Color.primary.opacity(0.2), lineWidth: 2)
-                                    )
-                                    .onAppear {
-                                        appWorkViewModel.uniqueID = UUID()
+
+        ZStack {
+            VStack {
+                    
+                    Form {
+                        Section(header: Text("Photo")) {
+                            VStack(alignment: .center) {
+                                
+                                HStack {
+                                    
+                                        // photo picker
+                                    PhotosPicker(selection: $imagePicker.imageSelection,
+                                                 matching: .images) {
+                                        Text("Select a photo")
                                     }
-                            } else {
-                                AsyncImage(url: urlPic) { phase in
-                                    switch phase {
-                                    case .empty:
-                                        ProgressView() // Display a progress view while the image is loading
-                                    case .success(let image):
+                                                 .disabled(!itIsInEdit ? true : false)
+                                                 .tint(.purple)
+                                                 .controlSize(.large)
+                                                 .buttonStyle(.borderedProminent)
+                                                 .padding()
+                                                 .onAppear {
+                                                     imagePicker.studentId = user.id
+                                                     imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
+                                                     imagePicker.imageSelection = nil
+                                                     imagePicker.image = nil
+                                                     imagePicker.theUIImage = nil
+                                                     print("-*- in onAppear student id is \(user.id)")
+                                                 }
+                                                 .onDisappear {
+                                                     print("-- in disappear")
+                                                     task {
+                                                         do {
+                                                             try await studentPicStubViewModel.reloadData(uuid: appWorkViewModel.getpicClass())
+                                                         } catch {
+                                                             print("ellelelell  Big error")
+                                                         }
+                                                     }
+                                                 }
+                                    
+                                        // delete button
+                                    if userImage != nil {
+                                        Button(action: {
+                                            self.userImage = nil
+                                        }) {
+                                            Text("Delete Image")
+                                                .padding()
+                                                .background(Color.red)
+                                                .foregroundColor(.white)
+                                                .cornerRadius(10)
+                                        }
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                        // if an image exists
+                                    if let image = imagePicker.image {
                                         image
                                             .resizable()
                                             .scaledToFit() // Display the loaded image
@@ -237,312 +224,341 @@ struct UserEditorContDup: View {
                                                 Circle()
                                                     .stroke(Color.primary.opacity(0.2), lineWidth: 2)
                                             )
-                                        
-                                    case .failure:
-                                        Text("Failed to load image") // Display an error message if the image fails to load
-                                    @unknown default:
-                                        fatalError()
-                                    }
-                                }
-                            }
-                        } // Hstack end
-                    }
-                }
-                
-                
-//                Section(header: Text("Notes")) {
-//
-//                    HStack {
-//                        if itIsInEdit {
-//                            if !user.notes.isEmpty {
-//                                Text("notes: ")
-//                            }
-//                            TextField("notes", text: $user.notes )
-//                                 .padding([.top, .bottom], 8)
-//                        } else {
-//                            Text(user.notes).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
-//                        }
-//                    }
-//
-////                    TextField("Notes", text: $user.notes )
-////                        .padding([.top, .bottom], 8)
-//
-//
-//                }
-                Section(header: Text("Name")) {
-                    AnimateTextField(textField: $user.firstName, mode: $mode, label: "First Name")
-                    AnimateTextField(textField: $user.lastName, mode: $mode, label: "Last Name")
-                }
-                
-                Section(header: Text("Notes")) {
-                    AnimateTextField(textField: $user.notes, mode: $mode, label: "notes")
-                }
-
-                Section(header: Text("email")) {
-                    AnimateTextField(textField: $user.email, mode: $mode, label: "email")
-                    
-                }
-                
-                .alert("Delete User?", isPresented: $showDeleteAlert) {
-                    Button(role: .destructive) {
-                        deleteTheUser()
-                    } label: {
-                        Text("Delete")
-                    }
-                } message: {
-                    Text("This will permanently delete the user.")
-                }
-                .textCase(nil)
-                
-                .environment(\.editMode, $mode)
-
-//            }
-            
-            
-//            UserDetailContent(user: $userCopy, isDeleted: $isDeleted, isNew: $isNew, urlPic: urlPic)
-            List {
-                Section {
-                    
-                    ForEach(selectedStudentClasses.compactMap({ id in
-//                        classesViewModel.schoolClasses
-                        (classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
-                                                                                            dummyPicClassToIgnore: appWorkViewModel.getpicClass() ) )
-                            .first(where: { $0.userGroupId == id })
-                    }), id: \.id) { schoolClass in
-                        Text("\(schoolClass.name)")
-                    }
-                    /*
-                    .onDelete { offsets in
-                        for offSet in offsets {
-                            selectedStudentClasses.remove(at: offSet)
-                        }
-                        saveselectedStudentClasses()
-                    }
-                     */
-//                }
-                } header: {
-                    HStack {
-                        Text("Classes ")
-                            //                                .bold()
-//                            .font(.title3)
-                        if editMode == .active || ( isNew == true && !userCopy.lastName.isEmpty ) {
-                            Spacer()
-                            Button {
-                                Task {
-                                    do {
-//                                        teacherIds = try await appWorkViewModel.getUsersInTeacherGroup() ?? []
-                                        passedItemSelected = selectedStudentClasses
-                                        toShowStudentClassesList.toggle()
-                                    } catch {
-                                        // Handle error
-                                    }
-                                }
-                             } label: {
-                                Image(systemName: "plus.forwardslash.minus")
-                                    .foregroundColor(.blue)
-                            }
-                            Divider()
-                        }
-                    }
-                }
-//           footer: {
-//                   Text("Number of classes: \(selectedStudentClasses.count)")
-//               }
-//                .headerProminence(.standard)
-            }
-                
-                if !isNew {
-                    DeleteButtonView(action: {
-                        inDelete.toggle()
-                    })
-                    .listRowInsets(EdgeInsets())
-                    .disabled(!itIsInEdit ? true : false)
-                }
-                
-//                if !isNew {
-//                    Button(role: .destructive) {
-//                        showDeleteAlert = true
-//                    } label: {
-//                        Text("Delete User")
-//                            .font(Font.custom("SF Pro", size: 17))
-//                            .foregroundColor(Color(UIColor.systemRed))
-//                    }
-//                    .frame(maxWidth: .infinity, alignment: .center)
-//                }
-            }
-            
-            
-            .environment(\.editMode, $mode)
-            .listStyle(SidebarListStyle())
-            
- 
-
-//      MARK: - toolbar   * * * * * * * * * * * * * * * * * * * * * *
-			.toolbar(content: {
-			    ToolbarItem(placement: .navigationBarTrailing) {
-                if !isNew {
-                    Button(!itIsInEdit ? "Edit" : "**Done**") {
-                        if itIsInEdit {
-                            if inUpdate {
-                                return
-                            }
-                            Task {
-                                do {
-                                    inUpdate = true
-                                    await upDateUser()
-                                    inUpdate = false
-                                    if !itIsInEdit {
-                                        updateModeWithAnimation()
+                                            .onAppear {
+                                                appWorkViewModel.uniqueID = UUID()
+                                            }
                                     } else {
-                                        updateModeWithAnimation(switchTo: .inactive)
+                                        AsyncImage(url: urlPic) { phase in
+                                            switch phase {
+                                            case .empty:
+                                                ProgressView() // Display a progress view while the image is loading
+                                            case .success(let image):
+                                                image
+                                                    .resizable()
+                                                    .scaledToFit() // Display the loaded image
+                                                    .clipShape(Circle())
+                                                    .frame(width: 100, height: 100)
+                                                    .overlay(
+                                                        Circle()
+                                                            .stroke(Color.primary.opacity(0.2), lineWidth: 13)
+                                                    )
+                                                
+                                            case .failure:
+                                                Text("Failed to load image") // Display an error message if the image fails to load
+                                            @unknown default:
+                                                fatalError()
+                                            }
+                                        }
                                     }
-//                                    mode = !itIsInEdit ? .active  : .inactive
-                                } catch {
-                                    print("Failed in task")
+                                } // Hstack end
+                            }
+                        }
+                        
+                        
+        //                Section(header: Text("Notes")) {
+        //
+        //                    HStack {
+        //                        if itIsInEdit {
+        //                            if !user.notes.isEmpty {
+        //                                Text("notes: ")
+        //                            }
+        //                            TextField("notes", text: $user.notes )
+        //                                 .padding([.top, .bottom], 8)
+        //                        } else {
+        //                            Text(user.notes).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
+        //                        }
+        //                    }
+        //
+        ////                    TextField("Notes", text: $user.notes )
+        ////                        .padding([.top, .bottom], 8)
+        //
+        //
+        //                }
+                        Section(header: Text("Name")) {
+                            AnimateTextField(textField: $user.firstName, mode: $mode, label: "First Name")
+                            AnimateTextField(textField: $user.lastName, mode: $mode, label: "Last Name")
+                        }
+                        
+                        Section(header: Text("Notes")) {
+                            AnimateTextField(textField: $user.notes, mode: $mode, label: "notes")
+                        }
+
+                        Section(header: Text("email")) {
+                            AnimateTextField(textField: $user.email, mode: $mode, label: "email")
+                            
+                        }
+                        
+                        .alert("Delete User?", isPresented: $showDeleteAlert) {
+                            Button(role: .destructive) {
+                                deleteTheUser()
+                            } label: {
+                                Text("Delete")
+                            }
+                        } message: {
+                            Text("This will permanently delete the user.")
+                        }
+                        .textCase(nil)
+                        
+                        .environment(\.editMode, $mode)
+
+        //            }
+                    
+                    
+        //            UserDetailContent(user: $userCopy, isDeleted: $isDeleted, isNew: $isNew, urlPic: urlPic)
+                    List {
+                        Section {
+                            
+                            ForEach(selectedStudentClasses.compactMap({ id in
+        //                        classesViewModel.schoolClasses
+                                (classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
+                                                                                                    dummyPicClassToIgnore: appWorkViewModel.getpicClass() ) )
+                                    .first(where: { $0.userGroupId == id })
+                            }), id: \.id) { schoolClass in
+                                Text("\(schoolClass.name)")
+                            }
+                            /*
+                            .onDelete { offsets in
+                                for offSet in offsets {
+                                    selectedStudentClasses.remove(at: offSet)
+                                }
+                                saveselectedStudentClasses()
+                            }
+                             */
+        //                }
+                        } header: {
+                            HStack {
+                                Text("Classes ")
+                                    //                                .bold()
+        //                            .font(.title3)
+                                if editMode == .active || ( isNew == true && !userCopy.lastName.isEmpty ) {
+                                    Spacer()
+                                    Button {
+                                        Task {
+                                            do {
+        //                                        teacherIds = try await appWorkViewModel.getUsersInTeacherGroup() ?? []
+                                                passedItemSelected = selectedStudentClasses
+                                                toShowStudentClassesList.toggle()
+                                            } catch {
+                                                // Handle error
+                                            }
+                                        }
+                                     } label: {
+                                        Image(systemName: "plus.forwardslash.minus")
+                                            .foregroundColor(.blue)
+                                    }
+                                    Divider()
                                 }
                             }
-                        } else {
-                            updateModeWithAnimation()
-//                            mode = .active
                         }
-                    }.frame(height: 96, alignment: .trailing)
-                    
-                }
-            }
-            // 			Cancel button from editing not adding
-            ToolbarItem(placement: .navigationBarLeading) {
-                if itIsInEdit && !isNew {
-                    Button("Cancel") {
-                        inCancelEdit.toggle()
-                    }.frame(height: 96, alignment: .trailing)
-                }
-            }
-            
-            
-				ToolbarItem(placement: .cancellationAction) {
-					if isNew {
-						Button("Cancel") {
-							dismiss()
-						}
-					}
-				}
-				ToolbarItem {
-					Button {
-						addTheUser()
-					} label: {
-						Text(isNew ? "Add" : "")
-					}
-					.disabled(userCopy.lastName.isEmpty || userCopy.firstName.isEmpty)
-				}
-			})
-			
-//      MARK: - Navigation Bar  * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
-            .navigationBarBackButtonHidden(mode == .active ? true : false)
-
-
-//       MARK: - Confirmation Dialog  * * * * * * * * * * * * * * * * * * * * * * * * 
-        
-        .confirmationDialog("Are you sure you want to delete this class?", isPresented: $inDelete) {
-            Button("Delete Class", role: .destructive) {
-               // deleteClass()
-            }
-        }
-        // from edit
-        .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelEdit, titleVisibility: .visible) {
-            Button("Discard Changes edit ", role: .destructive) {
-                    // Do something when the user confirms
-                     mode = .inactive
-//                    selectedStudents        = selectedStudentsInitialValues
-//                    selectedTeachers        = selectedTeachersInitialValues
-                user.lastName        = userInitialValues.lastName
-                user.firstName       = userInitialValues.firstName
-                user.notes           = userInitialValues.notes
-                user.email           = userInitialValues.email
-
-
-//                    schoolClass.description = schoolClassInitialValues.description
-//                    dump(schoolClass)
-            }
-        }
-        // from add
-        .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelAdd, titleVisibility: .visible) {
-            Button("Discard Changes add ", role: .destructive) {
-                    // Do something when the user confirms
-                dismiss()
-            }
-        }
-    
-        
-
-
-
-
-
-//      MARK: - Appear and Disappear   * * * * * * * * * * * * * * * * * * * * * *                        
-				.onAppear {
-					usersViewModel.ignoreLoading = true
-
-					if !isNew {
-						toDoWithNewUserToProcess()
-					} else {
-						mode = .active
-					}
-				}
-
-				.onDisappear {
-					mode = .inactive
-				}
-
-/* 
-           .onDisappear {
-                // We are about to update
-                if isNew == false && isDeleted == false {
-                    print("🚘 In on disAppear -UserEditorContDup zero \(user.firstName) ")
-                    if user_start == user {
-                        print("its the same")
-                    } else {
-                        print("its different")
+        //           footer: {
+        //                   Text("Number of classes: \(selectedStudentClasses.count)")
+        //               }
+        //                .headerProminence(.standard)
+                    }
                         
-                        Task {
-                            print(user.notes)
-                            await UsersViewModel.updateUser(user:user)
-//                            do {
-//                                _ = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: user.id,
-//                                                                                                   username: user.username,
-//                                                                                                   password: "123456" ,
-//                                                                                                   email: user.email,
-//                                                                                                   firstName: user.firstName,
-//                                                                                                   lastName: user.lastName,
-//                                                                                                   locationId: user.locationId))
-//
-//                            } catch let error as ApiError {
-//                                    //  FIXME: -  put in alert that will display approriate error message
-//                                print(error.description)
-//                            }
+                        if !isNew {
+                            DeleteButtonView(action: {
+                                inDelete.toggle()
+                            })
+                            .listRowInsets(EdgeInsets())
+                            .disabled(!itIsInEdit ? true : false)
                         }
+ 
+                        
+        //                if !isNew {
+        //                    Button(role: .destructive) {
+        //                        showDeleteAlert = true
+        //                    } label: {
+        //                        Text("Delete User")
+        //                            .font(Font.custom("SF Pro", size: 17))
+        //                            .foregroundColor(Color(UIColor.systemRed))
+        //                    }
+        //                    .frame(maxWidth: .infinity, alignment: .center)
+        //                }
+                    }
+                    
+                    
+                    .environment(\.editMode, $mode)
+                    .listStyle(SidebarListStyle())
+                    
+
+        //      MARK: - toolbar   * * * * * * * * * * * * * * * * * * * * * *
+                    .toolbar(content: {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                        if !isNew {
+                            Button(!itIsInEdit ? "Edit" : "**Done**") {
+                                if itIsInEdit {
+                                    if inUpdate {
+                                        return
+                                    }
+                                    
+                                    Task {
+                                        isBlocking = true
+                                       
+                                        do {
+                                            inUpdate = true
+                                            await upDateUser()
+                                            inUpdate = false
+                                            isBlocking = false
+                                            if !itIsInEdit {
+                                                updateModeWithAnimation()
+                                            } else {
+                                                updateModeWithAnimation(switchTo: .inactive)
+                                            }
+        //                                    mode = !itIsInEdit ? .active  : .inactive
+                                        } catch {
+                                            print("Failed in task")
+                                        }
+                                    }
+                                } else {
+                                    updateModeWithAnimation()
+        //                            mode = .active
+                                }
+                            }.frame(height: 96, alignment: .trailing)
+                                .disabled(isBlocking)
+                            
+                        }
+                    }
+                    // 			Cancel button from editing not adding
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        if itIsInEdit && !isNew {
+                            Button("Cancel") {
+                                inCancelEdit.toggle()
+                            }.frame(height: 96, alignment: .trailing)
+                                .disabled(isBlocking)
+                        }
+                    }
+                    
+                    
+                        ToolbarItem(placement: .cancellationAction) {
+                            if isNew {
+                                Button("Cancel") {
+                                    dismiss()
+                                }
+                            }
+                        }
+                        ToolbarItem {
+                            Button {
+                                addTheUser()
+                            } label: {
+                                Text(isNew ? "Add" : "")
+                            }
+                            .disabled(userCopy.lastName.isEmpty || userCopy.firstName.isEmpty)
+                        }
+                    })
+                    
+        //      MARK: - Navigation Bar  * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
+                    .navigationBarBackButtonHidden(mode == .active ? true : false)
+
+
+        //       MARK: - Confirmation Dialog  * * * * * * * * * * * * * * * * * * * * * * * *
+                
+                .confirmationDialog("Are you sure you want to delete this class?", isPresented: $inDelete) {
+                    Button("Delete Class", role: .destructive) {
+                       // deleteClass()
+                    }
+                }
+                // from edit
+                .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelEdit, titleVisibility: .visible) {
+                    Button("Discard Changes edit ", role: .destructive) {
+                            // Do something when the user confirms
+                             mode = .inactive
+        //                    selectedStudents        = selectedStudentsInitialValues
+        //                    selectedTeachers        = selectedTeachersInitialValues
+                        user.lastName        = userInitialValues.lastName
+                        user.firstName       = userInitialValues.firstName
+                        user.notes           = userInitialValues.notes
+                        user.email           = userInitialValues.email
+
+
+        //                    schoolClass.description = schoolClassInitialValues.description
+        //                    dump(schoolClass)
+                    }
+                }
+                // from add
+                .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelAdd, titleVisibility: .visible) {
+                    Button("Discard Changes add ", role: .destructive) {
+                            // Do something when the user confirms
                         dismiss()
                     }
                 }
-             }
- */
-//               .onChange(of: userCopy){ _ in
-//                    if !isDeleted {
-//                        user = userCopy
-//                    }
-//                }
-        }
+            
+                
 
-        .overlay(alignment: .center) {
-            if isUserDeleted {
-                Color(UIColor.systemBackground)
-                Text("User Deleted. Select an User.")
-                    .foregroundStyle(.secondary)
+
+
+
+
+        //      MARK: - Appear and Disappear   * * * * * * * * * * * * * * * * * * * * * *
+                        .onAppear {
+                            usersViewModel.ignoreLoading = true
+
+                            if !isNew {
+                                toDoWithNewUserToProcess()
+                            } else {
+                                mode = .active
+                            }
+                        }
+
+                        .onDisappear {
+                            mode = .inactive
+                        }
+
+        /*
+                   .onDisappear {
+                        // We are about to update
+                        if isNew == false && isDeleted == false {
+                            print("🚘 In on disAppear -UserEditorContDup zero \(user.firstName) ")
+                            if user_start == user {
+                                print("its the same")
+                            } else {
+                                print("its different")
+                                
+                                Task {
+                                    print(user.notes)
+                                    await UsersViewModel.updateUser(user:user)
+        //                            do {
+        //                                _ = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: user.id,
+        //                                                                                                   username: user.username,
+        //                                                                                                   password: "123456" ,
+        //                                                                                                   email: user.email,
+        //                                                                                                   firstName: user.firstName,
+        //                                                                                                   lastName: user.lastName,
+        //                                                                                                   locationId: user.locationId))
+        //
+        //                            } catch let error as ApiError {
+        //                                    //  FIXME: -  put in alert that will display approriate error message
+        //                                print(error.description)
+        //                            }
+                                }
+                                dismiss()
+                            }
+                        }
+                     }
+         */
+        //               .onChange(of: userCopy){ _ in
+        //                    if !isDeleted {
+        //                        user = userCopy
+        //                    }
+        //                }
+                }
+
+                .overlay(alignment: .center) {
+                    if isUserDeleted {
+                        Color(UIColor.systemBackground)
+                        Text("User Deleted. Select an User.")
+                            .foregroundStyle(.secondary)
+                    }
+                    
             }
+            BlockingOverlayView(isBlocking: $isBlocking)
+
+        }
         }
     }
  
     
-}
+
 
 extension UserEditorContDup {
     

@@ -15,6 +15,7 @@ class ImagePicker: ObservableObject {
     @EnvironmentObject var classDetailViewModel: ClassDetailViewModel
     
     var theUIImage: UIImage?
+    var inUpdate: Bool = false
     @Published var image: Image?
     @Published var images: [Image] = []
     
@@ -102,10 +103,12 @@ func loadTransferable2(from imageSelection: PhotosPickerItem?) async throws {
         guard let data = try await imageSelection?.loadTransferable(type: Data.self) else {
             throw ImageProcessingError.loadTransferablefailed
         }
+        print("-*- After loadTransferable")
         
         guard let uiImg = UIImage(data: data) else {
             throw ImageProcessingError.invalidImageData
         }
+        print("-*- After UIImage")
 
         image = Image(uiImage: uiImg)
         theUIImage = uiImg
@@ -135,19 +138,28 @@ func loadTransferable2(from imageSelection: PhotosPickerItem?) async throws {
 // TODO: It does not work for most of the types
 func loadTransferable2Update() async  {
     
-    do {
-        
-        defer {
-            image = nil
-            theUIImage = nil
-        }
+    guard inUpdate == false else {
+        return
+    }
+    
+    inUpdate = true
+    
+    defer {
+         image = nil
+         theUIImage = nil
+         inUpdate = false
+     }
 
+    do {
+ 
 //        image = Image(uiImage: uiImg)
 //        theUIImage = uiImg
+//        try await Task.sleep(nanoseconds: 8 * 1_000_000_000) // 1 second = 1_000_000_000 nanoseconds
         
         guard let studentId = self.studentId, let teachAuth = self.teachAuth else {
            throw ImageProcessingError.missingInformation
        }
+        print("-*- After getting the student \(self.studentId) and teacher auth \(self.teachAuth)")
 
         // resize the image
         guard let theUIImageToWork  = theUIImage,
@@ -155,6 +167,9 @@ func loadTransferable2Update() async  {
               let resizedUIImage    = UIImage(data: resizedImageData) else {
             throw ImageProcessingError.invalidResizedImageData
         }
+        print("-*- After resize image and teacher auth \(resizedImageData.count)")
+
+        
         
         
         // take the UIImage and make it a SwiftUI Image
@@ -163,11 +178,12 @@ func loadTransferable2Update() async  {
         
         // do api Update
         try await updatePhoto(id: studentId, teachAuth: teachAuth, data: resizedImageData)
-        
+        print("-*- After Update photo ")
+
     } catch let error as ImageProcessingError {
          print(error.errorDescription ?? "An error occurred")
     } catch {
-        print("an error occured")
+        print("not defined  error occured")
     }
 }
 
