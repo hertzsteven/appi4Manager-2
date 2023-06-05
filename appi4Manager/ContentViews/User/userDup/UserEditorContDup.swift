@@ -178,6 +178,9 @@ struct UserEditorContDup: View {
                                          .onAppear {
                                              imagePicker.studentId = user.id
                                              imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
+                                             imagePicker.imageSelection = nil
+                                             imagePicker.image = nil
+                                             imagePicker.theUIImage = nil
                                          }
                                          .onDisappear {
                                              print("-- in disappear")
@@ -614,6 +617,8 @@ extension UserEditorContDup {
             usr.id == user.id
         }
         usersViewModel.users[index!] = user
+        
+        await imagePicker.loadTransferable2Update()
         
         // update the student Pic
 //        imagePicker.updateTheImage()
