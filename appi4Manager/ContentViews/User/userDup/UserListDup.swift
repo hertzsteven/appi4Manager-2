@@ -121,7 +121,8 @@ struct UserListDup: View {
 //      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * *
         .sheet(isPresented: $isAddingNewUser) {
             NavigationView {
-                UserEditorContent( user: $newUser, urlPic: URL(string: "https://developitsnfredu.jamfcloud.com/application/views/default/assets/image/avatar/avatar.png")!, isNew: true)
+                UserEditorContDup( user: newUser, urlPic: URL(string: "https://developitsnfredu.jamfcloud.com/application/views/default/assets/image/avatar/avatar.png")!, userInitialValues: newUser, isNew: true)
+//                UserEditorContent( user: $newUser, urlPic: URL(string: "https://developitsnfredu.jamfcloud.com/application/views/default/assets/image/avatar/avatar.png")!, isNew: true)
             }
         }
         

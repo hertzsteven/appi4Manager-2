@@ -25,8 +25,8 @@ struct TestOutView: View {
             .buttonStyle(.borderedProminent)
             .padding()
             .onAppear {
-                imagePicker.studentId = 16
-                imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
+//                imagePicker.studentId = 16
+//                imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
             }
             if let image = imagePicker.image {
                 image

@@ -74,8 +74,8 @@ struct UserDetailContent: View {
                         .buttonStyle(.borderedProminent)
                         .padding()
                         .onAppear {
-                            imagePicker.studentId = user.id
-                            imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
+//                            imagePicker.studentId = user.id
+//                            imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
                         }
                         .onDisappear {
                             print("-- in disappear")

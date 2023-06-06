@@ -103,40 +103,33 @@ struct UserEditorContDup: View {
     }
     
     fileprivate func addTheUser() {
-        if isNew {
-//        setup properties of User for doing the add
-            userCopy.username  = String(Array(UUID().uuidString.split(separator: "-")).last!)
-            userCopy.locationId = appWorkViewModel.currentLocation.id
-            userCopy.groupIds   = [appWorkViewModel.getIDpicClass()]
-            Task {
-//             add the user
-                do {
-//                add user into jamf
-//                    let resposnseaddAUser: AddAUserResponse = try await ApiManager.shared.getData(from: .addUser(username:    userCopy.username,
-//                                                                                                                 password:    "123456",
-//                                                                                                                 email:         userCopy.email,
-//                                                                                                                 firstName:     userCopy.firstName,
-//                                                                                                                 lastName:        userCopy.lastName,
-//                                                                                                                 notes:         userCopy.notes,
-//                                                                                                                 locationId:     userCopy.locationId,
-//                                                                                                                 groupIds:         userCopy.groupIds,
-//                                                                                                                 teacherGroups: userCopy.teacherGroups))
-//
-                    
-                    let resposnseaddAUser: AddAUserResponse = try await ApiManager.shared.getData(from: .addUsr(user: userCopy))
-//                   add user into existing user array
-                    userCopy.id = resposnseaddAUser.id
-                    self.usersViewModel.users.append(self.userCopy)
-//                 trigger a refresh of screen and not getting the image from cacheh
-                    self.appWorkViewModel.uniqueID = UUID()
-                } catch let error as ApiError {
-                        //  FIXME: -  put in alert that will display approriate error message
-                    print(error)
-                }
-            }
-            dismiss()
-        }
-    }
+         if isNew {
+ //        setup properties of User for doing the add
+             user.username  = String(Array(UUID().uuidString.split(separator: "-")).last!)
+             user.locationId = appWorkViewModel.currentLocation.id
+             user.groupIds   = [appWorkViewModel.getIDpicClass()]
+             Task {
+                 do {
+                     let resposnseaddAUser: AddAUserResponse = try await ApiManager.shared.getData(from: .addUsr(user: user))
+                     
+                     user.id = resposnseaddAUser.id
+                     await imagePicker.loadTransferable2Update(teachAuth: appWorkViewModel.getTeacherAuth(), studentId: user.id)
+
+
+ //                   add user into existing user array
+                     self.usersViewModel.users.append(self.user)
+
+ //                 trigger a refresh of screen and not getting the image from cacheh
+                     self.appWorkViewModel.uniqueID = UUID()
+
+                 } catch let error as ApiError {
+                         //  FIXME: -  put in alert that will display approriate error message
+                     print(error)
+                 }
+             }
+         }
+     }
+    
     fileprivate func deleteTheUser() {
         print("we are about to delete the user \(user.id)")
         isDeleted = true
@@ -180,11 +173,12 @@ struct UserEditorContDup: View {
                                                  .buttonStyle(.borderedProminent)
                                                  .padding()
                                                  .onAppear {
-                                                     imagePicker.studentId = user.id
-                                                     imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
+//                                                     imagePicker.studentId = user.id
+                                                    // imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
                                                      imagePicker.imageSelection = nil
                                                      imagePicker.image = nil
                                                      imagePicker.theUIImage = nil
+                                                     imagePicker.savedImage = nil
                                                      print("-*- in onAppear student id is \(user.id)")
                                                  }
                                                  .onDisappear {
@@ -227,7 +221,20 @@ struct UserEditorContDup: View {
                                             .onAppear {
                                                 appWorkViewModel.uniqueID = UUID()
                                             }
-                                    } else {
+                                    } else if let image = imagePicker.savedImage {
+                                        image
+                                            .resizable()
+                                            .scaledToFit() // Display the loaded image
+                                            .clipShape(Circle())
+                                            .frame(width: 100, height: 100)
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(Color.red.opacity(0.2), lineWidth: 2)
+                                            )
+                                            .onAppear {
+                                                appWorkViewModel.uniqueID = UUID()
+                                            }
+                                    }else {
                                         AsyncImage(url: urlPic) { phase in
                                             switch phase {
                                             case .empty:
@@ -437,15 +444,41 @@ struct UserEditorContDup: View {
                                 }
                             }
                         }
-                        ToolbarItem {
-                            Button {
-                                addTheUser()
-                            } label: {
-                                Text(isNew ? "Add" : "")
-                            }
-                            .disabled(userCopy.lastName.isEmpty || userCopy.firstName.isEmpty)
-                        }
-                    })
+//                        ToolbarItem {
+//                            Button {
+//                                addTheUser()
+//                            } label: {
+//                                Text(isNew ? "Add" : "")
+//                            }
+//                            .disabled(user.lastName.isEmpty || user.firstName.isEmpty)
+//                        }
+//                    })
+                ToolbarItem {
+                   Button {
+           if isNew {
+               if inAdd {
+                   return
+               }
+               Task {
+                   do {
+                       inAdd = true
+                       await addTheUser()
+                       dismiss()
+                       inAdd = false
+                   } catch {
+                       print("Failed in task")
+                   }
+               }
+           }
+                   
+                       
+                   } label: {
+                       Text(isNew ? "Add" : "")
+                   }
+                   .disabled(user.lastName.isEmpty || user.firstName.isEmpty)
+               }
+           } )
+
                     
         //      MARK: - Navigation Bar  * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
                     .navigationBarBackButtonHidden(mode == .active ? true : false)
@@ -634,7 +667,7 @@ extension UserEditorContDup {
         }
         usersViewModel.users[index!] = user
         
-        await imagePicker.loadTransferable2Update()
+        await imagePicker.loadTransferable2Update(teachAuth: appWorkViewModel.getTeacherAuth(), studentId: user.id)
         
         // update the student Pic
 //        imagePicker.updateTheImage()

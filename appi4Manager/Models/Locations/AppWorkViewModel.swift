@@ -54,6 +54,12 @@ class AppWorkViewModel: ObservableObject {
         }
         return nil
     }
+    
+    public func getTeacherAuth() -> String {
+        "9c74b8d6a4934ca986dfe46592896801"
+    }
+    
+
     /*
     public func getUsersInTeacherGroup() -> [Int]? {
 //        teacherGroupDict[currentLocation.id]!
