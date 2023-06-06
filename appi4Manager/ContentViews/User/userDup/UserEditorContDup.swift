@@ -136,11 +136,11 @@ struct UserEditorContDup: View {
         
         Task {
             do {
-                usersViewModel.delete(user)
                 print("break")
                 let response = try await ApiManager.shared.getDataNoDecode(from: .deleteaUser(id: user.id))
                 dump(response)
-                
+                usersViewModel.delete(user)
+
                 
             } catch let error as ApiError {
                     //  FIXME: -  put in alert that will display approriate error message
@@ -175,10 +175,6 @@ struct UserEditorContDup: View {
                                                  .onAppear {
 //                                                     imagePicker.studentId = user.id
                                                     // imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
-                                                     imagePicker.imageSelection = nil
-                                                     imagePicker.image = nil
-                                                     imagePicker.theUIImage = nil
-                                                     imagePicker.savedImage = nil
                                                      print("-*- in onAppear student id is \(user.id)")
                                                  }
                                                  .onDisappear {
@@ -295,15 +291,15 @@ struct UserEditorContDup: View {
                             
                         }
                         
-                        .alert("Delete User?", isPresented: $showDeleteAlert) {
-                            Button(role: .destructive) {
-                                deleteTheUser()
-                            } label: {
-                                Text("Delete")
-                            }
-                        } message: {
-                            Text("This will permanently delete the user.")
-                        }
+//                        .alert("Delete xxxx User?", isPresented: $showDeleteAlert) {
+//                            Button(role: .destructive) {
+//                                deleteTheUser()
+//                            } label: {
+//                                Text("Delete")
+//                            }
+//                        } message: {
+//                            Text("This will permanently delete the user.")
+//                        }
                         .textCase(nil)
                         
                         .environment(\.editMode, $mode)
@@ -463,6 +459,7 @@ struct UserEditorContDup: View {
                    do {
                        inAdd = true
                        await addTheUser()
+                       usersViewModel.ignoreLoading = false
                        dismiss()
                        inAdd = false
                    } catch {
@@ -487,8 +484,8 @@ struct UserEditorContDup: View {
         //       MARK: - Confirmation Dialog  * * * * * * * * * * * * * * * * * * * * * * * *
                 
                 .confirmationDialog("Are you sure you want to delete this class?", isPresented: $inDelete) {
-                    Button("Delete Class", role: .destructive) {
-                       // deleteClass()
+                    Button("Delete the Student", role: .destructive) {
+                        deleteTheUser()
                     }
                 }
                 // from edit
@@ -502,6 +499,12 @@ struct UserEditorContDup: View {
                         user.firstName       = userInitialValues.firstName
                         user.notes           = userInitialValues.notes
                         user.email           = userInitialValues.email
+                        
+                        imagePicker.imageSelection = nil
+                        imagePicker.image = nil
+                        imagePicker.theUIImage = nil
+                        imagePicker.savedImage = nil
+
 
 
         //                    schoolClass.description = schoolClassInitialValues.description
@@ -646,6 +649,14 @@ extension UserEditorContDup {
         // put the ids into selected students array
         selectedStudentClasses = user.groupIds
         selectedTeacherClasses = user.teacherGroups
+        
+        
+        
+        imagePicker.imageSelection = nil
+        imagePicker.image = nil
+        imagePicker.theUIImage = nil
+        imagePicker.savedImage = nil
+
     }
 
 }
