@@ -48,10 +48,7 @@ struct UserEditorContDup: View {
     var itIsInEdit: Bool {
         mode == .active
     }
-    
-
-
-    
+   
     @State private var userImage: Image? = nil
     @StateObject var imagePicker = ImagePicker()
     @State private var showDeleteAlert = false
@@ -102,55 +99,6 @@ struct UserEditorContDup: View {
         !usersViewModel.exists(userInitialValues) && !isNew
     }
     
-    fileprivate func addTheUser() {
-         if isNew {
- //        setup properties of User for doing the add
-             user.username  = String(Array(UUID().uuidString.split(separator: "-")).last!)
-             user.locationId = appWorkViewModel.currentLocation.id
-             user.groupIds   = [appWorkViewModel.getIDpicClass()]
-             Task {
-                 do {
-                     let resposnseaddAUser: AddAUserResponse = try await ApiManager.shared.getData(from: .addUsr(user: user))
-                     
-                     user.id = resposnseaddAUser.id
-                     await imagePicker.loadTransferable2Update(teachAuth: appWorkViewModel.getTeacherAuth(), studentId: user.id)
-
-
- //                   add user into existing user array
-                     self.usersViewModel.users.append(self.user)
-
- //                 trigger a refresh of screen and not getting the image from cacheh
-                     self.appWorkViewModel.uniqueID = UUID()
-
-                 } catch let error as ApiError {
-                         //  FIXME: -  put in alert that will display approriate error message
-                     print(error)
-                 }
-             }
-         }
-     }
-    
-    fileprivate func deleteTheUser() {
-        print("we are about to delete the user \(user.id)")
-        isDeleted = true
-        
-        Task {
-            do {
-                print("break")
-                let response = try await ApiManager.shared.getDataNoDecode(from: .deleteaUser(id: user.id))
-                dump(response)
-                usersViewModel.delete(user)
-
-                
-            } catch let error as ApiError {
-                    //  FIXME: -  put in alert that will display approriate error message
-                print(error.description)
-            }
-        }
-        dismiss()
-    }
-
-
     var body: some View {
 
         ZStack {
@@ -225,7 +173,7 @@ struct UserEditorContDup: View {
                                             .frame(width: 100, height: 100)
                                             .overlay(
                                                 Circle()
-                                                    .stroke(Color.red.opacity(0.2), lineWidth: 2)
+                                                    .stroke(Color.primary.opacity(0.2), lineWidth: 2)
                                             )
                                             .onAppear {
                                                 appWorkViewModel.uniqueID = UUID()
@@ -243,7 +191,7 @@ struct UserEditorContDup: View {
                                                     .frame(width: 100, height: 100)
                                                     .overlay(
                                                         Circle()
-                                                            .stroke(Color.primary.opacity(0.2), lineWidth: 13)
+                                                            .stroke(Color.primary.opacity(0.2), lineWidth: 2)
                                                     )
                                                 
                                             case .failure:
@@ -258,25 +206,6 @@ struct UserEditorContDup: View {
                         }
                         
                         
-        //                Section(header: Text("Notes")) {
-        //
-        //                    HStack {
-        //                        if itIsInEdit {
-        //                            if !user.notes.isEmpty {
-        //                                Text("notes: ")
-        //                            }
-        //                            TextField("notes", text: $user.notes )
-        //                                 .padding([.top, .bottom], 8)
-        //                        } else {
-        //                            Text(user.notes).foregroundColor(itIsInEdit  ? .black : Color(.darkGray))
-        //                        }
-        //                    }
-        //
-        ////                    TextField("Notes", text: $user.notes )
-        ////                        .padding([.top, .bottom], 8)
-        //
-        //
-        //                }
                         Section(header: Text("Name")) {
                             AnimateTextField(textField: $user.firstName, mode: $mode, label: "First Name")
                             AnimateTextField(textField: $user.lastName, mode: $mode, label: "Last Name")
@@ -291,43 +220,21 @@ struct UserEditorContDup: View {
                             
                         }
                         
-//                        .alert("Delete xxxx User?", isPresented: $showDeleteAlert) {
-//                            Button(role: .destructive) {
-//                                deleteTheUser()
-//                            } label: {
-//                                Text("Delete")
-//                            }
-//                        } message: {
-//                            Text("This will permanently delete the user.")
-//                        }
                         .textCase(nil)
                         
                         .environment(\.editMode, $mode)
 
-        //            }
-                    
-                    
-        //            UserDetailContent(user: $userCopy, isDeleted: $isDeleted, isNew: $isNew, urlPic: urlPic)
                     List {
                         Section {
                             
                             ForEach(selectedStudentClasses.compactMap({ id in
-        //                        classesViewModel.schoolClasses
                                 (classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
                                                                                                     dummyPicClassToIgnore: appWorkViewModel.getpicClass() ) )
                                     .first(where: { $0.userGroupId == id })
                             }), id: \.id) { schoolClass in
                                 Text("\(schoolClass.name)")
                             }
-                            /*
-                            .onDelete { offsets in
-                                for offSet in offsets {
-                                    selectedStudentClasses.remove(at: offSet)
-                                }
-                                saveselectedStudentClasses()
-                            }
-                             */
-        //                }
+
                         } header: {
                             HStack {
                                 Text("Classes ")
@@ -366,18 +273,7 @@ struct UserEditorContDup: View {
                             .listRowInsets(EdgeInsets())
                             .disabled(!itIsInEdit ? true : false)
                         }
- 
                         
-        //                if !isNew {
-        //                    Button(role: .destructive) {
-        //                        showDeleteAlert = true
-        //                    } label: {
-        //                        Text("Delete User")
-        //                            .font(Font.custom("SF Pro", size: 17))
-        //                            .foregroundColor(Color(UIColor.systemRed))
-        //                    }
-        //                    .frame(maxWidth: .infinity, alignment: .center)
-        //                }
                     }
                     
                     
@@ -408,14 +304,12 @@ struct UserEditorContDup: View {
                                             } else {
                                                 updateModeWithAnimation(switchTo: .inactive)
                                             }
-        //                                    mode = !itIsInEdit ? .active  : .inactive
                                         } catch {
                                             print("Failed in task")
                                         }
                                     }
                                 } else {
                                     updateModeWithAnimation()
-        //                            mode = .active
                                 }
                             }.frame(height: 96, alignment: .trailing)
                                 .disabled(isBlocking)
@@ -436,46 +330,35 @@ struct UserEditorContDup: View {
                         ToolbarItem(placement: .cancellationAction) {
                             if isNew {
                                 Button("Cancel") {
-                                    dismiss()
+                                    inCancelAdd = true
                                 }
                             }
                         }
-//                        ToolbarItem {
-//                            Button {
-//                                addTheUser()
-//                            } label: {
-//                                Text(isNew ? "Add" : "")
-//                            }
-//                            .disabled(user.lastName.isEmpty || user.firstName.isEmpty)
-//                        }
-//                    })
-                ToolbarItem {
-                   Button {
-           if isNew {
-               if inAdd {
-                   return
-               }
-               Task {
-                   do {
-                       inAdd = true
-                       await addTheUser()
-                       usersViewModel.ignoreLoading = false
-                       dismiss()
-                       inAdd = false
-                   } catch {
-                       print("Failed in task")
-                   }
-               }
-           }
-                   
-                       
-                   } label: {
-                       Text(isNew ? "Add" : "")
-                   }
-                   .disabled(user.lastName.isEmpty || user.firstName.isEmpty)
-               }
-           } )
-
+                        ToolbarItem {
+                            Button {
+                                if isNew {
+                                    if inAdd {
+                                        return
+                                    }
+                                    Task {
+                                        do {
+                                            inAdd = true
+                                            await addTheUser()
+                                            usersViewModel.ignoreLoading = false
+                                            dismiss()
+                                            inAdd = false
+                                        } catch {
+                                            print("Failed in task")
+                                        }
+                                    }
+                                }
+                            } label: {
+                                Text(isNew ? "Add" : "")
+                            }
+                            .disabled(user.lastName.isEmpty || user.firstName.isEmpty)
+                        }
+                    } )
+                
                     
         //      MARK: - Navigation Bar  * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
                     .navigationBarBackButtonHidden(mode == .active ? true : false)
@@ -493,36 +376,24 @@ struct UserEditorContDup: View {
                     Button("Discard Changes edit ", role: .destructive) {
                             // Do something when the user confirms
                              mode = .inactive
-        //                    selectedStudents        = selectedStudentsInitialValues
-        //                    selectedTeachers        = selectedTeachersInitialValues
-                        user.lastName        = userInitialValues.lastName
-                        user.firstName       = userInitialValues.firstName
-                        user.notes           = userInitialValues.notes
-                        user.email           = userInitialValues.email
-                        
-                        imagePicker.imageSelection = nil
-                        imagePicker.image = nil
-                        imagePicker.theUIImage = nil
-                        imagePicker.savedImage = nil
-
-
-
-        //                    schoolClass.description = schoolClassInitialValues.description
-        //                    dump(schoolClass)
+                        user.lastName               = userInitialValues.lastName
+                        user.firstName              = userInitialValues.firstName
+                        user.notes                  = userInitialValues.notes
+                        user.email                  = userInitialValues.email
+                        imagePicker.imageSelection  = nil
+                        imagePicker.image           = nil
+                        imagePicker.theUIImage      = nil
+                        imagePicker.savedImage      = nil
                     }
                 }
                 // from add
                 .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelAdd, titleVisibility: .visible) {
-                    Button("Discard Changes add ", role: .destructive) {
+                    Button("Discard Changes", role: .destructive) {
                             // Do something when the user confirms
                         dismiss()
                     }
                 }
             
-                
-
-
-
 
 
         //      MARK: - Appear and Disappear   * * * * * * * * * * * * * * * * * * * * * *
@@ -540,43 +411,6 @@ struct UserEditorContDup: View {
                             mode = .inactive
                         }
 
-        /*
-                   .onDisappear {
-                        // We are about to update
-                        if isNew == false && isDeleted == false {
-                            print("🚘 In on disAppear -UserEditorContDup zero \(user.firstName) ")
-                            if user_start == user {
-                                print("its the same")
-                            } else {
-                                print("its different")
-                                
-                                Task {
-                                    print(user.notes)
-                                    await UsersViewModel.updateUser(user:user)
-        //                            do {
-        //                                _ = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: user.id,
-        //                                                                                                   username: user.username,
-        //                                                                                                   password: "123456" ,
-        //                                                                                                   email: user.email,
-        //                                                                                                   firstName: user.firstName,
-        //                                                                                                   lastName: user.lastName,
-        //                                                                                                   locationId: user.locationId))
-        //
-        //                            } catch let error as ApiError {
-        //                                    //  FIXME: -  put in alert that will display approriate error message
-        //                                print(error.description)
-        //                            }
-                                }
-                                dismiss()
-                            }
-                        }
-                     }
-         */
-        //               .onChange(of: userCopy){ _ in
-        //                    if !isDeleted {
-        //                        user = userCopy
-        //                    }
-        //                }
                 }
 
                 .overlay(alignment: .center) {
@@ -593,8 +427,6 @@ struct UserEditorContDup: View {
         }
     }
  
-    
-
 
 extension UserEditorContDup {
     
@@ -649,9 +481,7 @@ extension UserEditorContDup {
         // put the ids into selected students array
         selectedStudentClasses = user.groupIds
         selectedTeacherClasses = user.teacherGroups
-        
-        
-        
+
         imagePicker.imageSelection = nil
         imagePicker.image = nil
         imagePicker.theUIImage = nil
@@ -661,11 +491,59 @@ extension UserEditorContDup {
 
 }
 
-    
-
 
 
 extension UserEditorContDup {
+    
+    fileprivate func addTheUser() {
+         if isNew {
+ //        setup properties of User for doing the add
+             user.username  = String(Array(UUID().uuidString.split(separator: "-")).last!)
+             user.locationId = appWorkViewModel.currentLocation.id
+             user.groupIds   = [appWorkViewModel.getIDpicClass()]
+             Task {
+                 do {
+                     let resposnseaddAUser: AddAUserResponse = try await ApiManager.shared.getData(from: .addUsr(user: user))
+                     
+                     user.id = resposnseaddAUser.id
+                     await imagePicker.loadTransferable2Update(teachAuth: appWorkViewModel.getTeacherAuth(), studentId: user.id)
+
+
+ //                   add user into existing user array
+                     self.usersViewModel.users.append(self.user)
+
+ //                 trigger a refresh of screen and not getting the image from cacheh
+                     self.appWorkViewModel.uniqueID = UUID()
+
+                 } catch let error as ApiError {
+                         //  FIXME: -  put in alert that will display approriate error message
+                     print(error)
+                 }
+             }
+         }
+     }
+    
+    fileprivate func deleteTheUser() {
+        print("we are about to delete the user \(user.id)")
+        isDeleted = true
+        
+        Task {
+            do {
+                print("break")
+                let response = try await ApiManager.shared.getDataNoDecode(from: .deleteaUser(id: user.id))
+                dump(response)
+                usersViewModel.delete(user)
+
+                
+            } catch let error as ApiError {
+                    //  FIXME: -  put in alert that will display approriate error message
+                print(error.description)
+            }
+        }
+        dismiss()
+    }
+
+
     
     fileprivate func upDateUser() async {
 
