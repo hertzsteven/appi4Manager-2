@@ -16,6 +16,7 @@
 		46336705299452A600CF5EA3 /* CustomLabelStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46336704299452A600CF5EA3 /* CustomLabelStyle.swift */; };
 		463367072995251000CF5EA3 /* UserEditorContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 463367062995251000CF5EA3 /* UserEditorContent.swift */; };
 		4636B2B129D0ABD800F10054 /* StubStartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4636B2B029D0ABD800F10054 /* StubStartView.swift */; };
+		463BEDCB2A41507000A1FBD8 /* LessonsListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 463BEDCA2A41507000A1FBD8 /* LessonsListResponse.swift */; };
 		46492B1C29F5CA9300699F96 /* StudentPicStubViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46492B1B29F5CA9300699F96 /* StudentPicStubViewModel.swift */; };
 		46584FCA2993E1040025F539 /* list_the_usersApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46584FC92993E1040025F539 /* list_the_usersApp.swift */; };
 		46584FCC2993E1040025F539 /* UserListContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46584FCB2993E1040025F539 /* UserListContent.swift */; };
@@ -29,6 +30,7 @@
 		46584FE72993F0960025F539 /* ApiHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46584FE62993F0960025F539 /* ApiHelper.swift */; };
 		46584FE92993F0C40025F539 /* ApiError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46584FE82993F0C40025F539 /* ApiError.swift */; };
 		46584FEB2993F10F0025F539 /* ApiEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46584FEA2993F10F0025F539 /* ApiEndpoint.swift */; };
+		466EC6FD2A42609D007EEEDB /* LessonDetailResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466EC6FC2A42609D007EEEDB /* LessonDetailResponse.swift */; };
 		46786B762A24D97C000F6716 /* UserListDup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46786B752A24D97C000F6716 /* UserListDup.swift */; };
 		46786B782A24D9A6000F6716 /* UserEditorContDup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46786B772A24D9A6000F6716 /* UserEditorContDup.swift */; };
 		46786B7A2A24E5E7000F6716 /* UserCardVwDup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46786B792A24E5E7000F6716 /* UserCardVwDup.swift */; };
@@ -67,6 +69,7 @@
 		46336704299452A600CF5EA3 /* CustomLabelStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLabelStyle.swift; sourceTree = "<group>"; };
 		463367062995251000CF5EA3 /* UserEditorContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditorContent.swift; sourceTree = "<group>"; };
 		4636B2B029D0ABD800F10054 /* StubStartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubStartView.swift; sourceTree = "<group>"; };
+		463BEDCA2A41507000A1FBD8 /* LessonsListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonsListResponse.swift; sourceTree = "<group>"; };
 		46492B1B29F5CA9300699F96 /* StudentPicStubViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentPicStubViewModel.swift; sourceTree = "<group>"; };
 		46584FC62993E1040025F539 /* appi4Manager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = appi4Manager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		46584FC92993E1040025F539 /* list_the_usersApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = list_the_usersApp.swift; sourceTree = "<group>"; };
@@ -81,6 +84,7 @@
 		46584FE62993F0960025F539 /* ApiHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiHelper.swift; sourceTree = "<group>"; };
 		46584FE82993F0C40025F539 /* ApiError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiError.swift; sourceTree = "<group>"; };
 		46584FEA2993F10F0025F539 /* ApiEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiEndpoint.swift; sourceTree = "<group>"; };
+		466EC6FC2A42609D007EEEDB /* LessonDetailResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonDetailResponse.swift; sourceTree = "<group>"; };
 		46786B752A24D97C000F6716 /* UserListDup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListDup.swift; sourceTree = "<group>"; };
 		46786B772A24D9A6000F6716 /* UserEditorContDup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditorContDup.swift; sourceTree = "<group>"; };
 		46786B792A24E5E7000F6716 /* UserCardVwDup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCardVwDup.swift; sourceTree = "<group>"; };
@@ -148,6 +152,15 @@
 			path = ContentViews;
 			sourceTree = "<group>";
 		};
+		463BEDC92A41503100A1FBD8 /* Lessons */ = {
+			isa = PBXGroup;
+			children = (
+				463BEDCA2A41507000A1FBD8 /* LessonsListResponse.swift */,
+				466EC6FC2A42609D007EEEDB /* LessonDetailResponse.swift */,
+			);
+			path = Lessons;
+			sourceTree = "<group>";
+		};
 		46584FBD2993E1040025F539 = {
 			isa = PBXGroup;
 			children = (
@@ -190,6 +203,7 @@
 		46584FD72993EA9C0025F539 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				463BEDC92A41503100A1FBD8 /* Lessons */,
 				46BDEEF82A0E93F3000B4950 /* Categories */,
 				46D2A9A229DB4CC1007B134E /* ImagePicker */,
 				46AEA63F29C8E50500D2B994 /* Locations */,
@@ -453,6 +467,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				463BEDCB2A41507000A1FBD8 /* LessonsListResponse.swift in Sources */,
 				46584FCC2993E1040025F539 /* UserListContent.swift in Sources */,
 				46D6C83029FE9D66009861FD /* ItemListSelectView.swift in Sources */,
 				463367072995251000CF5EA3 /* UserEditorContent.swift in Sources */,
@@ -489,6 +504,7 @@
 				46336705299452A600CF5EA3 /* CustomLabelStyle.swift in Sources */,
 				46584FE72993F0960025F539 /* ApiHelper.swift in Sources */,
 				461D21CC299D89DD008B7BD2 /* ClassDetailViewModel.swift in Sources */,
+				466EC6FD2A42609D007EEEDB /* LessonDetailResponse.swift in Sources */,
 				461D21CE299D8A64008B7BD2 /* Student.swift in Sources */,
 				46584FEB2993F10F0025F539 /* ApiEndpoint.swift in Sources */,
 				469420F229C7ED67004B8CB4 /* ExtensionsAndMore.swift in Sources */,

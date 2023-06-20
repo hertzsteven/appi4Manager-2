@@ -488,7 +488,6 @@ extension UserEditorContDup {
         imagePicker.savedImage = nil
 
     }
-
 }
 
 

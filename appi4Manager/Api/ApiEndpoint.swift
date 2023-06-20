@@ -33,6 +33,9 @@ enum ApiEndpoint {
     case assignToClass(uuid: String, students: Array<Int>, teachers: Array<Int>)
     case getLocations
     case updatePhoto(id: Int, teachAuth: String, data: Data)
+    case getLessons(teachAuth: String)
+    case getLessonDetail(teachAuth: String, id: Int)
+
 }
 
 extension ApiEndpoint {
@@ -72,6 +75,11 @@ extension ApiEndpoint {
             return "/teacher/uploadPhoto/\(id)"
         case .addUsr:
             return "/users"
+        case .getLessons( teachAuth: _ ):
+           return "/teacher/lessons"
+        case .getLessonDetail( teachAuth: _, let id ):
+           return "/teacher/lessons/\(id)"
+
         }
     }
     
@@ -98,6 +106,10 @@ extension ApiEndpoint {
             return .PUT
         case .updatePhoto(id: _, teachAuth: _, data: _):
             return .POST
+        case .getLessons( teachAuth: _ ):
+            return .GET
+        case .getLessonDetail(teachAuth: _, id: _):
+            return .GET
         default:
             return .GET
         }
@@ -130,6 +142,11 @@ extension ApiEndpoint {
             return [URLQueryItem(name: "token", value: "9c74b8d6a4934ca986dfe46592896801")]
         case .getUsersInGroup(let groupID) :
             return [URLQueryItem(name: "memberOf", value: String(groupID))]
+        case .getLessons(teachAuth: let teachAuth):
+            return [URLQueryItem(name: "token", value: teachAuth)]
+        case .getLessonDetail(teachAuth: let teachAuth, id: _ ):
+            return [URLQueryItem(name: "token", value: "9c74b8d6a4934ca986dfe46592896801")]
+
 //        case .getStudents(uuid: _):
 //            return [URLQueryItem(name: "token", value: "9c74b8d6a4934ca986dfe46592896801")]
         default:

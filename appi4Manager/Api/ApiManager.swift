@@ -100,7 +100,7 @@ final class ApiManager {
 
             case 200...299:
                 print("Successful response - Code: \(httpResponse.statusCode)")
-                 
+                 print(respnseOfNetworkCall.data)
             case 400:
                 throw ApiError.clientBadRequest(hTTPuRLResponse: httpResponse)
             case 401:
@@ -412,6 +412,17 @@ private extension ApiManager {
             
             request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
             
+        case .getLessons( _ ):
+             request.addValue(ApiHelper.authorizationCode, forHTTPHeaderField: "Authorization")
+             request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
+             request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
+  
+        case .getLessonDetail(teachAuth: _, id: _):
+             request.addValue(ApiHelper.authorizationCode, forHTTPHeaderField: "Authorization")
+             request.addValue("3", forHTTPHeaderField: "X-Server-Protocol-Version")
+             request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
+  
+
             // what is left look at other
             
             

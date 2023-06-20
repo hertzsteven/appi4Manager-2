@@ -38,10 +38,15 @@ struct TestOutView: View {
             
             Text("I am over here")
             Button {
-                 print("getting the students")
+                 print("getting the lessons")
                 Task {
                     do {
-                      
+                        let lessonsListResponse: LessonsListResponse = try await ApiManager.shared.getData(from: .getLessons(teachAuth: "9c74b8d6a4934ca986dfe46592896801"))
+                         dump(lessonsListResponse)
+                         print(lessonsListResponse)
+     
+                        
+                        
                       let locationsResponse: LocationsResponse = try await ApiManager.shared.getData(from: .getLocations)
                       dump(locationsResponse)
                       print(locationsResponse)

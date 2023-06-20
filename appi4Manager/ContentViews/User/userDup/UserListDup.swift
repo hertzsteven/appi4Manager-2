@@ -148,7 +148,7 @@ struct UserListDup: View {
         .navigationBarTitleDisplayMode(.inline)
         
         
-//      MARK: - Navigation Destimation   * * * * * * * * * * * * * * * * * * * * * *
+//      MARK: - Navigation Destination   * * * * * * * * * * * * * * * * * * * * * *
         .navigationDestination(for: User.self) { theUser in
             let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: appWorkViewModel.uniqueID)
             UserEditorContDup(user: theUser, urlPic: imageURL, userInitialValues: theUser)
