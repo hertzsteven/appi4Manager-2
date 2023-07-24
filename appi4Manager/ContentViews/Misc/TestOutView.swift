@@ -124,6 +124,71 @@ struct TestOutView: View {
             } label: {
                 Text("get the students")
             }
+            
+            Button {
+                print("getting the apps")
+                Task {
+                    do {
+                        let appResponse: AppResponse = try await ApiManager.shared.getData(from: .getApps)
+                            //                        dump(appResponse)
+                        
+                        for app in appResponse.apps {
+                                //                            let record = CKRecord(recordType: "appProfiles", recordID: CKRecord.ID(recordName: "\(app.bundleId)"))
+                            do {
+                                print(app.name, app.bundleId, app.icon)
+                                
+//                                if app.name.contains("TeachMe") {
+//                                    print(app.name, "it is doodle")
+////                                let recordID = CKRecord.ID(recordName: "\(app.bundleId)-\(app.id)")
+//                                    let record = CKRecord(recordType: "appProfiles", recordID: CKRecord.ID(recordName: "\(app.bundleId)"))
+//                                    record["appBundleId"] = app.bundleId
+//                                    record["name"] = app.name
+//                                    record["id"] = app.id
+//                                    record["locationId"] = app.locationId
+//                                    record["description"] = app.description
+//                                    record["icon"] = app.icon
+//                                    record["category"] = "dummy"
+//                                    record["profileName"] = "duummy"
+//                                    /// save it
+//                                    dbs.save(record) { (record, error) in
+//                                    print("```* - * - Saving . . .")
+//                                        //   DispatchQueue.main.async {
+//                                    if let error = error {
+//                                        print("```* - * - error saving it \(error)")
+//                                    } else {
+//                                        print("```* - * - succesful ***")
+//                                        print(record as Any)
+//                                    }
+//                                         }
+//                                } else {
+////                                    print("not doing ", app.name)
+////                                    print("\(app.bundleId)-\(app.id)")
+//                                }
+//                            }
+                        }
+ 
+                                
+                            catch {
+                                print("Error fetching records: \(error.localizedDescription)")
+                            }
+                        }
+                        
+                    } catch let error as ApiError {
+                            //  FIXME: -  put in alert that will display approriate error message
+                        print(error.description)
+                    }
+                    
+                    print("in task after do")
+                    
+                }
+                print("after task")
+                
+            } label: {
+                Text("get the apps")
+            }
+            
+            
+            
 
         }
     }

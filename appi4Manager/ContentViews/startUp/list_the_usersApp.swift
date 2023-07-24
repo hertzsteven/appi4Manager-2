@@ -26,7 +26,9 @@ struct list_the_usersApp: App {
 
     var body: some Scene {
         WindowGroup {
-//            TestOutView()
+            TestOutView()
+            
+/* 
             if appWorkViewModel.isLoaded {
                 DashboardView()
                     .environmentObject(usersViewModel)
@@ -37,6 +39,7 @@ struct list_the_usersApp: App {
             } else {
                 ProgressView()
             }
+ */
 
             
 //             if appWorkViewModel.isLoaded {

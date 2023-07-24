@@ -35,6 +35,7 @@ enum ApiEndpoint {
     case updatePhoto(id: Int, teachAuth: String, data: Data)
     case getLessons(teachAuth: String)
     case getLessonDetail(teachAuth: String, id: Int)
+    case getApps
 
 }
 
@@ -79,7 +80,8 @@ extension ApiEndpoint {
            return "/teacher/lessons"
         case .getLessonDetail( teachAuth: _, let id ):
            return "/teacher/lessons/\(id)"
-
+        case .getApps:
+            return "/apps"
         }
     }
     
