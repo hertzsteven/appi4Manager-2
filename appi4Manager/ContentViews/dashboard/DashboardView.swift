@@ -19,12 +19,16 @@ struct DashboardView: View {
     
     let categories = [
         Category(name: "Devices", color: .blue, image: Image(systemName: "ipad.and.iphone"), count: 5),
-        Category(name: "Users", color: .green, image: Image(systemName: "person.fill"), count: 12),
+        Category(name: "Categories", color: .green, image: Image(systemName: "person.fill"), count: 12),
         Category(name: "Apps", color: .red, image: Image(systemName: "apps.ipad"), count: 3),
         Category(name: "Classes", color: .purple, image: Image(systemName: "person.3.sequence.fill"), count: 8),
         Category(name: "SchoolListDup", color: .orange, image: Image(systemName: "airplane"), count: 2),
         Category(name: "UserDup", color: .yellow, image: Image(systemName: "dollarsign.circle.fill"), count: 6)
     ]
+    
+    @StateObject var model          = CategoryViewModel()
+    @StateObject var appsViewModel  = AppsViewModel()
+
 
     var body: some View {
         NavigationStack(path:$path ) {
@@ -45,22 +49,27 @@ struct DashboardView: View {
             }
             .navigationDestination(for: Category.self, destination: { category in
                 switch category.name {
-                case "Users":
-                    UserListContent(newUser: User.makeDefault())
-                        .task {
-                            await loadTheClasses()
-                        }
-                        .alert(isPresented: $hasError,
-                               error: error) {
-                            Button {
-                                Task {
-                                    await loadTheClasses()
-                                }
-                            } label: {
-                                Text("Retry")
-                            }
-                        }
-                    
+                case "Categories":
+                    CategoryListView( newAppCategory: AppCategory.makeDefault())
+                        .environmentObject(model)
+                        .environmentObject(appsViewModel)
+                
+
+//                    UserListContent(newUser: User.makeDefault())
+//                        .task {
+//                            await loadTheClasses()
+//                        }
+//                        .alert(isPresented: $hasError,
+//                               error: error) {
+//                            Button {
+//                                Task {
+//                                    await loadTheClasses()
+//                                }
+//                            } label: {
+//                                Text("Retry")
+//                            }
+//                        }
+//
                 case "UserDup":
                     UserListDup(newUser: User.makeDefault())
                         .task {

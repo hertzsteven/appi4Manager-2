@@ -41,12 +41,17 @@ struct TestOutView: View {
                  print("getting the lessons")
                 Task {
                     do {
+                        let lessonsDetailResponse: LessonDetailResponse = try await ApiManager.shared.getData(from: .getLessonDetail(teachAuth: "9c74b8d6a4934ca986dfe46592896801", id: 25))
+                         dump(lessonsDetailResponse)
+                         print(lessonsDetailResponse)
+     
+                        
                         let lessonsListResponse: LessonsListResponse = try await ApiManager.shared.getData(from: .getLessons(teachAuth: "9c74b8d6a4934ca986dfe46592896801"))
                          dump(lessonsListResponse)
                          print(lessonsListResponse)
      
-                        
-                        
+ 
+
                       let locationsResponse: LocationsResponse = try await ApiManager.shared.getData(from: .getLocations)
                       dump(locationsResponse)
                       print(locationsResponse)

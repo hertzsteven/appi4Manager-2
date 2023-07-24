@@ -8,46 +8,30 @@
 import Foundation
 
 struct LessonDetailResponse: Codable {
+    
     let id: Int
     let name: String
-    let description: String?
-    let appLock: Bool?
-    let appWhitelist: [String]?
-
-//    WebWhiteliststruct
-    struct WebWhitelist: Codable {
-        let lockInSafari: Bool
-        let sites: [URL]
-    }
-    let webWhitelist: WebWhitelist?
-
-//    Materials
-    struct Materials: Codable {
-        let lockInSafari: Bool
-        let weblock: Bool
-        struct Site: Codable {
-            let url: URL
-            let title: String
-        }
-        let sites: [Site]?
-    }
-    let materials: Materials?
+    let description: String
+    let colorId: Int
     
-//      Resrictions
-//    let notifications: Any? //TODO: Specify the type to conforms Codable protocol
-    struct Restrictions: Codable {
-        let allowAppstore: Bool
-        let allowCamera: Bool
-        let allowChat: Bool
-        let allowGamecenter: Bool
-        let allowNotifications: Bool
-        let allowSafari: Bool
-        let allowScreenshots: Bool
-        let allowSpellcheck: Bool
-        let allowiTunes: Bool
-        let allowAirDrop: Bool
+    struct AppWhite: Codable {
+        let identifier: String
+        let name: String
+        let icon: URL
     }
-    let restrictions: Restrictions
+    let appWhitelist: [AppWhite]
     
-    let genres: [String]
+    let restrictedFunctionality: [String]
+    let restrictedGenres: [String]
+    let weblock: Bool
+    
+    struct Link: Codable {
+        let url: String
+        let title: String
+    }
+    let links: [Link]
+    
+    let lockInSafari: Bool
+    
 }
+

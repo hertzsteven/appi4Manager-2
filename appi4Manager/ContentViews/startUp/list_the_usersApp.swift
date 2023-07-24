@@ -6,6 +6,13 @@
 //
 
 import SwiftUI
+class AppState: ObservableObject {
+    @Published private(set) var hasOnboarded: Bool = true
+    
+    func setHasOnboarded(to hasOnboarded: Bool)  {
+        self.hasOnboarded = hasOnboarded
+    }
+}
 
 @main
 struct list_the_usersApp: App {
@@ -14,6 +21,8 @@ struct list_the_usersApp: App {
     @StateObject var classDetailViewModel       = ClassDetailViewModel()
     @StateObject var studentPicStubViewModel    = StudentPicStubViewModel()
     @StateObject var classesViewModel           = ClassesViewModel()
+    
+
 
     var body: some Scene {
         WindowGroup {

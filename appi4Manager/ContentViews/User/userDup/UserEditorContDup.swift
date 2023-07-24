@@ -375,7 +375,7 @@ struct UserEditorContDup: View {
                 .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelEdit, titleVisibility: .visible) {
                     Button("Discard Changes edit ", role: .destructive) {
                             // Do something when the user confirms
-                             mode = .inactive
+                        mode = .inactive
                         user.lastName               = userInitialValues.lastName
                         user.firstName              = userInitialValues.firstName
                         user.notes                  = userInitialValues.notes

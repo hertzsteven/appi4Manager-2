@@ -145,7 +145,7 @@ extension ApiEndpoint {
         case .getLessons(teachAuth: let teachAuth):
             return [URLQueryItem(name: "token", value: teachAuth)]
         case .getLessonDetail(teachAuth: let teachAuth, id: _ ):
-            return [URLQueryItem(name: "token", value: "9c74b8d6a4934ca986dfe46592896801")]
+            return [URLQueryItem(name: "token", value: teachAuth)]
 
 //        case .getStudents(uuid: _):
 //            return [URLQueryItem(name: "token", value: "9c74b8d6a4934ca986dfe46592896801")]
