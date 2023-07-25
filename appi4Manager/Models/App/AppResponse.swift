@@ -7,14 +7,17 @@
 
 import Foundation
 
-struct AppResponse: Codable {
-    struct Ap: Codable {
-        let id: Int
-        let locationId: Int
-        let isBook: Bool
-        let bundleId: String
-        let icon: String
-        let name: String
+struct Appx: Codable, Identifiable, Hashable, ItemsToSelectRepresentable {
+    let id: Int
+    let locationId: Int
+    let isBook: Bool
+    let bundleId: String
+    let icon: String
+    let name: String
+    var nameToDisplay: String {
+        name
+    }
+
 //        let version: Date
 //        let shortVersion: String
 //        let extVersion: Int
@@ -38,7 +41,7 @@ struct AppResponse: Codable {
 //       // let associatedDirectDownload: Any? //TODO: Specify the type to conforms Codable protocol
 //      //  let associatedDomains: Any? //TODO: Specify the type to conforms Codable protocol
 //        let adamId: Date
-        let description: String?
+    let description: String?
 //        let externalVersion: Int
 //        let html: String
 //        let vendor: String
@@ -50,7 +53,10 @@ struct AppResponse: Codable {
 //        let deviceFamilies: [String]
 //        let isTvOSCompatible: Bool
 //        let isMacOsCompatible: Bool
-    }
-    let apps: [Ap]
+}
+
+
+struct AppResponse: Codable {
+    let apps: [Appx]
 }
 
