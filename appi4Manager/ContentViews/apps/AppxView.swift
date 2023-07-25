@@ -11,6 +11,7 @@ struct AppxView: View {
     @EnvironmentObject var appxViewModel: AppxViewModel
     @State private var hasError = false
     @State private var error: ApiError?
+    @State private var showApps: Bool = false
     
     
     var body: some View {
@@ -21,11 +22,38 @@ struct AppxView: View {
                     ProgressView().controlSize(.large).scaleEffect(2)
                 }
             } else {
-                List(appxViewModel.appx) { app in
-                    Text(app.name)
+                
+                Form {
+                    Text("hello")
+                    Button("get Apps") {
+                        showApps = true
+                    }
                 }
             }
         }
+        
+//      MARK: -alerts  * * * * * * * * * * * * * * * * * * * * * * * *
+        .alert(isPresented: $hasError,
+               error: error) {
+            Button {
+                Task {
+                    await loadTheapps()
+                }
+            } label: {
+                Text("Retry")
+            }
+        }
+
+//      MARK: -sheets  * * * * * * * * * * * * * * * * * * * * * * * *
+               .sheet(isPresented: $showApps) {
+                   ListTheApps(theApps: appxViewModel.appx)
+               }
+
+        
+//      MARK: - Navigation Bar  * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
+       .navigationTitle("apps")
+       .navigationBarTitleDisplayMode(.inline)
+
 //      MARK: - Task Modifier    * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
         .task {
             if appxViewModel.ignoreLoading {
@@ -50,6 +78,16 @@ struct AppxView: View {
                 self.error      = xerror
             }
         }
+    }
+}
+
+
+struct ListTheApps: View {
+    let theApps: [Appx]
+    var body: some View {
+        List(theApps) { app in
+             Text(app.name)
+         }
     }
 }
 

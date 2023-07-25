@@ -189,8 +189,8 @@ struct CategoryEditorContView: View {
 //    @EnvironmentObject var apps2ViewModel : AppsViewModel
     
     @StateObject var appsViewModel : AppsViewModel
-
-    @StateObject var model: CategoryViewModel
+    @EnvironmentObject var categoryViewModel: CategoryViewModel
+//    @StateObject var categoryViewModel: CategoryViewModel
     
     @State var selectedColor: Color =  CategoryColors.random()
 
@@ -351,9 +351,9 @@ struct CategoryEditorContView: View {
                                                         appIds: selectedApps)
                             dump(newAppCTG)
                             
-                            model.appCategories.append(newAppCTG)
+                            categoryViewModel.appCategories.append(newAppCTG)
                             
-                            model.saveToUserDefaults()
+                            categoryViewModel.saveToUserDefaults()
                             dismiss()
                             
                         }
@@ -767,12 +767,12 @@ extension CategoryEditorContView {
     fileprivate func deleteTheAppCategory() {
 //        print("we are about to delete the user \(user.id)")
         
-        let index = model.appCategories.firstIndex { appCtg in
+        let index = categoryViewModel.appCategories.firstIndex { appCtg in
             appCtg.id == appCategory.id
         }
-        model.appCategories.remove(at: index!)
+        categoryViewModel.appCategories.remove(at: index!)
         
-        model.saveToUserDefaults()
+        categoryViewModel.saveToUserDefaults()
 
         isDeleted = true
  /*
@@ -808,12 +808,12 @@ extension CategoryEditorContView {
                                     colorRGB: ColorRGB(red: rgba.red, green: rgba.green, blue: rgba.blue, alpha: rgba.alpha),
                                     appIds: selectedApps)
 
-        let index = model.appCategories.firstIndex { appCtg in
+        let index = categoryViewModel.appCategories.firstIndex { appCtg in
             appCtg.id == appCategory.id
         }
-        model.appCategories[index!] = updatedAppCategory
+        categoryViewModel.appCategories[index!] = updatedAppCategory
         
-        model.saveToUserDefaults()
+        categoryViewModel.saveToUserDefaults()
 /*
          // update user in array of users being shown
         let index = usersViewModel.users.firstIndex { usr in
@@ -865,8 +865,9 @@ struct CategoryEditorContView_Previews: PreviewProvider {
         
         CategoryEditorContView(appCategoryInitialValues: appCategory,
                                appCategory: appCategory,
-                               appsViewModel: appsViewModel, model: categoryViewModel)
+                               appsViewModel: appsViewModel)
             .environmentObject(appsViewModel)
+            .environmentObject(categoryViewModel)  // Add this line
     }
 }
 

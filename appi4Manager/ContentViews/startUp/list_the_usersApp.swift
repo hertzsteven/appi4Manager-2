@@ -22,7 +22,8 @@ struct list_the_usersApp: App {
     @StateObject var studentPicStubViewModel    = StudentPicStubViewModel()
     @StateObject var classesViewModel           = ClassesViewModel()
     @StateObject var appxViewModel              = AppxViewModel()
-    
+    @StateObject var categoryViewModel                      = CategoryViewModel()
+    @StateObject var appsViewModel              = AppsViewModel()
 
 
     var body: some Scene {
@@ -38,6 +39,9 @@ struct list_the_usersApp: App {
                     .environmentObject(classesViewModel)
                     .environmentObject(appWorkViewModel)
                     .environmentObject(appxViewModel)
+                    .environmentObject(categoryViewModel)
+                    .environmentObject(appsViewModel)
+
 
             } else {
                 ProgressView()

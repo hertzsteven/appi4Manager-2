@@ -9,13 +9,15 @@ import SwiftUI
 
 struct CategoryListView: View {
     
-//    @EnvironmentObject var model: ViewModel
-    @StateObject    var model:          CategoryViewModel = CategoryViewModel()
+    @EnvironmentObject var appsViewModel : AppsViewModel
+    @EnvironmentObject var categoryViewModel: CategoryViewModel
+
+    //    @EnvironmentObject var model: ViewModel
+//    @StateObject    var categoryViewModel:          CategoryViewModel = CategoryViewModel()
     @State private  var popUpSheetSw:   Bool  = false
     @State private  var favoriteColor:  Int  = 0
     @State var path: NavigationPath = NavigationPath()
-    @EnvironmentObject var appsViewModel : AppsViewModel
-    
+   
     @State          var newAppCategory: AppCategory
     @State private  var isAddingNewAppCategory = false
     
@@ -23,22 +25,10 @@ struct CategoryListView: View {
     var body: some View {
 //        NavigationStack(path:$path ) {
             VStack {
-/*
-                
-                // PICKER
-                Picker("What is your favorite color?", selection: $favoriteColor) {
-                    Text("Red").tag(0)
-                    Text("Green").tag(1)
-                    Text("Blue").tag(2)
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal, 16)
-                
- */
-                // LazyGrid
+               // LazyGrid
                 ScrollView {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))], spacing: 12) {
-                        ForEach(model.appCategories, id: \.self) { item in
+                        ForEach(categoryViewModel.appCategories, id: \.self) { item in
                             NavigationLink(value: item) {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 10)
@@ -89,20 +79,22 @@ struct CategoryListView: View {
 //      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * *
             .sheet(isPresented: $isAddingNewAppCategory) {
                 NavigationView {
-                    CategoryEditorContView(appCategoryInitialValues: newAppCategory,
-                                    appCategory: newAppCategory,
-                                           appsViewModel: appsViewModel, model: model,
-                                           isNew: true
+                    CategoryEditorContView(appCategoryInitialValues: newAppCategory
+                                          , appCategory: newAppCategory
+                                          , appsViewModel: appsViewModel
+//                                          , categoryViewModel: categoryViewModel
+                                          , isNew: true
                     )
                 }
                 .presentationDetents( [ .large ] )
             }
             
-//      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * *
+//      MARK: -Navigation  * * * * * * * * * * * * * * * * * * * * * * * *
             .navigationDestination(for: AppCategory.self) { theappCategory in
-                CategoryEditorContView(appCategoryInitialValues: theappCategory,
-                                appCategory: theappCategory,
-                                       appsViewModel: appsViewModel, model: model
+                CategoryEditorContView(appCategoryInitialValues: theappCategory
+                                       , appCategory: theappCategory
+                                       , appsViewModel: appsViewModel
+//                                       categoryViewModel: categoryViewModel
                 )
             }
 

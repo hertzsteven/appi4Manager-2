@@ -26,8 +26,8 @@ struct DashboardView: View {
         Category(name: "UserDup", color: .yellow, image: Image(systemName: "dollarsign.circle.fill"), count: 6)
     ]
     
-    @StateObject var model          = CategoryViewModel()
-    @StateObject var appsViewModel  = AppsViewModel()
+//    @StateObject var model          = CategoryViewModel()
+//    @StateObject var appsViewModel  = AppsViewModel()
 
 
     var body: some View {
@@ -51,8 +51,8 @@ struct DashboardView: View {
                 switch category.name {
                 case "Categories":
                     CategoryListView( newAppCategory: AppCategory.makeDefault())
-                        .environmentObject(model)
-                        .environmentObject(appsViewModel)
+//                        .environmentObject(model)
+//                        .environmentObject(appsViewModel)
                 
 
 //                    UserListContent(newUser: User.makeDefault())
