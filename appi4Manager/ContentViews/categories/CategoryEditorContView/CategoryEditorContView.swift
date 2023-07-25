@@ -7,133 +7,8 @@
 
 import SwiftUI
 
-struct CircleView: View {
-    var color: Color
-
-    var body: some View {
-        Circle()
-            .fill(color)
-            .frame(width: 100, height: 100)
-            .padding(. horizontal,40)
-    }
-}
-
-struct DeleteButtonViewCTG: View {
-    
-    var action: () -> Void
-    
-    var body: some View {
-        Button(role: .destructive) {
-            action()
-        }
-    label: {
-        Text("Delete")
-            .foregroundColor(.white)
-            .bold()
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(Color.red)
-            .cornerRadius(10)
-    }
-    .buttonStyle(PlainButtonStyle())
-    .frame(maxWidth: .infinity)
-    .listRowInsets(EdgeInsets())
-    }
-}
-
-
-struct CollapsibleListCTG: View {
-    @EnvironmentObject var model: CategoryViewModel
-    @EnvironmentObject var appsViewModel : AppsViewModel
-    @Environment(\.editMode) var editMode
-    
-    @Binding var isListVisible: Bool
-    @Binding var newItem: String
-    @Binding var listData:   [String]
-    let title:      String
-    let appArray: [Apps]
-    
-    var action: () -> Void
-    
-    var itIsInEdit: Bool {
-        editMode?.wrappedValue == .active
-    }
-    
-    var body: some View {
-        
-        Section(header: HStack {
-       
-            TextField("Update \(title)", text: $newItem)
-            Spacer()
-       
-//            if itIsInEdit {
-                Button {
-                    action()
-                } label: {
-                    Image(systemName: "plusminus")
-                }
-                Divider()
-//            }
-       
-            Button {
-                isListVisible.toggle()
-            } label: {
-                Image(systemName: isListVisible ? "chevron.down" : "chevron.right")
-            }
-        }) { if isListVisible {
-            
-            ForEach(listData.map({ id in
-//                appsViewModel.apps.first(where: { $0.id == id })!
-                appArray.first(where: { $0.id == id })!
-            }), id: \.id) { app in
-                Label("\(app.title)", systemImage: app.symbolName)
-//                Text("\(app.title)")
-                    .foregroundColor(itIsInEdit ? .black :  Color(.darkGray))
-            }
-            .onAppear{
-                print("wait")
-                print(listData)
-                print("ok")
-            }
-
-        }
-        }
-
-
-    }
-}
-
-
-//struct AnimateTextField: View {
-//    @Binding var textField: String
-//    @Binding var mode : EditMode
-//    var itIsInEdit: Bool {
-//        mode == .active
-//    }
-//    let label: String
-//
-//    var body: some View {
-//
-//        HStack {
-//            if !textField.isEmpty {
-//                Text("\(label): ")
-//            }
-//
-//            ZStack(alignment: .leading) {
-//                TextField(label, text: $textField)
-//                    .opacity(itIsInEdit ? 1 : 0)
-//                Text(textField)
-//                    .opacity(itIsInEdit ? 0 : 1)
-//                    .foregroundColor(Color(.darkGray))
-//            }
-//        }
-//    }
-//}
-
 
 struct CategoryEditorContView: View {
-
-//  added properties
 
     @State var isBlocking = false
     
@@ -142,12 +17,6 @@ struct CategoryEditorContView: View {
     @State private var inAdd    = false
     
     @State var mode: EditMode = .inactive
-    
-//    @State private var showDeleteAlert = false
-
-
-//    @State var editMode = EditMode.inactive
-
 
     @State var selectedAppsSaved:       Array<Int> = []
 
@@ -161,37 +30,24 @@ struct CategoryEditorContView: View {
 
     @State var appCategory: AppCategory
     @State var selectedAppsInitialValues:   Array<Int> = []
-    
-//    @State private var isSheetPresented = false
     @State private var inCancelEdit = false
     @State private var inCancelAdd = false
-
-
-//    @State private var appCategory_start   = AppCategory.makeDefault()  // this gets done by the update
-//    @State private var appCategoryCopy     = AppCategory.makeDefault()
-
     @State private var isDeleted = false
     
     var itIsInEdit: Bool {
         mode == .active
     }
-
-    
     
     private var isAppCategoryDeleted: Bool {
         // change to appCategory view model
-    // !usersViewModel.exists(appCategoryInitialValues) && !isNew
-    false
+        // !usersViewModel.exists(appCategoryInitialValues) && !isNew
+        false
     }
 
-// added properties end
+    @EnvironmentObject  var appsxViewModel:     AppxViewModel
+    @StateObject        var appsViewModel:      AppsViewModel
+    @EnvironmentObject  var categoryViewModel:  CategoryViewModel
 
-//    @EnvironmentObject var apps2ViewModel : AppsViewModel
-    
-    @StateObject var appsViewModel : AppsViewModel
-    @EnvironmentObject var categoryViewModel: CategoryViewModel
-//    @StateObject var categoryViewModel: CategoryViewModel
-    
     @State var selectedColor: Color =  CategoryColors.random()
 
 //    @State var someText: String = ""
@@ -211,70 +67,71 @@ struct CategoryEditorContView: View {
     @State var newItem1: String = ""
     @State private var toShowAppList: Bool = false
     @State private var sometext = ""
-    
-    
-    
+
 //    var buttonAction: () -> Void
     
     var body: some View {
             //        NavigationStack() {
         GeometryReader { geometry in
-            Form {
-                
-                    //  Circle and Name
-                Section {
-                        // The Circle with 2 Spacer Views
-                    HStack {
-                        PopulateCircleView(selectedColor: $selectedColor, selectedSymbol: $appCategory.symbolName)
-                    }
-                        // The name field
-                    EnterNameView(someText: $appCategory.title, mode: $mode, selectedColor: selectedColor )
+            ZStack {
+                Form {
                     
-                }
-                VStack {
-                    SymbolPickerView(selectedSymbol: $appCategory.symbolName, selectedColor: $selectedColor, mode: $mode)
-                } .frame(height: geometry.size.height / 4)
-                    // My Color Picker with fixed colors
-                ColorPickerViewView(selectedColor: $selectedColor, mode: $mode)
-                
-                    // Swift Color Picker View
-                ColorPicker("Select a Custom Color", selection: $selectedColor)
-                    .opacity(itIsInEdit ? 1 : 0.6)
-                    .disabled(itIsInEdit ? false : true)
-                
-                
-    
-                
-                CollapsibleListCTG(isListVisible: $isList1Visible, newItem: $newItem1, listData: $selectedApps, title: "Apps", appArray: appsViewModel.apps) {
-                    Task {
-                        do {
-                            passedItemSelected = selectedApps
-                            toShowAppList.toggle()
-                        } catch {
-                                // Handle error
+                        //  Circle and Name
+                    Section {
+                            // The Circle with 2 Spacer Views
+                        HStack {
+                            PopulateCircleView(selectedColor: $selectedColor, selectedSymbol: $appCategory.symbolName)
+                        }
+                            // The name field
+                        EnterNameView(someText: $appCategory.title, mode: $mode, selectedColor: selectedColor )
+                    }
+                    
+                    
+                    VStack {
+                        SymbolPickerView(selectedSymbol: $appCategory.symbolName, selectedColor: $selectedColor, mode: $mode)
+                    }
+                    .frame(height: geometry.size.height / 4)
+                    
+                        // My Color Picker with fixed colors
+                    ColorPickerViewView(selectedColor: $selectedColor, mode: $mode)
+                    
+                    
+                        // Swift Color Picker View
+                    ColorPicker("Select a Custom Color", selection: $selectedColor)
+                        .opacity(itIsInEdit ? 1 : 0.6)
+                        .disabled(itIsInEdit ? false : true)
+                    
+                    
+                    CollapsibleListCTG(isListVisible: $isList1Visible, newItem: $newItem1, listData: $selectedApps, title: "Apps", appArray: appsViewModel.apps) {
+                        Task {
+                            do {
+                                passedItemSelected = selectedApps
+                                toShowAppList.toggle()
+                            } catch {
+                                    // Handle error
+                            }
                         }
                     }
-                }
-                .opacity(itIsInEdit ? 1 : 0.6)
-                .disabled(itIsInEdit ? false : true)
-                
-                .environment(\.editMode, $mode)
-                .onAppear {
-                    print("=====================")
-                dump(appsViewModel.apps)
-                    print("===================")
-
-                }
-                if !isNew {
-                    DeleteButtonViewCTG(action: {
-                        inDelete.toggle()
-                    })
-                    .listRowInsets(EdgeInsets())
-                    .disabled(!itIsInEdit ? true : false)
-                }
-                
+                    .opacity(itIsInEdit ? 1 : 0.6)
+                    .disabled(itIsInEdit ? false : true)
+                    
+                    .environment(\.editMode, $mode)
+                    
+                    .onAppear {
+                        print("in form on appaer")
+                    }
+                    
+                        // delete button
+                    if !isNew {
+                        DeleteButtonViewCTG(action: {
+                            inDelete.toggle()
+                        })
+                        .listRowInsets(EdgeInsets())
+                        .disabled(!itIsInEdit ? true : false)
+                    } // end of delete button
+                    
+                } // end of form
             }
-            
                 //       MARK: - Navigation Configuration  * * * * * * * * * * * * * * * * * * * * * * * *
             .navigationTitle("New Category")
             .navigationBarTitleDisplayMode(.inline)
@@ -284,39 +141,18 @@ struct CategoryEditorContView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     if !isNew {
-                        Button(!itIsInEdit ? "Edit" : "**Done**") {
-                            if itIsInEdit {
-                                if inUpdate {
-                                    return
-                                }
-                                
-                                Task {
-                                    isBlocking = true
-                                    
-                                    do {
-                                        inUpdate = true
-                                        await upDateAppCategory()
-                                        inUpdate = false
-                                        isBlocking = false
-                                        if !itIsInEdit {
-                                                //                                                updateModeWithAnimation()
-                                        } else {
-                                            updateModeWithAnimation(switchTo: .inactive)
-                                        }
-                                    } catch {
-                                        print("Failed in task")
-                                    }
-                                }
-                            } else {
-                                updateModeWithAnimation()
-                            }
-                        }.frame(height: 96, alignment: .trailing)
-                            .disabled(isBlocking)
+                        Button(action: {
+                            itIsInEdit ? handleEdit() : handleDone()
+                        }, label: {
+                            Text(!itIsInEdit ? "Edit" : "Done")
+                        })
+                        .frame(height: 96, alignment: .trailing)
+                        .disabled(isBlocking)
                     }
                 }
                 
                 
-                    //             Cancel button from editing not adding
+                    //   Cancel button from editing not adding
                 ToolbarItem(placement: .navigationBarLeading) {
                     if itIsInEdit && !isNew {
                         Button("Cancel") {
@@ -326,7 +162,7 @@ struct CategoryEditorContView: View {
                     }
                 }
                 
-                
+                    //   Cancel button from  adding
                 ToolbarItem(placement: .cancellationAction) {
                     if isNew {
                         Button("Cancel") {
@@ -335,31 +171,15 @@ struct CategoryEditorContView: View {
                     }
                 }
                 
-                
+                    // doing an add
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
+                    Button(action: {
                         if isNew {
-                            if inAdd {
-                                return
-                            }
-                            let uiColor = UIColor(selectedColor)
-                            let rgba = uiColor.rgba
-                            let newAppCTG = AppCategory(id: appCategory.id,
-                                                        title: appCategory.title,
-                                                        symbolName: appCategory.symbolName,
-                                                        colorRGB: ColorRGB(red: rgba.red, green: rgba.green, blue: rgba.blue, alpha: rgba.alpha),
-                                                        appIds: selectedApps)
-                            dump(newAppCTG)
-                            
-                            categoryViewModel.appCategories.append(newAppCTG)
-                            
-                            categoryViewModel.saveToUserDefaults()
-                            dismiss()
-                            
+                            handleAdd()
                         }
-                    } label: {
+                    }, label: {
                         Text(isNew ? "Add" : "")
-                    }
+                    })
                     .frame(height: 96, alignment: .trailing)
                     .disabled(appCategory.title.isEmpty)
                 }
@@ -373,7 +193,7 @@ struct CategoryEditorContView: View {
                 //      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * *
             
             
-                //       Select Students Popup
+                //       Select app Popup
             .sheet(isPresented: $toShowAppList) {
                 
                     //                    let userFilter2: ((any ItemsToSelectRepresentable) -> Bool) = { usr in
@@ -383,9 +203,9 @@ struct CategoryEditorContView: View {
                 let userFilter2: ((any ItemsToSelectRepresentableStr) -> Bool)? = nil
                 NavigationView {
                     ItemListSelectViewStr(passedItemSelected: $passedItemSelected,
-                                       itemsToList: appsViewModel.apps,
-                                       itemFilter2: userFilter2,
-                                       listTitle: "Select the apps for the category")
+                                          itemsToList: appsViewModel.apps,
+                                          itemFilter2: userFilter2,
+                                          listTitle: "Select the apps for the category")
                 }
                 .onDisappear {
                     print(passedItemSelected)
@@ -394,9 +214,6 @@ struct CategoryEditorContView: View {
                     appCategory.appIds = selectedApps
                 }
             }
-            
-            
-            
             
             
                 //       MARK: - Confirmation Dialog  * * * * * * * * * * * * * * * * * * * * * * * *
@@ -433,7 +250,7 @@ struct CategoryEditorContView: View {
                 //           }
             .onAppear {
                 print("-----------------------")
-            dump(appsViewModel.apps)
+                dump(appsViewModel.apps)
                 print("-----------------------")
                 selectedColor = Color(UIColor(red: appCategory.colorRGB.red,
                                               green: appCategory.colorRGB.green,
@@ -451,11 +268,62 @@ struct CategoryEditorContView: View {
             .onDisappear{
                 mode = .inactive
             }
-        }
+        } // end geomotry
     }
 }
 
+extension CategoryEditorContView {
+    
+    // handle the edit done toolbarItem
+    func handleEdit() {
+        if inUpdate {
+            return
+        }
 
+        Task {
+            isBlocking = true
+
+            do {
+                inUpdate = true
+                await upDateAppCategory()
+                inUpdate = false
+                isBlocking = false
+                if !itIsInEdit {
+                    //updateModeWithAnimation()
+                } else {
+                    updateModeWithAnimation(switchTo: .inactive)
+                }
+            } catch {
+                print("Failed in task")
+            }
+        }
+    }
+
+    func handleDone() {
+        updateModeWithAnimation()
+    }
+    
+    func handleAdd() {
+        if inAdd {
+            return
+        }
+        
+        let uiColor = UIColor(selectedColor)
+        let rgba = uiColor.rgba
+        let newAppCTG = AppCategory(id: appCategory.id,
+                                    title: appCategory.title,
+                                    symbolName: appCategory.symbolName,
+                                    colorRGB: ColorRGB(red: rgba.red, green: rgba.green, blue: rgba.blue, alpha: rgba.alpha),
+                                    appIds: selectedApps)
+        
+        dump(newAppCTG)
+        
+        categoryViewModel.appCategories.append(newAppCTG)
+        
+        categoryViewModel.saveToUserDefaults()
+        dismiss()
+    }
+}
 
 //  MARK: -  View Components
 
@@ -527,31 +395,6 @@ struct ColorButton: View {
 }
 
 
-//struct ColorButton2: View {
-//    let color: Color
-//    @Binding var selectedColor: Color
-//
-//    var body: some View {
-//        Button(action: {
-//            selectedColor = color
-//        }) {
-//            Circle()
-//                .fill(color)
-//                .frame(width: 50, height: 50)
-//                .overlay(
-//                    Circle()
-//                        .stroke(selectedColor == color ? Color.gray : Color.clear, lineWidth: 2)
-//                        .opacity(0.8)
-//                        .animation(
-//                            .easeInOut(duration: 0.6),
-//                            value: selectedColor == color
-//                        )
-//                    .frame(width: 60, height: 60)
-//                )
-//        }
-//    }
-//}
-
 struct ColorPickerViewView: View {
     
     @Binding  var selectedColor: Color
@@ -574,49 +417,6 @@ struct ColorPickerViewView: View {
     }
 }
 
-//struct SymbolPickerView2: View {
-//
-//    @State private var symbolNames = CategorySymbols.symbolNames
-//    @Binding var selectedSymbol: String
-//    var columns = Array(repeating: GridItem(.flexible()), count: 6)
-//
-//    @Binding  var selectedColor: Color
-//
-//    var body: some View {
-//        ScrollView {
-////            LazyVGrid(columns: [GridItem(.adaptive(minimum: 40))], spacing: 16) {
-//            LazyVGrid(columns: columns) {
-//                ForEach(symbolNames, id: \.self) { symbolItem in
-//                    Button {
-//                        selectedSymbol = symbolItem
-//                    } label: {
-//                        Image(systemName: symbolItem)
-//                            .imageScale(.large)
-//                            .foregroundColor(selectedColor)
-//                            .padding(5)
-//                            .overlay(
-//                                Circle()
-//                                    .stroke(selectedSymbol == symbolItem ? Color.gray : Color.clear, lineWidth: 2)
-//                                    .opacity(0.8)
-//                                    .animation(
-//                                        .easeInOut(duration: 0.6),
-//                                        value: selectedSymbol == symbolItem
-//                                    )
-//                                .frame(width: 40, height: 40)
-//
-//                             )
-//                    }
-//                    .buttonStyle(.plain)
-//                }
-//            }
-////            .drawingGroup()
-//        }
-//        .onAppear {
-////            selectedColor = Color(.blue)
-//        }
-//
-//    }
-//}
 
 struct SymbolPickerView: View {
     
