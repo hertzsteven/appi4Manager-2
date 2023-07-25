@@ -92,7 +92,10 @@ struct DashboardView: View {
                         .task {
                             await loadTheUsers()
                        }
-                    
+
+                case "Apps":
+                    AppxView()
+   
                 default:
                     SchoolListContent(path: $path, newClass: SchoolClass.makeDefault())
                 }

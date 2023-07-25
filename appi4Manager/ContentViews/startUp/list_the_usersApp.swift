@@ -21,14 +21,15 @@ struct list_the_usersApp: App {
     @StateObject var classDetailViewModel       = ClassDetailViewModel()
     @StateObject var studentPicStubViewModel    = StudentPicStubViewModel()
     @StateObject var classesViewModel           = ClassesViewModel()
+    @StateObject var appxViewModel              = AppxViewModel()
     
 
 
     var body: some Scene {
         WindowGroup {
-            TestOutView()
+//            TestOutView()
             
-/* 
+ 
             if appWorkViewModel.isLoaded {
                 DashboardView()
                     .environmentObject(usersViewModel)
@@ -36,11 +37,12 @@ struct list_the_usersApp: App {
                     .environmentObject(studentPicStubViewModel)
                     .environmentObject(classesViewModel)
                     .environmentObject(appWorkViewModel)
+                    .environmentObject(appxViewModel)
+
             } else {
                 ProgressView()
             }
- */
-
+ 
             
 //             if appWorkViewModel.isLoaded {
 //                TabBarController()
