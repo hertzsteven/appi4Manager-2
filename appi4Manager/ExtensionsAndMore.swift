@@ -34,6 +34,16 @@ protocol ItemsToSelectRepresentable: Identifiable {
 }
 
 
+
+protocol ItemsToSelectRepresentablewithPic: Identifiable {
+    var locationId: Int { get }
+    var nameToDisplay: String { get }
+    var id: Int { get }
+    var icon: String { get}
+}
+
+
+
 struct OnScroll: ViewModifier {
     let onScroll: (CGFloat) -> Void
     

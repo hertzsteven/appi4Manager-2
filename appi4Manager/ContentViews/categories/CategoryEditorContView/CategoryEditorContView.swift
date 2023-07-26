@@ -20,9 +20,9 @@ struct CategoryEditorContView: View {
 
     @State var selectedAppsSaved:       Array<Int> = []
 
-    @State var passedItemSelected:      Array<String> = []
+    @State var passedItemSelected:      Array<Int> = []
 
-    @State var selectedApps:            Array<String> = []
+    @State var selectedApps:            Array<Int> = []
     
     @State var appCategoryInitialValues: AppCategory
     @State private var toShowAppsList:  Bool = false
@@ -44,9 +44,11 @@ struct CategoryEditorContView: View {
         false
     }
 
-    @EnvironmentObject  var appsxViewModel:     AppxViewModel
+    @EnvironmentObject  var appxViewModel:     AppxViewModel
     @StateObject        var appsViewModel:      AppsViewModel
     @EnvironmentObject  var categoryViewModel:  CategoryViewModel
+    @EnvironmentObject var appWorkViewModel : AppWorkViewModel
+
 
     @State var selectedColor: Color =  CategoryColors.random()
 
@@ -67,6 +69,10 @@ struct CategoryEditorContView: View {
     @State var newItem1: String = ""
     @State private var toShowAppList: Bool = false
     @State private var sometext = ""
+    
+    @State private var hasError = false
+    @State private var error: ApiError?
+
 
 //    var buttonAction: () -> Void
     
@@ -74,75 +80,87 @@ struct CategoryEditorContView: View {
             //        NavigationStack() {
         GeometryReader { geometry in
             ZStack {
-                Form {
-                    
-                        //  Circle and Name
-                    Section {
-                            // The Circle with 2 Spacer Views
-                        HStack {
-                            PopulateCircleView(selectedColor: $selectedColor, selectedSymbol: $appCategory.symbolName)
-                        }
-                            // The name field
-                        EnterNameView(someText: $appCategory.title, mode: $mode, selectedColor: selectedColor )
-                    }
-                    
-                    
+                if appxViewModel.isLoaded == false {
                     VStack {
-                        SymbolPickerView(selectedSymbol: $appCategory.symbolName, selectedColor: $selectedColor, mode: $mode)
+                        ProgressView().controlSize(.large).scaleEffect(2)
                     }
-                    .frame(height: geometry.size.height / 4)
+                } else {
                     
-                        // My Color Picker with fixed colors
-                    ColorPickerViewView(selectedColor: $selectedColor, mode: $mode)
-                    
-                    
-                        // Swift Color Picker View
-                    ColorPicker("Select a Custom Color", selection: $selectedColor)
-                        .opacity(itIsInEdit ? 1 : 0.6)
-                        .disabled(itIsInEdit ? false : true)
-                    
-                    
-                    CollapsibleListCTG(isListVisible: $isList1Visible, newItem: $newItem1, listData: $selectedApps, title: "Apps", appArray: appsViewModel.apps) {
-                        Task {
-                            do {
-                                passedItemSelected = selectedApps
-                                toShowAppList.toggle()
-                            } catch {
-                                    // Handle error
+                    Form {
+                        
+                        Text(appxViewModel.appx.first?.name ?? "empty")
+                        
+                            //  Circle and Name
+                        Section {
+                                // The Circle with 2 Spacer Views
+                            HStack {
+                                PopulateCircleView(selectedColor: $selectedColor, selectedSymbol: $appCategory.symbolName)
+                            }
+                                // The name field
+                            EnterNameView(someText: $appCategory.title, mode: $mode, selectedColor: selectedColor )
+                        }
+                        
+                        
+                        VStack {
+                            SymbolPickerView(selectedSymbol: $appCategory.symbolName, selectedColor: $selectedColor, mode: $mode)
+                        }
+                        .frame(height: geometry.size.height / 4)
+                        
+                            // My Color Picker with fixed colors
+                        ColorPickerViewView(selectedColor: $selectedColor, mode: $mode)
+                        
+                        
+                            // Swift Color Picker View
+                        ColorPicker("Select a Custom Color", selection: $selectedColor)
+                            .opacity(itIsInEdit ? 1 : 0.6)
+                            .disabled(itIsInEdit ? false : true)
+                        
+                        
+                        CollapsibleListCTG(isListVisible: $isList1Visible, newItem: $newItem1, listData: $selectedApps, title: "Apps", appArray: appxViewModel.appx) {
+                            Task {
+                                do {
+                                    passedItemSelected = selectedApps
+                                    toShowAppList.toggle()
+                                } catch {
+                                        // Handle error
+                                }
                             }
                         }
-                    }
-                    .opacity(itIsInEdit ? 1 : 0.6)
-                    .disabled(itIsInEdit ? false : true)
-                    
-                    .environment(\.editMode, $mode)
-                    
-                    .onAppear {
-                        print("in form on appaer")
-                    }
-                    
-                        // delete button
-                    if !isNew {
-                        DeleteButtonViewCTG(action: {
-                            inDelete.toggle()
-                        })
-                        .listRowInsets(EdgeInsets())
-                        .disabled(!itIsInEdit ? true : false)
-                    } // end of delete button
-                    
-                } // end of form
+                        .opacity(itIsInEdit ? 1 : 0.6)
+                        .disabled(itIsInEdit ? false : true)
+                        
+                        .environment(\.editMode, $mode)
+                        
+                        .onAppear {
+                                //                        print("in form on appaer")
+                        }
+                        
+                            // delete button
+                        if !isNew {
+                            DeleteButtonViewCTG(action: {
+                                inDelete.toggle()
+                            })
+                            .listRowInsets(EdgeInsets())
+                            .disabled(!itIsInEdit ? true : false)
+                        } // end of delete button
+                        
+                    } // end of form
+                }
             }
-                //       MARK: - Navigation Configuration  * * * * * * * * * * * * * * * * * * * * * * * *
+            //       MARK: - Navigation Configuration  * * * * * * * * * * * * * * * * * * * * * * * *
             .navigationTitle("New Category")
             .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(mode == .active ? true : false)
             
             
-                //       MARK: - Toolbar Configuration  * * * * * * * * * * * * * * * * * * * * * * * *
+            //       MARK: - Toolbar Configuration  * * * * * * * * * * * * * * * * * * * * * * * *
+
             .toolbar {
+            
                 ToolbarItem(placement: .navigationBarTrailing) {
                     if !isNew {
                         Button(action: {
-                            itIsInEdit ? handleEdit() : handleDone()
+                            itIsInEdit ? toolbarhandleEdit() : toolbarhandleDone()
                         }, label: {
                             Text(!itIsInEdit ? "Edit" : "Done")
                         })
@@ -151,8 +169,7 @@ struct CategoryEditorContView: View {
                     }
                 }
                 
-                
-                    //   Cancel button from editing not adding
+                //   Cancel button from editing not adding
                 ToolbarItem(placement: .navigationBarLeading) {
                     if itIsInEdit && !isNew {
                         Button("Cancel") {
@@ -162,7 +179,7 @@ struct CategoryEditorContView: View {
                     }
                 }
                 
-                    //   Cancel button from  adding
+                //   Cancel button from  adding
                 ToolbarItem(placement: .cancellationAction) {
                     if isNew {
                         Button("Cancel") {
@@ -171,11 +188,11 @@ struct CategoryEditorContView: View {
                     }
                 }
                 
-                    // doing an add
+                // doing an add
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         if isNew {
-                            handleAdd()
+                            toolbarhandleAdd()
                         }
                     }, label: {
                         Text(isNew ? "Add" : "")
@@ -184,28 +201,25 @@ struct CategoryEditorContView: View {
                     .disabled(appCategory.title.isEmpty)
                 }
                 
-            }
+            }   // end of toolbar
             
             
-                //      MARK: - Navigation Bar  * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
-            .navigationBarBackButtonHidden(mode == .active ? true : false)
-            
-                //      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * *
+            //      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * *
             
             
-                //       Select app Popup
+            //       Select app Popup
             .sheet(isPresented: $toShowAppList) {
                 
-                    //                    let userFilter2: ((any ItemsToSelectRepresentable) -> Bool) = { usr in
-                    //                        !teacherIds.contains(usr.id)
-                    //                    }
+                //                    let userFilter2: ((any ItemsToSelectRepresentable) -> Bool) = { usr in
+                //                        !teacherIds.contains(usr.id)
+                //                    }
                 
-                let userFilter2: ((any ItemsToSelectRepresentableStr) -> Bool)? = nil
+                let userFilter2: ((any ItemsToSelectRepresentablewithPic) -> Bool)? = nil
                 NavigationView {
-                    ItemListSelectViewStr(passedItemSelected: $passedItemSelected,
-                                          itemsToList: appsViewModel.apps,
-                                          itemFilter2: userFilter2,
-                                          listTitle: "Select the apps for the category")
+                    ItemListSelectViewWithPic(passedItemSelected:  $passedItemSelected,
+                                       itemsToList:          appxViewModel.appx,
+                                       itemFilter2:          userFilter2,
+                                       listTitle:            "Select the apps for the category")
                 }
                 .onDisappear {
                     print(passedItemSelected)
@@ -216,14 +230,14 @@ struct CategoryEditorContView: View {
             }
             
             
-                //       MARK: - Confirmation Dialog  * * * * * * * * * * * * * * * * * * * * * * * *
-            
+            //       MARK: - Confirmation Dialog  * * * * * * * * * * * * * * * * * * * * * * * *
+
             .confirmationDialog("Are you sure you want to delete this class?", isPresented: $inDelete) {
                 Button("Delete the Student", role: .destructive) {
                     deleteTheAppCategory()
                 }
             }
-                // from edit
+            // from edit
             .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelEdit, titleVisibility: .visible) {
                 Button("Discard Changes edit ", role: .destructive) {
                         // Do something when the user confirms
@@ -238,27 +252,36 @@ struct CategoryEditorContView: View {
                 }
             }
             
-                // from add
+            // from add
             .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelAdd, titleVisibility: .visible) {
                 Button("Discard Changes", role: .destructive) {
                         // Do something when the user confirms
                     dismiss()
                 }
             }
-            
-                // -------
-                //           }
+//      MARK: - Task Modifier    * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
+            .task {
+                guard appxViewModel.isLoaded == false else { return }
+                if appxViewModel.ignoreLoading {
+                    print("in ignore lloading")
+                    appxViewModel.ignoreLoading = false
+                        // Don't load the classes if ignoreLoading is true
+                } else {
+                        // Load the classes if ignoreLoading is false
+                    print("in before await")
+                    await loadTheapps()
+                    appxViewModel.ignoreLoading = false
+                }
+                
+            }
             .onAppear {
-                print("-----------------------")
-                dump(appsViewModel.apps)
-                print("-----------------------")
                 selectedColor = Color(UIColor(red: appCategory.colorRGB.red,
                                               green: appCategory.colorRGB.green,
                                               blue: appCategory.colorRGB.blue,
                                               alpha: appCategory.colorRGB.alpha)
                 )
                     //                usersViewModel.ignoreLoading = true
-                
+                print("in on appear")
                 if !isNew {
                     toDoWithNewAppCategoryToProcess()
                 } else {
@@ -274,8 +297,20 @@ struct CategoryEditorContView: View {
 
 extension CategoryEditorContView {
     
+    func loadTheapps() async {
+        do {
+            try await appxViewModel.loadData2()
+        } catch  {
+            if let xerror = error as? ApiError {
+                self.hasError   = true
+                self.error      = xerror
+            }
+        }
+    }
+
+    
     // handle the edit done toolbarItem
-    func handleEdit() {
+    func toolbarhandleEdit() {
         if inUpdate {
             return
         }
@@ -299,11 +334,11 @@ extension CategoryEditorContView {
         }
     }
 
-    func handleDone() {
+    func toolbarhandleDone() {
         updateModeWithAnimation()
     }
     
-    func handleAdd() {
+    func toolbarhandleAdd() {
         if inAdd {
             return
         }
@@ -314,7 +349,8 @@ extension CategoryEditorContView {
                                     title: appCategory.title,
                                     symbolName: appCategory.symbolName,
                                     colorRGB: ColorRGB(red: rgba.red, green: rgba.green, blue: rgba.blue, alpha: rgba.alpha),
-                                    appIds: selectedApps)
+                                    appIds: selectedApps,
+                                    locationId: appWorkViewModel.currentLocation.id)
         
         dump(newAppCTG)
         
@@ -326,148 +362,6 @@ extension CategoryEditorContView {
 }
 
 //  MARK: -  View Components
-
-struct PopulateCircleView: View {
-    @Binding var selectedColor: Color
-    @Binding var selectedSymbol: String
-    
-    var body: some View {
-        Spacer()
-         CircleView(color: selectedColor)
-             .overlay(alignment: .center) {
-                 Image(systemName: selectedSymbol)
-                     .foregroundColor(.white)
-                     .font(.title)
-                     .bold()
-         }
-         Spacer()
-    }
-}
-
-struct EnterNameView: View {
-    
-    @Binding var someText: String
-    @Binding var mode: EditMode
-    let selectedColor: Color
-    
-    var body: some View {
-        AnimateTextField(textField: $someText, mode: $mode, label: "Title")
-//        TextField("Name", text: $someText)
-//            .font(.PoppinsBold(size: 24))
-            .opacity(1.0)
-            .multilineTextAlignment(.center)
-            .foregroundColor(selectedColor)
-            .padding()
-            .background(Color.gray.opacity(0.3))
-            .cornerRadius(10)
-            .padding([.top, .bottom])
-            .onAppear {
-                UITextField.appearance().clearButtonMode = .whileEditing
-            }
-    }
-}
-
-struct ColorButton: View {
-    let color: Color
-    @Binding var selectedColor: Color
-    
-    var body: some View {
-        Button(action: {
-            selectedColor = color
-        }) {
-            GeometryReader { geometry in
-                Circle()
-                    .fill(color)
-                    .overlay(
-                        Circle()
-                            .stroke(selectedColor == color ? Color.gray : Color.clear, lineWidth: 2)
-                            .opacity(0.8)
-                            .animation(
-                                .easeInOut(duration: 0.6),
-                                value: selectedColor == color
-                            )
-                        .frame(width: geometry.size.width + 8, height: geometry.size.height + 8)
-                    )
-            }
-            .aspectRatio(1, contentMode: .fit)
-        }
-    }
-}
-
-
-struct ColorPickerViewView: View {
-    
-    @Binding  var selectedColor: Color
-    @Binding  var mode: EditMode
-    var itIsInEdit: Bool {
-        mode == .active
-    }
-
-
-    var body: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: 20) {
-                ForEach(CategoryColors.all, id: \.self) { clr in
-                    ColorButton(color: clr, selectedColor: $selectedColor)
-                        .opacity(itIsInEdit ? 1 : 0.6)
-                        .disabled(itIsInEdit ? false : true)
-                }
-            }.padding()
-        }
-    }
-}
-
-
-struct SymbolPickerView: View {
-    
-    @State private var symbolNames = CategorySymbols.symbolNames
-    @Binding var selectedSymbol: String
-
-    var columns = Array(repeating: GridItem(.flexible()), count: 6)
-
-    @Binding  var selectedColor: Color
-    @Binding  var mode: EditMode
-    var itIsInEdit: Bool {
-        mode == .active
-    }
-
-    var body: some View {
-        ScrollView {
-            LazyVGrid(columns: columns) {
-                ForEach(symbolNames, id: \.self) { symbolItem in
-                    Button {
-                        selectedSymbol = symbolItem
-                    } label: {
-                        GeometryReader { geometry in
-                            Image(systemName: symbolItem)
-                                .imageScale(.large)
-                                .foregroundColor(selectedColor)
-                                .padding(10)
-                                .opacity(itIsInEdit ? 1 : 0.6)
-                                .disabled(itIsInEdit ? false : true)
-                                .overlay(
-                                    Circle()
-                                        .stroke(selectedSymbol == symbolItem ? Color.gray : Color.clear, lineWidth: 2)
-                                        .opacity(0.8)
-                                        .animation(
-                                            .easeInOut(duration: 0.6),
-                                            value: selectedSymbol == symbolItem
-                                        )
-                                        .frame(width: geometry.size.width + 4, height: geometry.size.height + 4)
-                                )
-                        }
-                        .aspectRatio(1, contentMode: .fit)
-                        .padding(5)
-                    }
-                    .opacity(itIsInEdit ? 1 : 0.6)
-                    .disabled(itIsInEdit ? false : true)
-
-                    .buttonStyle(.plain)
-                }
-            }
-        }
-    }
-}
 
 
 extension CategoryEditorContView {
@@ -606,7 +500,7 @@ extension CategoryEditorContView {
                                     title: appCategory.title,
                                     symbolName: appCategory.symbolName,
                                     colorRGB: ColorRGB(red: rgba.red, green: rgba.green, blue: rgba.blue, alpha: rgba.alpha),
-                                    appIds: selectedApps)
+                                             appIds: selectedApps, locationId: appWorkViewModel.currentLocation.id)
 
         let index = categoryViewModel.appCategories.firstIndex { appCtg in
             appCtg.id == appCategory.id
@@ -655,12 +549,13 @@ struct CategoryEditorContView_Previews: PreviewProvider {
     static var previews: some View {
         // You need to initialize a CategoryViewModel and AppCategory object with some initial values for the preview.
         let categoryViewModel = CategoryViewModel()
-        
+        var appWorkViewModel = AppWorkViewModel()
+
         let appCategory = AppCategory(id: "1",
                                       title: "Test Category",
                                       symbolName: "star.fill",
                                       colorRGB: ColorRGB(red: 1.0, green: 0.5, blue: 0.5, alpha: 1.0),
-                                      appIds: [])
+                                      appIds: [], locationId: appWorkViewModel.currentLocation.id)
         let appsViewModel = AppsViewModel()
         
         CategoryEditorContView(appCategoryInitialValues: appCategory,

@@ -10,6 +10,7 @@ import SwiftUI
 struct CategoryListView: View {
     
     @EnvironmentObject var appsViewModel : AppsViewModel
+    @EnvironmentObject var appWorkViewModel : AppWorkViewModel
     @EnvironmentObject var categoryViewModel: CategoryViewModel
 
     //    @EnvironmentObject var model: ViewModel
@@ -28,7 +29,8 @@ struct CategoryListView: View {
                // LazyGrid
                 ScrollView {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))], spacing: 12) {
-                        ForEach(categoryViewModel.appCategories, id: \.self) { item in
+//                        ForEach(categoryViewModel.appCategories, id: \.self) { item in
+                        ForEach(categoryViewModel.filterCategoriesinLocation(appWorkViewModel.currentLocation.id), id: \.self) { item in
                             NavigationLink(value: item) {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 10)
@@ -110,6 +112,21 @@ struct CategoryListView: View {
                         Image(systemName: "plus")
                     }
                     .frame(height: 96, alignment: .trailing)
+                }
+                
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Menu {
+                        Picker("Pick a location", selection: $appWorkViewModel.selectedLocationIdx) {
+                            ForEach(0 ..< appWorkViewModel.locations.count) { index in
+                                Text(appWorkViewModel.locations[index].name)
+                                    .tag(index)
+                            }
+                        }
+                        .padding()
+                    } label: {
+                        Text(appWorkViewModel.locations[appWorkViewModel.selectedLocationIdx].name).padding()
+                    }
+                    .pickerStyle(.menu)
                 }
             }
 

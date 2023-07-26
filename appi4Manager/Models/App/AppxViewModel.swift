@@ -14,12 +14,15 @@ class AppxViewModel: ObservableObject {
         didSet {
             if !appx.isEmpty {
                 saveToUserDefaults()
+                isLoaded = true
             }
         }
     }
 
-    @Published var isLoading = false
-    @Published var ignoreLoading = false
+    @Published var isLoading        = false
+    @Published var ignoreLoading    = false
+    @Published var isLoaded         = false
+
     
     private let userDefaultsKey = "apps1"
 
@@ -40,11 +43,12 @@ class AppxViewModel: ObservableObject {
         isLoading = true
         defer { isLoading = false }
         
-        try await Task.sleep(nanoseconds: 3 * 1_000_000_000) // 1 second = 1_000_000_000 nanoseconds
+//        try await Task.sleep(nanoseconds: 3 * 1_000_000_000) // 1 second = 1_000_000_000 nanoseconds
 
         let resposnse: AppResponse = try await ApiManager.shared.getData(from: .getApps)
         DispatchQueue.main.async {
             self.appx = resposnse.apps
+            
         }
     }
     

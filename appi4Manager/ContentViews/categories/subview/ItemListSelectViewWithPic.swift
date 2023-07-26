@@ -1,13 +1,15 @@
 //
-//  ItemListSelectView.swift
+//  ItemListSelectViewWithPic.swift
 //  appi4Manager
 //
-//  Created by Steven Hertz on 4/30/23.
+//  Created by Steven Hertz on 7/26/23.
 //
 
 import SwiftUI
 
-struct ItemListSelectView<theItemsToSelect: ItemsToSelectRepresentable> : View {
+import SwiftUI
+
+struct ItemListSelectViewWithPic<theItemsToSelect: ItemsToSelectRepresentablewithPic> : View {
     
     @EnvironmentObject var appWorkViewModel: AppWorkViewModel
 
@@ -17,7 +19,7 @@ struct ItemListSelectView<theItemsToSelect: ItemsToSelectRepresentable> : View {
     
     var itemsToList: Array<theItemsToSelect>
 
-    let itemFilter2: ((any ItemsToSelectRepresentable) -> Bool)?
+    let itemFilter2: ((any ItemsToSelectRepresentablewithPic) -> Bool)?
     
     let listTitle: String
     
@@ -43,6 +45,15 @@ struct ItemListSelectView<theItemsToSelect: ItemsToSelectRepresentable> : View {
                     HStack {
                         Text("\(itm.nameToDisplay)")
                         Spacer()
+                        
+                        AsyncImage(url: URL(string: itm.icon)) { image in
+                             image.resizable()
+                         } placeholder: {
+                             ProgressView()
+                         }
+                         .frame(width: 50, height: 50)
+                         .padding([.leading])
+
                         
                         if passedItemSelected.contains(itm.id) {
                             Image(systemName: "checkmark.square")
@@ -76,10 +87,11 @@ struct ItemListSelectView<theItemsToSelect: ItemsToSelectRepresentable> : View {
     }
 }
 
-struct SampleItem: ItemsToSelectRepresentable {
+struct SampleItemwithPic: ItemsToSelectRepresentablewithPic {
     var id: Int
     var nameToDisplay: String
     var locationId: Int
+    var icon: String
 }
 
 //struct ItemListSelectView_Previews: PreviewProvider {

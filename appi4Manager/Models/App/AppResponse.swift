@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Appx: Codable, Identifiable, Hashable, ItemsToSelectRepresentable {
+struct Appx: Codable, Identifiable, Hashable, ItemsToSelectRepresentablewithPic {    
     let id: Int
     let locationId: Int
     let isBook: Bool

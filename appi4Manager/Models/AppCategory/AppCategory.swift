@@ -38,7 +38,8 @@ struct AppCategory: Codable, Identifiable, Hashable {
     var title:      String
     var symbolName: String
     var colorRGB:   ColorRGB
-    var appIds:     [String] = []
+    var appIds:     [Int] = []
+    var locationId:  Int
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
@@ -53,7 +54,7 @@ extension AppCategory {
         return AppCategory(title: "",
                            symbolName: CategorySymbols.randomName(),
                            colorRGB: ColorRGB(red: rgba.red, green: rgba.green, blue: rgba.blue, alpha: rgba.alpha),
-                           appIds: ["1"]
+                           appIds: [1], locationId:0
         )
     }
 }
@@ -75,11 +76,28 @@ class CategoryViewModel: ObservableObject {
 
     private let userDefaultsKey = "appCategories7"
     
+    func filterCategoriesinLocation(_ locationId: Int) -> Array<AppCategory> {
+        var filteredCategoriesbyLocation = [AppCategory]()
+        
+        filteredCategoriesbyLocation = appCategories.filter{ appCategory in
+            appCategory.locationId  == locationId
+        }
+        
+        return filteredCategoriesbyLocation
+    }
+  
+    
+//    func getCategoriesByLocation(location: Int) -> Array<AppCategory> {
+//        appCategories.filter { appCtg in
+//            appCtg.
+//        }
+//    }
+    
     func loadSomeSamples()  {
         let ar = [
-            AppCategory(title: "the first one", symbolName: "star", colorRGB: ColorRGB(red: 0.3, green: 0.7, blue: 0.1, alpha: 1)),
-            AppCategory(title: "the second one", symbolName: "star", colorRGB: ColorRGB(red: 0.6, green: 0.3, blue: 0.4, alpha: 1)),
-            AppCategory(title: "the third one", symbolName: "star", colorRGB: ColorRGB(red: 0.8, green: 0.9, blue: 0.7, alpha: 1)),
+            AppCategory(title: "the first one", symbolName: "star", colorRGB: ColorRGB(red: 0.3, green: 0.7, blue: 0.1, alpha: 1), locationId: 0),
+            AppCategory(title: "the second one", symbolName: "star", colorRGB: ColorRGB(red: 0.6, green: 0.3, blue: 0.4, alpha: 1), locationId: 0),
+            AppCategory(title: "the third one", symbolName: "star", colorRGB: ColorRGB(red: 0.8, green: 0.9, blue: 0.7, alpha: 1), locationId: 1),
             ]
     
         appCategories.append(contentsOf: ar)
