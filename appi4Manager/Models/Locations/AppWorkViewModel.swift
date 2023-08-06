@@ -89,7 +89,7 @@ class AppWorkViewModel: ObservableObject {
                 let locationsResponse: LocationsResponse = try await ApiManager.shared.getData(from: .getLocations)
 
                     viewModel.locations = locationsResponse.locations
-                    viewModel.selectedLocationIdx = 1
+                    viewModel.selectedLocationIdx = 0
                     viewModel.currentLocation = viewModel.locations[viewModel.selectedLocationIdx]
                     viewModel.isLoaded = true
             } catch {

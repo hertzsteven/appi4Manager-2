@@ -49,6 +49,8 @@ struct DashboardView: View {
             }
             .navigationDestination(for: Category.self, destination: { category in
                 switch category.name {
+                case "Devices":
+                    CategoryDisclosureView( )
                 case "Categories":
                     CategoryListView( newAppCategory: AppCategory.makeDefault())
 //                        .environmentObject(model)

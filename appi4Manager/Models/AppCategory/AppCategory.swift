@@ -69,13 +69,13 @@ class CategoryViewModel: ObservableObject {
         }
     }
 
+    private let userDefaultsKey = "appCategories7"
     init() {
 //        loadSomeSamples()
         loadFromUserDefaults()
     }
 
-    private let userDefaultsKey = "appCategories7"
-    
+
     func filterCategoriesinLocation(_ locationId: Int) -> Array<AppCategory> {
         var filteredCategoriesbyLocation = [AppCategory]()
         
@@ -86,7 +86,6 @@ class CategoryViewModel: ObservableObject {
         return filteredCategoriesbyLocation
     }
   
-    
 //    func getCategoriesByLocation(location: Int) -> Array<AppCategory> {
 //        appCategories.filter { appCtg in
 //            appCtg.

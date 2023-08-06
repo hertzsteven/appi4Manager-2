@@ -22,7 +22,7 @@ import Foundation
         static let password = "123456"
         
         static let clssuserGroupId = 1
-        static let globalLocationId = 1
+        static let globalLocationId = 0
 
             //        static let authorizationCodeAlt = "Basic NjUzMTkwNzY6TUNTTUQ2VkM3TUNLVU5OOE1KNUNEQTk2UjFIWkJHQVY="
 

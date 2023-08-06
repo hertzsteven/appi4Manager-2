@@ -228,7 +228,19 @@ struct CollapsibleListCTG: View {
                     //                appsViewModel.apps.first(where: { $0.id == id })!
                 appArray.first(where: { $0.id == id })!
             }), id: \.id) { app in
-                Label("\(app.nameToDisplay)", systemImage: "pencil")
+                Label {
+                    Text("\(app.nameToDisplay)")
+                } icon: {
+                    AsyncImage(url: URL(string: app.icon)) { image in
+                         image.resizable()
+                     } placeholder: {
+                         ProgressView()
+                     }
+                     .frame(width: 32, height: 32)
+//                     .padding([.leading])
+                }
+
+              //  Label("\(app.nameToDisplay)", systemImage: "pencil")
                     //                Text("\(app.title)")
                     .foregroundColor(itIsInEdit ? .black :  Color(.darkGray))
             }
