@@ -46,35 +46,86 @@ struct LblExtractedSubview: View {
     }
 }
 
+struct HeaderGroupBoxStyle: GroupBoxStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(alignment: .leading) {
+            configuration.label
+            configuration.content
+        }
+        .padding()
+        .background(Color.orange.opacity(0.6))
+        
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+}
+
+
 struct CategoryDisclosureView: View {
     @EnvironmentObject var appxViewModel :    AppxViewModel
     @EnvironmentObject var appWorkViewModel : AppWorkViewModel
     @EnvironmentObject var categoryViewModel: CategoryViewModel
     
-    var appSelected: Array<Int> = []
+    @State var appSelected: Array<Int> = []
     
     @State var accumulatex: Double = 0
 
-    
+    var filteredData: [Appx] {
+        appxViewModel.appx.filter { appSelected.contains($0.id) }
+    }
+
+    @State private var selectedSegment = 0
+    @State private var lengthOfSesssion: Int = 20
+    @State private var singleAppMode: Bool = false
     var body: some View {
         
         if accumulatex > 0 {
             GroupBox {
-                Text("Hello how are you")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                
-                Button("reset") {
-                    withAnimation {
-                        accumulatex = 0
+                Picker("Apps", selection: $selectedSegment) {
+                    ForEach(appSelected, id: \.self) { appsel in
+                            //                        Text(appxViewModel.appx.filter { appSelected.contains($0.id) }[index].name).tag(index)
+                        if let idx = appxViewModel.appx.firstIndex(where: { $0.id == appsel }) {
+                            HStack {
+                                Text(appxViewModel.appx[idx].name)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+//                                Spacer()
+                            }
+                        }
                     }
-                    
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .pickerStyle(.automatic)
+                Stepper("Session Length: \(lengthOfSesssion)", value: $lengthOfSesssion, in: 5...60, step: 5)
+                
+                HStack {
+                    Toggle("Single App", isOn: $singleAppMode)
+                    Button("Reset") {
+                        withAnimation {
+                            accumulatex = 0
+                            appSelected.removeAll()
+                            lengthOfSesssion = 20
+                        }
+                        
+                    }
+                }
+            }  label: {
+                HStack {
+                    Text("**App Profile App Count:** \(appSelected.count)")
+                    Spacer()
+                    Button("Reset") {
+                        withAnimation {
+                            accumulatex = 0
+                            appSelected.removeAll()
+                            lengthOfSesssion = 20
+                        }
+                        
+                    }
                 }
             }
             .padding()
             .cornerRadius(12.0, antialiased: true)
             .opacity(accumulatex > 0 ? 1 : 0)
             .animation(Animation.easeInOut(duration: 2.0), value: accumulatex)
+            .groupBoxStyle(HeaderGroupBoxStyle())
             
         }
         
@@ -85,34 +136,61 @@ struct CategoryDisclosureView: View {
                         
                         if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
 //                        LblExtractedSubview(matchedApp: matchedApp)
-                           GroupBox {
-                                HStack {
-                                    Image(systemName: "checkmark.square")
-                                    if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
-                                        AsyncImage(url: URL(string: matchedApp.icon)) { image in
-                                            image.resizable()
-                                        } placeholder: {
-                                            ProgressView()
-                                        }
-                                        .frame(width: 50, height: 50)
-                                        .padding([.leading])
-                                        
-                                    } else {
-                                        Text("the app Name is ")
+                            
+                            Button {
+                               if let idx = appSelected.firstIndex(of: appId) {
+                                    appSelected.remove(at: idx)
+                                    accumulatex -= 1
+                                } else {
+//                                if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
+                                    withAnimation {
+                                        accumulatex += 1
+                                        appSelected.append(matchedApp.id)
                                     }
-                                    
-                                    
-                                    if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
-                                        Text(" \(matchedApp.name)") // assuming Appx has a property name
-                                    } else {
-                                        Text("the app Name is ")
-                                    }
-                                    
-                                    Spacer()
-                                }.frame(maxWidth: .infinity)
-                           }
-                           .groupBoxStyle(CardGroupBoxStyle(bgclr: UIColor(ciColor: .init(red: catg.colorRGB.red, green: catg.colorRGB.green, blue: catg.colorRGB.blue, alpha: catg.colorRGB.alpha))))
-                           
+                                }
+
+                            } label: {
+                                GroupBox {
+                                     HStack {
+                                         if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
+                                             if appSelected.contains(matchedApp.id) {
+                                                 Image(systemName: "checkmark.square")
+                                                     .foregroundColor(.blue)
+                                                     .scaleEffect(1.3)
+                                             } else {
+                                                 Image(systemName: "square")
+                                                     .foregroundColor(.blue)                                             }
+                                         }
+                                         
+                                         if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
+                                             AsyncImage(url: URL(string: matchedApp.icon)) { image in
+                                                 image.resizable()
+                                             } placeholder: {
+                                                 ProgressView()
+                                             }
+                                             .frame(width: 50, height: 50)
+                                             .padding([.leading])
+                                             
+                                         } else {
+                                             Text("the app Name is ")
+                                         }
+                                         
+                                         
+                                         if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
+                                             Text(" \(matchedApp.name)") // assuming Appx has a property name
+                                         } else {
+                                             Text("the app Name is ")
+                                         }
+                                         
+                                         Spacer()
+                                     }.frame(maxWidth: .infinity)
+                                }
+                                .groupBoxStyle(CardGroupBoxStyle(bgclr: UIColor(ciColor: .init(red: catg.colorRGB.red, green: catg.colorRGB.green, blue: catg.colorRGB.blue, alpha: catg.colorRGB.alpha))))
+                                .accentColor(Color.primary)
+                                
+                            }
+
+
 
                             /*
                            .onTapGesture {
