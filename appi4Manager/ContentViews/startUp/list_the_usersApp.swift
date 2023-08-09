@@ -29,23 +29,23 @@ struct list_the_usersApp: App {
     var body: some Scene {
         WindowGroup {
 //            TestOutView()
-            
+            StudentAppProfileView()
  
-            if appWorkViewModel.isLoaded {
-                DashboardView()
-                    .environmentObject(usersViewModel)
-                    .environmentObject(classDetailViewModel)
-                    .environmentObject(studentPicStubViewModel)
-                    .environmentObject(classesViewModel)
-                    .environmentObject(appWorkViewModel)
-                    .environmentObject(appxViewModel)
-                    .environmentObject(categoryViewModel)
-                    .environmentObject(appsViewModel)
-
-
-            } else {
-                ProgressView()
-            }
+//            if appWorkViewModel.isLoaded {
+//                DashboardView()
+//                    .environmentObject(usersViewModel)
+//                    .environmentObject(classDetailViewModel)
+//                    .environmentObject(studentPicStubViewModel)
+//                    .environmentObject(classesViewModel)
+//                    .environmentObject(appWorkViewModel)
+//                    .environmentObject(appxViewModel)
+//                    .environmentObject(categoryViewModel)
+//                    .environmentObject(appsViewModel)
+//
+//
+//            } else {
+//                ProgressView()
+//            }
  
             
 //             if appWorkViewModel.isLoaded {
@@ -59,7 +59,6 @@ struct list_the_usersApp: App {
 //            }
 
 //             TestOutView()
-            
             
             
             
