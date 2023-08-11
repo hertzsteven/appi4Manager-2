@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4606C7452A8521AC00A3B44E /* NavigateToStudentAppProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4606C7442A8521AC00A3B44E /* NavigateToStudentAppProfile.swift */; };
 		4609120229D0811B000337E8 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4609120129D0811B000337E8 /* DashboardView.swift */; };
 		461D21CA299C4A37008B7BD2 /* AddAUserResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461D21C9299C4A37008B7BD2 /* AddAUserResponse.swift */; };
 		461D21CC299D89DD008B7BD2 /* ClassDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461D21CB299D89DC008B7BD2 /* ClassDetailViewModel.swift */; };
@@ -60,6 +61,7 @@
 		46BD34E529BE236D002A8395 /* CreateaClassResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BD34E429BE236D002A8395 /* CreateaClassResponse.swift */; };
 		46BD73142A0EC7A000AE23B1 /* SchoolListDup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BD73132A0EC7A000AE23B1 /* SchoolListDup.swift */; };
 		46BDEEFA2A0E9421000B4950 /* Categories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BDEEF92A0E9421000B4950 /* Categories.swift */; };
+		46CFFD652A840552003503C2 /* AppProfileWeeklyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46CFFD642A840552003503C2 /* AppProfileWeeklyView.swift */; };
 		46D2A9A429DB4D12007B134E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D2A9A329DB4D12007B134E /* ImagePicker.swift */; };
 		46D3F1DB29EF434500D507F3 /* UserCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D3F1DA29EF434500D507F3 /* UserCardView.swift */; };
 		46D6C82D29FE14EF009861FD /* StudentTeacherListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D6C82C29FE14EF009861FD /* StudentTeacherListView.swift */; };
@@ -76,6 +78,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4606C7442A8521AC00A3B44E /* NavigateToStudentAppProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigateToStudentAppProfile.swift; sourceTree = "<group>"; };
 		4609120129D0811B000337E8 /* DashboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		461D21C9299C4A37008B7BD2 /* AddAUserResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAUserResponse.swift; sourceTree = "<group>"; };
 		461D21CB299D89DC008B7BD2 /* ClassDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassDetailViewModel.swift; sourceTree = "<group>"; };
@@ -131,6 +134,7 @@
 		46BD34E429BE236D002A8395 /* CreateaClassResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateaClassResponse.swift; sourceTree = "<group>"; };
 		46BD73132A0EC7A000AE23B1 /* SchoolListDup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolListDup.swift; sourceTree = "<group>"; };
 		46BDEEF92A0E9421000B4950 /* Categories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Categories.swift; sourceTree = "<group>"; };
+		46CFFD642A840552003503C2 /* AppProfileWeeklyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppProfileWeeklyView.swift; sourceTree = "<group>"; };
 		46D2A9A329DB4D12007B134E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		46D3F1DA29EF434500D507F3 /* UserCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCardView.swift; sourceTree = "<group>"; };
 		46D6C82C29FE14EF009861FD /* StudentTeacherListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentTeacherListView.swift; sourceTree = "<group>"; };
@@ -266,6 +270,8 @@
 			isa = PBXGroup;
 			children = (
 				464A2A012A829C890045B68C /* StudentAppProfileView.swift */,
+				46CFFD642A840552003503C2 /* AppProfileWeeklyView.swift */,
+				4606C7442A8521AC00A3B44E /* NavigateToStudentAppProfile.swift */,
 			);
 			path = StudentAppProfile;
 			sourceTree = "<group>";
@@ -646,9 +652,11 @@
 				469EFF262A6F6D400047E8BC /* AppxView.swift in Sources */,
 				4698CA2A2A2E1FE200D8A888 /* BlockingOverlayView.swift in Sources */,
 				466FF03D2A7050C8002946F7 /* Components.swift in Sources */,
+				4606C7452A8521AC00A3B44E /* NavigateToStudentAppProfile.swift in Sources */,
 				46584FE92993F0C40025F539 /* ApiError.swift in Sources */,
 				46584FDF2993ECD50025F539 /* UsersViewModel.swift in Sources */,
 				46336705299452A600CF5EA3 /* CustomLabelStyle.swift in Sources */,
+				46CFFD652A840552003503C2 /* AppProfileWeeklyView.swift in Sources */,
 				46584FE72993F0960025F539 /* ApiHelper.swift in Sources */,
 				461D21CC299D89DD008B7BD2 /* ClassDetailViewModel.swift in Sources */,
 				466EC6FD2A42609D007EEEDB /* LessonDetailResponse.swift in Sources */,

@@ -8,6 +8,7 @@
 import Foundation
 
 
+
 struct Session: Identifiable, Codable {
     var id = UUID() // to make it unique per session
     var apps: [Int]
@@ -21,11 +22,23 @@ struct DailySessions: Codable {
     var homeSession: Session
 }
 
-struct StudentAppProfile: Identifiable, Codable {
+struct StudentAppProfile: Identifiable, Codable, Equatable, Hashable {
+    
     var id: Int
     var locationId: Int
     var sessions: [String: DailySessions] // Key is the day of the week (e.g., "Sunday")
+    
+    static func == (lhs: StudentAppProfile, rhs: StudentAppProfile) -> Bool {
+        lhs.id == rhs.id
+    }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(locationId)
+        // You may want to combine other properties as well, depending on what makes sense for your use case.
+    }
 }
+
+
 
 
 //struct StudentAppProfile: Identifiable, Codable {

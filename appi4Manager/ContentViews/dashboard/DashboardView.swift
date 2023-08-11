@@ -98,6 +98,9 @@ struct DashboardView: View {
                 case "Apps":
                     AppxView()
    
+                case "Classes":
+                    NavigateToStudentAppProfile()
+   
                 default:
                     SchoolListContent(path: $path, newClass: SchoolClass.makeDefault())
                 }

@@ -24,28 +24,29 @@ struct list_the_usersApp: App {
     @StateObject var appxViewModel              = AppxViewModel()
     @StateObject var categoryViewModel          = CategoryViewModel()
     @StateObject var appsViewModel              = AppsViewModel()
+    
+    
 
 
     var body: some Scene {
         WindowGroup {
 //            TestOutView()
-            StudentAppProfileView()
- 
-//            if appWorkViewModel.isLoaded {
-//                DashboardView()
-//                    .environmentObject(usersViewModel)
-//                    .environmentObject(classDetailViewModel)
-//                    .environmentObject(studentPicStubViewModel)
-//                    .environmentObject(classesViewModel)
-//                    .environmentObject(appWorkViewModel)
-//                    .environmentObject(appxViewModel)
-//                    .environmentObject(categoryViewModel)
-//                    .environmentObject(appsViewModel)
-//
-//
-//            } else {
-//                ProgressView()
-//            }
+// NavigateToStudentAppProfile()
+            if appWorkViewModel.isLoaded {
+                DashboardView()
+                    .environmentObject(usersViewModel)
+                    .environmentObject(classDetailViewModel)
+                    .environmentObject(studentPicStubViewModel)
+                    .environmentObject(classesViewModel)
+                    .environmentObject(appWorkViewModel)
+                    .environmentObject(appxViewModel)
+                    .environmentObject(categoryViewModel)
+                    .environmentObject(appsViewModel)
+
+
+            } else {
+                ProgressView()
+            }
  
             
 //             if appWorkViewModel.isLoaded {
