@@ -269,9 +269,9 @@
 		464A29FE2A828BD50045B68C /* StudentAppProfile */ = {
 			isa = PBXGroup;
 			children = (
-				464A2A012A829C890045B68C /* StudentAppProfileView.swift */,
-				46CFFD642A840552003503C2 /* AppProfileWeeklyView.swift */,
 				4606C7442A8521AC00A3B44E /* NavigateToStudentAppProfile.swift */,
+				46CFFD642A840552003503C2 /* AppProfileWeeklyView.swift */,
+				464A2A012A829C890045B68C /* StudentAppProfileView.swift */,
 			);
 			path = StudentAppProfile;
 			sourceTree = "<group>";

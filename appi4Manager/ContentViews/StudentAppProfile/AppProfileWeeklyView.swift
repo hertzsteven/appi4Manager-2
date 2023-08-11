@@ -177,11 +177,24 @@ extension AppProfileWeeklyView {
     }
 }
 
-//struct AppProfileWeeklyView_Previews: PreviewProvider {
-//
-//    static var previews: some View {
-//        AppProfileWeeklyView(currentProfile: <#StudentAppProfile#>)
-//    }
-//}
-
+struct AppProfileWeeklyView_Previews: PreviewProvider {
+    static var previews: some View {
+        // Sample StudentAppProfile
+        let sampleProfile = StudentAppProfile(
+            id: 1,
+            locationId: 1,
+            sessions: ["Monday": DailySessions(
+                amSession: Session(apps: [27], sessionLength: 20, oneAppLock: true),
+                pmSession: Session(apps: [34], sessionLength: 20, oneAppLock: true),
+                homeSession: Session(apps: [27], sessionLength: 20, oneAppLock: true)
+            )]
+        )
+        
+        // Sample AppxViewModel
+        let appxViewModel = AppxViewModel()
+        
+        return AppProfileWeeklyView(currentProfile: sampleProfile)
+            .environmentObject(appxViewModel)
+    }
+}
 
