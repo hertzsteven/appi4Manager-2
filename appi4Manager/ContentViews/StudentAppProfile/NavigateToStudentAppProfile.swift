@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct NavigateToStudentAppProfile: View {
+    
     var body: some View {
         VStack(spacing: 16) {
             Text("Hello World!")
@@ -25,14 +26,16 @@ struct NavigateToStudentAppProfile: View {
         
         .navigationDestination(for: StudentAppProfile.self, destination: {prf  in
             
+            var x = StudentAppProfileViewModel()
             let studentProfiles = StudentAppProfileViewModel.loadProfiles()
+            
             
             if let idx = studentProfiles.firstIndex(where: { prf in
                 prf.id == 8
             }) {
-                AppProfileWeeklyView(currentProfile: studentProfiles[idx])
+                AppProfileWeeklyView(currentProfile: studentProfiles[idx], studentAppProfilesList: studentProfiles)
             } else {
-                AppProfileWeeklyView(currentProfile: prf)
+                AppProfileWeeklyView(currentProfile: prf,  studentAppProfilesList: studentProfiles)
             }
             
         })

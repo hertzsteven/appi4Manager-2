@@ -14,13 +14,13 @@
             filePath = "appi4Manager/ContentViews/StudentAppProfile/AppProfileWeeklyView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "156"
-            endingLineNumber = "156"
+            startingLineNumber = "199"
+            endingLineNumber = "199"
             landmarkName = "loadTheapps()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd609f319"
+                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd6090fda"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -30,12 +30,12 @@
                   urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfile/AppProfileWeeklyView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "161"
-                  endingLineNumber = "161"
+                  startingLineNumber = "190"
+                  endingLineNumber = "190"
                   offsetFromSymbolStart = "140">
                </Location>
                <Location
-                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd609f319"
+                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd6090fda"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -45,12 +45,12 @@
                   urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfile/AppProfileWeeklyView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "161"
-                  endingLineNumber = "161"
+                  startingLineNumber = "190"
+                  endingLineNumber = "190"
                   offsetFromSymbolStart = "324">
                </Location>
                <Location
-                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd609f35f"
+                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd6090f3b"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -60,12 +60,12 @@
                   urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfile/AppProfileWeeklyView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "163"
-                  endingLineNumber = "163"
+                  startingLineNumber = "191"
+                  endingLineNumber = "191"
                   offsetFromSymbolStart = "140">
                </Location>
                <Location
-                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd609f35f"
+                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd6090f3b"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -75,12 +75,12 @@
                   urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfile/AppProfileWeeklyView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "163"
-                  endingLineNumber = "163"
+                  startingLineNumber = "191"
+                  endingLineNumber = "191"
                   offsetFromSymbolStart = "324">
                </Location>
                <Location
-                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd6090f5e"
+                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd60908bf"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -90,12 +90,12 @@
                   urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfile/AppProfileWeeklyView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "194"
-                  endingLineNumber = "194"
+                  startingLineNumber = "195"
+                  endingLineNumber = "195"
                   offsetFromSymbolStart = "140">
                </Location>
                <Location
-                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd6090f5e"
+                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd60908bf"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -105,27 +105,71 @@
                   urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfile/AppProfileWeeklyView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "194"
-                  endingLineNumber = "194"
+                  startingLineNumber = "195"
+                  endingLineNumber = "195"
+                  offsetFromSymbolStart = "324">
+               </Location>
+               <Location
+                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd6090822"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for appi4Manager.AppProfileWeeklyView.loadTheapps() async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfile/AppProfileWeeklyView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "198"
+                  endingLineNumber = "198"
+                  offsetFromSymbolStart = "140">
+               </Location>
+               <Location
+                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd6090822"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for appi4Manager.AppProfileWeeklyView.loadTheapps() async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfile/AppProfileWeeklyView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "198"
+                  endingLineNumber = "198"
+                  offsetFromSymbolStart = "324">
+               </Location>
+               <Location
+                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd6090f18"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for appi4Manager.AppProfileWeeklyView.loadTheapps() async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfile/AppProfileWeeklyView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "192"
+                  endingLineNumber = "192"
+                  offsetFromSymbolStart = "140">
+               </Location>
+               <Location
+                  uuid = "9A215CFF-E6DA-4228-B3A8-A1F925277C20 - d5e3d2ffd6090f18"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for appi4Manager.AppProfileWeeklyView.loadTheapps() async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfile/AppProfileWeeklyView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "192"
+                  endingLineNumber = "192"
                   offsetFromSymbolStart = "324">
                </Location>
             </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "25E18153-87F2-4629-996F-B6A45A0917FB"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "appi4Manager/ContentViews/StudentAppProfile/AppProfileWeeklyView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "142"
-            endingLineNumber = "142"
-            landmarkName = "processApps()"
-            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

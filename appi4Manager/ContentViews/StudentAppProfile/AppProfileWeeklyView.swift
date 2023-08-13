@@ -10,10 +10,10 @@ import SwiftUI
 struct AppProfileWeeklyView: View {
     
     //  MARK: -  Properties
-    @ObservedObject     var viewModel =     StudentAppProfileViewModel()
-    @EnvironmentObject  var appxViewModel:  AppxViewModel
-    @State              var currentProfile: StudentAppProfile
-    @State private      var dayProfile:     DailySessions? = nil
+    @ObservedObject     var studentAppProfileViewModel =    StudentAppProfileViewModel()
+    @EnvironmentObject  var appxViewModel:                  AppxViewModel
+    @State              var currentProfile:                 StudentAppProfile
+    @State private      var dayProfile:                     DailySessions? = nil
     
     // to control the Load
     @State private var hasError = false
@@ -21,40 +21,37 @@ struct AppProfileWeeklyView: View {
     @State private var showApps: Bool = false
     
     // Temp To test stuff
-    @State var appListString: Array<String> = []
-    @State var appCodex: Int = 0
+    @State var appListStringAM: Array<String> = []
+    @State var appListStringPM: Array<String> = []
+    @State var appCodexAM: Int = 0
+    @State var appCodexPM: Int = 0
+    
+    var studentAppProfilesList: [StudentAppProfile]
+
     
     //  MARK: -  Body
     var body: some View {
         
         VStack {
-            Text("sksks \(currentProfile.id)  \(appxViewModel.appx.count) and \(appCodex)")
+            Text("sksks \(currentProfile.id)  \(appxViewModel.appx.count) and \(appListStringAM.joined())")
                 .padding([.top, .bottom], 16)
             
             VStack(alignment: .leading, spacing: 12) {
                 Text("Monday")
                     .font(.title)
-                    //                .frame(maxWidth: .infinity, maxHeight: .infinity,  alignment: .topLeading)
-                    .padding([.top, .leading])
+                     .padding([.top, .leading])
                     .padding(.bottom,4)
                 Divider().foregroundColor(.red)
                 Group {
                     Text("**AM:** - 9:00 - 11:59")
                         .padding([ .leading])
-                        //                    Text("App Profile")
-                        //                        .padding(.leading, 16.0)
-                        //                        //                    .padding(.top, 1.0)
                     VStack(alignment: .leading, spacing: 4) {
-                            //                        Text("App Profile")
-                            //                            .font(.headline)
-                            //                        Divider()
-                            //                            .padding()
                         Text("**Session Length:** 20 minutes")
                         Text("**Configration:** Locked into one App")
                         Divider()
                         VStack {
                             Label {
-                                Text("Elmo Loves the ABCs and what happens if more")
+                                Text("\(appListStringAM.joined())")
                             } icon: {
                                 Image("heartshare")
                                     .resizable()
@@ -86,9 +83,9 @@ struct AppProfileWeeklyView: View {
                         Divider()
                         VStack {
                             Label {
-                                Text("Elmo Loves the ABCs and what happens if more")
+                                Text("\(appListStringPM.joined())")
                             } icon: {
-                                Image("tabby")
+                                Image("heartshare")
                                     .resizable()
                                     .frame(width: 48, height: 48, alignment: .leading)
                             }
@@ -138,15 +135,61 @@ extension AppProfileWeeklyView {
     //  MARK: -  Functions
 
     func processApps() {
+
         guard let amApps = currentProfile.sessions["Sunday"]?.amSession.apps else { fatalError("Big Error") }
-        print(amApps)
+        print("----",amApps)
         for appCode in amApps {
             if let appName = getAppWithId(appCode)?.name {
-                appCodex = appCode
-                appListString.append(appName)
+                appCodexAM = appCode
+                appListStringAM.append(appName)
+            }
+        }
+
+        print(currentProfile.sessions["Sunday"]?.pmSession.apps)
+        guard let pmApps = currentProfile.sessions["Sunday"]?.pmSession.apps else { fatalError("Big Error") }
+        for appCode in pmApps {
+            if let appName = getAppWithId(appCode)?.name {
+                appCodexPM = appCode
+                appListStringPM.append(appName)
             }
         }
     }
+    
+    func updateProfileWithdailySessions(_ dailySessions: DailySessions) {
+    
+        guard var sundaySessions = currentProfile.sessions["Sunday"] else {
+            print("Sunday sessions not found")
+            return
+        }
+        
+        sundaySessions.amSession.apps = dailySessions.amSession.apps
+        sundaySessions.amSession.sessionLength = dailySessions.amSession.sessionLength
+        print(sundaySessions.pmSession.apps)
+
+        sundaySessions.pmSession.apps = dailySessions.pmSession.apps
+        print(sundaySessions.pmSession.apps)
+
+        sundaySessions.homeSession.apps = dailySessions.homeSession.apps
+        print(sundaySessions.pmSession.apps)
+
+        currentProfile.sessions["Sunday"] = sundaySessions
+        dump(currentProfile.sessions["Sunday"])
+        
+
+        studentAppProfileViewModel.profiles = studentAppProfilesList
+
+        if let idx = studentAppProfileViewModel.profiles.firstIndex(where: { prf in
+            prf.id == 8
+        }) {
+            studentAppProfileViewModel.profiles[idx] = currentProfile
+            studentAppProfileViewModel.saveProfiles()
+
+        } else {
+            print("no match")
+        }
+    }
+    
+    
     
     func loadTheapps() async {
         print("in load apps")
@@ -177,24 +220,24 @@ extension AppProfileWeeklyView {
     }
 }
 
-struct AppProfileWeeklyView_Previews: PreviewProvider {
-    static var previews: some View {
-        // Sample StudentAppProfile
-        let sampleProfile = StudentAppProfile(
-            id: 1,
-            locationId: 1,
-            sessions: ["Monday": DailySessions(
-                amSession: Session(apps: [27], sessionLength: 20, oneAppLock: true),
-                pmSession: Session(apps: [34], sessionLength: 20, oneAppLock: true),
-                homeSession: Session(apps: [27], sessionLength: 20, oneAppLock: true)
-            )]
-        )
-        
-        // Sample AppxViewModel
-        let appxViewModel = AppxViewModel()
-        
-        return AppProfileWeeklyView(currentProfile: sampleProfile)
-            .environmentObject(appxViewModel)
-    }
-}
-
+//struct AppProfileWeeklyView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        // Sample StudentAppProfile
+//        let sampleProfile = StudentAppProfile(
+//            id: 1,
+//            locationId: 1,
+//            sessions: ["Monday": DailySessions(
+//                amSession: Session(apps: [27], sessionLength: 20, oneAppLock: true),
+//                pmSession: Session(apps: [34], sessionLength: 20, oneAppLock: true),
+//                homeSession: Session(apps: [27], sessionLength: 20, oneAppLock: true)
+//            )]
+//        )
+//
+//        // Sample AppxViewModel
+//        let appxViewModel = AppxViewModel()
+//
+//        return AppProfileWeeklyView(currentProfile: sampleProfile)
+//            .environmentObject(appxViewModel)
+//    }
+//}
+//
