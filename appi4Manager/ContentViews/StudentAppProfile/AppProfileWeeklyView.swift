@@ -35,6 +35,23 @@ struct AppProfileWeeklyView: View {
         VStack {
             Text("sksks \(currentProfile.id)  \(appxViewModel.appx.count) and \(appListStringAM.joined())")
                 .padding([.top, .bottom], 16)
+            HStack {
+                Button("counting bears and texteria") {
+                    var myDailySession =  DailySessions.makeDefaultDailySession()
+                    myDailySession.amSession.apps = [17]
+                    myDailySession.pmSession.apps = [32]
+
+                    updateProfileWithdailySessions(myDailySession)
+                }
+                Button("endless alphabet and numbers") {
+                    var myDailySession =  DailySessions.makeDefaultDailySession()
+                    myDailySession.amSession.apps = [30]
+                    myDailySession.pmSession.apps = [39]
+
+                    updateProfileWithdailySessions(myDailySession)
+
+                }
+            }
             
             VStack(alignment: .leading, spacing: 12) {
                 Text("Monday")
@@ -156,6 +173,8 @@ extension AppProfileWeeklyView {
     }
     
     func updateProfileWithdailySessions(_ dailySessions: DailySessions) {
+        
+        dump(dailySessions)
     
         guard var sundaySessions = currentProfile.sessions["Sunday"] else {
             print("Sunday sessions not found")
@@ -167,7 +186,7 @@ extension AppProfileWeeklyView {
         print(sundaySessions.pmSession.apps)
 
         sundaySessions.pmSession.apps = dailySessions.pmSession.apps
-        print(sundaySessions.pmSession.apps)
+        print(sundaySessions.amSession.apps)
 
         sundaySessions.homeSession.apps = dailySessions.homeSession.apps
         print(sundaySessions.pmSession.apps)
@@ -188,9 +207,7 @@ extension AppProfileWeeklyView {
             print("no match")
         }
     }
-    
-    
-    
+       
     func loadTheapps() async {
         print("in load apps")
         do {
@@ -220,24 +237,37 @@ extension AppProfileWeeklyView {
     }
 }
 
-//struct AppProfileWeeklyView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        // Sample StudentAppProfile
-//        let sampleProfile = StudentAppProfile(
-//            id: 1,
-//            locationId: 1,
-//            sessions: ["Monday": DailySessions(
-//                amSession: Session(apps: [27], sessionLength: 20, oneAppLock: true),
-//                pmSession: Session(apps: [34], sessionLength: 20, oneAppLock: true),
-//                homeSession: Session(apps: [27], sessionLength: 20, oneAppLock: true)
-//            )]
-//        )
-//
-//        // Sample AppxViewModel
-//        let appxViewModel = AppxViewModel()
-//
-//        return AppProfileWeeklyView(currentProfile: sampleProfile)
-//            .environmentObject(appxViewModel)
-//    }
-//}
-//
+struct AppProfileWeeklyView_Previews: PreviewProvider {
+    static var previews: some View {
+        // Sample StudentAppProfile
+        let sampleProfile = StudentAppProfile(
+            id: 1,
+            locationId: 1,
+            sessions: ["Monday": DailySessions(
+                amSession: Session(apps: [27], sessionLength: 20, oneAppLock: true),
+                pmSession: Session(apps: [34], sessionLength: 20, oneAppLock: true),
+                homeSession: Session(apps: [27], sessionLength: 20, oneAppLock: true)
+            )]
+        )
+
+        // Additional sample profile
+        let anotherProfile = StudentAppProfile(
+            id: 2,
+            locationId: 2,
+            sessions: ["Tuesday": DailySessions(
+                amSession: Session(apps: [15], sessionLength: 15, oneAppLock: false),
+                pmSession: Session(apps: [22], sessionLength: 25, oneAppLock: false),
+                homeSession: Session(apps: [15], sessionLength: 15, oneAppLock: false)
+            )]
+        )
+
+        // Sample studentAppProfilesList
+        let sampleProfilesList = [sampleProfile, anotherProfile]
+
+        // Sample AppxViewModel
+        let appxViewModel = AppxViewModel()
+
+        return AppProfileWeeklyView(currentProfile: sampleProfile, studentAppProfilesList: sampleProfilesList)
+            .environmentObject(appxViewModel)
+    }
+}

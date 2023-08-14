@@ -61,6 +61,9 @@ struct HeaderGroupBoxStyle: GroupBoxStyle {
 
 
 struct CategoryDisclosureView: View {
+    @Binding var selectedSession: Session?
+    @Binding var isSheetPresented: Bool
+    
     @EnvironmentObject var appxViewModel :    AppxViewModel
     @EnvironmentObject var appWorkViewModel : AppWorkViewModel
     @EnvironmentObject var categoryViewModel: CategoryViewModel
@@ -80,7 +83,9 @@ struct CategoryDisclosureView: View {
         
         if accumulatex > 0 {
             GroupBox {
-                Picker("Apps", selection: $selectedSegment) {
+                appPickerView()
+
+                 Picker("Apps", selection: $selectedSegment) {
                     ForEach(appSelected, id: \.self) { appsel in
                             //                        Text(appxViewModel.appx.filter { appSelected.contains($0.id) }[index].name).tag(index)
                         if let idx = appxViewModel.appx.firstIndex(where: { $0.id == appsel }) {
@@ -91,9 +96,10 @@ struct CategoryDisclosureView: View {
                             }
                         }
                     }
-                }
+                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .pickerStyle(.automatic)
+                
                 Stepper("Session Length: \(lengthOfSesssion)", value: $lengthOfSesssion, in: 5...60, step: 5)
                 
                 HStack {
@@ -111,12 +117,15 @@ struct CategoryDisclosureView: View {
                 HStack {
                     Text("**App Profile App Count:** \(appSelected.count)")
                     Spacer()
-                    Button("Reset") {
-                        withAnimation {
-                            accumulatex = 0
-                            appSelected.removeAll()
-                            lengthOfSesssion = 20
-                        }
+                    Button("Done") {
+//                        withAnimation {
+//                            accumulatex = 0
+//                            appSelected.removeAll()
+//                            lengthOfSesssion = 20
+//                        }
+                        selectedSession = Session(apps: appSelected, sessionLength: lengthOfSesssion, oneAppLock: singleAppMode)
+                        isSheetPresented = false
+
                         
                     }
                 }
@@ -264,13 +273,29 @@ struct CategoryDisclosureView: View {
             dump(appxViewModel.appx)
         }
     }
-}
-
-
-struct CategoryDisclosureView_Previews: PreviewProvider {
-    var categoryViewModel = CategoryViewModel()
-    
-    static var previews: some View {
-        CategoryDisclosureView().environmentObject(CategoryViewModel())
+    private func appPickerView() -> some View {
+        Picker("Apps", selection: $selectedSegment) {
+            ForEach(appSelected, id: \.self) { appsel in
+                    //                        Text(appxViewModel.appx.filter { appSelected.contains($0.id) }[index].name).tag(index)
+                if let idx = appxViewModel.appx.firstIndex(where: { $0.id == appsel }) {
+                    HStack {
+                        Text(appxViewModel.appx[idx].name)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            //                                Spacer()
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .pickerStyle(.automatic)
     }
 }
+
+
+//struct CategoryDisclosureView_Previews: PreviewProvider {
+//    var categoryViewModel = CategoryViewModel()
+//
+//    static var previews: some View {
+//        CategoryDisclosureView().environmentObject(CategoryViewModel())
+//    }
+//}

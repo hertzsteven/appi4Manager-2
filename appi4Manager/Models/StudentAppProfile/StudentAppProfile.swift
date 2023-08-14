@@ -20,6 +20,11 @@ struct DailySessions: Codable {
     var amSession: Session
     var pmSession: Session
     var homeSession: Session
+    static func makeDefaultDailySession() -> DailySessions {
+        DailySessions(amSession: Session(apps: [], sessionLength: 0, oneAppLock: false),
+                      pmSession: Session(apps: [], sessionLength: 0, oneAppLock: false),
+                      homeSession: Session(apps: [], sessionLength: 0, oneAppLock: false))
+    }
 }
 
 struct StudentAppProfile: Identifiable, Codable, Equatable, Hashable {
