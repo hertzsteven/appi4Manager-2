@@ -7,6 +7,12 @@
 
 import Foundation
 
+
+struct DailySessionConfiguration {
+    var oneAppLockAM: Bool
+}
+
+
 class StudentAppProfileViewModel: ObservableObject {
     @Published var profiles: [StudentAppProfile] = [] {
         didSet {
@@ -15,6 +21,8 @@ class StudentAppProfileViewModel: ObservableObject {
             }
         }
     }
+    @Published var dailySessionConfiguration: [DailySessionConfiguration] = Array(repeating: DailySessionConfiguration(oneAppLockAM: false), count: 7)
+
     
     func addProfile(profile: StudentAppProfile) {
         profiles.append(profile)

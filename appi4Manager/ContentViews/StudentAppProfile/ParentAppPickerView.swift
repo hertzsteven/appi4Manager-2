@@ -15,7 +15,10 @@ struct Person {
 struct ParentAppPickerView: View {
     @State private var isSheetPresented = false
     @State private var selectedPerson: Person?
-    
+    @State         var singleAppMode : Bool = false
+    @State         var sessionLength : Int = 0
+    @State var appCode = 0
+
     @State private var selectedSession: Session?
     
     var body: some View {
@@ -26,19 +29,18 @@ struct ParentAppPickerView: View {
                 isSheetPresented.toggle()
             }
             
-            if let session = selectedSession, let theapp = session.apps.first {
-                Text("Selected session: \(theapp)")
+            if let returnedSession = selectedSession,
+                let theapp = returnedSession.apps.first {
+                VStack {
+                    Text("Selected session: \(theapp)")
+                    Text("Length of time is: \(returnedSession.sessionLength)")
+                    Text("one app lock is: \(returnedSession.oneAppLock ? "true" : "false" )")
+                }
             }
         }
-        
-
-        
-//        .sheet(isPresented: $isSheetPresented) {
-//            PersonListView(selectedPerson: $selectedPerson, isSheetPresented: $isSheetPresented)
-//        }
-        
+            
         .sheet(isPresented: $isSheetPresented) {
-            CategoryDisclosureView(selectedSession: $selectedSession, isSheetPresented: $isSheetPresented)
+            CategoryDisclosureView(selectedSession: $selectedSession, isSheetPresented: $isSheetPresented, lengthOfSesssion: $sessionLength, singleAppMode: $singleAppMode, appCodeAM: $appCode )
         }
 
     }

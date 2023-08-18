@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct NavigateToStudentAppProfile: View {
+struct DummyStudentProfileLauncherView: View {
     
     var body: some View {
         VStack(spacing: 16) {
@@ -33,9 +33,11 @@ struct NavigateToStudentAppProfile: View {
             if let idx = studentProfiles.firstIndex(where: { prf in
                 prf.id == 8
             }) {
-                AppProfileWeeklyView(currentProfile: studentProfiles[idx], studentAppProfilesList: studentProfiles)
+                ShowStudentProfiileDayView(currentProfile: studentProfiles[idx], studentAppProfilesList: studentProfiles)
+//                AppProfileWeeklyView(currentProfile: studentProfiles[idx], studentAppProfilesList: studentProfiles)
             } else {
-                AppProfileWeeklyView(currentProfile: prf,  studentAppProfilesList: studentProfiles)
+                ShowStudentProfiileDayView(currentProfile: prf,  studentAppProfilesList: studentProfiles)
+//                AppProfileWeeklyView(currentProfile: prf,  studentAppProfilesList: studentProfiles)
             }
             
         })
@@ -44,7 +46,7 @@ struct NavigateToStudentAppProfile: View {
 
 struct NavigateToStudentAppProfile_Previews: PreviewProvider {
     static var previews: some View {
-        NavigateToStudentAppProfile()
+        DummyStudentProfileLauncherView()
     }
 }
 

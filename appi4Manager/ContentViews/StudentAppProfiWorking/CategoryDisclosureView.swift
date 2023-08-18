@@ -77,29 +77,30 @@ struct CategoryDisclosureView: View {
     }
 
     @State private var selectedSegment = 0
-    @State private var lengthOfSesssion: Int = 20
-    @State private var singleAppMode: Bool = false
+    @Binding var lengthOfSesssion: Int
+    @Binding var singleAppMode: Bool
+    @Binding var appCodeAM: Int
+    
     var body: some View {
         
         if accumulatex > 0 {
             GroupBox {
-                appPickerView()
-
-                 Picker("Apps", selection: $selectedSegment) {
-                    ForEach(appSelected, id: \.self) { appsel in
-                            //                        Text(appxViewModel.appx.filter { appSelected.contains($0.id) }[index].name).tag(index)
-                        if let idx = appxViewModel.appx.firstIndex(where: { $0.id == appsel }) {
-                            HStack {
-                                Text(appxViewModel.appx[idx].name)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-//                                Spacer()
+//                appPickerView()
+                Text(" the new app code selected\(appCodeAM)")
+                        Picker("Apps", selection: $selectedSegment) {
+                            ForEach(appSelected, id: \.self) { appsel in
+                                    //                        Text(appxViewModel.appx.filter { appSelected.contains($0.id) }[index].name).tag(index)
+                                if let idx = appxViewModel.appx.firstIndex(where: { $0.id == appsel }) {
+                                    HStack {
+                                        Text(appxViewModel.appx[idx].name)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            //                                Spacer()
+                                    }
+                                }
                             }
-                        }
-                    }
-                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .pickerStyle(.automatic)
-                
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .pickerStyle(.menu)
+                }
                 Stepper("Session Length: \(lengthOfSesssion)", value: $lengthOfSesssion, in: 5...60, step: 5)
                 
                 HStack {
@@ -155,6 +156,7 @@ struct CategoryDisclosureView: View {
                                     withAnimation {
                                         accumulatex += 1
                                         appSelected.append(matchedApp.id)
+                                        appCodeAM = matchedApp.id
                                     }
                                 }
 
