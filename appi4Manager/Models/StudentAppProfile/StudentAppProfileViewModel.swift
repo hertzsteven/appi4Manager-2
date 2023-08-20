@@ -9,7 +9,9 @@ import Foundation
 
 
 struct DailySessionConfiguration {
-    var oneAppLockAM: Bool
+    var oneAppLockAM:       Bool
+    var appCodeAM:          Int
+    var sessionLengthAM:    Int
 }
 
 
@@ -21,7 +23,8 @@ class StudentAppProfileViewModel: ObservableObject {
             }
         }
     }
-    @Published var dailySessionConfiguration: [DailySessionConfiguration] = Array(repeating: DailySessionConfiguration(oneAppLockAM: false), count: 7)
+    @Published var dailySessionConfiguration: [DailySessionConfiguration] =
+    Array(repeating: DailySessionConfiguration(oneAppLockAM: false, appCodeAM: 0,sessionLengthAM: 0 ), count: 7)
 
     
     func addProfile(profile: StudentAppProfile) {

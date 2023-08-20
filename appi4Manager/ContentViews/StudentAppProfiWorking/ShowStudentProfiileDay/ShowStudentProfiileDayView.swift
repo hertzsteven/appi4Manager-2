@@ -26,6 +26,10 @@ struct ShowStudentProfiileDayView: View {
     @State var appListStringPM: Array<String> = []
     @State var appCodexAM: Int = 0
     @State var appCodexPM: Int = 0
+    
+    
+    @State var dailySessionConfigurationx: [DailySessionConfiguration] =
+    Array(repeating: DailySessionConfiguration(oneAppLockAM: false, appCodeAM: 0,sessionLengthAM: 0 ), count: 7)
 //    @State var singleAppMode
     
     var studentAppProfilesList: [StudentAppProfile]
@@ -112,7 +116,8 @@ struct ShowStudentProfiileDayView: View {
                 Divider().foregroundColor(.red)
                 
                 SessionGroupView(timeOfDay:         "**AM:** - 9:00 - 11:59",
-                                 sessionLength:     $sessionLengthAM,
+                                 sessionLength:     $dailySessionConfigurationx[0].sessionLengthAM,
+//                                 sessionLength:     $sessionLengthAM,
                                  iPadLockedIntoApp: $oneAppLockAM,
                                  seesionNumber:     1,
                                  appList:           $appListAM,
@@ -138,6 +143,7 @@ struct ShowStudentProfiileDayView: View {
             .cornerRadius(10)
             .shadow(radius: 10)
             .padding()
+            
         }
         .onAppear {
             Task {
@@ -167,7 +173,11 @@ struct ShowStudentProfiileDayView: View {
             }
             
             guard let theAMSession = currentProfile.sessions["Sunday"]?.amSession else {fatalError("dd")}
-            sessionLengthAM = theAMSession.sessionLength
+            
+            var xx = DailySessionConfiguration(oneAppLockAM: true, appCodeAM: 99, sessionLengthAM: 111)
+            dailySessionConfigurationx[0].sessionLengthAM = theAMSession.sessionLength
+//            studentAppProfileViewModel.dailySessionConfiguration[0].sessionLengthAM = 111
+//            sessionLengthAM = theAMSession.sessionLength
             oneAppLockAM    = theAMSession.oneAppLock
             
             if let theOneApp = currentProfile.sessions["Sunday"]?.amSession.apps.first {
@@ -185,7 +195,8 @@ struct ShowStudentProfiileDayView: View {
         .sheet(isPresented: $isSheetPresented) {
             CategoryDisclosureView(selectedSession: $selectedSession,
                                    isSheetPresented: $isSheetPresented,
-                                   lengthOfSesssion: $sessionLengthAM, singleAppMode: $oneAppLockAM, appCodeAM: $appCodeAM)
+                                   lengthOfSesssion: $dailySessionConfigurationx[0].sessionLengthAM, singleAppMode: $oneAppLockAM, appCodeAM: $appCodeAM)
+//                                   lengthOfSesssion: $sessionLengthAM, singleAppMode: $oneAppLockAM, appCodeAM: $appCodeAM)
                 .onDisappear {
                     if let returnedSession = selectedSession,
                        let theapp = returnedSession.apps.first {
