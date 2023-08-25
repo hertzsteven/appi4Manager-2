@@ -12,6 +12,7 @@ struct DailySessionConfiguration {
     var oneAppLockAM:       Bool
     var appCodeAM:          Int
     var sessionLengthAM:    Int
+    var sessionLengthDoubleAM:    Double
 }
 
 
@@ -24,7 +25,7 @@ class StudentAppProfileViewModel: ObservableObject {
         }
     }
     @Published var dailySessionConfiguration: [DailySessionConfiguration] =
-    Array(repeating: DailySessionConfiguration(oneAppLockAM: false, appCodeAM: 0,sessionLengthAM: 0 ), count: 7)
+    Array(repeating: DailySessionConfiguration(oneAppLockAM: false, appCodeAM: 0,sessionLengthAM: 0, sessionLengthDoubleAM: 0.0 ), count: 7)
 
     
     func addProfile(profile: StudentAppProfile) {

@@ -14,7 +14,7 @@ class AppState: ObservableObject {
     }
 }
 
-@main
+  @main
 struct list_the_usersApp: App {
     @StateObject var appWorkViewModel           = AppWorkViewModel.instantiate()
     @StateObject var usersViewModel             = UsersViewModel()

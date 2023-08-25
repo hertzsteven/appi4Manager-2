@@ -10,11 +10,17 @@ import SwiftUI
 
 struct ShowStudentProfiileDayView: View {
     
+    @State private var selectedIndex = 0
+    @State private var selectedDay: String = "Sunday"
+    let days = ["Sunday", "Monday", "Tuesday"]
+
+    
     //  MARK: -  Properties
     @ObservedObject     var studentAppProfileViewModel =    StudentAppProfileViewModel()
     @EnvironmentObject  var appxViewModel:                  AppxViewModel
     @State              var currentProfile:                 StudentAppProfile
     @State private      var dayProfile:                     DailySessions? = nil
+    @State 				var	dayOfWeekString:				String = "Sunday"
     
     // to control the Load
     @State private var hasError = false
@@ -29,7 +35,13 @@ struct ShowStudentProfiileDayView: View {
     
     
     @State var dailySessionConfigurationx: [DailySessionConfiguration] =
-    Array(repeating: DailySessionConfiguration(oneAppLockAM: false, appCodeAM: 0,sessionLengthAM: 0 ), count: 7)
+    Array(repeating: DailySessionConfiguration(oneAppLockAM: false, appCodeAM: 0,sessionLengthAM: 0, sessionLengthDoubleAM: 0.0 ), count: 7)
+    @State var theDayNumber: Int = 0 {
+        didSet {
+            upDateDailySessionConfiguration()
+        }
+    }
+    
 //    @State var singleAppMode
     
     var studentAppProfilesList: [StudentAppProfile]
@@ -58,14 +70,14 @@ struct ShowStudentProfiileDayView: View {
         print(theapp)
         print(returnedSession.oneAppLock)
         print(returnedSession.sessionLength)
-        currentProfile.sessions["Sunday"]?.amSession = returnedSession
+        currentProfile.sessions[dayOfWeekString]?.amSession = returnedSession
         
-        if  let theapp = currentProfile.sessions["Sunday"]?.amSession.apps.first {
+        if  let theapp = currentProfile.sessions[dayOfWeekString]?.amSession.apps.first {
             print(theapp)
         }
         
-        print(currentProfile.sessions["Sunday"]?.amSession.oneAppLock)
-        print(currentProfile.sessions["Sunday"]?.amSession.sessionLength)
+        print(currentProfile.sessions[dayOfWeekString]?.amSession.oneAppLock)
+        print(currentProfile.sessions[dayOfWeekString]?.amSession.sessionLength)
         
         
         studentAppProfileViewModel.profiles = studentAppProfilesList
@@ -85,28 +97,58 @@ struct ShowStudentProfiileDayView: View {
     
     var body: some View {
         
+            //        Picker("Select a day", selection: $selectedIndex) {
+            //            ForEach(0..<days.count) { index in
+            //                Text(self.days[index]).tag(index)
+            //            }
+            //        }
+            //        .pickerStyle(.menu)
+            //        .onChange(of: selectedIndex) { newValue in
+            //            selectedDay = days[newValue]
+            //            dayOfWeekString = days[newValue]
+            //        }
+        
+        ScrollView {
         VStack {
+            HStack {
+                Button("Sunday") {
+                    dayOfWeekString = "Sunday"
+                    theDayNumber = 0
+                }
+                Button("Monday") {
+                    dayOfWeekString = "Monday"
+                    theDayNumber = 1
+                }
+                Button("Tuesday") {
+                    dayOfWeekString = "Tuesday"
+                    theDayNumber = 2
+                }
+            }
+            
+            Text("Selected day: \(selectedDay)")
+            
+            
             Text("Sam Ashe - App Profile").padding([.top, .bottom], 16)
-          
-
+            
+            
             Text("lock to one app \(oneAppLockAM ? "yes" : "No")")
             
-            if let sessionLength = currentProfile.sessions["Sunday"]?.amSession.sessionLength {
+            if let sessionLength = currentProfile.sessions[dayOfWeekString]?.amSession.sessionLength {
                 Text("length: \(sessionLength)")
             }
             
             
             
-            if let xxx = getAppNameWithId(currentProfile.sessions["Sunday"]?.amSession.apps.first) {
+            if let xxx = getAppNameWithId(currentProfile.sessions[dayOfWeekString]?.amSession.apps.first) {
                 
                 Text(xxx)
             }
-            if let zzz = currentProfile.sessions["Sunday"]?.amSession.apps.first {
+            if let zzz = currentProfile.sessions[dayOfWeekString]?.amSession.apps.first {
                 
                 Text("\(zzz)")
             }
-
-
+            
+            
             VStack(alignment: .leading, spacing: 12) {
                 Text("Monday")
                     .font(.title)
@@ -115,25 +157,30 @@ struct ShowStudentProfiileDayView: View {
                 
                 Divider().foregroundColor(.red)
                 
-                SessionGroupView(timeOfDay:         "**AM:** - 9:00 - 11:59",
-                                 sessionLength:     $dailySessionConfigurationx[0].sessionLengthAM,
-//                                 sessionLength:     $sessionLengthAM,
-                                 iPadLockedIntoApp: $oneAppLockAM,
-                                 seesionNumber:     1,
+                
+                SessionGroupView(selectedNum:       0.0,
+                                 timeOfDay:         "**AM:** - 9:00 - 11:59",
+                                 sessionLength:     $dailySessionConfigurationx[theDayNumber].sessionLengthAM,
+                                 //                                 sessionLength:     $sessionLengthAM,
+                                 iPadLockedIntoApp: $dailySessionConfigurationx[theDayNumber].oneAppLockAM,
+                                 seesionNumber:     0,
                                  appList:           $appListAM,
                                  isSheetPresented:  $isSheetPresented,
-                                 appCodeAM:         $appCodeAM)
+                                 
+                                 appCodeAM:         $dailySessionConfigurationx[theDayNumber].appCodeAM,
+                                 sessionLengthDoubleAM: $dailySessionConfigurationx[theDayNumber].sessionLengthDoubleAM)
                 SessionGroupView(timeOfDay:         "**PM:** - 9:00 - 11:59",
                                  sessionLength:     $sessionLengthPM,
                                  iPadLockedIntoApp: $oneAppLockPM,
-                                 seesionNumber:     2,
+                                 seesionNumber:     1,
                                  appList:           $appListPM,
                                  isSheetPresented:  $isSheetPresented,
-                                 appCodeAM:         $appCodePM)
-//                SessionGroupView(timeOfDay: "**Home:** - 9:00 - 11:59",
-//                                 sessionLength: 20,
-//                                 iPadLockedIntoApp: true,
-//                                 seesionNumber: 3)
+                                 appCodeAM:         $appCodePM,
+                                 sessionLengthDoubleAM: $dailySessionConfigurationx[theDayNumber].sessionLengthDoubleAM)
+                    //                SessionGroupView(timeOfDay: "**Home:** - 9:00 - 11:59",
+                    //                                 sessionLength: 20,
+                    //                                 iPadLockedIntoApp: true,
+                    //                                 seesionNumber: 3)
                 .padding(.bottom)
                 
                     //                Rectangle().fill(.secondary).opacity(0.2).frame(maxWidth: .infinity, minHeight: 1, idealHeight: 3, maxHeight: 6)
@@ -145,6 +192,7 @@ struct ShowStudentProfiileDayView: View {
             .padding()
             
         }
+    }
         .onAppear {
             Task {
                 if appxViewModel.ignoreLoading {
@@ -157,7 +205,7 @@ struct ShowStudentProfiileDayView: View {
                 }
             }
             // load the current profile into pieces
-            guard let xoneAppLockAM = currentProfile.sessions["Sunday"]?.amSession.oneAppLock else { fatalError("one app lock failed") }
+            guard let xoneAppLockAM = currentProfile.sessions[dayOfWeekString]?.amSession.oneAppLock else { fatalError("one app lock failed") }
             oneAppLockAM = xoneAppLockAM
             
             
@@ -171,19 +219,9 @@ struct ShowStudentProfiileDayView: View {
             } else {
                 print("returned is nill")
             }
-            
-            guard let theAMSession = currentProfile.sessions["Sunday"]?.amSession else {fatalError("dd")}
-            
-            var xx = DailySessionConfiguration(oneAppLockAM: true, appCodeAM: 99, sessionLengthAM: 111)
-            dailySessionConfigurationx[0].sessionLengthAM = theAMSession.sessionLength
-//            studentAppProfileViewModel.dailySessionConfiguration[0].sessionLengthAM = 111
-//            sessionLengthAM = theAMSession.sessionLength
-            oneAppLockAM    = theAMSession.oneAppLock
-            
-            if let theOneApp = currentProfile.sessions["Sunday"]?.amSession.apps.first {
-                appCodeAM = theOneApp
-            }
-            
+
+            upDateDailySessionConfiguration()
+             
 
         }
         
@@ -195,7 +233,7 @@ struct ShowStudentProfiileDayView: View {
         .sheet(isPresented: $isSheetPresented) {
             CategoryDisclosureView(selectedSession: $selectedSession,
                                    isSheetPresented: $isSheetPresented,
-                                   lengthOfSesssion: $dailySessionConfigurationx[0].sessionLengthAM, singleAppMode: $oneAppLockAM, appCodeAM: $appCodeAM)
+                                   lengthOfSesssion: $dailySessionConfigurationx[theDayNumber].sessionLengthAM, singleAppMode: $dailySessionConfigurationx[theDayNumber].oneAppLockAM, appCodeAM: $dailySessionConfigurationx[theDayNumber].appCodeAM)
 //                                   lengthOfSesssion: $sessionLengthAM, singleAppMode: $oneAppLockAM, appCodeAM: $appCodeAM)
                 .onDisappear {
                     if let returnedSession = selectedSession,
@@ -211,9 +249,26 @@ struct ShowStudentProfiileDayView: View {
 }
 
 extension ShowStudentProfiileDayView {
+    
+    func upDateDailySessionConfiguration() {
+        guard let theAMSession = currentProfile.sessions[dayOfWeekString]?.amSession else {fatalError("dd")}
+         
+//         var xx = DailySessionConfiguration(oneAppLockAM: true, appCodeAM: 99, sessionLengthAM: 111)
+         dailySessionConfigurationx[theDayNumber].sessionLengthAM = theAMSession.sessionLength
+        dailySessionConfigurationx[theDayNumber].sessionLengthDoubleAM = Double(theAMSession.sessionLength)
+//            studentAppProfileViewModel.dailySessionConfiguration[0].sessionLengthAM = 111
+//            sessionLengthAM = theAMSession.sessionLength
+         dailySessionConfigurationx[theDayNumber].oneAppLockAM    = theAMSession.oneAppLock
+         
+         if let theOneApp = currentProfile.sessions[dayOfWeekString]?.amSession.apps.first {
+             dailySessionConfigurationx[theDayNumber].appCodeAM = theOneApp
+         }
+
+    }
+    
     func processApps() {
 
-        guard let amApps = currentProfile.sessions["Sunday"]?.amSession.apps else { fatalError("Big Error") }
+        guard let amApps = currentProfile.sessions[dayOfWeekString]?.amSession.apps else { fatalError("Big Error") }
         print("----",amApps)
         for appCode in amApps {
             if let appName = getAppWithId(appCode)?.name {
@@ -222,8 +277,8 @@ extension ShowStudentProfiileDayView {
             }
         }
 
-        print(currentProfile.sessions["Sunday"]?.pmSession.apps)
-        guard let pmApps = currentProfile.sessions["Sunday"]?.pmSession.apps else { fatalError("Big Error") }
+        print(currentProfile.sessions[dayOfWeekString]?.pmSession.apps)
+        guard let pmApps = currentProfile.sessions[dayOfWeekString]?.pmSession.apps else { fatalError("Big Error") }
         for appCode in pmApps {
             if let appName = getAppWithId(appCode)?.name {
                 appCodexPM = appCode
@@ -287,14 +342,22 @@ extension ShowStudentProfiileDayView {
 
 struct SessionGroupView: View {
     @EnvironmentObject  var appxViewModel:  AppxViewModel
+    @State private var isEditing = false
+    @State   var selectedNum: Double = 0.0
     
     let timeOfDay:                      LocalizedStringKey
-    @Binding var sessionLength:         Int
+    @Binding var sessionLength:         Int {
+        didSet {
+            selectedNum = Double(sessionLength)
+        }
+    }
+
     @Binding var iPadLockedIntoApp:     Bool
     let seesionNumber:                  Int
     @Binding var appList:               String
     @Binding var isSheetPresented:      Bool
     @Binding var appCodeAM:             Int
+    @Binding var sessionLengthDoubleAM: Double
     
     var body: some View {
         Group {
@@ -307,7 +370,24 @@ struct SessionGroupView: View {
                 }.padding(.trailing)
             }
             VStack(alignment: .leading, spacing: 4) {
-                Text("**appCode:** \(appCodeAM) ")
+//                Text("**appCode:** \(appCodeAM) ")
+                HStack {
+                    Text("Minutes: \(sessionLengthDoubleAM, specifier: "%.f")   ")
+                        .font(.headline)
+                        .bold()
+                    Slider(value: $sessionLengthDoubleAM, in: 5...60, step: 5.0){
+                        Text("Slider")
+                    } minimumValueLabel: {
+                        Text("5")
+                    } maximumValueLabel: {
+                        Text("60")
+                    } onEditingChanged: { editing in
+                        isEditing = editing
+                    }.disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                }
+                Toggle(isOn: /*@START_MENU_TOKEN@*/.constant(true)/*@END_MENU_TOKEN@*/, label: {
+                    Text("Locked INto the App").font(.headline)
+                }).disabled(true)
                 
                 Text("**Session Length:** \(sessionLength) minutes")
                 Text("**iPad Locked to app:** \( iPadLockedIntoApp ? "Locked" : "Not Locked")")
@@ -343,7 +423,7 @@ struct SessionGroupView: View {
             .padding([.horizontal])
         }
         .onAppear {
-            
+           
         }
     }
 
