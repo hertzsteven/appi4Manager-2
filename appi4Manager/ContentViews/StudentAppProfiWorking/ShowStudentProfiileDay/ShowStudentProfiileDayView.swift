@@ -19,7 +19,7 @@ struct ShowStudentProfiileDayView: View {
     @ObservedObject     var studentAppProfileViewModel =    StudentAppProfileViewModel()
     @EnvironmentObject  var appxViewModel:                  AppxViewModel
     @State              var currentProfile:                 StudentAppProfile
-    @State private      var dayProfile:                     DailySessions? = nil
+    @State              var dayProfile:                     DailySessions? = nil
     @State 				var	dayOfWeekString:				String = "Sunday"
     
     // to control the Load
@@ -34,8 +34,18 @@ struct ShowStudentProfiileDayView: View {
     @State var appCodexPM: Int = 0
     
     
+    
     @State var dailySessionConfigurationx: [DailySessionConfiguration] =
-    Array(repeating: DailySessionConfiguration(oneAppLockAM: false, appCodeAM: 0,sessionLengthAM: 0, sessionLengthDoubleAM: 0.0 ), count: 7)
+    Array(repeating: DailySessionConfiguration(
+        oneAppLockAM: false,
+        appCodeAM: 0,
+        sessionLengthAM: 0,
+        sessionLengthDoubleAM: 0.0,
+        oneAppLockPM: false,
+        appCodePM: 0,
+        sessionLengthPM: 0,
+        sessionLengthDoublePM: 0.0
+    ), count: 7)
     @State var theDayNumber: Int = 0 {
         didSet {
             upDateDailySessionConfiguration()
@@ -44,7 +54,7 @@ struct ShowStudentProfiileDayView: View {
     
 //    @State var singleAppMode
     
-    var studentAppProfilesList: [StudentAppProfile]
+    @State var studentAppProfilesList: [StudentAppProfile]
 
 //	properties to communicate with disclosure app and group box
     
@@ -62,22 +72,66 @@ struct ShowStudentProfiileDayView: View {
     @State var sessionLengthPM = 0
 
     
-    @State private var isSheetPresented = false
+    @State private var isSheetPresentedAM = false
+    @State private var isSheetPresentedPM = false
+
     @State private var selectedSession: Session?
     
-    fileprivate func updateTheStudent(_ theapp: Int, _ returnedSession: Session) {
+    fileprivate func updateTheStudentAM(_ theapp: Int, _ returnedSession: Session) {
+        
+        // get the dayOfWeek from current Profile
+        guard var dayOfWeekSession = currentProfile.sessions[dayOfWeekString]  else {
+            fatalError("could nor get the day")
+        }
+        
+        dump(returnedSession)
+        dayOfWeekSession.amSession = returnedSession
+        
+        studentAppProfileViewModel.profiles = studentAppProfilesList
+        
+        if let idx = studentAppProfileViewModel.profiles.firstIndex(where: { prf in
+            prf.id == 8
+        }) {
+           
+            var studentProf = studentAppProfileViewModel.profiles[idx]
+            studentProf.replaceSession(forDay: dayOfWeekString , with: dayOfWeekSession)
+            dump(studentProf)
+                // 5
+            studentAppProfileViewModel.profiles[idx] = studentProf
+                //6
+            dump(studentAppProfileViewModel.profiles[idx])
+            
+//            currentProfile.sessions.removeValue(forKey: dayOfWeekString)
+            currentProfile.sessions.updateValue(dayOfWeekSession, forKey: dayOfWeekString)
+            
+            dump(currentProfile.sessions[dayOfWeekString])
+           
+          
+            upDateDailySessionConfiguration()
+            
+            studentAppProfileViewModel.saveProfiles()
+            
+            studentAppProfilesList = studentAppProfileViewModel.profiles
+            
+        } else {
+            print("no match")
+        }
+    }
+    
+    fileprivate func updateTheStudentPM(_ theapp: Int, _ returnedSession: Session) {
         
         print(theapp)
         print(returnedSession.oneAppLock)
         print(returnedSession.sessionLength)
-        currentProfile.sessions[dayOfWeekString]?.amSession = returnedSession
         
-        if  let theapp = currentProfile.sessions[dayOfWeekString]?.amSession.apps.first {
+        currentProfile.sessions[dayOfWeekString]?.pmSession = returnedSession
+        
+        if  let theapp = currentProfile.sessions[dayOfWeekString]?.pmSession.apps.first {
             print(theapp)
         }
         
-        print(currentProfile.sessions[dayOfWeekString]?.amSession.oneAppLock)
-        print(currentProfile.sessions[dayOfWeekString]?.amSession.sessionLength)
+        print(currentProfile.sessions[dayOfWeekString]?.pmSession.oneAppLock)
+        print(currentProfile.sessions[dayOfWeekString]?.pmSession.sessionLength)
         
         
         studentAppProfileViewModel.profiles = studentAppProfilesList
@@ -89,6 +143,7 @@ struct ShowStudentProfiileDayView: View {
             studentAppProfileViewModel.profiles[idx] = currentProfile
                 //6
             studentAppProfileViewModel.saveProfiles()
+             studentAppProfilesList = studentAppProfileViewModel.profiles
             
         } else {
             print("no match")
@@ -125,9 +180,10 @@ struct ShowStudentProfiileDayView: View {
                 }
             }
             
-            Text("Selected day: \(selectedDay)")
+            Text("Selected day: \(dayOfWeekString)")
             
             
+/* 
             Text("Sam Ashe - App Profile").padding([.top, .bottom], 16)
             
             
@@ -148,8 +204,10 @@ struct ShowStudentProfiileDayView: View {
                 Text("\(zzz)")
             }
             
+ */
             
             VStack(alignment: .leading, spacing: 12) {
+/* 
                 Text("Monday")
                     .font(.title)
                     .padding([.top, .leading])
@@ -157,26 +215,32 @@ struct ShowStudentProfiileDayView: View {
                 
                 Divider().foregroundColor(.red)
                 
+ */
                 
                 SessionGroupView(selectedNum:       0.0,
                                  timeOfDay:         "**AM:** - 9:00 - 11:59",
                                  sessionLength:     $dailySessionConfigurationx[theDayNumber].sessionLengthAM,
-                                 //                                 sessionLength:     $sessionLengthAM,
                                  iPadLockedIntoApp: $dailySessionConfigurationx[theDayNumber].oneAppLockAM,
                                  seesionNumber:     0,
                                  appList:           $appListAM,
-                                 isSheetPresented:  $isSheetPresented,
+                                 isSheetPresented:  $isSheetPresentedAM,
                                  
                                  appCodeAM:         $dailySessionConfigurationx[theDayNumber].appCodeAM,
                                  sessionLengthDoubleAM: $dailySessionConfigurationx[theDayNumber].sessionLengthDoubleAM)
-                SessionGroupView(timeOfDay:         "**PM:** - 9:00 - 11:59",
-                                 sessionLength:     $sessionLengthPM,
-                                 iPadLockedIntoApp: $oneAppLockPM,
-                                 seesionNumber:     1,
+                     
+            
+ 
+                SessionGroupView(selectedNum:       0.0,
+                                 timeOfDay:         "**PM:** - 9:00 - 11:59",
+                                 sessionLength:     $dailySessionConfigurationx[theDayNumber].sessionLengthPM,
+                                 iPadLockedIntoApp: $dailySessionConfigurationx[theDayNumber].oneAppLockPM,
+                                 seesionNumber:     0,
                                  appList:           $appListPM,
-                                 isSheetPresented:  $isSheetPresented,
-                                 appCodeAM:         $appCodePM,
-                                 sessionLengthDoubleAM: $dailySessionConfigurationx[theDayNumber].sessionLengthDoubleAM)
+                                 isSheetPresented:  $isSheetPresentedPM,
+                                 
+                                 appCodeAM:         $dailySessionConfigurationx[theDayNumber].appCodePM,
+                                 sessionLengthDoubleAM: $dailySessionConfigurationx[theDayNumber].sessionLengthDoublePM)
+
                     //                SessionGroupView(timeOfDay: "**Home:** - 9:00 - 11:59",
                     //                                 sessionLength: 20,
                     //                                 iPadLockedIntoApp: true,
@@ -221,7 +285,8 @@ struct ShowStudentProfiileDayView: View {
             }
 
             upDateDailySessionConfiguration()
-             
+            
+            studentAppProfileViewModel.profiles = studentAppProfilesList
 
         }
         
@@ -230,40 +295,63 @@ struct ShowStudentProfiileDayView: View {
                 processApps()
             }
         }
-        .sheet(isPresented: $isSheetPresented) {
+        .sheet(isPresented: $isSheetPresentedAM) {
             CategoryDisclosureView(selectedSession: $selectedSession,
-                                   isSheetPresented: $isSheetPresented,
-                                   lengthOfSesssion: $dailySessionConfigurationx[theDayNumber].sessionLengthAM, singleAppMode: $dailySessionConfigurationx[theDayNumber].oneAppLockAM, appCodeAM: $dailySessionConfigurationx[theDayNumber].appCodeAM)
-//                                   lengthOfSesssion: $sessionLengthAM, singleAppMode: $oneAppLockAM, appCodeAM: $appCodeAM)
+                                   isSheetPresented: $isSheetPresentedAM,
+                                   lengthOfSesssion: $dailySessionConfigurationx[theDayNumber].sessionLengthAM,
+                                   singleAppMode: $dailySessionConfigurationx[theDayNumber].oneAppLockAM,
+                                   appCode: $dailySessionConfigurationx[theDayNumber].appCodeAM)
                 .onDisappear {
                     if let returnedSession = selectedSession,
                        let theapp = returnedSession.apps.first {
-                        updateTheStudent(theapp, returnedSession)
+                        updateTheStudentAM(theapp, returnedSession)
                        
                     } // end if
          
                 } // end onDisappear
         } // end sheet
-
+        .sheet(isPresented: $isSheetPresentedPM) {
+            CategoryDisclosureView(selectedSession: $selectedSession,
+                                   isSheetPresented: $isSheetPresentedPM,
+                                   lengthOfSesssion: $dailySessionConfigurationx[theDayNumber].sessionLengthPM,
+                                   singleAppMode:    $dailySessionConfigurationx[theDayNumber].oneAppLockPM,
+                                   appCode:          $dailySessionConfigurationx[theDayNumber].appCodePM)
+                .onDisappear {
+                    if let returnedSession = selectedSession,
+                       let theapp = returnedSession.apps.first {
+                        updateTheStudentPM(theapp, returnedSession)
+                       
+                    } // end if
+         
+                } // end onDisappear
+        } // end sheet
     }
 }
 
 extension ShowStudentProfiileDayView {
     
     func upDateDailySessionConfiguration() {
-        guard let theAMSession = currentProfile.sessions[dayOfWeekString]?.amSession else {fatalError("dd")}
-         
-//         var xx = DailySessionConfiguration(oneAppLockAM: true, appCodeAM: 99, sessionLengthAM: 111)
-         dailySessionConfigurationx[theDayNumber].sessionLengthAM = theAMSession.sessionLength
-        dailySessionConfigurationx[theDayNumber].sessionLengthDoubleAM = Double(theAMSession.sessionLength)
-//            studentAppProfileViewModel.dailySessionConfiguration[0].sessionLengthAM = 111
-//            sessionLengthAM = theAMSession.sessionLength
-         dailySessionConfigurationx[theDayNumber].oneAppLockAM    = theAMSession.oneAppLock
-         
-         if let theOneApp = currentProfile.sessions[dayOfWeekString]?.amSession.apps.first {
-             dailySessionConfigurationx[theDayNumber].appCodeAM = theOneApp
-         }
+        guard let theAMSession                                          = currentProfile.sessions[dayOfWeekString]?.amSession else {fatalError("dd")}
 
+        dailySessionConfigurationx[theDayNumber].sessionLengthAM        = theAMSession.sessionLength
+        dailySessionConfigurationx[theDayNumber].sessionLengthDoubleAM  = Double(theAMSession.sessionLength)
+        dailySessionConfigurationx[theDayNumber].oneAppLockAM           = theAMSession.oneAppLock
+        
+        if let theOneApp                                                = currentProfile.sessions[dayOfWeekString]?.amSession.apps.first {
+            dailySessionConfigurationx[theDayNumber].appCodeAM          = theOneApp
+        }
+        
+        guard let thePMSession                                          = currentProfile.sessions[dayOfWeekString]?.pmSession else {fatalError("dd")}
+
+        dailySessionConfigurationx[theDayNumber].sessionLengthPM        = thePMSession.sessionLength
+        dailySessionConfigurationx[theDayNumber].sessionLengthDoublePM  = Double(thePMSession.sessionLength)
+        dailySessionConfigurationx[theDayNumber].oneAppLockPM           = thePMSession.oneAppLock
+        
+        if let theOneApp                                                = currentProfile.sessions[dayOfWeekString]?.pmSession.apps.first {
+            dailySessionConfigurationx[theDayNumber].appCodePM          = theOneApp
+        }
+
+        
     }
     
     func processApps() {
@@ -385,7 +473,7 @@ struct SessionGroupView: View {
                         isEditing = editing
                     }.disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
                 }
-                Toggle(isOn: /*@START_MENU_TOKEN@*/.constant(true)/*@END_MENU_TOKEN@*/, label: {
+                Toggle(isOn: $iPadLockedIntoApp, label: {
                     Text("Locked INto the App").font(.headline)
                 }).disabled(true)
                 

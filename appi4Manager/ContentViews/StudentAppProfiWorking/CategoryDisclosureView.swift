@@ -79,14 +79,14 @@ struct CategoryDisclosureView: View {
     @State private var selectedSegment = 0
     @Binding var lengthOfSesssion: Int
     @Binding var singleAppMode: Bool
-    @Binding var appCodeAM: Int
+    @Binding var appCode: Int
     
     var body: some View {
         
         if accumulatex > 0 {
             GroupBox {
 //                appPickerView()
-                Text(" the new app code selected\(appCodeAM)")
+                Text(" the new app code selected\(appCode)")
                         Picker("Apps", selection: $selectedSegment) {
                             ForEach(appSelected, id: \.self) { appsel in
                                     //                        Text(appxViewModel.appx.filter { appSelected.contains($0.id) }[index].name).tag(index)
@@ -156,7 +156,7 @@ struct CategoryDisclosureView: View {
                                     withAnimation {
                                         accumulatex += 1
                                         appSelected.append(matchedApp.id)
-                                        appCodeAM = matchedApp.id
+                                        appCode = matchedApp.id
                                     }
                                 }
 

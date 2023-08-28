@@ -41,6 +41,14 @@ struct StudentAppProfile: Identifiable, Codable, Equatable, Hashable {
         hasher.combine(locationId)
         // You may want to combine other properties as well, depending on what makes sense for your use case.
     }
+    mutating func deleteSession(forDay day: String) {
+        sessions.removeValue(forKey: day)
+    }
+    
+    mutating func replaceSession(forDay day: String, with newSession: DailySessions) {
+        sessions[day] = newSession
+    }
+
 }
 
 

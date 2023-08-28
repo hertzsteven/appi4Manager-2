@@ -40,7 +40,7 @@ struct ParentAppPickerView: View {
         }
             
         .sheet(isPresented: $isSheetPresented) {
-            CategoryDisclosureView(selectedSession: $selectedSession, isSheetPresented: $isSheetPresented, lengthOfSesssion: $sessionLength, singleAppMode: $singleAppMode, appCodeAM: $appCode )
+            CategoryDisclosureView(selectedSession: $selectedSession, isSheetPresented: $isSheetPresented, lengthOfSesssion: $sessionLength, singleAppMode: $singleAppMode, appCode: $appCode )
         }
 
     }

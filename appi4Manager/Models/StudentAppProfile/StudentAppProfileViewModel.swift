@@ -9,10 +9,24 @@ import Foundation
 
 
 struct DailySessionConfiguration {
-    var oneAppLockAM:       Bool
-    var appCodeAM:          Int
-    var sessionLengthAM:    Int
-    var sessionLengthDoubleAM:    Double
+    var oneAppLockAM:           Bool
+    var appCodeAM:              Int
+    var sessionLengthAM:        Int {
+        didSet {
+            sessionLengthDoubleAM = Double(sessionLengthAM)
+        }
+    }
+    var sessionLengthDoubleAM:  Double
+    
+    var oneAppLockPM:           Bool
+    var appCodePM:              Int
+    var sessionLengthPM:        Int {
+        didSet {
+            sessionLengthDoublePM = Double(sessionLengthPM)
+        }
+    }
+    var sessionLengthDoublePM:  Double
+
 }
 
 
@@ -20,12 +34,21 @@ class StudentAppProfileViewModel: ObservableObject {
     @Published var profiles: [StudentAppProfile] = [] {
         didSet {
             if !profiles.isEmpty {
-                saveProfiles()
+//                saveProfiles()
             }
         }
     }
     @Published var dailySessionConfiguration: [DailySessionConfiguration] =
-    Array(repeating: DailySessionConfiguration(oneAppLockAM: false, appCodeAM: 0,sessionLengthAM: 0, sessionLengthDoubleAM: 0.0 ), count: 7)
+    Array(repeating: DailySessionConfiguration(
+        oneAppLockAM: false,
+        appCodeAM: 0,
+        sessionLengthAM: 0,
+        sessionLengthDoubleAM: 0.0,
+        oneAppLockPM: false,
+        appCodePM: 0,
+        sessionLengthPM: 0,
+        sessionLengthDoublePM: 0.0
+    ), count: 7)
 
     
     func addProfile(profile: StudentAppProfile) {
@@ -76,6 +99,12 @@ class StudentAppProfileViewModel: ObservableObject {
     
     func saveProfiles() {
         if let encoded = try? JSONEncoder().encode(profiles) {
+            if let idx = profiles.firstIndex(where: { prf in
+                prf.id == 8
+            }) {
+                    // 5
+                dump(profiles[idx])
+            }
             UserDefaults.standard.set(encoded, forKey: "StudentProfiles3")
         }
     }
