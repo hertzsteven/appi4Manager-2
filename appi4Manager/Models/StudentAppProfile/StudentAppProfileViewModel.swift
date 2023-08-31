@@ -7,6 +7,9 @@
 
 import Foundation
 
+enum ProfileErrors: Error {
+    case NotFound
+}
 
 struct DailySessionConfiguration {
     var oneAppLockAM:           Bool
@@ -26,15 +29,13 @@ struct DailySessionConfiguration {
         }
     }
     var sessionLengthDoublePM:  Double
-
 }
-
 
 class StudentAppProfileViewModel: ObservableObject {
     @Published var profiles: [StudentAppProfile] = [] {
         didSet {
             if !profiles.isEmpty {
-//                saveProfiles()
+                    //                saveProfiles()
             }
         }
     }
@@ -49,7 +50,14 @@ class StudentAppProfileViewModel: ObservableObject {
         sessionLengthPM: 0,
         sessionLengthDoublePM: 0.0
     ), count: 7)
+    @Published var isLoaded: Bool = false  // New state to track if data is loaded
 
+    
+    init() {
+        profiles = StudentAppProfileViewModel.loadProfiles()
+        isLoaded = true  // Set to true once the data is loaded
+
+    }
     
     func addProfile(profile: StudentAppProfile) {
         profiles.append(profile)
@@ -63,11 +71,43 @@ class StudentAppProfileViewModel: ObservableObject {
         }
     }
     
+    func saveProfiles() {
+        if let encoded = try? JSONEncoder().encode(profiles) {
+            if let idx = profiles.firstIndex(where: { prf in
+                prf.id == 8
+            }) {
+                    // 5
+                dump(profiles[idx])
+            }
+            UserDefaults.standard.set(encoded, forKey: "StudentProfiles3")
+        }
+    }
+    
+    func getProfileForStudent(_ studentId: Int) throws -> StudentAppProfile {
+        guard let studentIdx = profiles.firstIndex(where: { prf in
+            prf.id == studentId
+        }) else { throw ProfileErrors.NotFound}
+        return profiles[studentIdx]
+    }
+    
+    static func loadProfiles() -> [StudentAppProfile] {
+        if let savedProfiles = UserDefaults.standard.object(forKey: "StudentProfiles3") as? Data {
+            if let decoded = try? JSONDecoder().decode([StudentAppProfile].self, from: savedProfiles) {
+                return decoded
+            }
+        }
+        return []
+    }
+}
+
+
+// generating Mockes
+extension StudentAppProfileViewModel {
+    
     static func makeDefaultfor(_ id: Int, locationId: Int) -> StudentAppProfile {
          generateSampleProfileforId(id: id, locationId: locationId, apps: [], sessionLength: 0, oneAppLock: false)
     }
 
-    
     static func sampleProfile() -> [StudentAppProfile] {
         
         let sampleProfile1 = generateSampleProfileforId(id: 3, locationId: 0, apps: [11,34], sessionLength: 20, oneAppLock: false)
@@ -97,25 +137,5 @@ class StudentAppProfileViewModel: ObservableObject {
         return sampleProfile
     }
     
-    func saveProfiles() {
-        if let encoded = try? JSONEncoder().encode(profiles) {
-            if let idx = profiles.firstIndex(where: { prf in
-                prf.id == 8
-            }) {
-                    // 5
-                dump(profiles[idx])
-            }
-            UserDefaults.standard.set(encoded, forKey: "StudentProfiles3")
-        }
-    }
-    
-    static func loadProfiles() -> [StudentAppProfile] {
-        if let savedProfiles = UserDefaults.standard.object(forKey: "StudentProfiles3") as? Data {
-            if let decoded = try? JSONDecoder().decode([StudentAppProfile].self, from: savedProfiles) {
-                return decoded
-            }
-        }
-        return []
-    }
 }
 

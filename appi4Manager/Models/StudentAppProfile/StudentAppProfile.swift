@@ -8,18 +8,18 @@
 import Foundation
 
 
-
-struct Session: Identifiable, Codable {
-    var id = UUID() // to make it unique per session
-    var apps: [Int]
-    var sessionLength: Int
-    var oneAppLock: Bool
-}
-
-struct DailySessions: Codable {
+struct DailySessions: Codable, Equatable {
     var amSession: Session
     var pmSession: Session
     var homeSession: Session
+    
+        // Implement the Equatable protocol by defining the == operator
+    static func == (lhs: DailySessions, rhs: DailySessions) -> Bool {
+        return lhs.amSession == rhs.amSession &&
+        lhs.pmSession == rhs.pmSession &&
+        lhs.homeSession == rhs.homeSession
+    }
+    
     static func makeDefaultDailySession() -> DailySessions {
         DailySessions(amSession: Session(apps: [], sessionLength: 0, oneAppLock: false),
                       pmSession: Session(apps: [], sessionLength: 0, oneAppLock: false),
@@ -27,20 +27,38 @@ struct DailySessions: Codable {
     }
 }
 
+struct Session: Identifiable, Codable, Equatable {
+    var id = UUID() // to make it unique per session
+    var apps: [Int]
+    var sessionLength: Int
+    var oneAppLock: Bool
+    
+    // Implement the Equatable protocol by defining the == operator
+    static func == (lhs: Session, rhs: Session) -> Bool {
+        return lhs.apps == rhs.apps &&
+        lhs.sessionLength == rhs.sessionLength &&
+        lhs.oneAppLock == rhs.oneAppLock
+    }
+}
+
+
 struct StudentAppProfile: Identifiable, Codable, Equatable, Hashable {
     
     var id: Int
     var locationId: Int
     var sessions: [String: DailySessions] // Key is the day of the week (e.g., "Sunday")
     
+    
     static func == (lhs: StudentAppProfile, rhs: StudentAppProfile) -> Bool {
         lhs.id == rhs.id
     }
+    
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(locationId)
         // You may want to combine other properties as well, depending on what makes sense for your use case.
     }
+    
     mutating func deleteSession(forDay day: String) {
         sessions.removeValue(forKey: day)
     }
