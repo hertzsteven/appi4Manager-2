@@ -16,10 +16,26 @@ struct MockFromStudentScreenView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: Int.self) { studentId in
             
-         let profilesx =  StudentAppProfileViewModel.loadProfiles()
+         let profilesx =  StudentAppProfileViewModel.loadProfilesx()
             
             if let studentFound = profilesx.first { $0.id == studentId} {
-                MockToStudentScreenView(studentAppProfilefiles: StudentAppProfileViewModel.loadProfiles(), studentId: studentId, studentAppprofile:  studentFound)
+//                MockToStudentScreenView(studentAppProfilefiles: StudentAppProfileViewModel.loadProfiles(), studentId: studentId, studentAppprofile:  studentFound)
+                MockBareBones(
+                    studentAppProfilefiles: StudentAppProfileViewModel.loadProfilesx(),
+                    profileManager: StudentAppProfileManager(),
+                    studentAppprofile: StudentAppProfilex(
+                    id: 8,
+                    locationId: 0,
+                    sessions: [
+                    "Sunday" : DailySessions(
+                        amSession:      Session(apps: [11], sessionLength: 22,  oneAppLock: true),
+                        pmSession:      Session(apps: [11], sessionLength: 22,  oneAppLock: true),
+                        homeSession:    Session(apps: [11], sessionLength: 22,  oneAppLock: true)),
+                    "Monday" : DailySessions(
+                        amSession:      Session(apps: [11], sessionLength: 22,  oneAppLock: true),
+                        pmSession:      Session(apps: [11], sessionLength: 22,  oneAppLock: true),
+                        homeSession:    Session(apps: [11], sessionLength: 22,  oneAppLock: true))]
+                ))
             }
 
         }

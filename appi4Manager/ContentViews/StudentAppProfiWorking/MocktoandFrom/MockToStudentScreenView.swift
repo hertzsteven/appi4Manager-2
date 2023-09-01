@@ -36,19 +36,58 @@ enum DayOfWeek: Int, CaseIterable {
 }
 
 
+class StudentAppProfilex: Identifiable, Decodable, ObservableObject {
+                var id:         Int
+                var locationId: Int
+    @Published     var sessions:     [String: DailySessions]
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case locationId
+        case sessions
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container  = try decoder.container(keyedBy: CodingKeys.self)
+        id             = try container.decode(Int.self, forKey: .id)
+        locationId     = try container.decode(Int.self, forKey: .locationId)
+        sessions       = try container.decode([String: DailySessions].self, forKey: .sessions)
+    }
+
+    init(id: Int, locationId: Int, sessions: [String: DailySessions]) {
+        self.id          = id
+        self.locationId  = locationId
+        self.sessions    = sessions
+    }
+}
+
+
+class StudentAppProfileManager: ObservableObject {
+    @Published var studentAppProfileFiles: [StudentAppProfilex] = []
+    
+    func updateStudentAppProfile(newProfile: StudentAppProfilex) {
+        if let idx = studentAppProfileFiles.firstIndex(where: { $0.id == newProfile.id }) {
+            studentAppProfileFiles.remove(at: idx)
+            studentAppProfileFiles.append(newProfile)
+        }
+    }
+}
+
 struct MockToStudentScreenView: View {
     
         //  MARK: -  Properties
     
     
-    var studentAppProfilefiles: [StudentAppProfile] = []
+    var studentAppProfilefiles: [StudentAppProfilex] = []
     
     @State private var selectedDay = DayOfWeek.sunday
     
     @State var studentId: Int
     
     
-    @State var studentAppprofile: StudentAppProfile
+    @StateObject var profileManager                   : StudentAppProfileManager
+
+    @StateObject var studentAppprofile                : StudentAppProfilex
     
     @State var currentDayStudentAppProfile: DailySessions = DailySessions.makeDefaultDailySession()
     
@@ -146,6 +185,7 @@ struct MockToStudentScreenView: View {
         
         
         .onAppear {
+            profileManager.studentAppProfileFiles = studentAppProfilefiles
             setCurrentDateWith(selectedDay.asAString)
         }
         

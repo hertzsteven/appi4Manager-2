@@ -98,6 +98,15 @@ class StudentAppProfileViewModel: ObservableObject {
         }
         return []
     }
+    
+    static func loadProfilesx() -> [StudentAppProfilex] {
+        if let savedProfiles = UserDefaults.standard.object(forKey: "StudentProfiles3") as? Data {
+            if let decoded = try? JSONDecoder().decode([StudentAppProfilex].self, from: savedProfiles) {
+                return decoded
+            }
+        }
+        return []
+    }
 }
 
 
