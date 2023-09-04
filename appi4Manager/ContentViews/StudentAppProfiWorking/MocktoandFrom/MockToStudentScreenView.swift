@@ -160,7 +160,6 @@ struct MockToStudentScreenView: View {
                 }
             }
             
-            
             Group {
                 
                 amGroupBox()
@@ -194,26 +193,30 @@ struct MockToStudentScreenView: View {
         }, content: {
             MockSetupAppProfileView(presentMakeAppProfile   : $presentMakeAppProfile,
                                     selectedDay             : selectedDay,
-                                    sessionLength           : {
-                switch timeOfDay {
-                case .am:
-                    return $currentDayStudentAppProfile.amSession.sessionLength
-                case .pm:
-                    return $currentDayStudentAppProfile.pmSession.sessionLength
-                case .home:
-                    return $currentDayStudentAppProfile.homeSession.sessionLength
-                }
-            }(),
-                                    apps                    : {
-                switch timeOfDay {
-                case .am:
-                    return $currentDayStudentAppProfile.amSession.apps
-                case .pm:
-                    return $currentDayStudentAppProfile.pmSession.apps
-                case .home:
-                    return $currentDayStudentAppProfile.homeSession.apps
-                }
-            }()
+                                    sessionLength           : getSessionLengthBinding(),
+                                    apps                    : getappsBinding(),
+                                    oneAppLock              : getoneAppLockBinding()
+
+//                                    sessionLength           : {
+//                switch timeOfDay {
+//                case .am:
+//                    return $currentDayStudentAppProfile.amSession.sessionLength
+//                case .pm:
+//                    return $currentDayStudentAppProfile.pmSession.sessionLength
+//                case .home:
+//                    return $currentDayStudentAppProfile.homeSession.sessionLength
+//                }
+//            }(),
+//                                    apps                    : {
+//                switch timeOfDay {
+//                case .am:
+//                    return $currentDayStudentAppProfile.amSession.apps
+//                case .pm:
+//                    return $currentDayStudentAppProfile.pmSession.apps
+//                case .home:
+//                    return $currentDayStudentAppProfile.homeSession.apps
+//                }
+//            }()
             )
         })
         
@@ -228,6 +231,40 @@ struct MockToStudentScreenView: View {
         
     }
  
+    func getSessionLengthBinding() -> Binding<Int> {
+        switch timeOfDay {
+        case .am:
+            return $currentDayStudentAppProfile.amSession.sessionLength
+        case .pm:
+            return $currentDayStudentAppProfile.pmSession.sessionLength
+        case .home:
+            return $currentDayStudentAppProfile.homeSession.sessionLength
+        }
+    }
+
+    func getappsBinding() -> Binding<[Int]> {
+        switch timeOfDay {
+        case .am:
+            return $currentDayStudentAppProfile.amSession.apps
+        case .pm:
+            return $currentDayStudentAppProfile.pmSession.apps
+        case .home:
+            return $currentDayStudentAppProfile.homeSession.apps
+        }
+    }
+
+    func getoneAppLockBinding() -> Binding<Bool> {
+        switch timeOfDay {
+        case .am:
+            return $currentDayStudentAppProfile.amSession.oneAppLock
+        case .pm:
+            return $currentDayStudentAppProfile.pmSession.oneAppLock
+        case .home:
+            return $currentDayStudentAppProfile.homeSession.oneAppLock
+        }
+    }
+
+    
     //  MARK: -  Funcs for Views
     func amGroupBox(theTitle: String = "am session")-> some View {
         return  GroupBox {
