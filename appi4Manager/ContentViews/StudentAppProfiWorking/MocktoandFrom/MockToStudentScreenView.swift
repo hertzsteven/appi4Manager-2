@@ -36,7 +36,7 @@ enum DayOfWeek: Int, CaseIterable {
 }
 
 
-class StudentAppProfilex: Identifiable, Decodable, ObservableObject {
+class StudentAppProfilex: Identifiable, Codable, ObservableObject {
                 var id:         Int
                 var locationId: Int
     @Published     var sessions:     [String: DailySessions]
@@ -54,6 +54,14 @@ class StudentAppProfilex: Identifiable, Decodable, ObservableObject {
         sessions       = try container.decode([String: DailySessions].self, forKey: .sessions)
     }
 
+    // Implementing the Encodable protocol manually
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(locationId, forKey: .locationId)
+        try container.encode(sessions, forKey: .sessions)
+    }
+
     init(id: Int, locationId: Int, sessions: [String: DailySessions]) {
         self.id          = id
         self.locationId  = locationId
@@ -65,12 +73,34 @@ class StudentAppProfilex: Identifiable, Decodable, ObservableObject {
 class StudentAppProfileManager: ObservableObject {
     @Published var studentAppProfileFiles: [StudentAppProfilex] = []
     
+    static func loadProfilesx() -> [StudentAppProfilex] {
+        if let savedProfiles = UserDefaults.standard.object(forKey: "StudentProfiles3") as? Data {
+            if let decoded = try? JSONDecoder().decode([StudentAppProfilex].self, from: savedProfiles) {
+                return decoded
+            }
+        }
+        return []
+    }
+    
     func updateStudentAppProfile(newProfile: StudentAppProfilex) {
         if let idx = studentAppProfileFiles.firstIndex(where: { $0.id == newProfile.id }) {
             studentAppProfileFiles.remove(at: idx)
             studentAppProfileFiles.append(newProfile)
         }
     }
+    func saveProfiles() {
+        if let encoded = try? JSONEncoder().encode(studentAppProfileFiles) {
+            if let idx = studentAppProfileFiles.firstIndex(where: { prf in
+                prf.id == 8
+            }) {
+                    // 5
+                dump(studentAppProfileFiles[idx])
+            }
+            UserDefaults.standard.set(encoded, forKey: "StudentProfiles3")
+        }
+    }
+    
+
 }
 
 struct MockToStudentScreenView: View {
@@ -115,45 +145,36 @@ struct MockToStudentScreenView: View {
                 .padding(.top, 32)
             
             Divider().padding()
+            
             HStack {
-                Button("Update Sunday") {
-                    currentDayStudentAppProfile.amSession.sessionLength = 44
-                    studentAppprofile.sessions["Sunday"]!.amSession.sessionLength = 44
-                    dump(studentAppprofile)
-                }
-                
-                Button("Update Monday") {
-                    currentDayStudentAppProfile.amSession.sessionLength = 44
-                    studentAppprofile.sessions["Monday"]!.amSession.sessionLength = 44
-                    dump(studentAppprofile)
-                }
-                
-                Button("GoToAPPProfileSetupAM") {
+                Button("GoToAPPProfile SetupAM") {
                     timeOfDay = .am
                     currentDayStudentAppProfileSave = currentDayStudentAppProfile
                     presentMakeAppProfile.toggle()
                 }
                 
-                Button("GoToAPPProfileSetupPM") {
+                Button("GoToAPPProfile SetupPM") {
                     timeOfDay = .pm
                     currentDayStudentAppProfileSave = currentDayStudentAppProfile
                     presentMakeAppProfile.toggle()
                 }
             }
             
-            amGroupBox()
             
-            GroupBox {
-                Text("Student Code \(studentId) and \(studentAppprofile.sessions.count)").padding()
-                Text("Length of seconds \(currentDayStudentAppProfile.amSession.sessionLength)").padding()
-            }label: {
-                Text("am session")
-            }
-            GroupBox {
-                Text("Student Code \(studentId) and \(studentAppprofile.sessions.count)").padding()
-                Text("Length of seconds \(currentDayStudentAppProfile.pmSession.sessionLength)").padding()
-            } label: {
-                Text("pm session")
+            Group {
+                
+                amGroupBox()
+                
+                GroupBox {
+                    Text("Student Code \(studentId) and \(studentAppprofile.sessions.count)").padding()
+                    if let theApps = currentDayStudentAppProfile.pmSession.apps.first {
+                        Text("App codes: \(theApps)")
+                    }
+                    
+                    Text("Length of seconds \(currentDayStudentAppProfile.pmSession.sessionLength)").padding()
+                } label: {
+                    Text("pm session")
+                }
             }
             
             Spacer()
@@ -165,13 +186,15 @@ struct MockToStudentScreenView: View {
             if currentDayStudentAppProfile != currentDayStudentAppProfileSave {
                 print(" they are not equal")
                 upDateStudentAppProfile()
+                profileManager.updateStudentAppProfile(newProfile: studentAppprofile)
+                profileManager.saveProfiles()
             } else {
                 print("they are equal")
             }
         }, content: {
-            MockSetupAppProfileView(presentMakeAppProfile: $presentMakeAppProfile,
-                                    selectedDay: selectedDay,
-                                    sessionLength: {
+            MockSetupAppProfileView(presentMakeAppProfile   : $presentMakeAppProfile,
+                                    selectedDay             : selectedDay,
+                                    sessionLength           : {
                 switch timeOfDay {
                 case .am:
                     return $currentDayStudentAppProfile.amSession.sessionLength
@@ -180,9 +203,19 @@ struct MockToStudentScreenView: View {
                 case .home:
                     return $currentDayStudentAppProfile.homeSession.sessionLength
                 }
-            }())
+            }(),
+                                    apps                    : {
+                switch timeOfDay {
+                case .am:
+                    return $currentDayStudentAppProfile.amSession.apps
+                case .pm:
+                    return $currentDayStudentAppProfile.pmSession.apps
+                case .home:
+                    return $currentDayStudentAppProfile.homeSession.apps
+                }
+            }()
+            )
         })
-        
         
         .onAppear {
             profileManager.studentAppProfileFiles = studentAppProfilefiles
@@ -194,17 +227,21 @@ struct MockToStudentScreenView: View {
         }
         
     }
-        //  MARK: -  Funcs for Views
+ 
+    //  MARK: -  Funcs for Views
     func amGroupBox(theTitle: String = "am session")-> some View {
         return  GroupBox {
             Text("Student Code \(studentId) and \(studentAppprofile.sessions.count)").padding()
+            if let theApps = currentDayStudentAppProfile.amSession.apps.first {
+                Text("App codes: \(theApps)")
+            }
             Text("Length of seconds \(currentDayStudentAppProfile.amSession.sessionLength)").padding()
         }label: {
             Text(theTitle)
         }
     }
     
-        //  MARK: -  Funcs to assist in processes
+    //  MARK: -  Funcs to assist in processes
     func setCurrentDateWith(_ stringDayOfWeek: String)  {
         guard let currentDayStudentAppProfilefilxe = studentAppprofile.sessions[stringDayOfWeek] else {
             fatalError("big error")
@@ -212,47 +249,25 @@ struct MockToStudentScreenView: View {
         currentDayStudentAppProfile = currentDayStudentAppProfilefilxe
     }
     
+    //  MARK: -  Update the student profile
     func upDateStudentAppProfile()  {
         switch timeOfDay {
         case .am:
-            dump(studentAppprofile)
             studentAppprofile.sessions[selectedDay.asAString]?.amSession.sessionLength = currentDayStudentAppProfile.amSession.sessionLength
-            dump(studentAppprofile)
+            studentAppprofile.sessions[selectedDay.asAString]?.amSession.apps = currentDayStudentAppProfile.amSession.apps
+            studentAppprofile.sessions[selectedDay.asAString]?.amSession.oneAppLock = currentDayStudentAppProfile.amSession.oneAppLock
         case .pm:
             studentAppprofile.sessions[selectedDay.asAString]?.pmSession.sessionLength = currentDayStudentAppProfile.pmSession.sessionLength
+            studentAppprofile.sessions[selectedDay.asAString]?.pmSession.apps = currentDayStudentAppProfile.pmSession.apps
+            studentAppprofile.sessions[selectedDay.asAString]?.pmSession.oneAppLock = currentDayStudentAppProfile.pmSession.oneAppLock
         case .home:
             studentAppprofile.sessions[selectedDay.asAString]?.homeSession.sessionLength = currentDayStudentAppProfile.homeSession.sessionLength
+            studentAppprofile.sessions[selectedDay.asAString]?.homeSession.apps = currentDayStudentAppProfile.homeSession.apps
+            studentAppprofile.sessions[selectedDay.asAString]?.homeSession.oneAppLock = currentDayStudentAppProfile.homeSession.oneAppLock
         }
-//        if let idx = studentAppProfilefiles.firstIndex(where: {  $0.id == studentId  }) {
-//            studentAppProfilefiles[idx] = profile
-//            dump(studentAppProfilefiles)
-//        }
     }
-    
-    
-    
+   
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

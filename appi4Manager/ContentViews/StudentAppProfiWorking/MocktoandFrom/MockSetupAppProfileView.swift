@@ -14,6 +14,8 @@ struct MockSetupAppProfileView: View {
     let selectedDay: DayOfWeek
     
     @Binding var sessionLength: Int
+    
+    @Binding var apps: [Int]
 
     var body: some View {
         VStack(spacing: 32) {
@@ -21,7 +23,20 @@ struct MockSetupAppProfileView: View {
                 presentMakeAppProfile.toggle()
             }
             Button("changeTo55") {
-                sessionLength = 55
+                sessionLength = Int.random(in: 901...999)
+                print("changed session length to \(sessionLength)")
+                let theAppcodes = [27,
+                    17,
+                    32,
+                    11,
+                    28]
+                let filteredArray = theAppcodes.filter { theI in
+                    !apps.contains(theI)
+                }
+                let theAppcode = filteredArray.randomElement()
+                apps.removeAll()
+                apps.append(theAppcode ?? 12121)
+                print("changed aaps to \(apps)")
                 presentMakeAppProfile.toggle()
             }
 
