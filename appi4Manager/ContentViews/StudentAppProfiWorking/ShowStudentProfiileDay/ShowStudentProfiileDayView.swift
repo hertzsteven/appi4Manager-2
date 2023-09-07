@@ -77,6 +77,8 @@ struct ShowStudentProfiileDayView: View {
 
     @State private var selectedSession: Session?
     
+    @State var apps: Array<Int> = []
+    
     
     var body: some View {
         ScrollView {
@@ -176,9 +178,10 @@ struct ShowStudentProfiileDayView: View {
         .sheet(isPresented: $isSheetPresentedAM) {
             CategoryDisclosureView(selectedSession: $selectedSession,
                                    isSheetPresented: $isSheetPresentedAM,
-                                   lengthOfSesssion: $dailySessionConfigurationx[theDayNumber].sessionLengthAM,
-                                   singleAppMode: $dailySessionConfigurationx[theDayNumber].oneAppLockAM,
-                                   appCode: $dailySessionConfigurationx[theDayNumber].appCodeAM)
+                                   sessionLength: $dailySessionConfigurationx[theDayNumber].sessionLengthAM,
+                                   oneAppLock: $dailySessionConfigurationx[theDayNumber].oneAppLockAM,
+                                   appCode: $dailySessionConfigurationx[theDayNumber].appCodeAM,
+                                   apps: $apps)
                 .onDisappear {
                     if let returnedSession = selectedSession,
                        let theapp = returnedSession.apps.first {
@@ -192,9 +195,10 @@ struct ShowStudentProfiileDayView: View {
         .sheet(isPresented: $isSheetPresentedPM) {
             CategoryDisclosureView(selectedSession: $selectedSession,
                                    isSheetPresented: $isSheetPresentedPM,
-                                   lengthOfSesssion: $dailySessionConfigurationx[theDayNumber].sessionLengthPM,
-                                   singleAppMode:    $dailySessionConfigurationx[theDayNumber].oneAppLockPM,
-                                   appCode:          $dailySessionConfigurationx[theDayNumber].appCodePM)
+                                   sessionLength: $dailySessionConfigurationx[theDayNumber].sessionLengthPM,
+                                   oneAppLock:    $dailySessionConfigurationx[theDayNumber].oneAppLockPM,
+                                   appCode:          $dailySessionConfigurationx[theDayNumber].appCodePM,
+                                   apps: $apps)
                 .onDisappear {
                     if let returnedSession = selectedSession,
                        let theapp = returnedSession.apps.first {

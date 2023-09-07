@@ -126,6 +126,9 @@ struct MockToStudentScreenView: View {
     @State var presentMakeAppProfile: Bool  = false
     @State var timeOfDay                    = TimeOfDay.am
     
+    @State var appCode = 0
+    @State private var selectedSession: Session?
+    
 }
 
 
@@ -204,14 +207,23 @@ extension MockToStudentScreenView {
             } else {
                 print("they are equal")
             }
-        }) {MockSetupAppProfileView(presentMakeAppProfile   : $presentMakeAppProfile,
-                                    selectedDay             : selectedDay,
-                                    sessionLength           : getSessionLengthBinding(),
-                                    apps                    : getappsBinding(),
-                                    oneAppLock              : getoneAppLockBinding()
-        )
-        }
-        
+        })
+//        {MockSetupAppProfileView(presentMakeAppProfile   : $presentMakeAppProfile,
+//                                    selectedDay             : selectedDay,
+//                                    sessionLength           : getSessionLengthBinding(),
+//                                    apps                    : getappsBinding(),
+//                                    oneAppLock              : getoneAppLockBinding()
+//        )
+//        }
+//
+        {
+                   CategoryDisclosureView(selectedSession  : $selectedSession,
+                                          isSheetPresented : $presentMakeAppProfile,
+                                          sessionLength    : getSessionLengthBinding(),
+                                          oneAppLock       : getoneAppLockBinding(),
+                                          appCode          : $appCode,
+                                          apps             : getappsBinding() )
+               }
         
         .onAppear {
             profileManager.studentAppProfileFiles = studentAppProfilefiles
@@ -232,7 +244,10 @@ extension MockToStudentScreenView {
     func amGroupBox(theTitle: String = "am session")-> some View {
         return  GroupBox {
             Text("Student Code \(studentId) and \(studentAppprofile.sessions.count)").padding()
-            if let theApps = currentDayStudentAppProfile.amSession.apps.first {
+            let stringArray     = currentDayStudentAppProfile.amSession.apps.map { String($0) }
+            let joinedString    = stringArray.joined(separator: ",")
+                Text("App codes: \(joinedString)")
+             if let theApps = currentDayStudentAppProfile.amSession.apps.first {
                 Text("App codes: \(theApps)")
             }
             Text("Length of seconds \(currentDayStudentAppProfile.amSession.sessionLength)").padding()

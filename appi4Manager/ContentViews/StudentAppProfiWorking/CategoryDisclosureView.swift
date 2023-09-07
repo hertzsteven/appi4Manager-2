@@ -68,7 +68,14 @@ struct CategoryDisclosureView: View {
     @EnvironmentObject var appWorkViewModel : AppWorkViewModel
     @EnvironmentObject var categoryViewModel: CategoryViewModel
     
-    @State var appSelected: Array<Int> = []
+    @State var appSelected: Array<Int> = [] {
+        didSet {
+            print("^ count \(apps.count)")
+            apps.removeAll()
+            apps.append(contentsOf: appSelected)
+            print("^ count \(apps.count)")
+        }
+    }
     
     @State var accumulatex: Double = 0
 
@@ -77,9 +84,10 @@ struct CategoryDisclosureView: View {
     }
 
     @State private var selectedSegment = 0
-    @Binding var lengthOfSesssion: Int
-    @Binding var singleAppMode: Bool
-    @Binding var appCode: Int
+    @Binding var sessionLength          : Int
+    @Binding var oneAppLock             : Bool
+    @Binding var appCode                : Int
+    @Binding var apps                   : [Int]
     
     var body: some View {
         
@@ -101,15 +109,15 @@ struct CategoryDisclosureView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .pickerStyle(.menu)
                 }
-                Stepper("Session Length: \(lengthOfSesssion)", value: $lengthOfSesssion, in: 5...60, step: 5)
+                Stepper("Session Length: \(sessionLength)", value: $sessionLength, in: 5...60, step: 5)
                 
                 HStack {
-                    Toggle("Single App", isOn: $singleAppMode)
+                    Toggle("Single App", isOn: $oneAppLock)
                     Button("Reset") {
                         withAnimation {
                             accumulatex = 0
                             appSelected.removeAll()
-                            lengthOfSesssion = 20
+                            sessionLength = 20
                         }
                         
                     }
@@ -124,7 +132,7 @@ struct CategoryDisclosureView: View {
 //                            appSelected.removeAll()
 //                            lengthOfSesssion = 20
 //                        }
-                        selectedSession = Session(apps: appSelected, sessionLength: lengthOfSesssion, oneAppLock: singleAppMode)
+                        selectedSession = Session(apps: appSelected, sessionLength: sessionLength, oneAppLock: oneAppLock)
                         isSheetPresented = false
 
                         

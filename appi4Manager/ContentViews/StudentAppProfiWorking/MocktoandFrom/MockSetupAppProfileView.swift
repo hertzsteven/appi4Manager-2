@@ -9,16 +9,16 @@ import SwiftUI
 
 struct MockSetupAppProfileView: View {
 
-    @Binding var presentMakeAppProfile: Bool
+    @Binding var presentMakeAppProfile      : Bool          // allows for dismiss
     
-    let selectedDay: DayOfWeek
+    let selectedDay                         : DayOfWeek     // needed but not updated
     
     
-    @Binding var sessionLength: Int
+    @Binding var sessionLength              : Int           // returned to caller
     
-    @Binding var apps: [Int]
+    @Binding var apps                       : [Int]         // returned to caller
     
-    @Binding var oneAppLock: Bool
+    @Binding var oneAppLock                 : Bool          // returned to caller
     
 
     

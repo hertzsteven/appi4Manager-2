@@ -18,6 +18,7 @@ struct ParentAppPickerView: View {
     @State         var singleAppMode : Bool = false
     @State         var sessionLength : Int = 0
     @State var appCode = 0
+    @State var apps: Array<Int> = []
 
     @State private var selectedSession: Session?
     
@@ -40,7 +41,12 @@ struct ParentAppPickerView: View {
         }
             
         .sheet(isPresented: $isSheetPresented) {
-            CategoryDisclosureView(selectedSession: $selectedSession, isSheetPresented: $isSheetPresented, lengthOfSesssion: $sessionLength, singleAppMode: $singleAppMode, appCode: $appCode )
+            CategoryDisclosureView(selectedSession  : $selectedSession,
+                                   isSheetPresented : $isSheetPresented,
+                                   sessionLength    : $sessionLength,
+                                   oneAppLock       : $singleAppMode,
+                                   appCode          : $appCode,
+                                   apps             : $apps )
         }
 
     }

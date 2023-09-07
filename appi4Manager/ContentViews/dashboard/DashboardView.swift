@@ -96,11 +96,12 @@ struct DashboardView: View {
                        }
 
                 case "Apps":
-                    AppxView()
+//                    AppxView()
+                    MockFromStudentScreenView()
    
                 case "NavigateToStudentAppProfile":
-                    MockFromStudentScreenView()
-//                    DummyStudentProfileLauncherView()
+//                    MockFromStudentScreenView()
+                    DummyStudentProfileLauncherView()
    
                 default:
                     SchoolListContent(path: $path, newClass: SchoolClass.makeDefault())
