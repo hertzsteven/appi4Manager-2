@@ -22,10 +22,10 @@ struct MockFromStudentScreenView: View {
             
             if let studentFound = profilesx.first { $0.id == studentId} {
                 MockToStudentScreenView(
-                                        studentAppProfilefiles: StudentAppProfileViewModel.loadProfilesx(),
-                                        studentId: studentId,
+                                        studentId                   : studentId,
+                                        studentAppProfilefiles      : StudentAppProfileViewModel.loadProfilesx(),
                                         profileManager: StudentAppProfileManager(),
-                                        studentAppprofile:  studentFound)
+                                        studentAppprofile           :  studentFound)
 
 //                MockToStudentScreenView(
 //                                        studentAppProfilefiles: StudentAppProfileViewModel.loadProfilesx(),

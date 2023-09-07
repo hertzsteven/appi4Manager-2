@@ -35,7 +35,6 @@ enum DayOfWeek: Int, CaseIterable {
     }
 }
 
-
 class StudentAppProfilex: Identifiable, Codable, ObservableObject {
                 var id:         Int
                 var locationId: Int
@@ -68,7 +67,6 @@ class StudentAppProfilex: Identifiable, Codable, ObservableObject {
         self.sessions    = sessions
     }
 }
-
 
 class StudentAppProfileManager: ObservableObject {
     @Published var studentAppProfileFiles: [StudentAppProfilex] = []
@@ -103,40 +101,40 @@ class StudentAppProfileManager: ObservableObject {
 
 }
 
+
+
+//  MARK:   After Classes before View
+
 struct MockToStudentScreenView: View {
     
-        //  MARK: -  Properties
-    
-    
-    var studentAppProfilefiles: [StudentAppProfilex] = []
-    
+    //  MARK:  Properties
     @State private var selectedDay = DayOfWeek.sunday
     
     @State var studentId: Int
     
-    
-    @StateObject var profileManager                   : StudentAppProfileManager
+    //  MARK: Manage Student Profile
+    var studentAppProfilefiles: [StudentAppProfilex]        = []
+    @StateObject var profileManager                         : StudentAppProfileManager
+    @StateObject var studentAppprofile                      : StudentAppProfilex
+    @State var currentDayStudentAppProfile: DailySessions   = DailySessions.makeDefaultDailySession()
 
-    @StateObject var studentAppprofile                : StudentAppProfilex
-    
-    @State var currentDayStudentAppProfile: DailySessions = DailySessions.makeDefaultDailySession()
-    
+    //  MARK: Properties to help with processes
     @State var currentDayStudentAppProfileSave: DailySessions = DailySessions.makeDefaultDailySession()
     
     
+    //  MARK:  Control the popup
+    @State var presentMakeAppProfile: Bool  = false
+    @State var timeOfDay                    = TimeOfDay.am
     
-        //  MARK: -  Control the popup
-    @State var presentMakeAppProfile: Bool = false
+}
+
+
+//  MARK: -  body
+extension MockToStudentScreenView {
     
-    @State var timeOfDay = TimeOfDay.am
-    
-    
-        //  MARK: -  body
-    
-    var body: some View {
-        
-        VStack(spacing: 16) {
-            
+    var controlView: some View {
+            // Control day displayed and update Infor
+        Group {
             Picker("Select a day of the week", selection: $selectedDay) {
                 ForEach(DayOfWeek.allCases, id:\.self) { day in
                     Text(day.asAString).tag(day.rawValue)
@@ -159,23 +157,39 @@ struct MockToStudentScreenView: View {
                     presentMakeAppProfile.toggle()
                 }
             }
+        }
+
+    }
+    
+    var displayInfoView: some View {
+        Group {
             
-            Group {
+            amGroupBox()
+            
+            GroupBox {
+                Text("Student Code \(studentId) and \(studentAppprofile.sessions.count)").padding()
                 
-                amGroupBox()
-                
-                GroupBox {
-                    Text("Student Code \(studentId) and \(studentAppprofile.sessions.count)").padding()
-                    if let theApps = currentDayStudentAppProfile.pmSession.apps.first {
-                        Text("App codes: \(theApps)")
-                    }
-                    
-                    Text("Length of seconds \(currentDayStudentAppProfile.pmSession.sessionLength)").padding()
-                } label: {
-                    Text("pm session")
+                if let theApps = currentDayStudentAppProfile.pmSession.apps.first {
+                    Text("App codes: \(theApps)")
                 }
+                
+                Text("Length of seconds \(currentDayStudentAppProfile.pmSession.sessionLength)").padding()
+                
+                Text("App lock is \(currentDayStudentAppProfile.pmSession.oneAppLock ? "true" : "false")")
+            } label: {
+                Text("pm session")
             }
+        }
+    }
+    
+    var body: some View {
+        
+        VStack(spacing: 16) {
+
+            controlView
             
+            displayInfoView
+
             Spacer()
             
         }
@@ -190,47 +204,49 @@ struct MockToStudentScreenView: View {
             } else {
                 print("they are equal")
             }
-        }, content: {
-            MockSetupAppProfileView(presentMakeAppProfile   : $presentMakeAppProfile,
+        }) {MockSetupAppProfileView(presentMakeAppProfile   : $presentMakeAppProfile,
                                     selectedDay             : selectedDay,
                                     sessionLength           : getSessionLengthBinding(),
                                     apps                    : getappsBinding(),
                                     oneAppLock              : getoneAppLockBinding()
-
-//                                    sessionLength           : {
-//                switch timeOfDay {
-//                case .am:
-//                    return $currentDayStudentAppProfile.amSession.sessionLength
-//                case .pm:
-//                    return $currentDayStudentAppProfile.pmSession.sessionLength
-//                case .home:
-//                    return $currentDayStudentAppProfile.homeSession.sessionLength
-//                }
-//            }(),
-//                                    apps                    : {
-//                switch timeOfDay {
-//                case .am:
-//                    return $currentDayStudentAppProfile.amSession.apps
-//                case .pm:
-//                    return $currentDayStudentAppProfile.pmSession.apps
-//                case .home:
-//                    return $currentDayStudentAppProfile.homeSession.apps
-//                }
-//            }()
-            )
-        })
+        )
+        }
+        
         
         .onAppear {
             profileManager.studentAppProfileFiles = studentAppProfilefiles
             setCurrentDateWith(selectedDay.asAString)
         }
         
+        
         .onChange(of: selectedDay) { newValue in
             setCurrentDateWith(newValue.asAString)
         }
         
     }
- 
+}
+
+//  MARK: -  For views
+extension MockToStudentScreenView {
+    
+    func amGroupBox(theTitle: String = "am session")-> some View {
+        return  GroupBox {
+            Text("Student Code \(studentId) and \(studentAppprofile.sessions.count)").padding()
+            if let theApps = currentDayStudentAppProfile.amSession.apps.first {
+                Text("App codes: \(theApps)")
+            }
+            Text("Length of seconds \(currentDayStudentAppProfile.amSession.sessionLength)").padding()
+            Text("App lock is \(currentDayStudentAppProfile.amSession.oneAppLock ? "true" : "false")")
+            
+        }label: {
+            Text(theTitle)
+        }
+    }
+}
+
+//  MARK: -  For communication with other Struct
+extension MockToStudentScreenView {
+    
     func getSessionLengthBinding() -> Binding<Int> {
         switch timeOfDay {
         case .am:
@@ -241,7 +257,7 @@ struct MockToStudentScreenView: View {
             return $currentDayStudentAppProfile.homeSession.sessionLength
         }
     }
-
+    
     func getappsBinding() -> Binding<[Int]> {
         switch timeOfDay {
         case .am:
@@ -252,7 +268,7 @@ struct MockToStudentScreenView: View {
             return $currentDayStudentAppProfile.homeSession.apps
         }
     }
-
+    
     func getoneAppLockBinding() -> Binding<Bool> {
         switch timeOfDay {
         case .am:
@@ -263,22 +279,12 @@ struct MockToStudentScreenView: View {
             return $currentDayStudentAppProfile.homeSession.oneAppLock
         }
     }
+    
+}
 
+//  MARK: -  Funcs for work
+extension MockToStudentScreenView {
     
-    //  MARK: -  Funcs for Views
-    func amGroupBox(theTitle: String = "am session")-> some View {
-        return  GroupBox {
-            Text("Student Code \(studentId) and \(studentAppprofile.sessions.count)").padding()
-            if let theApps = currentDayStudentAppProfile.amSession.apps.first {
-                Text("App codes: \(theApps)")
-            }
-            Text("Length of seconds \(currentDayStudentAppProfile.amSession.sessionLength)").padding()
-        }label: {
-            Text(theTitle)
-        }
-    }
-    
-    //  MARK: -  Funcs to assist in processes
     func setCurrentDateWith(_ stringDayOfWeek: String)  {
         guard let currentDayStudentAppProfilefilxe = studentAppprofile.sessions[stringDayOfWeek] else {
             fatalError("big error")
@@ -303,8 +309,11 @@ struct MockToStudentScreenView: View {
             studentAppprofile.sessions[selectedDay.asAString]?.homeSession.oneAppLock = currentDayStudentAppProfile.homeSession.oneAppLock
         }
     }
-   
+    
 }
+
+
+
 
 
 
@@ -325,3 +334,26 @@ struct MockToStudentScreenView: View {
     //    var thursdayProfile:    DailySessions = DailySessions.makeDefaultDailySession()
     //    var fridayProfile:      DailySessions = DailySessions.makeDefaultDailySession()
     //    var saturdayProfile:    DailySessions = DailySessions.makeDefaultDailySession()
+
+
+
+//                                    sessionLength           : {
+//                switch timeOfDay {
+//                case .am:
+//                    return $currentDayStudentAppProfile.amSession.sessionLength
+//                case .pm:
+//                    return $currentDayStudentAppProfile.pmSession.sessionLength
+//                case .home:
+//                    return $currentDayStudentAppProfile.homeSession.sessionLength
+//                }
+//            }(),
+//                                    apps                    : {
+//                switch timeOfDay {
+//                case .am:
+//                    return $currentDayStudentAppProfile.amSession.apps
+//                case .pm:
+//                    return $currentDayStudentAppProfile.pmSession.apps
+//                case .home:
+//                    return $currentDayStudentAppProfile.homeSession.apps
+//                }
+//            }()
