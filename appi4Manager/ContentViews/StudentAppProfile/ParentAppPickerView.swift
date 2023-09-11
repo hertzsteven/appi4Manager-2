@@ -16,7 +16,7 @@ struct ParentAppPickerView: View {
     @State private var isSheetPresented = false
     @State private var selectedPerson: Person?
     @State         var singleAppMode : Bool = false
-    @State         var sessionLength : Int = 0
+    @State         var sessionLength : Double = 0
     @State var appCode = 0
     @State var apps: Array<Int> = []
 

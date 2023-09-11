@@ -14,7 +14,7 @@ enum ProfileErrors: Error {
 struct DailySessionConfiguration {
     var oneAppLockAM:           Bool
     var appCodeAM:              Int
-    var sessionLengthAM:        Int {
+    var sessionLengthAM:        Double {
         didSet {
             sessionLengthDoubleAM = Double(sessionLengthAM)
         }
@@ -23,7 +23,7 @@ struct DailySessionConfiguration {
     
     var oneAppLockPM:           Bool
     var appCodePM:              Int
-    var sessionLengthPM:        Int {
+    var sessionLengthPM:        Double {
         didSet {
             sessionLengthDoublePM = Double(sessionLengthPM)
         }
@@ -126,7 +126,7 @@ extension StudentAppProfileViewModel {
         return [sampleProfile1, sampleProfile2, sampleProfile3 ]
     }
     
-    static func generateSampleProfileforId(id: Int, locationId: Int, apps:[Int], sessionLength: Int, oneAppLock: Bool ) ->  StudentAppProfile {
+    static func generateSampleProfileforId(id: Int, locationId: Int, apps:[Int], sessionLength: Double, oneAppLock: Bool ) ->  StudentAppProfile {
         let sampleSession = Session(apps: apps, sessionLength: sessionLength, oneAppLock: oneAppLock)
         let sampleDailySessions = DailySessions(amSession: sampleSession, pmSession: sampleSession, homeSession: sampleSession)
         

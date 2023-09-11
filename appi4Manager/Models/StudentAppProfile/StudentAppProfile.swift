@@ -30,7 +30,7 @@ struct DailySessions: Codable, Equatable {
 struct Session: Identifiable, Codable, Equatable {
     var id = UUID() // to make it unique per session
     var apps: [Int]
-    var sessionLength: Int
+    var sessionLength: Double
     var oneAppLock: Bool
     
     // Implement the Equatable protocol by defining the == operator

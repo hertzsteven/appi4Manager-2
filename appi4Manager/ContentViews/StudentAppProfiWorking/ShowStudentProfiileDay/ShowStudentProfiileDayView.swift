@@ -68,8 +68,8 @@ struct ShowStudentProfiileDayView: View {
     @State var appCodeAM = 0
     @State var appCodePM = 0
 
-    @State var sessionLengthAM = 0
-    @State var sessionLengthPM = 0
+    @State var sessionLengthAM: Double = 0
+    @State var sessionLengthPM:Double  = 0
 
     
     @State private var isSheetPresentedAM = false

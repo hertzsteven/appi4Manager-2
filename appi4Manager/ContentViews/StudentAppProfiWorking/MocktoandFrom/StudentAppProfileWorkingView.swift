@@ -9,9 +9,6 @@ import SwiftUI
 
 //  MARK: - extension for non view properties
 struct StudentAppProfileWorkingView {
-    //     FIXME: Dont need these they are only temporary
-    @State var sessionLengthDoubleAM: Double = 25
-    @State var sessionLengthDoublePM: Double = 10
     
     //  MARK:  Properties
     @State private var selectedDay = DayOfWeek.sunday
@@ -56,15 +53,36 @@ extension StudentAppProfileWorkingView: View {
         }
     }
     
+    var appSelectedView:    some View {
+        HStack {
+            Image("iconImage")
+                .resizable()
+                .frame(width: 64, height: 64, alignment: .center)
+                .padding([.top, .trailing])
+            
+            VStack(alignment: .leading) {
+                Text("Elmo Loves ABC")
+                    .bold()
+                Text("this is just a small description of the app and it should go from one side to the other")
+                    .foregroundColor(.gray)
+                    .font(.footnote)
+            }
+        }
+    }
+
+    
     //  MARK: -  the sub view for the am group
     var amGroupView: some View {
         GroupBox {
             VStack(alignment: .leading) {
+                
+                appSelectedView
+                
                 HStack {
                     Text("Minutes: \(55, specifier: "%.f")   ")
                         .font(.headline)
                         .bold()
-                    Slider(value: $sessionLengthDoubleAM, in: 5...60, step: 5.0){
+                    Slider(value: $currentDayStudentAppProfile.amSession.sessionLength, in: 5...60, step: 5.0){
                         Text("Slider")
                     } minimumValueLabel: {
                         Text("5")
@@ -72,14 +90,15 @@ extension StudentAppProfileWorkingView: View {
                         Text("60")
                     } onEditingChanged: { editing in
                         isEditing = editing
-                    }.disabled(true)
+                    }
+                    .disabled(true)
                 }
+                Toggle("Single App", isOn: $currentDayStudentAppProfile.amSession.oneAppLock)
+                    .disabled(true)
                 
                 if let theApps = currentDayStudentAppProfile.amSession.apps.first {
                     Text("App codes: \(theApps)")
                 }
-                Text("Length of seconds \(currentDayStudentAppProfile.amSession.sessionLength)").padding()
-                Text("App lock is \(currentDayStudentAppProfile.amSession.oneAppLock ? "true" : "false")")
             }
         }label: {
             HStack {
@@ -170,7 +189,7 @@ extension StudentAppProfileWorkingView: View {
 //  MARK: - extension for methods that communicate to popup View
 extension StudentAppProfileWorkingView {
     
-    func getSessionLengthBinding() -> Binding<Int> {
+    func getSessionLengthBinding() -> Binding<Double> {
         switch timeOfDay {
         case .am:
             return $currentDayStudentAppProfile.amSession.sessionLength

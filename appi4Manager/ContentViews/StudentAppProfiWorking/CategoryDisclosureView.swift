@@ -84,7 +84,7 @@ struct CategoryDisclosureView: View {
     }
 
     @State private var selectedSegment = 0
-    @Binding var sessionLength          : Int
+    @Binding var sessionLength          : Double
     @Binding var oneAppLock             : Bool
     @Binding var appCode                : Int
     @Binding var apps                   : [Int]
@@ -109,7 +109,7 @@ struct CategoryDisclosureView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .pickerStyle(.menu)
                 }
-                Stepper("Session Length: \(sessionLength)", value: $sessionLength, in: 5...60, step: 5)
+                Stepper("Session Length: \(Int(sessionLength))", value: $sessionLength, in: 5...60, step: 5)
                 
                 HStack {
                     Toggle("Single App", isOn: $oneAppLock)

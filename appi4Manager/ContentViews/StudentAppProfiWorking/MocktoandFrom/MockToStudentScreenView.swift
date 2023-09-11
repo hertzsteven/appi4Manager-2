@@ -72,7 +72,7 @@ class StudentAppProfileManager: ObservableObject {
     @Published var studentAppProfileFiles: [StudentAppProfilex] = []
     
     static func loadProfilesx() -> [StudentAppProfilex] {
-        if let savedProfiles = UserDefaults.standard.object(forKey: "StudentProfiles4") as? Data {
+        if let savedProfiles = UserDefaults.standard.object(forKey: "StudentProfiles5") as? Data {
             if let decoded = try? JSONDecoder().decode([StudentAppProfilex].self, from: savedProfiles) {
                 if decoded.count == 0 {
                     let sampleprofiles = StudentAppProfileManager.sampleProfile()
@@ -102,13 +102,13 @@ class StudentAppProfileManager: ObservableObject {
                     // 5
                 dump(studentAppProfileFiles[idx])
             }
-            UserDefaults.standard.set(encoded, forKey: "StudentProfiles4")
+            UserDefaults.standard.set(encoded, forKey: "StudentProfiles5")
         }
     }
     
     static func savePassedProfiles(profilesToSave: [StudentAppProfilex]) {
         if let encoded = try? JSONEncoder().encode(profilesToSave) {
-            UserDefaults.standard.set(encoded, forKey: "StudentProfiles4")
+            UserDefaults.standard.set(encoded, forKey: "StudentProfiles5")
         }
     }
 }
@@ -129,7 +129,7 @@ extension StudentAppProfileManager {
         return [sampleProfile1, sampleProfile2, sampleProfile3 ]
     }
     
-    static func generateSampleProfileforId(id: Int, locationId: Int, apps:[Int], sessionLength: Int, oneAppLock: Bool ) ->  StudentAppProfilex {
+    static func generateSampleProfileforId(id: Int, locationId: Int, apps:[Int], sessionLength: Double, oneAppLock: Bool ) ->  StudentAppProfilex {
         let sampleSession = Session(apps: apps, sessionLength: sessionLength, oneAppLock: oneAppLock)
         let sampleDailySessions = DailySessions(amSession: sampleSession, pmSession: sampleSession, homeSession: sampleSession)
         
@@ -312,7 +312,7 @@ extension MockToStudentScreenView {
 //  MARK: -  For communication with other Struct
 extension MockToStudentScreenView {
     
-    func getSessionLengthBinding() -> Binding<Int> {
+    func getSessionLengthBinding() -> Binding<Double> {
         switch timeOfDay {
         case .am:
             return $currentDayStudentAppProfile.amSession.sessionLength

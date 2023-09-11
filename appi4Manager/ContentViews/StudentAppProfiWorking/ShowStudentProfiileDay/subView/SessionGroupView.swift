@@ -14,7 +14,7 @@ struct SessionGroupView: View {
     @State   var selectedNum: Double = 0.0
     
     let timeOfDay:                      LocalizedStringKey
-    @Binding var sessionLength:         Int {
+    @Binding var sessionLength:         Double {
         didSet {
             selectedNum = Double(sessionLength)
         }
