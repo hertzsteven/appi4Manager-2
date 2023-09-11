@@ -7,12 +7,13 @@
 
 import SwiftUI
 
-
+//  MARK: - extension for non view properties
 struct StudentAppProfileWorkingView {
+    //     FIXME: Dont need these they are only temporary
     @State var sessionLengthDoubleAM: Double = 25
     @State var sessionLengthDoublePM: Double = 10
     
-        //  MARK:  Properties
+    //  MARK:  Properties
     @State private var selectedDay = DayOfWeek.sunday
     
     @State var studentId: Int
@@ -35,12 +36,15 @@ struct StudentAppProfileWorkingView {
     @State private var selectedSession: Session?
 
     
+    //     FIXME: Not sure, need to check if i need it and how to structure it
     @State private var isEditing: Bool = false
     
 }
 
+//  MARK: - extension for all the views and modifiers
 extension StudentAppProfileWorkingView: View {
-    
+
+    //  MARK: - headerView - Top subview
     var headerView: some View {
         Group {
             Picker("Select a day of the week", selection: $selectedDay) {
@@ -51,13 +55,11 @@ extension StudentAppProfileWorkingView: View {
                 .padding([.top, .horizontal] )
         }
     }
-
+    
+    //  MARK: -  the sub view for the am group
     var amGroupView: some View {
-        
         GroupBox {
-            
             VStack(alignment: .leading) {
-                
                 HStack {
                     Text("Minutes: \(55, specifier: "%.f")   ")
                         .font(.headline)
@@ -76,12 +78,8 @@ extension StudentAppProfileWorkingView: View {
                 if let theApps = currentDayStudentAppProfile.amSession.apps.first {
                     Text("App codes: \(theApps)")
                 }
-                
                 Text("Length of seconds \(currentDayStudentAppProfile.amSession.sessionLength)").padding()
-                
                 Text("App lock is \(currentDayStudentAppProfile.amSession.oneAppLock ? "true" : "false")")
-
-                
             }
         }label: {
             HStack {
@@ -102,7 +100,7 @@ extension StudentAppProfileWorkingView: View {
         .padding()
     }
     
-    
+    //  MARK: - mainview - Top subview
     var mainView: some View {
         Group {
             amGroupView
@@ -112,7 +110,8 @@ extension StudentAppProfileWorkingView: View {
 //            SessionGroupVw(sessionLengthDoubleAM: sessionLengthDoublePM)
         }
     }
-    
+
+    //  MARK: - mainview - Top subview
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
@@ -125,6 +124,7 @@ extension StudentAppProfileWorkingView: View {
             .shadow(radius: 10)
         .padding()
         }
+
         .sheet(isPresented: $presentMakeAppProfile, onDismiss: {
             print("dismissed makeAppProfile")
             if currentDayStudentAppProfile != currentDayStudentAppProfileSave {
@@ -158,7 +158,6 @@ extension StudentAppProfileWorkingView: View {
             setCurrentDateWith(selectedDay.asAString)
         }
         
-        
         .onChange(of: selectedDay) { newValue in
             setCurrentDateWith(newValue.asAString)
         }
@@ -168,6 +167,7 @@ extension StudentAppProfileWorkingView: View {
     
 }
 
+//  MARK: - extension for methods that communicate to popup View
 extension StudentAppProfileWorkingView {
     
     func getSessionLengthBinding() -> Binding<Int> {
@@ -205,7 +205,7 @@ extension StudentAppProfileWorkingView {
     
 }
 
-
+//  MARK: - extension for methods that do work
 extension StudentAppProfileWorkingView {
     
     func setCurrentDateWith(_ stringDayOfWeek: String)  {
@@ -235,6 +235,8 @@ extension StudentAppProfileWorkingView {
     
 }
 
+
+/*
 struct SessionGroupVw {
     @State private  var isEditing                :Bool = false
     @State          var sessionLengthDoubleAM    :Double
@@ -326,7 +328,9 @@ extension SessionGroupVw: View {
     }
     
 }
-
+*/
+ 
+ 
 //struct StudentAppProfileWorkingView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        StudentAppProfileWorkingView()
