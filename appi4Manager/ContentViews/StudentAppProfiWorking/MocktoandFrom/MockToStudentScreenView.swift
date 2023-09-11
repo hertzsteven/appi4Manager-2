@@ -36,9 +36,9 @@ enum DayOfWeek: Int, CaseIterable {
 }
 
 class StudentAppProfilex: Identifiable, Codable, ObservableObject {
-                var id:         Int
-                var locationId: Int
-    @Published     var sessions:     [String: DailySessions]
+                var id              : Int
+                var locationId      : Int
+    @Published  var sessions        : [String: DailySessions]
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -72,12 +72,20 @@ class StudentAppProfileManager: ObservableObject {
     @Published var studentAppProfileFiles: [StudentAppProfilex] = []
     
     static func loadProfilesx() -> [StudentAppProfilex] {
-        if let savedProfiles = UserDefaults.standard.object(forKey: "StudentProfiles3") as? Data {
+        if let savedProfiles = UserDefaults.standard.object(forKey: "StudentProfiles4") as? Data {
             if let decoded = try? JSONDecoder().decode([StudentAppProfilex].self, from: savedProfiles) {
-                return decoded
+                if decoded.count == 0 {
+                    let sampleprofiles = StudentAppProfileManager.sampleProfile()
+                    StudentAppProfileManager.savePassedProfiles(profilesToSave: sampleprofiles)
+                    return sampleprofiles
+                } else {
+                    return decoded
+                }
             }
         }
-        return []
+        let sampleprofiles = StudentAppProfileManager.sampleProfile()
+        StudentAppProfileManager.savePassedProfiles(profilesToSave: sampleprofiles)
+        return sampleprofiles
     }
     
     func updateStudentAppProfile(newProfile: StudentAppProfilex) {
@@ -94,11 +102,53 @@ class StudentAppProfileManager: ObservableObject {
                     // 5
                 dump(studentAppProfileFiles[idx])
             }
-            UserDefaults.standard.set(encoded, forKey: "StudentProfiles3")
+            UserDefaults.standard.set(encoded, forKey: "StudentProfiles4")
         }
     }
     
+    static func savePassedProfiles(profilesToSave: [StudentAppProfilex]) {
+        if let encoded = try? JSONEncoder().encode(profilesToSave) {
+            UserDefaults.standard.set(encoded, forKey: "StudentProfiles4")
+        }
+    }
+}
 
+// generating Mockes
+extension StudentAppProfileManager {
+    
+    static func makeDefaultfor(_ id: Int, locationId: Int) -> StudentAppProfilex {
+         generateSampleProfileforId(id: id, locationId: locationId, apps: [], sessionLength: 0, oneAppLock: false)
+    }
+
+    static func sampleProfile() -> [StudentAppProfilex] {
+        
+        let sampleProfile1 = generateSampleProfileforId(id: 3, locationId: 0, apps: [11,34], sessionLength: 20, oneAppLock: false)
+        let sampleProfile2 = generateSampleProfileforId(id: 8, locationId: 0, apps: [27], sessionLength: 30, oneAppLock: false)
+        let sampleProfile3 = generateSampleProfileforId(id: 48, locationId: 0, apps: [34], sessionLength: 15, oneAppLock: true)
+        
+        return [sampleProfile1, sampleProfile2, sampleProfile3 ]
+    }
+    
+    static func generateSampleProfileforId(id: Int, locationId: Int, apps:[Int], sessionLength: Int, oneAppLock: Bool ) ->  StudentAppProfilex {
+        let sampleSession = Session(apps: apps, sessionLength: sessionLength, oneAppLock: oneAppLock)
+        let sampleDailySessions = DailySessions(amSession: sampleSession, pmSession: sampleSession, homeSession: sampleSession)
+        
+        let sampleProfile = StudentAppProfilex(
+            id: id,
+            locationId: locationId,
+            sessions: [
+                "Sunday":       sampleDailySessions,
+                "Monday":       sampleDailySessions,
+                "Tuesday":      sampleDailySessions,
+                "Wednesday":    sampleDailySessions,
+                "Thursday":     sampleDailySessions,
+                "Friday":       sampleDailySessions,
+                "Saturday":     sampleDailySessions
+            ]
+        )
+        return sampleProfile
+    }
+    
 }
 
 

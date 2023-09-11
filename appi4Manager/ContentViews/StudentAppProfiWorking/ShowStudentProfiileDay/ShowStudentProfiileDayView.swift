@@ -10,20 +10,20 @@ import SwiftUI
 
 struct ShowStudentProfiileDayView: View {
     
-    @State private var selectedIndex = 0
-    @State private var selectedDay: String = "Sunday"
-    let days = ["Sunday", "Monday", "Tuesday"]
+    @State private var selectedIndex            = 0
+    @State private var selectedDay: String      = "Sunday"
+    let days                                    = ["Sunday", "Monday", "Tuesday"]
 
     
     //  MARK: -  Properties
-    @ObservedObject     var studentAppProfileViewModel =    StudentAppProfileViewModel()
-    @EnvironmentObject  var appxViewModel:                  AppxViewModel
-    @State              var currentProfile:                 StudentAppProfile
-    @State              var dayProfile:                     DailySessions? = nil
-    @State 				var	dayOfWeekString:				String = "Sunday"
+    @ObservedObject     var studentAppProfileViewModel                              = StudentAppProfileViewModel()
+    @EnvironmentObject  var appxViewModel                   : AppxViewModel
+    @State              var currentProfile                  : StudentAppProfile
+    @State              var dayProfile                      : DailySessions?        = nil
+    @State 				var	dayOfWeekString                 : String                = "Sunday"
     
     // to control the Load
-    @State private var hasError = false
+    @State private var hasError                             = false
     @State private var error: ApiError?
     @State private var showApps: Bool = false
 
@@ -148,7 +148,7 @@ struct ShowStudentProfiileDayView: View {
                 }
             }
             // load the current profile into pieces
-            guard let xoneAppLockAM = currentProfile.sessions[dayOfWeekString]?.amSession.oneAppLock else { fatalError("one app lock failed") }
+              guard let xoneAppLockAM = currentProfile.sessions[dayOfWeekString]?.amSession.oneAppLock else { fatalError("one app lock failed") }
             oneAppLockAM = xoneAppLockAM
             
             

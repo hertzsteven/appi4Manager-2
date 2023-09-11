@@ -7,62 +7,127 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "1025FC31-122F-4BFD-A119-0B39F5E3D519"
+            uuid = "D5FCDDB1-D134-4499-BF1F-C505229A1623"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/MockBareBones.swift"
+            filePath = "appi4Manager/Models/StudentAppProfile/StudentAppProfileViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "38"
-            endingLineNumber = "38"
+            startingLineNumber = "116"
+            endingLineNumber = "116"
+            landmarkName = "makeDefaultfor(_:locationId:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A1374E5A-3386-48EC-9D86-5AEA355DA4B2"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/MockToStudentScreenView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "79"
+            endingLineNumber = "79"
+            landmarkName = "loadProfilesx()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A3025600-8E9B-4C98-B292-F35F321F1DF5"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/StudentAppProfileWorkingView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "129"
+            endingLineNumber = "129"
             landmarkName = "body"
             landmarkType = "24">
             <Locations>
                <Location
-                  uuid = "1025FC31-122F-4BFD-A119-0B39F5E3D519 - 502e2de9121a9c1d"
+                  uuid = "A3025600-8E9B-4C98-B292-F35F321F1DF5 - bdd25425fb413"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #2 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.Button&lt;SwiftUI.Text&gt;, SwiftUI.Button&lt;SwiftUI.Text&gt;)&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.Text, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Button&lt;SwiftUI.Text&gt;, SwiftUI.Button&lt;SwiftUI.Text&gt;)&gt;&gt;)&gt; in appi4Manager.MockBareBones.body.getter : some"
+                  symbolName = "closure #2 () -&gt; () in appi4Manager.StudentAppProfileWorkingView.body.getter : some"
                   moduleName = "appi4Manager"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/MockBareBones.swift"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/StudentAppProfileWorkingView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "70"
-                  endingLineNumber = "70"
-                  offsetFromSymbolStart = "816">
+                  startingLineNumber = "121"
+                  endingLineNumber = "121"
+                  offsetFromSymbolStart = "388">
                </Location>
                <Location
-                  uuid = "1025FC31-122F-4BFD-A119-0B39F5E3D519 - 502e2de9121a9d81"
+                  uuid = "A3025600-8E9B-4C98-B292-F35F321F1DF5 - bdd25425fb52b"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #2 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.Button&lt;SwiftUI.Text&gt;, SwiftUI.Button&lt;SwiftUI.Text&gt;)&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.Text, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Button&lt;SwiftUI.Text&gt;, SwiftUI.Button&lt;SwiftUI.Text&gt;)&gt;&gt;)&gt; in appi4Manager.MockBareBones.body.getter : some"
+                  symbolName = "closure #2 () -&gt; () in appi4Manager.StudentAppProfileWorkingView.body.getter : some"
                   moduleName = "appi4Manager"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/MockBareBones.swift"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/StudentAppProfileWorkingView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "74"
-                  endingLineNumber = "74"
-                  offsetFromSymbolStart = "1616">
+                  startingLineNumber = "129"
+                  endingLineNumber = "129"
+                  offsetFromSymbolStart = "232">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1A82546E-5B80-40EF-8FA3-316ED1FEBBD9"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/MockToStudentScreenView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "98"
+            endingLineNumber = "98"
+            landmarkName = "saveProfiles()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "1A82546E-5B80-40EF-8FA3-316ED1FEBBD9 - ca8b9f1478619a58"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "appi4Manager.StudentAppProfileManager.saveProfiles() -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/MockToStudentScreenView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "98"
+                  endingLineNumber = "98"
+                  offsetFromSymbolStart = "52">
                </Location>
                <Location
-                  uuid = "1025FC31-122F-4BFD-A119-0B39F5E3D519 - 502e2de9121a907d"
+                  uuid = "1A82546E-5B80-40EF-8FA3-316ED1FEBBD9 - ca8b9f1478619a58"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #2 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.Button&lt;SwiftUI.Text&gt;, SwiftUI.Button&lt;SwiftUI.Text&gt;)&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.Text, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Button&lt;SwiftUI.Text&gt;, SwiftUI.Button&lt;SwiftUI.Text&gt;)&gt;&gt;)&gt; in appi4Manager.MockBareBones.body.getter : some"
+                  symbolName = "appi4Manager.StudentAppProfileManager.saveProfiles() -&gt; ()"
                   moduleName = "appi4Manager"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/MockBareBones.swift"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/MockToStudentScreenView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "38"
-                  endingLineNumber = "38"
-                  offsetFromSymbolStart = "1616">
+                  startingLineNumber = "98"
+                  endingLineNumber = "98"
+                  offsetFromSymbolStart = "296">
                </Location>
             </Locations>
          </BreakpointContent>
