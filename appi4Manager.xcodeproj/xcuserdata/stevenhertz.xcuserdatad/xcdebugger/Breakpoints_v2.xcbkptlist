@@ -84,5 +84,116 @@
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CEB65AD7-A6C4-4A7D-ABC0-E741ACB84C62"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/StudentAppProfileWorkingView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "393"
+            endingLineNumber = "393"
+            landmarkName = "getoneAppLockBinding()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "CEB65AD7-A6C4-4A7D-ABC0-E741ACB84C62 - 554733427627ee0a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for appi4Manager.StudentAppProfileWorkingView.proceesAppCodes() async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/StudentAppProfileWorkingView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "365"
+                  endingLineNumber = "365"
+                  offsetFromSymbolStart = "124">
+               </Location>
+               <Location
+                  uuid = "CEB65AD7-A6C4-4A7D-ABC0-E741ACB84C62 - fbeada953e582a08"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for appi4Manager.StudentAppProfileWorkingView.proceesAppCodes() async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/StudentAppProfileWorkingView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "365"
+                  endingLineNumber = "365"
+                  offsetFromSymbolStart = "480">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F4D4A56C-1174-4EB7-ACC2-47745813B14F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/StudentAppProfileWorkingView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "399"
+            endingLineNumber = "399"
+            landmarkName = "extension for methods that do work"
+            landmarkType = "19">
+            <Locations>
+               <Location
+                  uuid = "F4D4A56C-1174-4EB7-ACC2-47745813B14F - 554733427627eeaf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for appi4Manager.StudentAppProfileWorkingView.proceesAppCodes() async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/StudentAppProfileWorkingView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "370"
+                  endingLineNumber = "370"
+                  offsetFromSymbolStart = "484">
+               </Location>
+               <Location
+                  uuid = "F4D4A56C-1174-4EB7-ACC2-47745813B14F - fbeada953e582aad"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for appi4Manager.StudentAppProfileWorkingView.proceesAppCodes() async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/StudentAppProfileWorkingView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "370"
+                  endingLineNumber = "370"
+                  offsetFromSymbolStart = "600">
+               </Location>
+               <Location
+                  uuid = "F4D4A56C-1174-4EB7-ACC2-47745813B14F - 201181dfc67056d3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for appi4Manager.StudentAppProfileWorkingView.proceesAppCodes() async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/StudentAppProfiWorking/MocktoandFrom/StudentAppProfileWorkingView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "370"
+                  endingLineNumber = "370"
+                  offsetFromSymbolStart = "468">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

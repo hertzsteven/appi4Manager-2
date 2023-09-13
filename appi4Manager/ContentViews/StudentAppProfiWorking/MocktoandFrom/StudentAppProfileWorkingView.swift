@@ -47,6 +47,10 @@ struct StudentAppProfileWorkingView {
     @State private var isEditing: Bool = false
     @State var loadingState = LoadingState.loading
     
+    
+    @State private var selectedOption: Int = 0
+    @State private var data = ["One", "Two", "Three", "Four", "Five"]
+    @State var lineToDisplay = ""
 }
 
 //  MARK: - extension for all the views and modifiers
@@ -80,10 +84,6 @@ extension StudentAppProfileWorkingView: View {
                 Text("Failed to load data")
             }
             
-//            Image("iconImage")
-//                .resizable()
-//                .frame(width: 64, height: 64, alignment: .center)
-//                .padding([.top, .trailing])
             
             VStack(alignment: .leading) {
                 if loadingState == .loaded && !appsAMinfo.isEmpty {
@@ -93,8 +93,6 @@ extension StudentAppProfileWorkingView: View {
                 } else {
                     Text("Failed to load data")
                 }
-//                Text(appsAMinfo[0].name)
-//                    .bold()
                 Text("this is just a small description of the app and it should go from one side to the other")
                     .foregroundColor(.gray)
                     .font(.footnote)
@@ -103,11 +101,51 @@ extension StudentAppProfileWorkingView: View {
     }
     
     //  MARK: -  the sub view for the am group
+    
+    var multipleAppsViewAM : some View {
+        
+        Group {
+            Text("Apps")
+                .font(.subheadline)
+            if loadingState == .loaded && !appsAMinfo.isEmpty  {
+            Picker("jjjjjj", selection: $selectedOption) {
+                ForEach(0..<appsAMinfo.count) { index in
+                    let originalName = appsAMinfo[index].name
+                    let truncatedName = String(originalName.prefix(30))
+                    let displayName = originalName.count > 30 ? truncatedName + "..." : originalName
+                    Text(displayName).tag(index)
+
+//                    Text(String(appsAMinfo[index].name.prefix(30))).tag(index)
+                }
+            }
+            .tint(.black)
+            .frame(maxWidth: .infinity, alignment: .leading).border(.black, width: 1)
+            .onChange(of: selectedOption) { newValue in
+                lineToDisplay =  appsAMinfo[newValue].name
+            }
+        } else if loadingState == .loading {
+            ProgressView()
+        } else {
+            Text("Failed to load data")
+        }
+
+            Text(lineToDisplay)
+        }
+    }
+ 
+    
     var amGroupView: some View {
         GroupBox {
             VStack(alignment: .leading) {
                 
-                appSelectedViewAM
+                if appsAMinfo.count == 1 {
+                    appSelectedViewAM
+                } else if appsAMinfo.count > 1{
+                    multipleAppsViewAM
+                }
+
+                
+//                appSelectedViewAM
                 
                 HStack {
                     Text("Minutes: \(55, specifier: "%.f")   ")
@@ -127,15 +165,6 @@ extension StudentAppProfileWorkingView: View {
                 Toggle("Single App", isOn: $currentDayStudentAppProfile.amSession.oneAppLock)
                     .disabled(true)
                 
-//                if let theApps = currentDayStudentAppProfile.amSession.apps.first {
-                    ForEach(currentDayStudentAppProfile.amSession.apps, id: \.self) { appCode in
-                        Text("App codes: \(appCode)")
-                    }
-                    .onAppear {
-                        print("~~ from on appear on for each")
-                    }
-//                    Text("App codes: \(currentDayStudentAppProfile.amSession.apps)")
-//                }
             }
         } label: {
             HStack {
@@ -218,9 +247,6 @@ extension StudentAppProfileWorkingView: View {
                 Toggle("Single App", isOn: $currentDayStudentAppProfile.pmSession.oneAppLock)
                     .disabled(true)
                 
-                if let theApps = currentDayStudentAppProfile.pmSession.apps.first {
-                    Text("App codes: \(theApps)")
-                }
             }
         }label: {
             HStack {
@@ -275,7 +301,6 @@ extension StudentAppProfileWorkingView: View {
                 Task {
                     do {
                         loadingState = .loading
-                        appsAMinfo.removeAll()
                         await proceesAppCodes()
                         loadingState = .loaded
                     } catch {
@@ -305,6 +330,15 @@ extension StudentAppProfileWorkingView: View {
         
         .onChange(of: selectedDay) { newValue in
             setCurrentDateWith(newValue.asAString)
+            Task {
+                do {
+                    loadingState = .loading
+                    await proceesAppCodes()
+                    loadingState = .loaded
+                } catch {
+                    loadingState = .failed
+                }
+            }
         }
 
         .task {
@@ -363,11 +397,13 @@ extension StudentAppProfileWorkingView {
 extension StudentAppProfileWorkingView {
     
     func proceesAppCodes() async  {
+        appsAMinfo.removeAll()
         for appCode in currentDayStudentAppProfile.amSession.apps {
             if let appx = await getAppInfoFor(appCode) {
                 appsAMinfo.append(appx)
             }
         }
+        appsPMinfo.removeAll()
         for appCode in currentDayStudentAppProfile.pmSession.apps {
             if let appx = await getAppInfoFor(appCode) {
                 appsPMinfo.append(appx)
