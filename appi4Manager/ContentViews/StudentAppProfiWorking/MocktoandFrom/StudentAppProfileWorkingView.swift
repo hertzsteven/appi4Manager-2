@@ -100,8 +100,7 @@ extension StudentAppProfileWorkingView: View {
         }
     }
     
-    //  MARK: -  the sub view for the am group
-    
+    //  MARK: -  the sub view for the am group   
     var multipleAppsViewAM : some View {
         
         Group {
@@ -133,7 +132,6 @@ extension StudentAppProfileWorkingView: View {
         }
     }
  
-    
     var amGroupView: some View {
         GroupBox {
             VStack(alignment: .leading) {
@@ -185,6 +183,7 @@ extension StudentAppProfileWorkingView: View {
         .padding()
     }
     
+    
     var appSelectedViewPM:    some View {
         HStack {
             if loadingState == .loaded && !appsPMinfo.isEmpty  {
@@ -223,11 +222,48 @@ extension StudentAppProfileWorkingView: View {
         }
     }
 
+    var multipleAppsViewPM : some View {
+        
+        Group {
+            Text("Apps")
+                .font(.subheadline)
+            if loadingState == .loaded && !appsPMinfo.isEmpty  {
+            Picker("jjjjjj", selection: $selectedOption) {
+                ForEach(0..<appsPMinfo.count) { index in
+                    let originalName = appsPMinfo[index].name
+                    let truncatedName = String(originalName.prefix(30))
+                    let displayName = originalName.count > 30 ? truncatedName + "..." : originalName
+                    Text(displayName).tag(index)
+
+//                    Text(String(appsPMinfo[index].name.prefix(30))).tag(index)
+                }
+            }
+            .tint(.black)
+            .frame(maxWidth: .infinity, alignment: .leading).border(.black, width: 1)
+            .onChange(of: selectedOption) { newValue in
+                lineToDisplay =  appsPMinfo[newValue].name
+            }
+        } else if loadingState == .loading {
+            ProgressView()
+        } else {
+            Text("Failed to load data")
+        }
+
+            Text(lineToDisplay)
+        }
+    }
+
     var pmGroupView: some View {
         GroupBox {
             VStack(alignment: .leading) {
                 
-                appSelectedViewPM
+                if appsPMinfo.count == 1 {
+                    appSelectedViewPM
+                } else if appsPMinfo.count > 1{
+                    multipleAppsViewPM
+                }
+                
+//                appSelectedViewPM
                 
                 HStack {
                     Text("Minutes: \(55, specifier: "%.f")   ")
@@ -266,13 +302,129 @@ extension StudentAppProfileWorkingView: View {
         }
         .padding()
     }
+
+   var appSelectedViewHome:    some View {
+        HStack {
+            if loadingState == .loaded && !appsHomeinfo.isEmpty  {
+                AsyncImage(url: URL(string: appsHomeinfo[0].icon)) { image in
+                     image.resizable()
+                 } placeholder: {
+                     ProgressView()
+                 }
+                 .frame(width: 50, height: 50)
+                 .padding([.leading])
+            } else if loadingState == .loading {
+                ProgressView()
+            } else {
+                Text("Failed to load data")
+            }
+            
+            
+            VStack(alignment: .leading) {
+                if loadingState == .loaded && !appsHomeinfo.isEmpty {
+                    Text(appsHomeinfo[0].name)
+                } else if loadingState == .loading {
+                    ProgressView()
+                } else {
+                    Text("Failed to load data")
+                }
+                Text("this is just a small description of the app and it should go from one side to the other")
+                    .foregroundColor(.gray)
+                    .font(.footnote)
+            }
+        }
+    }
+    
+    //  MARK: -  the sub view for the home group   
+    var multipleAppsViewHome : some View {
+        
+        Group {
+            Text("Apps")
+                .font(.subheadline)
+            if loadingState == .loaded && !appsHomeinfo.isEmpty  {
+            Picker("jjjjjj", selection: $selectedOption) {
+                ForEach(0..<appsHomeinfo.count) { index in
+                    let originalName = appsHomeinfo[index].name
+                    let truncatedName = String(originalName.prefix(30))
+                    let displayName = originalName.count > 30 ? truncatedName + "..." : originalName
+                    Text(displayName).tag(index)
+
+//                    Text(String(appsHomeinfo[index].name.prefix(30))).tag(index)
+                }
+            }
+            .tint(.black)
+            .frame(maxWidth: .infinity, alignment: .leading).border(.black, width: 1)
+            .onChange(of: selectedOption) { newValue in
+                lineToDisplay =  appsHomeinfo[newValue].name
+            }
+        } else if loadingState == .loading {
+            ProgressView()
+        } else {
+            Text("Failed to load data")
+        }
+
+            Text(lineToDisplay)
+        }
+    }
+ 
+    var homeGroupView: some View {
+        GroupBox {
+            VStack(alignment: .leading) {
+                
+                if appsHomeinfo.count == 1 {
+                    appSelectedViewHome
+                } else if appsHomeinfo.count > 1{
+                    multipleAppsViewHome
+                }
+
+                
+//                appSelectedViewHome
+                
+                HStack {
+                    Text("Minutes: \(55, specifier: "%.f")   ")
+                        .font(.headline)
+                        .bold()
+                    Slider(value: $currentDayStudentAppProfile.homeSession.sessionLength, in: 5...60, step: 5.0){
+                        Text("Slider")
+                    } minimumValueLabel: {
+                        Text("5")
+                    } maximumValueLabel: {
+                        Text("60")
+                    } onEditingChanged: { editing in
+                        isEditing = editing
+                    }
+                    .disabled(true)
+                }
+                Toggle("Single App", isOn: $currentDayStudentAppProfile.homeSession.oneAppLock)
+                    .disabled(true)
+                
+            }
+        } label: {
+            HStack {
+                
+                Text("**Home:** 5:00 - ...")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Button {
+                                            timeOfDay = .home
+                                            currentDayStudentAppProfileSave = currentDayStudentAppProfile
+                                            presentMakeAppProfile.toggle()
+                } label: {
+                    Text("Set It 🔆")
+                }
+                
+            }.padding(.bottom)
+        }
+        .padding()
+    }
+    
     
     //  MARK: - mainview - Top subview
     var mainView: some View {
         Group {
             amGroupView
             pmGroupView
-            
+            homeGroupView
         }
     }
 
@@ -409,6 +561,13 @@ extension StudentAppProfileWorkingView {
                 appsPMinfo.append(appx)
             }
         }
+        appsHomeinfo.removeAll()
+        for appCode in currentDayStudentAppProfile.homeSession.apps {
+            if let appx = await getAppInfoFor(appCode) {
+                appsHomeinfo.append(appx)
+            }
+        }
+
     }
     
     func getAppInfoFor(_ appCode: Int) async  -> Appx? {

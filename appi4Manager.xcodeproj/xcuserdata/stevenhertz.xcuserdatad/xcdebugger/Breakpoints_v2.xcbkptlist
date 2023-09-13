@@ -96,8 +96,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "393"
             endingLineNumber = "393"
-            landmarkName = "getoneAppLockBinding()"
-            landmarkType = "7">
+            landmarkName = "homeGroupView"
+            landmarkType = "24">
             <Locations>
                <Location
                   uuid = "CEB65AD7-A6C4-4A7D-ABC0-E741ACB84C62 - 554733427627ee0a"
@@ -144,8 +144,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "399"
             endingLineNumber = "399"
-            landmarkName = "extension for methods that do work"
-            landmarkType = "19">
+            landmarkName = "homeGroupView"
+            landmarkType = "24">
             <Locations>
                <Location
                   uuid = "F4D4A56C-1174-4EB7-ACC2-47745813B14F - 554733427627eeaf"
