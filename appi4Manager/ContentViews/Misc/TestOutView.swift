@@ -35,12 +35,18 @@ struct TestOutView: View {
             } else {
                 Text("Tap the menu bar button to select a photo.")
             }
-            
+ 
             Text("I am over here")
             Button {
                  print("getting the lessons")
                 Task {
                     do {
+                        let appxOne: Appx = try await ApiManager.shared.getData(from: .getanApp(appId: 9))
+                        dump(appxOne)
+                        print("appxOne")
+
+                        
+                        
                         let lessonsDetailResponse: LessonDetailResponse = try await ApiManager.shared.getData(from: .getLessonDetail(teachAuth: "9c74b8d6a4934ca986dfe46592896801", id: 25))
                          dump(lessonsDetailResponse)
                          print(lessonsDetailResponse)

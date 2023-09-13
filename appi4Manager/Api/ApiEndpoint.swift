@@ -36,6 +36,7 @@ enum ApiEndpoint {
     case getLessons(teachAuth: String)
     case getLessonDetail(teachAuth: String, id: Int)
     case getApps
+    case getanApp(appId: Int)
 
 }
 
@@ -82,6 +83,8 @@ extension ApiEndpoint {
            return "/teacher/lessons/\(id)"
         case .getApps:
             return "/apps"
+        case .getanApp(let appId):
+            return "/apps/\(appId)"
         }
     }
     

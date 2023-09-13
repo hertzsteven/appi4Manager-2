@@ -24,13 +24,13 @@ enum DayOfWeek: Int, CaseIterable {
     
     var asAString: String {
         switch self {
-        case .sunday: return "Sunday"
-        case .monday: return "Monday"
-        case .tuesday: return "Tuesday"
-        case .wednesday: return "Wednesday"
-        case .thursday: return "Thursday"
-        case .friday: return "Friday"
-        case .saturday: return "Saturday"
+        case .sunday: return "Sun"
+        case .monday: return "Mon"
+        case .tuesday: return "Tues"
+        case .wednesday: return "Wed"
+        case .thursday: return "Thurs"
+        case .friday: return "Fri"
+        case .saturday: return "Sat"
         }
     }
 }
@@ -72,7 +72,7 @@ class StudentAppProfileManager: ObservableObject {
     @Published var studentAppProfileFiles: [StudentAppProfilex] = []
     
     static func loadProfilesx() -> [StudentAppProfilex] {
-        if let savedProfiles = UserDefaults.standard.object(forKey: "StudentProfiles5") as? Data {
+        if let savedProfiles = UserDefaults.standard.object(forKey: "StudentProfiles6") as? Data {
             if let decoded = try? JSONDecoder().decode([StudentAppProfilex].self, from: savedProfiles) {
                 if decoded.count == 0 {
                     let sampleprofiles = StudentAppProfileManager.sampleProfile()
@@ -102,13 +102,13 @@ class StudentAppProfileManager: ObservableObject {
                     // 5
                 dump(studentAppProfileFiles[idx])
             }
-            UserDefaults.standard.set(encoded, forKey: "StudentProfiles5")
+            UserDefaults.standard.set(encoded, forKey: "StudentProfiles6")
         }
     }
     
     static func savePassedProfiles(profilesToSave: [StudentAppProfilex]) {
         if let encoded = try? JSONEncoder().encode(profilesToSave) {
-            UserDefaults.standard.set(encoded, forKey: "StudentProfiles5")
+            UserDefaults.standard.set(encoded, forKey: "StudentProfiles6")
         }
     }
 }
@@ -137,13 +137,13 @@ extension StudentAppProfileManager {
             id: id,
             locationId: locationId,
             sessions: [
-                "Sunday":       sampleDailySessions,
-                "Monday":       sampleDailySessions,
-                "Tuesday":      sampleDailySessions,
-                "Wednesday":    sampleDailySessions,
-                "Thursday":     sampleDailySessions,
-                "Friday":       sampleDailySessions,
-                "Saturday":     sampleDailySessions
+                "Sun":       sampleDailySessions,
+                "Mon":       sampleDailySessions,
+                "Tues":      sampleDailySessions,
+                "Wed":    sampleDailySessions,
+                "Thurs":     sampleDailySessions,
+                "Fri":       sampleDailySessions,
+                "Sat":     sampleDailySessions
             ]
         )
         return sampleProfile

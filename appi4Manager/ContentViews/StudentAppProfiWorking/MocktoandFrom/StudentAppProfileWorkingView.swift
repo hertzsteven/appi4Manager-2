@@ -7,6 +7,13 @@
 
 import SwiftUI
 
+enum LoadingState {
+    case loading, loaded, failed
+}
+
+
+
+
 //  MARK: - extension for non view properties
 struct StudentAppProfileWorkingView {
     
@@ -31,10 +38,14 @@ struct StudentAppProfileWorkingView {
     
     @State var appCode = 0
     @State private var selectedSession: Session?
-
+    
+    @State var appsAMinfo: Array<Appx> = []
+    @State var appsPMinfo: Array<Appx> = []
+    @State var appsHomeinfo: Array<Appx> = []
     
     //     FIXME: Not sure, need to check if i need it and how to structure it
     @State private var isEditing: Bool = false
+    @State var loadingState = LoadingState.loading
     
 }
 
@@ -53,30 +64,50 @@ extension StudentAppProfileWorkingView: View {
         }
     }
     
-    var appSelectedView:    some View {
+    var appSelectedViewAM:    some View {
         HStack {
-            Image("iconImage")
-                .resizable()
-                .frame(width: 64, height: 64, alignment: .center)
-                .padding([.top, .trailing])
+            if loadingState == .loaded && !appsAMinfo.isEmpty  {
+                AsyncImage(url: URL(string: appsAMinfo[0].icon)) { image in
+                     image.resizable()
+                 } placeholder: {
+                     ProgressView()
+                 }
+                 .frame(width: 50, height: 50)
+                 .padding([.leading])
+            } else if loadingState == .loading {
+                ProgressView()
+            } else {
+                Text("Failed to load data")
+            }
+            
+//            Image("iconImage")
+//                .resizable()
+//                .frame(width: 64, height: 64, alignment: .center)
+//                .padding([.top, .trailing])
             
             VStack(alignment: .leading) {
-                Text("Elmo Loves ABC")
-                    .bold()
+                if loadingState == .loaded && !appsAMinfo.isEmpty {
+                    Text(appsAMinfo[0].name)
+                } else if loadingState == .loading {
+                    ProgressView()
+                } else {
+                    Text("Failed to load data")
+                }
+//                Text(appsAMinfo[0].name)
+//                    .bold()
                 Text("this is just a small description of the app and it should go from one side to the other")
                     .foregroundColor(.gray)
                     .font(.footnote)
             }
         }
     }
-
     
     //  MARK: -  the sub view for the am group
     var amGroupView: some View {
         GroupBox {
             VStack(alignment: .leading) {
                 
-                appSelectedView
+                appSelectedViewAM
                 
                 HStack {
                     Text("Minutes: \(55, specifier: "%.f")   ")
@@ -96,11 +127,17 @@ extension StudentAppProfileWorkingView: View {
                 Toggle("Single App", isOn: $currentDayStudentAppProfile.amSession.oneAppLock)
                     .disabled(true)
                 
-                if let theApps = currentDayStudentAppProfile.amSession.apps.first {
-                    Text("App codes: \(theApps)")
-                }
+//                if let theApps = currentDayStudentAppProfile.amSession.apps.first {
+                    ForEach(currentDayStudentAppProfile.amSession.apps, id: \.self) { appCode in
+                        Text("App codes: \(appCode)")
+                    }
+                    .onAppear {
+                        print("~~ from on appear on for each")
+                    }
+//                    Text("App codes: \(currentDayStudentAppProfile.amSession.apps)")
+//                }
             }
-        }label: {
+        } label: {
             HStack {
                 
                 Text("**AM:** 9:00- 11:59 ")
@@ -119,14 +156,97 @@ extension StudentAppProfileWorkingView: View {
         .padding()
     }
     
+    var appSelectedViewPM:    some View {
+        HStack {
+            if loadingState == .loaded && !appsPMinfo.isEmpty  {
+                AsyncImage(url: URL(string: appsPMinfo[0].icon)) { image in
+                     image.resizable()
+                 } placeholder: {
+                     ProgressView()
+                 }
+                 .frame(width: 50, height: 50)
+                 .padding([.leading])
+            } else if loadingState == .loading {
+                ProgressView()
+            } else {
+                Text("Failed to load data")
+            }
+            
+//            Image("iconImage")
+//                .resizable()
+//                .frame(width: 64, height: 64, alignment: .center)
+//                .padding([.top, .trailing])
+            
+            VStack(alignment: .leading) {
+                if loadingState == .loaded && !appsPMinfo.isEmpty {
+                    Text(appsPMinfo[0].name)
+                } else if loadingState == .loading {
+                    ProgressView()
+                } else {
+                    Text("Failed to load data")
+                }
+//                Text(appsPMinfo[0].name)
+//                    .bold()
+                Text("this is just a small description of the app and it should go from one side to the other")
+                    .foregroundColor(.gray)
+                    .font(.footnote)
+            }
+        }
+    }
+
+    var pmGroupView: some View {
+        GroupBox {
+            VStack(alignment: .leading) {
+                
+                appSelectedViewPM
+                
+                HStack {
+                    Text("Minutes: \(55, specifier: "%.f")   ")
+                        .font(.headline)
+                        .bold()
+                    Slider(value: $currentDayStudentAppProfile.pmSession.sessionLength, in: 5...60, step: 5.0){
+                        Text("Slider")
+                    } minimumValueLabel: {
+                        Text("5")
+                    } maximumValueLabel: {
+                        Text("60")
+                    } onEditingChanged: { editing in
+                        isEditing = editing
+                    }
+                    .disabled(true)
+                }
+                Toggle("Single App", isOn: $currentDayStudentAppProfile.pmSession.oneAppLock)
+                    .disabled(true)
+                
+                if let theApps = currentDayStudentAppProfile.pmSession.apps.first {
+                    Text("App codes: \(theApps)")
+                }
+            }
+        }label: {
+            HStack {
+                
+                Text("**PM:** 12:00- 4:59 ")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Button {
+                    timeOfDay = .pm
+                    currentDayStudentAppProfileSave = currentDayStudentAppProfile
+                    presentMakeAppProfile.toggle()
+                } label: {
+                    Text("Set It 🔆")
+                }
+                
+            }.padding(.bottom)
+        }
+        .padding()
+    }
+    
     //  MARK: - mainview - Top subview
     var mainView: some View {
         Group {
             amGroupView
+            pmGroupView
             
-//            SessionGroupVw(sessionLengthDoubleAM: sessionLengthDoubleAM)
-//            SessionGroupVw(sessionLengthDoubleAM: sessionLengthDoublePM)
-//            SessionGroupVw(sessionLengthDoubleAM: sessionLengthDoublePM)
         }
     }
 
@@ -145,24 +265,28 @@ extension StudentAppProfileWorkingView: View {
         }
 
         .sheet(isPresented: $presentMakeAppProfile, onDismiss: {
-            print("dismissed makeAppProfile")
+            print("~~ dismissed makeAppProfile")
             if currentDayStudentAppProfile != currentDayStudentAppProfileSave {
                 print(" they are not equal")
                 upDateStudentAppProfile()
                 profileManager.updateStudentAppProfile(newProfile: studentAppprofile)
                 profileManager.saveProfiles()
+                print("~~ dismissed makeAppProfile second")
+                Task {
+                    do {
+                        loadingState = .loading
+                        appsAMinfo.removeAll()
+                        await proceesAppCodes()
+                        loadingState = .loaded
+                    } catch {
+                        loadingState = .failed
+                    }
+                }
+
             } else {
                 print("they are equal")
             }
         })
-//        {MockSetupAppProfileView(presentMakeAppProfile   : $presentMakeAppProfile,
-//                                    selectedDay             : selectedDay,
-//                                    sessionLength           : getSessionLengthBinding(),
-//                                    apps                    : getappsBinding(),
-//                                    oneAppLock              : getoneAppLockBinding()
-//        )
-//        }
-//
         {
                    CategoryDisclosureView(selectedSession  : $selectedSession,
                                           isSheetPresented : $presentMakeAppProfile,
@@ -175,10 +299,21 @@ extension StudentAppProfileWorkingView: View {
         .onAppear {
             profileManager.studentAppProfileFiles = studentAppProfilefiles
             setCurrentDateWith(selectedDay.asAString)
+            print("~~ fom onappear will it work ")
+            
         }
         
         .onChange(of: selectedDay) { newValue in
             setCurrentDateWith(newValue.asAString)
+        }
+
+        .task {
+            do {
+                await proceesAppCodes()
+                loadingState = .loaded
+            } catch {
+                loadingState = .failed
+            }
         }
 
  
@@ -226,6 +361,32 @@ extension StudentAppProfileWorkingView {
 
 //  MARK: - extension for methods that do work
 extension StudentAppProfileWorkingView {
+    
+    func proceesAppCodes() async  {
+        for appCode in currentDayStudentAppProfile.amSession.apps {
+            if let appx = await getAppInfoFor(appCode) {
+                appsAMinfo.append(appx)
+            }
+        }
+        for appCode in currentDayStudentAppProfile.pmSession.apps {
+            if let appx = await getAppInfoFor(appCode) {
+                appsPMinfo.append(appx)
+            }
+        }
+    }
+    
+    func getAppInfoFor(_ appCode: Int) async  -> Appx? {
+        do {
+            let appxOne: Appx  = try await ApiManager.shared.getData(from: .getanApp(appId: appCode))
+            dump(appxOne)
+            return appxOne
+        } catch  {
+        //  FIXME: -  put in alert that will display approriate error message
+            print(error)
+            return nil
+        }
+        
+    }
     
     func setCurrentDateWith(_ stringDayOfWeek: String)  {
         guard let currentDayStudentAppProfilefilxe = studentAppprofile.sessions[stringDayOfWeek] else {
