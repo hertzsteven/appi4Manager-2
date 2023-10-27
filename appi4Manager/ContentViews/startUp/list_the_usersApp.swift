@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import FirebaseCore
+
 class AppState: ObservableObject {
     @Published private(set) var hasOnboarded: Bool = true
     
@@ -16,6 +18,13 @@ class AppState: ObservableObject {
 
   @main
 struct list_the_usersApp: App {
+    
+    init() {
+        FirebaseApp.configure()
+        print("Configured Firebase")
+
+    }
+    
     @StateObject var appWorkViewModel           = AppWorkViewModel.instantiate()
     @StateObject var usersViewModel             = UsersViewModel()
     @StateObject var classDetailViewModel       = ClassDetailViewModel()

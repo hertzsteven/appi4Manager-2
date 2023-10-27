@@ -27,6 +27,9 @@ struct MockFromStudentScreenView: View {
                     studentAppProfilefiles      : profilesx,
                     profileManager: StudentAppProfileManager(),
                     studentAppprofile           :  studentFound)
+            }
+
+        }
 
                 
 //                MockToStudentScreenView(
@@ -73,9 +76,6 @@ struct MockFromStudentScreenView: View {
 //                        pmSession:      Session(apps: [11], sessionLength: 22,  oneAppLock: true),
 //                        homeSession:    Session(apps: [11], sessionLength: 22,  oneAppLock: true))]
 //                ))
-            }
-
-        }
     }
     
 }

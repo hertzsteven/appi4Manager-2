@@ -50,6 +50,7 @@ struct DashboardView: View {
             .navigationDestination(for: Category.self, destination: { category in
                 switch category.name {
                 case "Devices":
+//                    IntegrateFireStore()
                     ParentAppPickerView()
                 case "Categories":
                     CategoryListView( newAppCategory: AppCategory.makeDefault())

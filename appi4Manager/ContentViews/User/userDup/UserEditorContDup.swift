@@ -124,6 +124,7 @@ struct UserEditorContDup: View {
 //                                                     imagePicker.studentId = user.id
                                                     // imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
                                                      print("-*- in onAppear student id is \(user.id)")
+                                                     checkIfUserInAppProfile(studentID: user.id)
                                                  }
                                                  .onDisappear {
                                                      print("-- in disappear")
@@ -214,6 +215,15 @@ struct UserEditorContDup: View {
                         Section(header: Text("Notes")) {
                             AnimateTextField(textField: $user.notes, mode: $mode, label: "notes")
                         }
+                        
+                        Section(header: Text("Apps")) {
+                            NavigationLink("Go To Student Profile For Student id 8", value: user.id)
+                            NavigationLink("Student Apps") {
+                                Text("Apps for Student \(user.id)")
+                            }
+                            
+                        }
+
 
                         Section(header: Text("email")) {
                             AnimateTextField(textField: $user.email, mode: $mode, label: "email")
@@ -276,6 +286,22 @@ struct UserEditorContDup: View {
                         
                     }
                     
+
+                    .navigationDestination(for: Int.self) { studentId in
+                        
+                     let profilesx =  StudentAppProfileManager.loadProfilesx()
+                        
+                        if let studentFound = profilesx.first { $0.id == studentId} {
+                            
+                            StudentAppProfileWorkingView(
+                                studentId                   : studentId,
+                                studentAppProfilefiles      : profilesx,
+                                profileManager: StudentAppProfileManager(),
+                                studentAppprofile           :  studentFound)
+                        }
+
+                    }
+                
                     
                     .environment(\.editMode, $mode)
                     .listStyle(SidebarListStyle())
@@ -585,6 +611,29 @@ extension UserEditorContDup {
 }
 
 fileprivate func saveselectedStudentClasses() {
+    
+}
+
+fileprivate func checkIfUserInAppProfile(studentID: Int) {
+    
+    print(studentID)
+    
+    var studentProfiles = StudentAppProfileManager.loadProfilesx()
+    
+    
+    if  !studentProfiles.contains(where: { prf in
+        prf.id == studentID
+    } ) {
+        // need to make a mock
+        let newProfile = StudentAppProfileManager.makeDefaultfor(studentID, locationId: 1)
+        
+        // load it into array
+        studentProfiles.append(newProfile)
+        
+        // save it
+        StudentAppProfileManager.savePassedProfiles(profilesToSave: studentProfiles)
+    }
+
     
 }
 

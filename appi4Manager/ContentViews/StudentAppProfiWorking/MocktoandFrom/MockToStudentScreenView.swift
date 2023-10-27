@@ -66,13 +66,25 @@ class StudentAppProfilex: Identifiable, Codable, ObservableObject {
         self.locationId  = locationId
         self.sessions    = sessions
     }
+    
+    func convertToDictionary() -> [String: Any]? {
+        do {
+            let data = try JSONEncoder().encode(self)
+            let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
+            return dictionary
+        } catch {
+            print("Error converting to dictionary: \(error)")
+            return nil
+        }
+    }
+
 }
 
 class StudentAppProfileManager: ObservableObject {
     @Published var studentAppProfileFiles: [StudentAppProfilex] = []
     
     static func loadProfilesx() -> [StudentAppProfilex] {
-        if let savedProfiles = UserDefaults.standard.object(forKey: "StudentProfiles6") as? Data {
+        if let savedProfiles = UserDefaults.standard.object(forKey: "StudentProfiles7") as? Data {
             if let decoded = try? JSONDecoder().decode([StudentAppProfilex].self, from: savedProfiles) {
                 if decoded.count == 0 {
                     let sampleprofiles = StudentAppProfileManager.sampleProfile()
@@ -102,13 +114,13 @@ class StudentAppProfileManager: ObservableObject {
                     // 5
                 dump(studentAppProfileFiles[idx])
             }
-            UserDefaults.standard.set(encoded, forKey: "StudentProfiles6")
+            UserDefaults.standard.set(encoded, forKey: "StudentProfiles7")
         }
     }
     
     static func savePassedProfiles(profilesToSave: [StudentAppProfilex]) {
         if let encoded = try? JSONEncoder().encode(profilesToSave) {
-            UserDefaults.standard.set(encoded, forKey: "StudentProfiles6")
+            UserDefaults.standard.set(encoded, forKey: "StudentProfiles7")
         }
     }
 }
