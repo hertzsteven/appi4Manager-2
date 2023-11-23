@@ -46,6 +46,11 @@ class StudentAppProfilex: Identifiable, Codable, ObservableObject {
         case sessions
     }
 
+    init() {
+        self.id = 0
+        self.locationId = 0
+        self.sessions = [:]
+    }
     required init(from decoder: Decoder) throws {
         let container  = try decoder.container(keyedBy: CodingKeys.self)
         id             = try container.decode(Int.self, forKey: .id)
@@ -67,6 +72,17 @@ class StudentAppProfilex: Identifiable, Codable, ObservableObject {
         self.sessions    = sessions
     }
     
+    func setStudentProfile(studentID: Int)  {
+        FirestoreManager().readStudentProfileNew(studentID: studentID) { studentAppProfilex, err in
+            guard let studentAppProfilex = studentAppProfilex else {
+                fatalError("could not retreive the student profile")
+            }
+            self.id = studentAppProfilex.id
+            self.locationId = studentAppProfilex.locationId
+            self.sessions  = studentAppProfilex.sessions
+        }
+    }
+    
     func convertToDictionary() -> [String: Any]? {
         do {
             let data = try JSONEncoder().encode(self)
@@ -82,8 +98,23 @@ class StudentAppProfilex: Identifiable, Codable, ObservableObject {
 
 class StudentAppProfileManager: ObservableObject {
     @Published var studentAppProfileFiles: [StudentAppProfilex] = []
+//    var firestoreManager = FirestoreManager()
     
-    static func loadProfilesx() -> [StudentAppProfilex] {
+    static func loadProfilesx() async -> [StudentAppProfilex] {
+        
+//        Task {
+            let profs = await FirestoreManager().fetchAndHandleProfiles10(collectionName: "studentProfiles")
+            dump(profs)
+            print("done")
+            return profs
+//        }
+
+//        let sampleprofiles = StudentAppProfileManager.sampleProfile()
+//        StudentAppProfileManager.savePassedProfiles(profilesToSave: sampleprofiles)
+//        return sampleprofiles
+    }
+    
+    static func loadProfilesxUserDefaukts() -> [StudentAppProfilex] {
         if let savedProfiles = UserDefaults.standard.object(forKey: "StudentProfiles7") as? Data {
             if let decoded = try? JSONDecoder().decode([StudentAppProfilex].self, from: savedProfiles) {
                 if decoded.count == 0 {
@@ -99,12 +130,18 @@ class StudentAppProfileManager: ObservableObject {
         StudentAppProfileManager.savePassedProfiles(profilesToSave: sampleprofiles)
         return sampleprofiles
     }
-    
+
     func updateStudentAppProfile(newProfile: StudentAppProfilex) {
         if let idx = studentAppProfileFiles.firstIndex(where: { $0.id == newProfile.id }) {
             studentAppProfileFiles.remove(at: idx)
             studentAppProfileFiles.append(newProfile)
+            Task {
+                 await  FirestoreManager().writeHandleStudentProfileNew2(studentProfile: newProfile)
+                 print("added new student")
+             }
+
         }
+        
     }
     func saveProfiles() {
         if let encoded = try? JSONEncoder().encode(studentAppProfileFiles) {
@@ -117,6 +154,7 @@ class StudentAppProfileManager: ObservableObject {
             UserDefaults.standard.set(encoded, forKey: "StudentProfiles7")
         }
     }
+    
     
     static func savePassedProfiles(profilesToSave: [StudentAppProfilex]) {
         if let encoded = try? JSONEncoder().encode(profilesToSave) {
@@ -265,7 +303,7 @@ extension MockToStudentScreenView {
                 print(" they are not equal")
                 upDateStudentAppProfile()
                 profileManager.updateStudentAppProfile(newProfile: studentAppprofile)
-                profileManager.saveProfiles()
+//                profileManager.saveProfiles()
             } else {
                 print("they are equal")
             }

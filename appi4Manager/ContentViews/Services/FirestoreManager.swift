@@ -215,6 +215,20 @@ extension FirestoreManager {
 //  MARK: -  writing and reading to fire store
 extension FirestoreManager {
     
+    
+//    // write
+//    func writeAppCategory(appCategory: AppCategory) {
+//        let db = Firestore.firestore()
+//        let docRef = db.collection("appCategories").document("\(appCategory.id)")
+//        
+//        do {
+//            try docRef.setData(from: appCategory)
+//        } catch let error {
+//            print("Error writing studentProfile to Firestore: \(error)")
+//        }
+//    }
+//
+    
     // write
     func writeStudentProfileNew(studentProfile: StudentAppProfilex) {
         let db = Firestore.firestore()
@@ -524,6 +538,242 @@ extension FirestoreManager {
             } catch let error {
                 print("Error writing studentProfile to Firestore: \(error)")
             }
+        }
+    }
+
+}
+
+extension FirestoreManager {
+    
+    
+    enum ProfileError: Error {
+        case missingCollection   (String)
+        // This function provides a readable description of the error
+        var description: String {
+            switch self {
+            case .missingCollection(_):
+                return "Error: Collection not found"
+            }
+        }
+    }
+
+    
+    
+    //  MARK: -  Get Documents in a collection
+    
+    func getAllAppCategories10with(collectionName: String = "appCategories") async throws -> QuerySnapshot {
+        var collRef: CollectionReference {
+            let db = Firestore.firestore()
+            return db.collection(collectionName)
+        }
+        
+        let snapshot = try await collRef.getDocuments(source: FirestoreSource.server)
+        
+        if snapshot.documents.isEmpty {
+            throw ProfileError.missingCollection("collection name returned no ducuments")
+        }
+        
+        return snapshot
+    }
+    
+    
+    func fetchAndHandleAppCategories10(collectionName: String = "appCategories") async -> [AppCategory] {
+    
+    var appCategories: [AppCategory] = []
+    
+    do {
+        let snapshot = try await self.getAllAppCategories10with(collectionName: collectionName)
+
+        for doc in snapshot.documents {
+            let appCtg = try doc.data(as: AppCategory.self)
+            appCategories.append(appCtg)
+        }
+
+        // Process the AppCategories as you need
+        print(appCategories)
+    }
+    catch {
+        handleError(error: error, funcName: #function)
+    }
+    
+    return appCategories
+
+}
+    
+    
+    
+    func getAllProfiles10with(collectionName: String = "studentProfiles") async throws -> QuerySnapshot {
+        var collRef: CollectionReference {
+            let db = Firestore.firestore()
+            return db.collection(collectionName)
+        }
+        
+        let snapshot = try await collRef.getDocuments(source: FirestoreSource.server)
+        
+        if snapshot.documents.isEmpty {
+            throw ProfileError.missingCollection("collection name returned no ducuments")
+        }
+        
+        return snapshot
+    }
+    
+    
+    func fetchAndHandleProfiles10(collectionName: String = "studentProfiles") async -> [StudentAppProfilex] {
+    
+    var studentProfiles: [StudentAppProfilex] = []
+    
+    do {
+        let snapshot = try await self.getAllProfiles10with(collectionName: collectionName)
+
+        for doc in snapshot.documents {
+            let prf = try doc.data(as: StudentAppProfilex.self)
+            studentProfiles.append(prf)
+        }
+
+        // Process the profiles as you need
+        print(studentProfiles)
+    }
+    catch {
+        handleError(error: error, funcName: #function)
+    }
+    
+    return studentProfiles
+
+}
+    
+    
+    
+    // write
+    func writeAppCategory(appCategory: AppCategory) {
+        let db = Firestore.firestore()
+        let docRef = db.collection("appCategories").document("\(appCategory.id)")
+        
+        do {
+            try docRef.setData(from: appCategory)
+        } catch let error {
+            print("Error writing studentProfile to Firestore: \(error)")
+        }
+    }
+
+    
+    
+    
+    //  MARK: -  Write a Student
+    func writeHandleStudentProfileNew2(studentProfile: StudentAppProfilex)  async  {
+        do {
+            try await writeStudentProfileNew2(studentProfile: studentProfile)
+            print("add student worked")
+        }
+        catch {
+            self.handleError(error: error, funcName: #function)
+        }
+    }
+    
+    func writeStudentProfileNew2(studentProfile: StudentAppProfilex) async throws {
+        let db = Firestore.firestore()
+        let docRef = db.collection("studentProfiles").document("\(studentProfile.id)")
+
+        try docRef.setData(from: studentProfile,merge: true)
+    }
+
+
+    //  MARK: -  Detete a app category
+    func deleteAppCategoryWith(_ appCategoryID: String) {
+        let db = Firestore.firestore()
+        let docRef = db.collection("appCategories").document(appCategoryID)
+        
+        docRef.delete { theError in
+            if let theError = theError {
+                self.handleError(error: theError, funcName: #function)
+            }
+        }
+    }
+
+
+
+
+    
+    //  MARK: -  Read a Student
+    func readStudentProfileWith(_ studentID: String,
+                                completion:  @escaping (StudentAppProfilex) -> () ) {
+        let db = Firestore.firestore()
+        let docRef = db.collection("studentProfiles").document(studentID)
+        
+        docRef.getDocument(as: StudentAppProfilex.self) { result in
+            
+            // kickout error condition to be handled
+            guard let profile = try? result.get() else {
+                if case .failure(let theError) = result {
+                    self.handleError(error: theError, funcName: #function)
+                }
+                return
+            }
+            
+
+            // process the received profile
+            completion(profile)
+            self.handleSuccess(profile: profile)
+
+            
+        }
+    }
+
+    func handleSuccess(profile: StudentAppProfilex) {
+        dump(profile)
+        print("Student profile: \(profile)")
+    }
+    
+    
+   
+//  MARK: -  Here are the error handling stuff
+    func handleError(error: Error, funcName: String ) {
+        
+        switch error {
+    
+        case let nsError as NSError where nsError.domain == FirestoreErrorDomain:
+            handleFirestoreError(nsError: nsError, funcName: funcName)
+        
+        case let decodingError as DecodingError:
+            handleDecodingError(decodingError: decodingError, funcName: funcName)
+            
+        case let profileError as ProfileError:
+            handleProfileError(profileError: profileError,funcName: funcName)
+
+        
+        default:
+            print("Unknown error occurred: \(error)")
+        }
+    }
+
+    func handleFirestoreError(nsError: NSError,  funcName: String) {
+        if nsError.code == FirestoreErrorCode.unavailable.rawValue {
+            print("At Function: \(funcName) - Network is down.")
+        } else {
+            print("At Function: \(funcName) - Firestore Error Code: \(nsError.code)")
+        }
+    }
+
+    func handleDecodingError(decodingError: DecodingError, funcName: String) {
+        switch decodingError {
+        case .typeMismatch(let type, let context):
+            print("At Function: \(funcName) - Type mismatch for type \(type): \(context)")
+        case .valueNotFound(let type, let context):
+            print("At Function: \(funcName) - Also for Rec Not Found -Value missing for type \(type): \(context)")
+        case .keyNotFound(let key, let context):
+            print("At Function: \(funcName) - Key '\(key)' not found: \(context)")
+        case .dataCorrupted(let context):
+            print("At Function: \(funcName) - Data corrupted: \(context)")
+        default:
+            print("At Function: \(funcName) - Decoding error: \(decodingError)")
+        }
+    }
+    
+    func handleProfileError(profileError: ProfileError, funcName: String) {
+        switch profileError {
+        case .missingCollection(let messg):
+            print("missing collection: -  \(messg)")
+        default:
+            print("Unknown error: \(profileError.localizedDescription)")
         }
     }
 

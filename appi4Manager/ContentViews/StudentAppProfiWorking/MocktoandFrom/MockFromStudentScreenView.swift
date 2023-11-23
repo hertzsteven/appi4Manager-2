@@ -8,8 +8,22 @@
 import SwiftUI
 
 struct MockFromStudentScreenView: View {
+    
+    @Binding var path: NavigationPath
+    @State var profilesx: [StudentAppProfilex] = []
+
     var body: some View {
         VStack(spacing: 24) {
+            Button("Go To Student Profile For Student id 8") {
+                Task {
+//                    profilesx =  await StudentAppProfileManager.loadProfilesx()
+                    profilesx = await  StudentAppProfileManager.loadProfilesx()
+                    print("-----")
+                    dump(profilesx)
+                    print("-----")
+                    path.append(8)
+                }
+            }
             NavigationLink("Go To Student Profile For Student id 8", value: 8)
             NavigationLink("Go To Student Profile For Student id 3", value: 3)
 
@@ -17,18 +31,22 @@ struct MockFromStudentScreenView: View {
         .navigationTitle("Launch Profile for Student 8")
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: Int.self) { studentId in
+         
+            StudentAppProfileWorkingView(studentId: studentId, profileManager: StudentAppProfileManager())
+        
+//         let profilesx =  StudentAppProfileManager.loadProfilesxUserDefaukts()
             
-         let profilesx =  StudentAppProfileManager.loadProfilesx()
-            
+            /*
             if let studentFound = profilesx.first { $0.id == studentId} {
+                
                 
                 StudentAppProfileWorkingView(
                     studentId                   : studentId,
                     studentAppProfilefiles      : profilesx,
-                    profileManager: StudentAppProfileManager(),
+                    profileManager              : StudentAppProfileManager(),
                     studentAppprofile           :  studentFound)
             }
-
+*/
         }
 
                 
@@ -80,8 +98,8 @@ struct MockFromStudentScreenView: View {
     
 }
 
-struct MockFromStudentScreenView_Previews: PreviewProvider {
-    static var previews: some View {
-        MockFromStudentScreenView()
-    }
-}
+//struct MockFromStudentScreenView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MockFromStudentScreenView()
+//    }
+//}

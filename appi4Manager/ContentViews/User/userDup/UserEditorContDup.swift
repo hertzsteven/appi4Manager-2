@@ -37,6 +37,10 @@ struct AnimateTextField: View {
 
 struct UserEditorContDup: View {
     
+    @State var profilesx: [StudentAppProfilex] = []
+    
+    @Binding var path: NavigationPath
+    
     @State var isBlocking = false
     
     @State private var inUpdate = false
@@ -217,10 +221,20 @@ struct UserEditorContDup: View {
                         }
                         
                         Section(header: Text("Apps")) {
-                            NavigationLink("Go To Student Profile For Student id 8", value: user.id)
-                            NavigationLink("Student Apps") {
-                                Text("Apps for Student \(user.id)")
+                            Button("App Profile For Student \(user.id)") {
+                                Task {
+                //                    profilesx =  await StudentAppProfileManager.loadProfilesx()
+                                    profilesx = await  StudentAppProfileManager.loadProfilesx()
+                                    print("-----")
+                                    dump(profilesx)
+                                    print("-----")
+                                    path.append(user.id)
+                                }
                             }
+//                            NavigationLink("Go To Student Profile For Student id 8", value: user.id)
+//                            NavigationLink("Student Apps") {
+//                                Text("Apps for Student \(user.id)")
+//                            }
                             
                         }
 
@@ -289,7 +303,7 @@ struct UserEditorContDup: View {
 
                     .navigationDestination(for: Int.self) { studentId in
                         
-                     let profilesx =  StudentAppProfileManager.loadProfilesx()
+                     let profilesx =  StudentAppProfileManager.loadProfilesxUserDefaukts()
                         
                         if let studentFound = profilesx.first { $0.id == studentId} {
                             
@@ -618,7 +632,7 @@ fileprivate func checkIfUserInAppProfile(studentID: Int) {
     
     print(studentID)
     
-    var studentProfiles = StudentAppProfileManager.loadProfilesx()
+    var studentProfiles = StudentAppProfileManager.loadProfilesxUserDefaukts()
     
     
     if  !studentProfiles.contains(where: { prf in

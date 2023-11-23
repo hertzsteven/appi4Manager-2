@@ -37,6 +37,11 @@ struct TestOutView: View {
             }
  
             Text("I am over here")
+            Button("Create Test category") {
+                let appCtg = AppCategory.makeDefault()
+                FirestoreManager().writeAppCategory(appCategory: appCtg)
+                print("doneit")
+            }
             Button {
                  print("getting the lessons")
                 Task {

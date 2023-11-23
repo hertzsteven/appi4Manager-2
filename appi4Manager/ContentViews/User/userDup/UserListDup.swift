@@ -11,6 +11,8 @@ import SwiftUI
 struct UserListDup: View {
 
 //   MARK: - Body View   * * * * * * * * * * * * * * * * * * * * * * * *
+    @Binding var path: NavigationPath
+
     @State private var searchText = ""
     
     @State private var presentAlertSw: Bool = false
@@ -121,7 +123,7 @@ struct UserListDup: View {
 //      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * *
         .sheet(isPresented: $isAddingNewUser) {
             NavigationView {
-                UserEditorContDup( user: newUser,
+                UserEditorContDup( path: $path, user: newUser,
                                    urlPic: URL(string: "https://developitsnfredu.jamfcloud.com/application/views/default/assets/image/avatar/avatar.png")!,
                                    userInitialValues: newUser,
                                    isNew: true)
@@ -154,7 +156,7 @@ struct UserListDup: View {
 //      MARK: - Navigation Destination   * * * * * * * * * * * * * * * * * * * * * *
         .navigationDestination(for: User.self) { theUser in
             let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: appWorkViewModel.uniqueID)
-            UserEditorContDup(user: theUser,
+            UserEditorContDup(path: $path, user: theUser,
                               urlPic: imageURL,
                               userInitialValues: theUser)
         }
@@ -242,8 +244,8 @@ private extension UserListDup {
 
 }
 
-struct UserListDupView_Previews: PreviewProvider {
-    static var previews: some View {
-        UserListDup(newUser: User.makeDefault())
-    }
-}
+//struct UserListDupView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        UserListDup(path: $path, newUser: User.makeDefault())
+//    }
+//}

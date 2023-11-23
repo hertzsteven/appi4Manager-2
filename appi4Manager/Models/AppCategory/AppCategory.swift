@@ -51,7 +51,7 @@ extension AppCategory {
     static func makeDefault() -> AppCategory {
         let uiColor = UIColor(CategoryColors.random())
         let rgba = uiColor.rgba
-        return AppCategory(title: "",
+        return AppCategory(title: "Test Firestore",
                            symbolName: CategorySymbols.randomName(),
                            colorRGB: ColorRGB(red: rgba.red, green: rgba.green, blue: rgba.blue, alpha: rgba.alpha),
                            appIds: [1], locationId:0
@@ -109,13 +109,31 @@ class CategoryViewModel: ObservableObject {
         }
     }
 
+
     func loadFromUserDefaults() {
-        if let savedAppCategories = UserDefaults.standard.object(forKey: userDefaultsKey) as? Data {
-            let decoder = JSONDecoder()
-            if let loadedAppCategories = try? decoder.decode([AppCategory].self, from: savedAppCategories) {
-                appCategories = loadedAppCategories
+//        if let savedAppCategories = UserDefaults.standard.object(forKey: userDefaultsKey) as? Data {
+//            let decoder = JSONDecoder()
+//            if let loadedAppCategories = try? decoder.decode([AppCategory].self, from: savedAppCategories) {
+//                appCategories = loadedAppCategories
+//            }
+//        }
+        
+//        Task {
+//            let profs = await FirestoreManager().fetchAndHandleProfiles10(collectionName: "studentProfiles")
+//            dump(profs)
+//            print("done")
+//        }
+
+        
+        Task {
+            let appctgs = await FirestoreManager().fetchAndHandleAppCategories10(collectionName: "appCategories")
+            DispatchQueue.main.async {
+                self.appCategories = appctgs
+                dump(appctgs)
+                print("done")
             }
         }
+
     }
 }
 

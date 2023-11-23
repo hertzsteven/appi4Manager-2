@@ -355,6 +355,7 @@ extension CategoryEditorContView {
         dump(newAppCTG)
         
         categoryViewModel.appCategories.append(newAppCTG)
+        FirestoreManager().writeAppCategory(appCategory: newAppCTG)
         
         categoryViewModel.saveToUserDefaults()
         dismiss()
@@ -466,6 +467,8 @@ extension CategoryEditorContView {
         }
         categoryViewModel.appCategories.remove(at: index!)
         
+        FirestoreManager().deleteAppCategoryWith(appCategory.id)
+        
         categoryViewModel.saveToUserDefaults()
 
         isDeleted = true
@@ -506,6 +509,8 @@ extension CategoryEditorContView {
             appCtg.id == appCategory.id
         }
         categoryViewModel.appCategories[index!] = updatedAppCategory
+        FirestoreManager().writeAppCategory(appCategory: updatedAppCategory)
+
         
         categoryViewModel.saveToUserDefaults()
 /*

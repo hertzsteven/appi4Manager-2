@@ -50,8 +50,9 @@ struct DashboardView: View {
             .navigationDestination(for: Category.self, destination: { category in
                 switch category.name {
                 case "Devices":
+                    TestOutView()
 //                    IntegrateFireStore()
-                    ParentAppPickerView()
+//                    ParentAppPickerView()
                 case "Categories":
                     CategoryListView( newAppCategory: AppCategory.makeDefault())
 //                        .environmentObject(model)
@@ -74,7 +75,7 @@ struct DashboardView: View {
 //                        }
 //
                 case "UserDup":
-                    UserListDup(newUser: User.makeDefault())
+                    UserListDup(path: $path, newUser: User.makeDefault())
                         .task {
                             await loadTheClasses()
                         }
@@ -97,8 +98,8 @@ struct DashboardView: View {
                        }
 
                 case "Apps":
-//                    AppxView()
-                    MockFromStudentScreenView()
+                   AppxView()
+//                    MockFromStudentScreenView(path: $path)
    
                 case "NavigateToStudentAppProfile":
 //                    MockFromStudentScreenView()

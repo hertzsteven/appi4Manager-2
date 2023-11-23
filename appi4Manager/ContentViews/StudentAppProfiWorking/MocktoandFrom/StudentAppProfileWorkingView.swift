@@ -17,15 +17,17 @@ enum LoadingState {
 //  MARK: - extension for non view properties
 struct StudentAppProfileWorkingView {
     
+    @State var noShow = true
+    
     //  MARK:  Properties
     @State private var selectedDay = DayOfWeek.sunday
     
     @State var studentId: Int
     
     //  MARK: Manage Student Profile
-    var studentAppProfilefiles: [StudentAppProfilex]        = []
+    @State var studentAppProfilefiles: [StudentAppProfilex]        = []
     @StateObject var profileManager                         : StudentAppProfileManager
-    @StateObject var studentAppprofile                      : StudentAppProfilex
+    @StateObject var studentAppprofile                      = StudentAppProfilex()
     @State var currentDayStudentAppProfile: DailySessions   = DailySessions.makeDefaultDailySession()
 
     //  MARK: Properties to help with processes
@@ -430,16 +432,21 @@ extension StudentAppProfileWorkingView: View {
 
     //  MARK: - mainview - Top subview
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 8) {
-                headerView
-                mainView
-            }
-            .frame(width: 380)
-            .background(Color.white)
-            .cornerRadius(10)
-            .shadow(radius: 10)
-        .padding()
+       
+            ScrollView {
+                if noShow == false {
+                VStack(alignment: .leading, spacing: 8) {
+                    headerView
+                    mainView
+                }
+                .frame(width: 380)
+                .background(Color.white)
+                .cornerRadius(10)
+                .shadow(radius: 10)
+                .padding()
+                } else {
+                    ProgressView()
+                }
         }
 
         .sheet(isPresented: $presentMakeAppProfile, onDismiss: {
@@ -448,7 +455,7 @@ extension StudentAppProfileWorkingView: View {
                 print(" they are not equal")
                 upDateStudentAppProfile()
                 profileManager.updateStudentAppProfile(newProfile: studentAppprofile)
-                profileManager.saveProfiles()
+//                profileManager.saveProfiles()
                 print("~~ dismissed makeAppProfile second")
                 Task {
                     do {
@@ -474,10 +481,26 @@ extension StudentAppProfileWorkingView: View {
                }
         
         .onAppear {
-            profileManager.studentAppProfileFiles = studentAppProfilefiles
-            setCurrentDateWith(selectedDay.asAString)
-            print("~~ fom onappear will it work ")
-            
+            Task {
+                studentAppProfilefiles = await  StudentAppProfileManager.loadProfilesx()
+                if let studentFound = studentAppProfilefiles.first { $0.id == studentId} {
+                    studentAppprofile.id = studentFound.id
+                    studentAppprofile.locationId = studentFound.locationId
+                    studentAppprofile.sessions = studentFound.sessions
+                }
+//                studentAppprofile.setStudentProfile(studentID: studentId)
+                profileManager.studentAppProfileFiles = studentAppProfilefiles
+
+                guard let currentDayStudentAppProfilefilxe = studentAppprofile.sessions["Sun"] else {
+                    fatalError("big error")
+                }
+                currentDayStudentAppProfile = currentDayStudentAppProfilefilxe
+
+//                setCurrentDateWith(selectedDay.asAString)
+                print("~~ fom onappear will it work ")
+                dump(currentDayStudentAppProfile)
+                noShow = false
+            }
         }
         
         .onChange(of: selectedDay) { newValue in
@@ -582,7 +605,7 @@ extension StudentAppProfileWorkingView {
         }
         
     }
-    
+  
     func setCurrentDateWith(_ stringDayOfWeek: String)  {
         guard let currentDayStudentAppProfilefilxe = studentAppprofile.sessions[stringDayOfWeek] else {
             fatalError("big error")
