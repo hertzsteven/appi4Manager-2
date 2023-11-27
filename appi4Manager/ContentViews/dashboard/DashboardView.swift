@@ -22,8 +22,8 @@ struct DashboardView: View {
         Category(name: "Categories", color: .green, image: Image(systemName: "person.fill"), count: 12),
         Category(name: "Apps", color: .red, image: Image(systemName: "apps.ipad"), count: 3),
         Category(name: "NavigateToStudentAppProfile", color: .purple, image: Image(systemName: "person.3.sequence.fill"), count: 8),
-        Category(name: "SchoolListDup", color: .orange, image: Image(systemName: "airplane"), count: 2),
-        Category(name: "UserDup", color: .yellow, image: Image(systemName: "dollarsign.circle.fill"), count: 6)
+        Category(name: "Classes", color: .orange, image: Image(systemName: "airplane"), count: 2),
+        Category(name: "Students", color: .yellow, image: Image(systemName: "dollarsign.circle.fill"), count: 6)
     ]
     
 //    @StateObject var model          = CategoryViewModel()
@@ -74,7 +74,7 @@ struct DashboardView: View {
 //                            }
 //                        }
 //
-                case "UserDup":
+                case "Students":
                     UserListDup(path: $path, newUser: User.makeDefault())
                         .task {
                             await loadTheClasses()
@@ -90,7 +90,7 @@ struct DashboardView: View {
                             }
                         }
                     
-               case "SchoolListDup":
+               case "Classes":
                     
                     SchoolListDup( newClass: SchoolClass.makeDefault())
                         .task {
@@ -171,9 +171,12 @@ struct CategoryView: View {
                     .padding([.bottom],8)
 
                     Text(category.name)
-                        .font(.body)
-                        .bold()
+                        .font(.system(size: 16, weight: .semibold, design: .default))
                         .foregroundColor(.secondary)
+//
+//                        .font(.body)
+//                        .bold()
+//                        .foregroundColor(.secondary)
                 }
                 .padding([.leading],4)
                 
