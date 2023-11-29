@@ -9,9 +9,32 @@ import SwiftUI
 import PhotosUI
 
 
+enum SchoolClassError: Error {
+    case fetchError
+    case createClassError
+    case dictCreationError
+    case other(Error)
+    
+    var localizedDescription: String {
+        switch self {
+        case .fetchError:
+            return "Failed to fetch school classes."
+        case .createClassError:
+            return "Failed to create a class."
+        case .dictCreationError:
+            return "Failed to create a dictionary of classes."
+        case .other(let error):
+            return error.localizedDescription
+        }
+    }
+}
+
+
 struct TestOutView: View {
     
     @StateObject var imagePicker = ImagePicker()
+    @State private var showAlert = false
+    @State private var errorMessage = ""
 
     var body: some View {
         VStack(spacing: 12) {
@@ -136,6 +159,17 @@ struct TestOutView: View {
                 Text("get the students")
             }
             
+            Button("Process the classes") {
+                    // Where you want to call the function
+                    Task {
+                        await processSchoolClasses()
+                        print("we will process the classes")
+                    }
+            }
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
+            }
+
             Button {
                 print("getting the apps")
                 Task {
@@ -197,12 +231,110 @@ struct TestOutView: View {
             } label: {
                 Text("get the apps")
             }
-            
-            
-            
-
         }
     }
+    
+    func processSchoolClasses() async {
+        do {
+            let resposnseSchoolClasses: SchoolClassResponse = try await ApiManager.shared.getData(from: .getSchoolClasses)
+            try await checkAndCreateClasses(schoolClasses: resposnseSchoolClasses.classes)
+            print("before dict")
+            try await makeDictofSpecialClass()
+            print("after dict")
+        } catch let error as SchoolClassError {
+            switch error {
+            case .other(let originalError):
+                print("An unexpected error occurred: \(originalError.localizedDescription)")
+                errorMessage = "An unexpected error occurred: \(originalError.localizedDescription)"
+                showAlert = true
+            default:
+                print("Error occurred: \(error.localizedDescription)")
+                errorMessage = error.localizedDescription
+                showAlert = true
+            }
+        } catch {
+            print("An unknown error occurred: \(error.localizedDescription)")
+            errorMessage = "An unknown error occurred: \(error.localizedDescription)"
+            showAlert = true
+            
+        }
+        
+    }
+    
+    func checkAndCreateClasses(schoolClasses: [SchoolClass]) async throws {
+        let locationIds = Set(schoolClasses.map { $0.locationId })
+        for locationId in locationIds {
+            let hasXYZClass = schoolClasses.contains { $0.locationId == locationId && $0.name == "abcdef" }
+            if !hasXYZClass {
+                try await createClass(for: locationId, name: "abcdef")
+                print("in creating classes")
+            }
+        }
+        print("finished checking and creating classes")
+    }
+    
+    fileprivate func makeDictofSpecialClass() async throws {
+        do {
+            let resposnseSchoolClasses: SchoolClassResponse = try await ApiManager.shared.getData(from: .getSchoolClasses)
+            let filteredSchoolClasses = resposnseSchoolClasses.classes.filter { $0.name == "abcdef" }
+            
+            let schoolClassDictionary = filteredSchoolClasses.reduce(into: [Int: String]()) { (dict, schoolClass) in
+                dict[schoolClass.locationId] = schoolClass.uuid
+            }
+                // Output the dictionary
+            for (location, uuid) in schoolClassDictionary {
+                print("Location: \(location), UUID: \(uuid)")
+            }
+            
+            
+            let schoolClassDictionaryID = filteredSchoolClasses.reduce(into: [Int: String]()) { (dict, schoolClass) in
+                dict[schoolClass.locationId] = schoolClass.id
+            }
+                // Output the dictionary
+            for (location, classID) in schoolClassDictionaryID {
+                print("Location: \(location), id: \(classID)")
+            }
+            
+            
+            let schoolClassDictionaryGroupID = filteredSchoolClasses.reduce(into: [Int: Int]()) { (dict, schoolClass) in
+                dict[schoolClass.locationId] = schoolClass.userGroupId
+            }
+                // Output the dictionary
+            for (location, classGroupID) in schoolClassDictionaryGroupID {
+                print("Location: \(location), userGroup: \(classGroupID)")
+            }
+
+        } catch {
+            print("ddjjdjdjdjjdjj")
+            throw SchoolClassError.dictCreationError
+        }
+    }
+    
+    func createClass(for locationId: Int, name: String) async throws {
+        print("Creating class for locationId: \(locationId)")
+
+        do {
+            // create the class
+            let resposnseCreateaClassResponse: CreateaClassResponse =
+                try await ApiManager.shared.getData(from: .createaClass(name: name, description: "testing from new app", locationId:  String(locationId)))
+            
+            // put the users is the class
+            let theuuid = resposnseCreateaClassResponse.uuid
+            // get all users
+            let resposnse: UserResponse = try await ApiManager.shared.getData(from: .getUsers)
+            // filter to get users in this location
+            let filteredUsers = resposnse.users.filter { $0.locationId == locationId }
+            // make an array from the user ids
+            let justUserIds = filteredUsers.map { $0.id }
+            
+            _ = try await ApiManager.shared.getDataNoDecode(from: .assignToClass(uuid: theuuid, students: justUserIds, teachers: []))
+
+        } catch  {
+            print(error)
+            throw SchoolClassError.createClassError
+        }
+    }
+
 }
 
 struct TestOutView_Previews: PreviewProvider {

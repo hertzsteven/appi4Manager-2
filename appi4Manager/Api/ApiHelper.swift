@@ -12,8 +12,8 @@ import Foundation
         
         /// API Base URL
         //  MARK: -  For MYNFR
-        static let baseURL =  "https://developitsnfrEDU.jamfcloud.com/api"
-        static let authorizationCode = "Basic NjUzMTkwNzY6UFFMNjFaVUU2RlFOWDVKSlMzTE5CWlBDS1BETVhMSFA="
+//        static let baseURL =  "https://developitsnfrEDU.jamfcloud.com/api"
+//        static let apiKey = "Basic NjUzMTkwNzY6UFFMNjFaVUU2RlFOWDVKSlMzTE5CWlBDS1BETVhMSFA="
         static let classuuid = "5660a0b6-7a4c-4749-abb2-735b3476a927"
 
 
@@ -51,12 +51,12 @@ class APISchoolInfo {
     // Singleton instance
     static let shared: APISchoolInfo = {
         guard let networkVariables = getValuesFromManagedConfigFile() else {
-        return APISchoolInfo(urlEndPoint:   "1111",
-                             apiKey:        "2222",
-                             asset:         "333",
-                             udid:          "444",
-                             companyId:     1111,
-                             helpurl:       "121")
+        return APISchoolInfo(urlEndPoint:   "https://developitsnfrEDU.jamfcloud.com/api",
+                             apiKey:        "Basic NjUzMTkwNzY6UFFMNjFaVUU2RlFOWDVKSlMzTE5CWlBDS1BETVhMSFA=",
+                             asset:         "asset",
+                             udid:          "udid",
+                             companyId:     2001128,
+                             helpurl:       "www.help.com")
         }
 
         return APISchoolInfo(urlEndPoint:   networkVariables.companyUrl,
