@@ -18,6 +18,7 @@ enum ApiEndpoint {
     
     /// Define all your endpoints here
     case getUsers
+    case getGroups
     case getUsersInGroup(groupID: Int)
     case getaUser(id: Int)
     case getStudents(uuid: String)
@@ -47,6 +48,8 @@ extension ApiEndpoint {
         switch self {
         case .getUsers:
            return "/users"
+        case .getGroups:
+           return "/users/groups"
         case .getUsersInGroup:
             return "/users"
         case .getStudents(let uuid):

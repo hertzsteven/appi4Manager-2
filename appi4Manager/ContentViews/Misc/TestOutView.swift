@@ -9,26 +9,6 @@ import SwiftUI
 import PhotosUI
 
 
-enum SchoolClassError: Error {
-    case fetchError
-    case createClassError
-    case dictCreationError
-    case other(Error)
-    
-    var localizedDescription: String {
-        switch self {
-        case .fetchError:
-            return "Failed to fetch school classes."
-        case .createClassError:
-            return "Failed to create a class."
-        case .dictCreationError:
-            return "Failed to create a dictionary of classes."
-        case .other(let error):
-            return error.localizedDescription
-        }
-    }
-}
-
 
 struct TestOutView: View {
     
@@ -169,6 +149,38 @@ struct TestOutView: View {
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
             }
+            
+
+            Button("Check For Teacher") {
+                    Task {
+                        let resposnsex: UserResponse = try await ApiManager.shared.getData(from: .getUsers)
+                        dump(resposnsex)
+                        let resposnse: MDMGroupsResponse = try await ApiManager.shared.getData(from: .getGroups)
+                        dump(resposnse)
+//                        print(resposnse)
+
+//                        await processSchoolClasses()
+//                        print("we will process the classes")
+                    }
+            }
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
+            }
+
+            
+            Button("Authenticate Teacher") {
+                     Task {
+//                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: ApiHelper.username, password: ApiHelper.password))
+//                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "teacherlila", password: "123456"))
+//                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "FC1E83770E22", password: "123456"))
+                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "coorddavid", password: "123456"))
+                         print(resposnse.token)
+                         dump(resposnse)
+                      }
+             }
+             .alert(isPresented: $showAlert) {
+                 Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
+             }
 
             Button {
                 print("getting the apps")
@@ -286,16 +298,6 @@ struct TestOutView: View {
                 print("Location: \(location), UUID: \(uuid)")
             }
             
-            
-            let schoolClassDictionaryID = filteredSchoolClasses.reduce(into: [Int: String]()) { (dict, schoolClass) in
-                dict[schoolClass.locationId] = schoolClass.id
-            }
-                // Output the dictionary
-            for (location, classID) in schoolClassDictionaryID {
-                print("Location: \(location), id: \(classID)")
-            }
-            
-            
             let schoolClassDictionaryGroupID = filteredSchoolClasses.reduce(into: [Int: Int]()) { (dict, schoolClass) in
                 dict[schoolClass.locationId] = schoolClass.userGroupId
             }
@@ -336,6 +338,12 @@ struct TestOutView: View {
     }
 
 }
+
+
+
+
+
+
 
 struct TestOutView_Previews: PreviewProvider {
     static var previews: some View {

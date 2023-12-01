@@ -210,6 +210,10 @@ private extension ApiManager {
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
             
+        case .getGroups:
+            request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+            request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
+
         case .getStudents(uuid: let uuid):
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("3", forHTTPHeaderField: "X-Server-Protocol-Version")

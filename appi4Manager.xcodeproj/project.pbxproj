@@ -40,6 +40,8 @@
 		464A2A022A829C890045B68C /* StudentAppProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 464A2A012A829C890045B68C /* StudentAppProfileView.swift */; };
 		464B6AD52A77D439008BF37F /* CategoryDisclosureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 464B6AD42A77D439008BF37F /* CategoryDisclosureView.swift */; };
 		464E54AB2A89BBC9000E0443 /* ParentAppPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 464E54AA2A89BBC9000E0443 /* ParentAppPickerView.swift */; };
+		465669942B1A251900195925 /* MDMGroupsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465669932B1A251900195925 /* MDMGroupsResponse.swift */; };
+		465669962B1A257700195925 /* MDMGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465669952B1A257700195925 /* MDMGroup.swift */; };
 		46584FCA2993E1040025F539 /* list_the_usersApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46584FC92993E1040025F539 /* list_the_usersApp.swift */; };
 		46584FCC2993E1040025F539 /* UserListContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46584FCB2993E1040025F539 /* UserListContent.swift */; };
 		46584FCE2993E1060025F539 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46584FCD2993E1060025F539 /* Assets.xcassets */; };
@@ -124,6 +126,8 @@
 		464A2A012A829C890045B68C /* StudentAppProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentAppProfileView.swift; sourceTree = "<group>"; };
 		464B6AD42A77D439008BF37F /* CategoryDisclosureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDisclosureView.swift; sourceTree = "<group>"; };
 		464E54AA2A89BBC9000E0443 /* ParentAppPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentAppPickerView.swift; sourceTree = "<group>"; };
+		465669932B1A251900195925 /* MDMGroupsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MDMGroupsResponse.swift; sourceTree = "<group>"; };
+		465669952B1A257700195925 /* MDMGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MDMGroup.swift; sourceTree = "<group>"; };
 		46584FC62993E1040025F539 /* appi4Manager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = appi4Manager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		46584FC92993E1040025F539 /* list_the_usersApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = list_the_usersApp.swift; sourceTree = "<group>"; };
 		46584FCB2993E1040025F539 /* UserListContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListContent.swift; sourceTree = "<group>"; };
@@ -355,6 +359,15 @@
 			path = StudentAppProfile;
 			sourceTree = "<group>";
 		};
+		465669922B1A24DA00195925 /* Groups */ = {
+			isa = PBXGroup;
+			children = (
+				465669932B1A251900195925 /* MDMGroupsResponse.swift */,
+				465669952B1A257700195925 /* MDMGroup.swift */,
+			);
+			path = Groups;
+			sourceTree = "<group>";
+		};
 		46584FBD2993E1040025F539 = {
 			isa = PBXGroup;
 			children = (
@@ -413,6 +426,7 @@
 				46E56DB82996B31200CB2512 /* ClassDetail */,
 				46E56DB529969F3F00CB2512 /* UserDetail */,
 				46E56DB22996974400CB2512 /* TeacherAuthentication */,
+				465669922B1A24DA00195925 /* Groups */,
 				46584FD92993EAC40025F539 /* User */,
 				46584FD82993EAAC0025F539 /* Users */,
 			);
@@ -710,6 +724,7 @@
 				463BEDCB2A41507000A1FBD8 /* LessonsListResponse.swift in Sources */,
 				461D89AD2A6D4E3700678391 /* ItemsToSelectRepresentableStr.swift in Sources */,
 				46584FCC2993E1040025F539 /* UserListContent.swift in Sources */,
+				465669942B1A251900195925 /* MDMGroupsResponse.swift in Sources */,
 				46D6C83029FE9D66009861FD /* ItemListSelectView.swift in Sources */,
 				463367072995251000CF5EA3 /* UserEditorContent.swift in Sources */,
 				46584FCA2993E1040025F539 /* list_the_usersApp.swift in Sources */,
@@ -750,6 +765,7 @@
 				46D7EA3929C94164007035F2 /* AppWorkViewModel.swift in Sources */,
 				461D89B12A6D82DE00678391 /* ItemListSelectViewStr.swift in Sources */,
 				46336700299426A900CF5EA3 /* UserDetailContent.swift in Sources */,
+				465669962B1A257700195925 /* MDMGroup.swift in Sources */,
 				46690D7A2A9D57B800C899FF /* MockToStudentScreenView.swift in Sources */,
 				46D6C82D29FE14EF009861FD /* StudentTeacherListView.swift in Sources */,
 				469EFF232A6F40F30047E8BC /* AppxViewModel.swift in Sources */,
