@@ -24,10 +24,12 @@ enum ApiEndpoint {
     case getStudents(uuid: String)
     case authenticateTeacher(company: String, username:String, password: String)
     case getSchoolClasses
+    case addGroup(mdmGroup: MDMGroup)
     case addUsr(user: User)
     case addUser(username: String, password: String, email: String, firstName: String, lastName: String,  notes: String, locationId: Int, groupIds: Array<Int>, teacherGroups: Array<Int>)
     case deleteaUser(id: Int)
     case updateaUser(id: Int, username: String, password: String, email: String, firstName: String, lastName: String, notes: String, locationId: Int, groupIds: Array<Int>, teacherGroups: Array<Int>)
+    case updateaGroup(mdmGroup: MDMGroup)
     case updateaClass(uuid: String, name: String, description: String)
     case createaClass(name: String, description: String, locationId: String)
     case deleteaClass(uuid: String)
@@ -62,6 +64,10 @@ extension ApiEndpoint {
             return "/classes"
         case .addUser:
             return "/users"
+        case .addGroup:
+            return "/users/groups"
+        case .updateaGroup(let mdmGroup):
+            return "/users/groups/\(mdmGroup.id)"
         case .deleteaUser(let id):
             return "/users/\(id)"
         case .updateaUser(let id, username: _, password: _, email: _, firstName: _, lastName: _, notes: _, locationId: _, groupIds: _, teacherGroups: _):
@@ -98,9 +104,13 @@ extension ApiEndpoint {
             return .POST
         case .addUser:
             return .POST
+        case .addGroup:
+            return .POST
         case .addUsr:
             return .POST
         case .updateaUser(id: _):
+            return .PUT
+        case .updateaGroup(mdmGroup: _):
             return .PUT
         case .updateaClass(uuid: _, name: _, description: _):
             return .PUT

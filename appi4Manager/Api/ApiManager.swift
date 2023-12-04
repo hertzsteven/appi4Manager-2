@@ -294,7 +294,50 @@ private extension ApiManager {
         case .deleteaUser(id: let id):
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             
+        case .addGroup(let mdmGroup):
+            request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+            request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
+            request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
             
+            let bodyString = """
+            {
+               "name": "\(mdmGroup.name)",
+             "description": "\(mdmGroup.description)",
+                "locationId": "\(mdmGroup.locationId)",
+               "acl": {
+                  "teacher": "\(mdmGroup.acl.teacher)"
+               }
+            }
+            """
+            
+            request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
+            
+        case .updateaGroup(let mdmGroup2):
+            
+            request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+            request.addValue("1", forHTTPHeaderField: "X-Server-Protocol-Version")
+            request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
+            
+//            let bodyString = """
+//            {
+//               "name": "AAAAPI Updated Group2",
+//               "acl": {
+//                  "teacher": "inherit"
+//               }
+//            }
+//            """
+
+            let bodyString = """
+              {
+                "name": "\(mdmGroup2.name)",
+                "acl": {
+                   "teacher": "\(mdmGroup2.acl.teacher)"
+              }
+              """
+             
+            request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
+            
+
         case .updateaUser(let id, let username, let password, let email, let firstName, let lastName,let notes, let locationId, let groupIds, let teacherGroups):
             
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")

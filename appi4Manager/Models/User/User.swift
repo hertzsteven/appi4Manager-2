@@ -8,6 +8,7 @@
 import Foundation
 
 struct User: Codable, Identifiable, Hashable, ItemsToSelectRepresentable {
+
     var id:             Int
     var locationId:     Int
     var deviceCount:    Int
@@ -22,6 +23,21 @@ struct User: Codable, Identifiable, Hashable, ItemsToSelectRepresentable {
     var modified:       String
     var nameToDisplay: String {
         "\(firstName) \(lastName)"
+    }
+    
+    internal init(id: Int, locationId: Int, deviceCount: Int, email: String, groupIds: Array<Int>, groups: Array<String>, teacherGroups: Array<Int>, firstName: String, lastName: String, username: String, notes: String, modified: String) {
+        self.id             = id
+        self.locationId     = locationId
+        self.deviceCount    = deviceCount
+        self.email          = email
+        self.groupIds       = groupIds
+        self.groups         = groups
+        self.teacherGroups  = teacherGroups
+        self.firstName      = firstName
+        self.lastName       = lastName
+        self.username       = username
+        self.notes          = notes
+        self.modified       = modified
     }
 }
 
@@ -52,3 +68,47 @@ extension User {
     }
 }
 
+
+
+
+
+extension User {
+     init(locationId: Int, email: String, firstName: String, lastName: String, username: String) {
+        self.id             = 0
+        self.locationId     = locationId
+        self.deviceCount    = 0
+        self.email          = email
+        self.groupIds       = []
+        self.groups         = []
+        self.teacherGroups  = []
+        self.firstName      = firstName
+        self.lastName       = lastName
+        self.username       = username
+        self.notes          = ""
+        self.modified = Date().description // Or any other default value/format
+    }
+}
+
+
+extension User {
+    static func createUserTeacher(locationId: Int) -> User {
+        let appi4TeacherName              = AppConstants.teacherUserName
+        let appi4TeacherNameWithLocation  = appi4TeacherName + String(locationId)
+        let rn                            = Int.random(in: 1...1000000)
+        let appi4Teacheremail             = "appi4Teacher\(locationId)and\(rn)@gmail.com"
+        return User(locationId: locationId, email: appi4Teacheremail, firstName: appi4TeacherName, lastName: appi4TeacherName, username: appi4TeacherNameWithLocation)
+    }
+}
+
+
+
+/*
+ {
+   "username": "sun4",
+   "password": "123456",
+   "email": "nekhhh1wapi2@jamfschool.com",
+   "firstName": "sun1",
+   "lastName": "sun1",
+   "locationId": 1
+ }
+ */
