@@ -29,5 +29,6 @@ enum AppConstants {
     // Add other literals and constants as needed
     static let teacherUserName                       = "**appi4Teacher-NoModification**"
     static let teacherGroupName                       = "**appi4TeacherGroup-NoModification**"
-
+    static let pictureClassName                       = "**appi4PictureClass-NoModification**"
+    
 }

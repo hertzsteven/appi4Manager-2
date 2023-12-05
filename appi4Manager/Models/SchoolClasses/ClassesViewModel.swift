@@ -102,6 +102,7 @@ class ClassesViewModel: ObservableObject {
         
         filteredClassesbyLocation = schoolClasses.filter{ schoolClass in
             schoolClass.locationId  == locationId &&
+            (schoolClass.userGroupId  != TeacherItems.shared.schoolClassDictionaryGroupID[locationId]) && 
             !(schoolClass.uuid      == dummyPicClassToIgnore)
         }
         

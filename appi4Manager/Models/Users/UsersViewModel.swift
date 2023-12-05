@@ -153,7 +153,7 @@ class UsersViewModel: ObservableObject {
             .sorted { $0.lastName < $1.lastName }
         
             .filter({ usr in
-                usr.locationId == selectedLocationID
+                usr.locationId == selectedLocationID && usr.id != TeacherItems.shared.teacherUserDict[selectedLocationID]
             })
             .filter {
                 if searchStr.isEmpty  {

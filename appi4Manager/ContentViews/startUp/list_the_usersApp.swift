@@ -22,6 +22,9 @@ struct list_the_usersApp: App {
     init() {
         FirebaseApp.configure()
         print("Configured Firebase")
+        Task {
+                 await TeacherItems.shared.setup()
+        }
 
     }
     
@@ -41,7 +44,7 @@ struct list_the_usersApp: App {
         WindowGroup {
 //            TestOutView()
 // NavigateToStudentAppProfile()
-            if appWorkViewModel.isLoaded {
+            if appWorkViewModel.isLoaded  {
                 DashboardView()
                     .environmentObject(usersViewModel)
                     .environmentObject(classDetailViewModel)

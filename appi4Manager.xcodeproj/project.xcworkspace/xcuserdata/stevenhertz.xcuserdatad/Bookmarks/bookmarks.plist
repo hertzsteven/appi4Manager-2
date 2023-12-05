@@ -12,54 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>64</string>
+					<string>690</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>64</string>
+					<string>689</string>
 					<key>Timestamp</key>
-					<string>723336709.899689</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>appi4Manager/Models/Groups/MDMGroup.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string></string>
-				<key>leading</key>
-				<string>    }
-}
-</string>
-				<key>trailing</key>
-				<string></string>
-			</dict>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
-					<key>EndingLineNumber</key>
-					<string>154</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
-					<key>StartingLineNumber</key>
-					<string>153</string>
-					<key>Timestamp</key>
-					<string>723153803.637765</string>
+					<string>723485518.581391</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -75,16 +34,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>            Button("Check For Teacher") {
+				<string>    
 </string>
 				<key>leading</key>
-				<string>            
-            
+				<string>}
+    
 </string>
 				<key>trailing</key>
-				<string>                Task {
-                    
-                    
+				<string>
+
+
 </string>
 			</dict>
 			<key>type</key>
@@ -93,6 +52,19 @@
 		<dict>
 			<key>destination</key>
 			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>0</string>
+					<key>EndingLineNumber</key>
+					<string>308</string>
+					<key>StartingColumnNumber</key>
+					<string>0</string>
+					<key>StartingLineNumber</key>
+					<string>307</string>
+					<key>Timestamp</key>
+					<string>723485518.581417</string>
+				</dict>
 				<key>rebasable-url</key>
 				<dict>
 					<key>base</key>
@@ -100,11 +72,24 @@
 					<key>payload</key>
 					<dict>
 						<key>relative-path</key>
-						<string>appi4Manager/Models/User/User.swift</string>
+						<string>appi4Manager/ContentViews/Misc/TestOutView.swift</string>
 					</dict>
 				</dict>
-				<key>type</key>
-				<string>DVTDocumentLocation</string>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>    
+</string>
+				<key>leading</key>
+				<string>        //    var teacherItems = TeacherItems()
+    
+</string>
+				<key>trailing</key>
+				<string>    
+    var body: some View {
+        VStack(spacing: 12) {
+</string>
 			</dict>
 			<key>type</key>
 			<string>bookmark</string>

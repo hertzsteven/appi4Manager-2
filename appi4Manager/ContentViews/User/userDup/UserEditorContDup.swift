@@ -595,8 +595,9 @@ extension UserEditorContDup {
         }
         usersViewModel.users[index!] = user
         
-        await imagePicker.loadTransferable2Update(teachAuth: appWorkViewModel.getTeacherAuth(), studentId: user.id)
-        
+        await imagePicker.loadTransferable2Update(teachAuth: TeacherItems.shared.theToken, studentId: user.id)
+//        await imagePicker.loadTransferable2Update(teachAuth: appWorkViewModel.getTeacherAuth(), studentId: user.id)
+
         // update the student Pic
 //        imagePicker.updateTheImage()
         
