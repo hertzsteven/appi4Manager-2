@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CategoryListView: View {
     
+    @EnvironmentObject var teacherItems: TeacherItems
+    
     @EnvironmentObject var appsViewModel : AppsViewModel
     @EnvironmentObject var appWorkViewModel : AppWorkViewModel
     @EnvironmentObject var categoryViewModel: CategoryViewModel
@@ -24,113 +26,123 @@ struct CategoryListView: View {
     
         
     var body: some View {
-//        NavigationStack(path:$path ) {
-            VStack {
-               // LazyGrid
-                ScrollView {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))], spacing: 12) {
-//                        ForEach(categoryViewModel.appCategories, id: \.self) { item in
-                        ForEach(categoryViewModel.filterCategoriesinLocation(appWorkViewModel.currentLocation.id), id: \.self) { item in
-                            NavigationLink(value: item) {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .frame(height: 100)
-                                        .foregroundColor(Color(UIColor(red: item.colorRGB.red, green: item.colorRGB.green, blue: item.colorRGB.blue, alpha: item.colorRGB.alpha)))
-                                        .padding([.leading, .trailing], 6)
-                                        .shadow(color: .gray, radius: 3)
-                                        .overlay(
-                                            VStack(alignment: .leading) {
-                                                Image(systemName: item.symbolName)
-                                                    .font(.title)
-                                                    .padding(.bottom, 6)
-                                                Text(item.title)
-                                                    .font(.body)
-                                            }
-                                                .foregroundColor(.white)
-                                                .padding(.leading, 16 ).padding(.bottom, 16)
-                                            ,
-                                            alignment: .bottomLeading
-                                        )
-                                        .offset(x: /*@START_MENU_TOKEN@*/10.0/*@END_MENU_TOKEN@*/, y: /*@START_MENU_TOKEN@*/10.0/*@END_MENU_TOKEN@*/)
-                                    Button(action: {
-                                        print("just print")
-                                    })  {
-                                        Circle()
-                                            .fill(Color.red)
-                                            .frame(width: 30, height: 30)
-                                            .offset(x: -87, y: -40)
+            //        NavigationStack(path:$path ) {
+        ZStack   {
+            if categoryViewModel.isLoaded   {
+                VStack {
+                        // LazyGrid
+                    ScrollView {
+                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))], spacing: 12) {
+                                //                        ForEach(categoryViewModel.appCategories, id: \.self) { item in
+                            ForEach(categoryViewModel.filterCategoriesinLocation(teacherItems.currentLocation.id), id: \.self) { item in
+                                NavigationLink(value: item) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .frame(height: 100)
+                                            .foregroundColor(Color(UIColor(red: item.colorRGB.red, green: item.colorRGB.green, blue: item.colorRGB.blue, alpha: item.colorRGB.alpha)))
+                                            .padding([.leading, .trailing], 6)
+                                            .shadow(color: .gray, radius: 3)
+                                            .overlay(
+                                                VStack(alignment: .leading) {
+                                                    Image(systemName: item.symbolName)
+                                                        .font(.title)
+                                                        .padding(.bottom, 6)
+                                                    Text(item.title)
+                                                        .font(.body)
+                                                }
+                                                    .foregroundColor(.white)
+                                                    .padding(.leading, 16 ).padding(.bottom, 16)
+                                                ,
+                                                alignment: .bottomLeading
+                                            )
+                                            .offset(x: /*@START_MENU_TOKEN@*/10.0/*@END_MENU_TOKEN@*/, y: /*@START_MENU_TOKEN@*/10.0/*@END_MENU_TOKEN@*/)
+                                        Button(action: {
+                                            print("just print")
+                                        })  {
+                                            Circle()
+                                                .fill(Color.red)
+                                                .frame(width: 30, height: 30)
+                                                .offset(x: -87, y: -40)
+                                        }
+                                        .opacity(0.0)
                                     }
-                                    .opacity(0.0)
                                 }
                             }
                         }
+                        .padding()
+                        
+                            // SPACER
+                        Spacer()
                     }
-                    .padding()
-                    
-                        // SPACER
-                    Spacer()
                 }
+            } else {
+                    ProgressView("Loading...")
+                               .scaleEffect(2) // Adjust the size of the ProgressView
+                               .padding() // Add some padding around the ProgressView
+                       
+                 }
             }
-            
-            .onAppear {
-                dump(appsViewModel.apps)
-                print("dd")
-//                model.loadSomeSamples()
-            }
-            
-//      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * *
-            .sheet(isPresented: $isAddingNewAppCategory) {
-                NavigationView {
-                    CategoryEditorContView(appCategoryInitialValues: newAppCategory
-                                          , appCategory: newAppCategory
-                                          , appsViewModel: appsViewModel
-//                                          , categoryViewModel: categoryViewModel
-                                          , isNew: true
-                    )
-                }
-                .presentationDetents( [ .large ] )
-            }
-            
-//      MARK: -Navigation  * * * * * * * * * * * * * * * * * * * * * * * *
-            .navigationDestination(for: AppCategory.self) { theappCategory in
-                CategoryEditorContView(appCategoryInitialValues: theappCategory
-                                       , appCategory: theappCategory
+        
+        
+        .onAppear {
+            categoryViewModel.loadAppCategories()
+            dump(appsViewModel.apps)
+                //                model.loadSomeSamples()
+        }
+        
+            //      MARK: - Popup  Sheets  * * * * * * * * * * * * * * * * * * * * * * * *
+        .sheet(isPresented: $isAddingNewAppCategory) {
+            NavigationView {
+                CategoryEditorContView(appCategoryInitialValues: newAppCategory
+                                       , appCategory: newAppCategory
                                        , appsViewModel: appsViewModel
-//                                       categoryViewModel: categoryViewModel
+                                       //                                          , categoryViewModel: categoryViewModel
+                                       , isNew: true
                 )
             }
-
-            .navigationTitle("Categories")
-            .navigationBarTitleDisplayMode(.inline)
-            
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        newAppCategory             = AppCategory.makeDefault()
-                        isAddingNewAppCategory     = true
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                    .frame(height: 96, alignment: .trailing)
+            .presentationDetents( [ .large ] )
+        }
+        
+            //      MARK: -Navigation  * * * * * * * * * * * * * * * * * * * * * * * *
+        .navigationDestination(for: AppCategory.self) { theappCategory in
+            CategoryEditorContView(appCategoryInitialValues: theappCategory
+                                   , appCategory: theappCategory
+                                   , appsViewModel: appsViewModel
+                                   //                                       categoryViewModel: categoryViewModel
+            )
+        }
+        
+        .navigationTitle("Categories")
+        .navigationBarTitleDisplayMode(.inline)
+        
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    newAppCategory             = AppCategory.makeDefault()
+                    isAddingNewAppCategory     = true
+                } label: {
+                    Image(systemName: "plus")
                 }
-                
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Menu {
-                        Picker("Pick a location", selection: $appWorkViewModel.selectedLocationIdx) {
-                            ForEach(0 ..< appWorkViewModel.locations.count) { index in
-                                Text(appWorkViewModel.locations[index].name)
-                                    .tag(index)
-                            }
-                        }
-                        .padding()
-                    } label: {
-                        Text(appWorkViewModel.locations[appWorkViewModel.selectedLocationIdx].name).padding()
-                    }
-                    .pickerStyle(.menu)
-                }
+                .frame(height: 96, alignment: .trailing)
             }
-
-//        }
+            
+            ToolbarItem(placement: .navigationBarLeading) {
+                Menu {
+                    Picker("Pick a location", selection: $teacherItems.selectedLocationIdx) {
+                        ForEach(0 ..< teacherItems.MDMlocations.count) { index in
+                            Text(teacherItems.MDMlocations[index].name)
+                                .tag(index)
+                        }
+                    }
+                    .padding()
+                } label: {
+                    Text(teacherItems.MDMlocations[teacherItems.selectedLocationIdx].name).padding()
+                }
+                .pickerStyle(.menu)
+            }
+        }
+        
+            //        }
     }
     
    private var addButton: some View {

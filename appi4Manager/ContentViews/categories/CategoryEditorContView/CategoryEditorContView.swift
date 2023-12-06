@@ -48,6 +48,7 @@ struct CategoryEditorContView: View {
     @StateObject        var appsViewModel:      AppsViewModel
     @EnvironmentObject  var categoryViewModel:  CategoryViewModel
     @EnvironmentObject var appWorkViewModel : AppWorkViewModel
+    @EnvironmentObject var teacherItems: TeacherItems
 
 
     @State var selectedColor: Color =  CategoryColors.random()
@@ -350,7 +351,7 @@ extension CategoryEditorContView {
                                     symbolName: appCategory.symbolName,
                                     colorRGB: ColorRGB(red: rgba.red, green: rgba.green, blue: rgba.blue, alpha: rgba.alpha),
                                     appIds: selectedApps,
-                                    locationId: appWorkViewModel.currentLocation.id)
+                                    locationId: teacherItems.currentLocation.id)
         
         dump(newAppCTG)
         
@@ -503,7 +504,7 @@ extension CategoryEditorContView {
                                     title: appCategory.title,
                                     symbolName: appCategory.symbolName,
                                     colorRGB: ColorRGB(red: rgba.red, green: rgba.green, blue: rgba.blue, alpha: rgba.alpha),
-                                             appIds: selectedApps, locationId: appWorkViewModel.currentLocation.id)
+                                             appIds: selectedApps, locationId: teacherItems.currentLocation.id)
 
         let index = categoryViewModel.appCategories.firstIndex { appCtg in
             appCtg.id == appCategory.id

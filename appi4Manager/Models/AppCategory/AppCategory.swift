@@ -68,11 +68,12 @@ class CategoryViewModel: ObservableObject {
             }
         }
     }
+    @Published var isLoaded = false
 
     private let userDefaultsKey = "appCategories7"
     init() {
 //        loadSomeSamples()
-        loadFromUserDefaults()
+//        loadAppCategories()
     }
 
 
@@ -110,7 +111,7 @@ class CategoryViewModel: ObservableObject {
     }
 
 
-    func loadFromUserDefaults() {
+    func loadAppCategories() {
 //        if let savedAppCategories = UserDefaults.standard.object(forKey: userDefaultsKey) as? Data {
 //            let decoder = JSONDecoder()
 //            if let loadedAppCategories = try? decoder.decode([AppCategory].self, from: savedAppCategories) {
@@ -129,6 +130,7 @@ class CategoryViewModel: ObservableObject {
             let appctgs = await FirestoreManager().fetchAndHandleAppCategories10(collectionName: "appCategories")
             DispatchQueue.main.async {
                 self.appCategories = appctgs
+                self.isLoaded = true
                 dump(appctgs)
                 print("done")
             }

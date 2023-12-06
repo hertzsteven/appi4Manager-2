@@ -8,36 +8,81 @@
 import SwiftUI
 import PhotosUI
 
-class TeacherItems {
+@MainActor
+class TeacherItems: ObservableObject {
     static let shared = TeacherItems()
     
-    var isLoaded = false
-    
-    var MDMlocations:                   Array<Location>  = []
-    var selectedLocationIdx:            Int = 0
-    var currentLocation:                Location        = Location(id: 0, name: "") {
+    @Published var isLoaded = false
+    @Published var isLoading = false
+    @Published var uniqueID = UUID()
+    @Published var doingEdit = false
+    @Published var doUpdate = false
+
+    @Published var MDMlocations:                   Array<Location>  = []
+    @Published var currentLocation:                Location        = Location(id: 0, name: "")
+    @Published var selectedLocationIdx:            Int = 0 {
         didSet {
             currentLocation = MDMlocations[selectedLocationIdx]
         }
     }
     
-    var schoolClassDictionaryGroupID:   [Int : Int]     = [:]
-    var schoolClassDictionaryUUID:      [Int : String]  = [:]
-    var teacherGroupDict:               [Int : Int]     = [:]
-    var teacherUserDict:                [Int : Int]     = [:]
-    var theToken = ""
+    @Published var schoolClassDictionaryGroupID:   [Int : Int]     = [:]
+    @Published var schoolClassDictionaryUUID:      [Int : String]  = [:]
+    @Published var teacherGroupDict:               [Int : Int]     = [:]
+    @Published var teacherUserDict:                [Int : Int]     = [:]
+    @Published var teacherAuthToken = ""
     
     private init() {
             // Private initializer to prevent external instantiation
     }
+}
+
+extension TeacherItems {
     
+    public func getpicClass() -> String {
+        schoolClassDictionaryUUID[currentLocation.id]!
+    }
+    
+    public func getIDpicClass() -> Int {
+        schoolClassDictionaryGroupID[currentLocation.id]!
+    }
+    
+    public func getTeacherGroup() -> Int {
+        teacherGroupDict[currentLocation.id]!
+    }
+
+    public func getUsersInTeacherGroup() async -> [Int]? {
+        do {
+            let userResponse: UserResponse = try await ApiManager.shared.getData(from: .getUsersInGroup(groupID: teacherGroupDict[currentLocation.id]!))
+            dump(userResponse)
+            let ids = userResponse.users.map { $0.id }
+            return ids
+        } catch {
+            //  FIXME: -  put in alert that will display appropriate error message
+            print(error.localizedDescription)
+        }
+        return nil
+    }
+    
+    public func getTeacherAuth() -> String {
+        teacherAuthToken
+//        "9c74b8d6a4934ca986dfe46592896801"
+    }
+    
+}
+
+extension TeacherItems {
+
     func exSetup() async {
         do {
             try await processLocations()
             try await processSchoolClasses()
             try await processTeacherUsers()
             try await processTeacherGroups()
-            isLoaded = true
+//            try await Task.sleep(nanoseconds: 10_000_000_000)
+            DispatchQueue.main.async {
+                self.isLoaded = true
+            }
         } catch {
             print("Error setting up TeacherItems: \(error)")
         }
@@ -201,12 +246,12 @@ class TeacherItems {
     fileprivate func finishUpAndGetAuthCode() async throws {
         
         /*
-         let myDictionary = ["first": "Apple", "second": "Banana", "third": "Cherry"]
-         
-         for (key, value) in myDictionary {
-         print("\(key): \(value)")
-         }
-         */
+            let myDictionary = ["first": "Apple", "second": "Banana", "third": "Cherry"]
+            
+            for (key, value) in myDictionary {
+            print("\(key): \(value)")
+            }
+            */
         
         guard let teacherGroupId    = teacherGroupDict[0] else {fatalError("no teacher group for 0")}
         guard let teacherId         = teacherUserDict[0]  else {fatalError("no teacher user for 0")}
@@ -239,9 +284,9 @@ class TeacherItems {
         
         
         let responseAuthenticate: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: "2001128",
-                                                                                                                           username: usr.username,
-                                                                                                                           password: "123456"))
-        theToken = responseAuthenticate.token
+                                                                                                                            username: usr.username,
+                                                                                                                            password: "123456"))
+        teacherAuthToken = responseAuthenticate.token
         dump(responseAuthenticate)
     }
     
@@ -331,13 +376,12 @@ class TeacherItems {
             throw SchoolClassError.createClassError
         }
     }
-    
 }
-
-
+    
 
 struct TestOutView: View {
     
+    @EnvironmentObject var teacherItems: TeacherItems
     @StateObject var imagePicker = ImagePicker()
     @State private var showAlert = false
     @State private var errorMessage = ""
@@ -346,288 +390,292 @@ struct TestOutView: View {
     
     
     var body: some View {
-        VStack(spacing: 12) {
-            
-            PhotosPicker(selection: $imagePicker.imageSelection,
-                         matching: .images) {
-                Label("Select a photo", systemImage: "photo")
-            }
-                         .tint(.purple)
-                         .controlSize(.large)
-                         .buttonStyle(.borderedProminent)
-                         .padding()
-                         .onAppear {
-                                 //                imagePicker.studentId = 16
-                                 //                imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
-                         }
-            if let image = imagePicker.image {
-                image
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                Text("Tap the menu bar button to select a photo.")
-            }
-            
-            Text("I am over here")
-            Button("Create Test category") {
-                let appCtg = AppCategory.makeDefault()
-                FirestoreManager().writeAppCategory(appCategory: appCtg)
-                print("doneit")
-            }
-            Button {
-                print("getting the lessons")
-                Task {
-                    do {
-                        let appxOne: Appx = try await ApiManager.shared.getData(from: .getanApp(appId: 9))
-                        dump(appxOne)
-                        print("appxOne")
+        if TeacherItems.shared.isLoaded {
+            VStack(spacing: 12) {
+                
+                PhotosPicker(selection: $imagePicker.imageSelection,
+                             matching: .images) {
+                    Label("Select a photo", systemImage: "photo")
+                }
+                             .tint(.purple)
+                             .controlSize(.large)
+                             .buttonStyle(.borderedProminent)
+                             .padding()
+                             .onAppear {
+                                     //                imagePicker.studentId = 16
+                                     //                imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
+                             }
+                if let image = imagePicker.image {
+                    image
+                        .resizable()
+                        .scaledToFit()
+                } else {
+                    Text("Tap the menu bar button to select a photo.")
+                }
+                
+                Text("I am over here")
+                Button("Create Test category") {
+                    let appCtg = AppCategory.makeDefault()
+                    FirestoreManager().writeAppCategory(appCategory: appCtg)
+                    print("doneit")
+                }
+                Button {
+                    print("getting the lessons")
+                    Task {
+                        do {
+                            let appxOne: Appx = try await ApiManager.shared.getData(from: .getanApp(appId: 9))
+                            dump(appxOne)
+                            print("appxOne")
+                            
+                            
+                            
+                            let lessonsDetailResponse: LessonDetailResponse = try await ApiManager.shared.getData(from: .getLessonDetail(teachAuth: "9c74b8d6a4934ca986dfe46592896801", id: 25))
+                            dump(lessonsDetailResponse)
+                            print(lessonsDetailResponse)
+                            
+                            
+                            let lessonsListResponse: LessonsListResponse = try await ApiManager.shared.getData(from: .getLessons(teachAuth: "9c74b8d6a4934ca986dfe46592896801"))
+                            dump(lessonsListResponse)
+                            print(lessonsListResponse)
+                            
+                            
+                            
+                            let locationsResponse: LocationsResponse = try await ApiManager.shared.getData(from: .getLocations)
+                            dump(locationsResponse)
+                            print(locationsResponse)
+                            
+                            let userRespnse: UserResponse = try await ApiManager.shared.getData(from: .getUsersInGroup(groupID: 21))
+                            dump(userRespnse)
+                            print("resposnseUserDetail")
+                            
+                            
+                            
+                            
+                            
+                            let z = try await ApiManager.shared.getDataNoDecode(from: .assignToClass(uuid: "3c0945a1-679d-4e0b-b70c-ad8aaa4481de", students: [6,48], teachers: [2]))
+                            dump(z)
+                            
+                            let id =  47
+                            let locationId = 0
+                            let email =  ""
+                            let username =  "xxx_apjgkjkjgjgi_user2"
+                            let firstName =  "Jeremy"
+                            let lastName =  "Stei"
+                            let groupIds:Array<Int>  =  [1,5]
+                            let teacherGroups:Array<Int>  =  [3]
+                            let notes =  "change6"
+                            let y = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: id,
+                                                                                                   username: username,
+                                                                                                   password: "",
+                                                                                                   email: email,
+                                                                                                   firstName: firstName,
+                                                                                                   lastName: lastName,
+                                                                                                   notes: notes,
+                                                                                                   locationId: locationId,
+                                                                                                   groupIds: groupIds,
+                                                                                                   teacherGroups: teacherGroups))
+                            dump(y)
+                            
+                            let x = try await ApiManager.shared.getDataNoDecode(from: .createaClass(name: "New class name", description: "created from testoutview", locationId: "1"))
+                            
+                            let classDetailResponse: ClassDetailResponse = try await ApiManager.shared.getData(from: .getStudents(uuid: ApiHelper.classuuid))
+                            dump(classDetailResponse)
+                            
+                            let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: ApiHelper.username, password: ApiHelper.password))
+                            dump(resposnse)
+                            print("break")
+                            
+                            let resposnseUserDetail: UserDetailResponse = try await ApiManager.shared.getData(from: .getaUser(id: resposnse.authenticatedAs.id))
+                            dump(resposnseUserDetail)
+                            print("resposnseUserDetail")
+                            
+                                // get classes
+                            let resposnseSchoolClasses: SchoolClassResponse = try await ApiManager.shared.getData(from: .getSchoolClasses)
+                            dump(resposnseSchoolClasses)
+                            print("resposnseSchoolClasses")
+                            
+                                //                        let cls = resposnseSchoolClasses.classes.contains {clss in
+                                //                            clss.userGroupId == ApiHelper.clssuserGroupId
+                                //                        }
+                                //                        dump(cls)
+                            
+                        } catch let error as ApiError {
+                                //  FIXME: -  put in alert that will display approriate error message
+                            print(error.description)
+                        }
                         
+                        print("in task afetr do")
                         
-                        
-                        let lessonsDetailResponse: LessonDetailResponse = try await ApiManager.shared.getData(from: .getLessonDetail(teachAuth: "9c74b8d6a4934ca986dfe46592896801", id: 25))
-                        dump(lessonsDetailResponse)
-                        print(lessonsDetailResponse)
-                        
-                        
-                        let lessonsListResponse: LessonsListResponse = try await ApiManager.shared.getData(from: .getLessons(teachAuth: "9c74b8d6a4934ca986dfe46592896801"))
-                        dump(lessonsListResponse)
-                        print(lessonsListResponse)
-                        
-                        
-                        
-                        let locationsResponse: LocationsResponse = try await ApiManager.shared.getData(from: .getLocations)
-                        dump(locationsResponse)
-                        print(locationsResponse)
-                        
-                        let userRespnse: UserResponse = try await ApiManager.shared.getData(from: .getUsersInGroup(groupID: 21))
-                        dump(userRespnse)
-                        print("resposnseUserDetail")
-                        
-                        
-                        
-                        
-                        
-                        let z = try await ApiManager.shared.getDataNoDecode(from: .assignToClass(uuid: "3c0945a1-679d-4e0b-b70c-ad8aaa4481de", students: [6,48], teachers: [2]))
-                        dump(z)
-                        
-                        let id =  47
-                        let locationId = 0
-                        let email =  ""
-                        let username =  "xxx_apjgkjkjgjgi_user2"
-                        let firstName =  "Jeremy"
-                        let lastName =  "Stei"
-                        let groupIds:Array<Int>  =  [1,5]
-                        let teacherGroups:Array<Int>  =  [3]
-                        let notes =  "change6"
-                        let y = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: id,
-                                                                                               username: username,
-                                                                                               password: "",
-                                                                                               email: email,
-                                                                                               firstName: firstName,
-                                                                                               lastName: lastName,
-                                                                                               notes: notes,
-                                                                                               locationId: locationId,
-                                                                                               groupIds: groupIds,
-                                                                                               teacherGroups: teacherGroups))
-                        dump(y)
-                        
-                        let x = try await ApiManager.shared.getDataNoDecode(from: .createaClass(name: "New class name", description: "created from testoutview", locationId: "1"))
-                        
-                        let classDetailResponse: ClassDetailResponse = try await ApiManager.shared.getData(from: .getStudents(uuid: ApiHelper.classuuid))
-                        dump(classDetailResponse)
-                        
-                        let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: ApiHelper.username, password: ApiHelper.password))
-                        dump(resposnse)
+                    }
+                    print("after task")
+                    
+                } label: {
+                    Text("get the students")
+                }
+                
+                Button("Process the classes") {
+                        // Where you want to call the function
+                    Task {
+                            //                    await processSchoolClasses()
+                        await TeacherItems.shared.exSetup()
+                        dump(TeacherItems.shared)
+                        print("we will process the classes")
+                    }
+                }
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
+                }
+                
+                
+                Button("Check For Teacher") {
+                    Task {
+                        let resposnsex: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: "2001128", username: "**appi4Teacher-NoModification**xQQRR0", password: "123456"))
+                        dump(resposnsex)
                         print("break")
+                            //                    try await processTeacherUsers()
+                            //                    try await processTeacherGroups()
                         
-                        let resposnseUserDetail: UserDetailResponse = try await ApiManager.shared.getData(from: .getaUser(id: resposnse.authenticatedAs.id))
+                        print("wait")
+                        
+                        
+                        let resposnseUserDetail: UserDetailResponse = try await ApiManager.shared.getData(from: .getaUser(id: 96))
                         dump(resposnseUserDetail)
+                        let usr = resposnseUserDetail.user
                         print("resposnseUserDetail")
+                        let groupIds:Array<Int>  =  [96]
+                        let y = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: usr.id,
+                                                                                               username: usr.username,
+                                                                                               password: "123456",
+                                                                                               email: usr.email,
+                                                                                               firstName: usr.firstName,
+                                                                                               lastName: usr.lastName,
+                                                                                               notes: usr.notes,
+                                                                                               locationId: usr.locationId,
+                                                                                               groupIds: groupIds,
+                                                                                               teacherGroups: usr.teacherGroups))
+                        dump(y)
+                        print(y)
                         
-                            // get classes
-                        let resposnseSchoolClasses: SchoolClassResponse = try await ApiManager.shared.getData(from: .getSchoolClasses)
-                        dump(resposnseSchoolClasses)
-                        print("resposnseSchoolClasses")
                         
-                            //                        let cls = resposnseSchoolClasses.classes.contains {clss in
-                            //                            clss.userGroupId == ApiHelper.clssuserGroupId
-                            //                        }
-                            //                        dump(cls)
                         
-                    } catch let error as ApiError {
-                            //  FIXME: -  put in alert that will display approriate error message
-                        print(error.description)
+                        
+                        
+                            //                    try await processTeacherGroups()
+                            //
+                            //                    try await processTeacherUsers()
+                            //
+                        let resposnse: MDMGroupsResponse = try await ApiManager.shared.getData(from: .getGroups)
+                        dump(resposnse)
+                            // get the locations
+                        let mdmGroups = resposnse.groups
+                        let locationsIds = Set(mdmGroups.map { $0.locationId })
+                            // check in each locations if there is a tracherGroup name
+                        for locationid in locationsIds {
+                            let hasMDMTeacherGroup = mdmGroups.contains {
+                                $0.locationId == locationid && $0.name == "SpecialTracherGroupName"
+                            }
+                            if !hasMDMTeacherGroup {
+                                print("need to create texhers group for \(locationid)")
+                            }
+                        }
+                        
+                        
+                        let mdmGroup = MDMGroup(id: 0, locationId: 1, name: "QWQWQW", description: "yes no maybe", userCount: 0, acl: MDMGroup.Acl(teacher: "allow", parent: "inherit"), modified: "inherit")
+                        let resposnseaddAGroup: AddAUserResponse = try await ApiManager.shared.getData(from: .addGroup(mdmGroup: mdmGroup))
+                        print(resposnseaddAGroup)
+                        dump(resposnseaddAGroup)
+                        let mdmGroup2 = MDMGroup(id: resposnseaddAGroup.id, locationId: 1, name: "AAAAPI Updated Group2", description: "I updatted it now after created", userCount: 0, acl: MDMGroup.Acl(teacher: "inherit", parent: "inherit"), modified: "inherit")
+                        let responseFromUpdatingUser = try await ApiManager.shared.getDataNoDecode(from: .updateaGroup(mdmGroup: mdmGroup2))
+                        print(responseFromUpdatingUser)
+                        dump(responseFromUpdatingUser)
+                        
+                            //                        await processSchoolClasses()
+                            //                        print("we will process the classes")
                     }
-                    
-                    print("in task afetr do")
-                    
                 }
-                print("after task")
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
+                }
                 
-            } label: {
-                Text("get the students")
-            }
-            
-            Button("Process the classes") {
-                    // Where you want to call the function
-                Task {
-                        //                    await processSchoolClasses()
-                    await TeacherItems.shared.exSetup()
-                    dump(TeacherItems.shared)
-                    print("we will process the classes")
-                }
-            }
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
-            }
-            
-            
-            Button("Check For Teacher") {
-                Task {
-                    let resposnsex: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: "2001128", username: "**appi4Teacher-NoModification**xQQRR0", password: "123456"))
-                    dump(resposnsex)
-                    print("break")
-                        //                    try await processTeacherUsers()
-                        //                    try await processTeacherGroups()
-                    
-                    print("wait")
-                    
-                    
-                    let resposnseUserDetail: UserDetailResponse = try await ApiManager.shared.getData(from: .getaUser(id: 96))
-                    dump(resposnseUserDetail)
-                    let usr = resposnseUserDetail.user
-                    print("resposnseUserDetail")
-                    let groupIds:Array<Int>  =  [96]
-                    let y = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: usr.id,
-                                                                                           username: usr.username,
-                                                                                           password: "123456",
-                                                                                           email: usr.email,
-                                                                                           firstName: usr.firstName,
-                                                                                           lastName: usr.lastName,
-                                                                                           notes: usr.notes,
-                                                                                           locationId: usr.locationId,
-                                                                                           groupIds: groupIds,
-                                                                                           teacherGroups: usr.teacherGroups))
-                    dump(y)
-                    print(y)
-                    
-                    
-                    
-                    
-                    
-                        //                    try await processTeacherGroups()
-                        //
-                        //                    try await processTeacherUsers()
-                        //
-                    let resposnse: MDMGroupsResponse = try await ApiManager.shared.getData(from: .getGroups)
-                    dump(resposnse)
-                        // get the locations
-                    let mdmGroups = resposnse.groups
-                    let locationsIds = Set(mdmGroups.map { $0.locationId })
-                        // check in each locations if there is a tracherGroup name
-                    for locationid in locationsIds {
-                        let hasMDMTeacherGroup = mdmGroups.contains {
-                            $0.locationId == locationid && $0.name == "SpecialTracherGroupName"
-                        }
-                        if !hasMDMTeacherGroup {
-                            print("need to create texhers group for \(locationid)")
-                        }
+                
+                Button("Authenticate Teacher") {
+                    Task {
+                            //                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: ApiHelper.username, password: ApiHelper.password))
+                            //                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "teacherlila", password: "123456"))
+                            //                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "FC1E83770E22", password: "123456"))
+                        let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "coorddavid", password: "123456"))
+                        print(resposnse.token)
+                        dump(resposnse)
                     }
-                    
-                    
-                    let mdmGroup = MDMGroup(id: 0, locationId: 1, name: "QWQWQW", description: "yes no maybe", userCount: 0, acl: MDMGroup.Acl(teacher: "allow", parent: "inherit"), modified: "inherit")
-                    let resposnseaddAGroup: AddAUserResponse = try await ApiManager.shared.getData(from: .addGroup(mdmGroup: mdmGroup))
-                    print(resposnseaddAGroup)
-                    dump(resposnseaddAGroup)
-                    let mdmGroup2 = MDMGroup(id: resposnseaddAGroup.id, locationId: 1, name: "AAAAPI Updated Group2", description: "I updatted it now after created", userCount: 0, acl: MDMGroup.Acl(teacher: "inherit", parent: "inherit"), modified: "inherit")
-                    let responseFromUpdatingUser = try await ApiManager.shared.getDataNoDecode(from: .updateaGroup(mdmGroup: mdmGroup2))
-                    print(responseFromUpdatingUser)
-                    dump(responseFromUpdatingUser)
-                    
-                        //                        await processSchoolClasses()
-                        //                        print("we will process the classes")
                 }
-            }
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
-            }
-            
-            
-            Button("Authenticate Teacher") {
-                Task {
-                        //                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: ApiHelper.username, password: ApiHelper.password))
-                        //                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "teacherlila", password: "123456"))
-                        //                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "FC1E83770E22", password: "123456"))
-                    let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "coorddavid", password: "123456"))
-                    print(resposnse.token)
-                    dump(resposnse)
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
                 }
-            }
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
-            }
-            
-            Button {
-                print("getting the apps")
-                Task {
-                    do {
-                        let appResponse: AppResponse = try await ApiManager.shared.getData(from: .getApps)
-                            //                        dump(appResponse)
-                        
-                        for app in appResponse.apps {
-                                //                            let record = CKRecord(recordType: "appProfiles", recordID: CKRecord.ID(recordName: "\(app.bundleId)"))
-                            do {
-                                print(app.name, app.bundleId, app.icon)
+                
+                Button {
+                    print("getting the apps")
+                    Task {
+                        do {
+                            let appResponse: AppResponse = try await ApiManager.shared.getData(from: .getApps)
+                                //                        dump(appResponse)
+                            
+                            for app in appResponse.apps {
+                                    //                            let record = CKRecord(recordType: "appProfiles", recordID: CKRecord.ID(recordName: "\(app.bundleId)"))
+                                do {
+                                    print(app.name, app.bundleId, app.icon)
+                                    
+                                        //                                if app.name.contains("TeachMe") {
+                                        //                                    print(app.name, "it is doodle")
+                                        ////                                let recordID = CKRecord.ID(recordName: "\(app.bundleId)-\(app.id)")
+                                        //                                    let record = CKRecord(recordType: "appProfiles", recordID: CKRecord.ID(recordName: "\(app.bundleId)"))
+                                        //                                    record["appBundleId"] = app.bundleId
+                                        //                                    record["name"] = app.name
+                                        //                                    record["id"] = app.id
+                                        //                                    record["locationId"] = app.locationId
+                                        //                                    record["description"] = app.description
+                                        //                                    record["icon"] = app.icon
+                                        //                                    record["category"] = "dummy"
+                                        //                                    record["profileName"] = "duummy"
+                                        //                                    /// save it
+                                        //                                    dbs.save(record) { (record, error) in
+                                        //                                    print("```* - * - Saving . . .")
+                                        //                                        //   DispatchQueue.main.async {
+                                        //                                    if let error = error {
+                                        //                                        print("```* - * - error saving it \(error)")
+                                        //                                    } else {
+                                        //                                        print("```* - * - succesful ***")
+                                        //                                        print(record as Any)
+                                        //                                    }
+                                        //                                         }
+                                        //                                } else {
+                                        ////                                    print("not doing ", app.name)
+                                        ////                                    print("\(app.bundleId)-\(app.id)")
+                                        //                                }
+                                        //                            }
+                                }
                                 
-                                    //                                if app.name.contains("TeachMe") {
-                                    //                                    print(app.name, "it is doodle")
-                                    ////                                let recordID = CKRecord.ID(recordName: "\(app.bundleId)-\(app.id)")
-                                    //                                    let record = CKRecord(recordType: "appProfiles", recordID: CKRecord.ID(recordName: "\(app.bundleId)"))
-                                    //                                    record["appBundleId"] = app.bundleId
-                                    //                                    record["name"] = app.name
-                                    //                                    record["id"] = app.id
-                                    //                                    record["locationId"] = app.locationId
-                                    //                                    record["description"] = app.description
-                                    //                                    record["icon"] = app.icon
-                                    //                                    record["category"] = "dummy"
-                                    //                                    record["profileName"] = "duummy"
-                                    //                                    /// save it
-                                    //                                    dbs.save(record) { (record, error) in
-                                    //                                    print("```* - * - Saving . . .")
-                                    //                                        //   DispatchQueue.main.async {
-                                    //                                    if let error = error {
-                                    //                                        print("```* - * - error saving it \(error)")
-                                    //                                    } else {
-                                    //                                        print("```* - * - succesful ***")
-                                    //                                        print(record as Any)
-                                    //                                    }
-                                    //                                         }
-                                    //                                } else {
-                                    ////                                    print("not doing ", app.name)
-                                    ////                                    print("\(app.bundleId)-\(app.id)")
-                                    //                                }
-                                    //                            }
+                                
+                                catch {
+                                    print("Error fetching records: \(error.localizedDescription)")
+                                }
                             }
                             
-                            
-                            catch {
-                                print("Error fetching records: \(error.localizedDescription)")
-                            }
+                        } catch let error as ApiError {
+                                //  FIXME: -  put in alert that will display approriate error message
+                            print(error.description)
                         }
                         
-                    } catch let error as ApiError {
-                            //  FIXME: -  put in alert that will display approriate error message
-                        print(error.description)
+                        print("in task after do")
+                        
                     }
+                    print("after task")
                     
-                    print("in task after do")
-                    
+                } label: {
+                    Text("get the apps")
                 }
-                print("after task")
-                
-            } label: {
-                Text("get the apps")
             }
+        } else {
+            Text("Is Loading")
         }
     }
     

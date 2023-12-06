@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>716</string>
+					<string>764</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>715</string>
+					<string>763</string>
 					<key>Timestamp</key>
-					<string>723524426.796964</string>
+					<string>723590633.9686249</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -57,13 +57,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>334</string>
+					<string>378</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>333</string>
+					<string>377</string>
 					<key>Timestamp</key>
-					<string>723524426.796945</string>
+					<string>723590633.968642</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -79,15 +79,15 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>    
+				<string>    }
 </string>
 				<key>leading</key>
-				<string>        }
-    }
+				<string>            throw SchoolClassError.createClassError
+        }
 </string>
 				<key>trailing</key>
 				<string>}
-
+    
 
 </string>
 			</dict>

@@ -36,6 +36,8 @@ struct list_the_usersApp: App {
     @StateObject var appxViewModel              = AppxViewModel()
     @StateObject var categoryViewModel          = CategoryViewModel()
     @StateObject var appsViewModel              = AppsViewModel()
+    @StateObject var teacherItems               = TeacherItems.shared
+    
     
     
 
@@ -44,7 +46,8 @@ struct list_the_usersApp: App {
         WindowGroup {
 //            TestOutView()
 // NavigateToStudentAppProfile()
-            if appWorkViewModel.isLoaded  {
+
+            if appWorkViewModel.isLoaded && teacherItems.isLoaded {
                 DashboardView()
                     .environmentObject(usersViewModel)
                     .environmentObject(classDetailViewModel)
@@ -54,13 +57,27 @@ struct list_the_usersApp: App {
                     .environmentObject(appxViewModel)
                     .environmentObject(categoryViewModel)
                     .environmentObject(appsViewModel)
-
+                    .environmentObject(TeacherItems.shared)
 
             } else {
                 ProgressView()
             }
+ /*
+            if appWorkViewModel.isLoaded  {
+                TestOutView()
+                    .environmentObject(TeacherItems.shared)
+                    .onAppear {
+                        Task {
+                            await TeacherItems.shared.exSetup()
+                        }
+                    }
+
+            } else {
+                ProgressView()
+            }
+*/
  
-            
+ 
 //             if appWorkViewModel.isLoaded {
 //                TabBarController()
 //                    .environmentObject(usersViewModel)

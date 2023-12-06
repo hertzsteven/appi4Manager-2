@@ -66,6 +66,7 @@ struct CategoryDisclosureView: View {
     
     @EnvironmentObject var appxViewModel :    AppxViewModel
     @EnvironmentObject var appWorkViewModel : AppWorkViewModel
+    @EnvironmentObject var teacherItems : TeacherItems
     @EnvironmentObject var categoryViewModel: CategoryViewModel
     
     @State var appSelected: Array<Int> = [] {
