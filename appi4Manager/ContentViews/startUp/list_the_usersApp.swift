@@ -23,7 +23,7 @@ struct list_the_usersApp: App {
         FirebaseApp.configure()
         print("Configured Firebase")
         Task {
-                 await TeacherItems.shared.setup()
+                 await TeacherItems.shared.exSetup()
         }
 
     }

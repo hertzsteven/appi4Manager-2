@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>690</string>
+					<string>716</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>689</string>
+					<string>715</string>
 					<key>Timestamp</key>
-					<string>723485518.581391</string>
+					<string>723524426.796964</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -34,16 +34,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>    
+				<string>            let justUserIds = filteredUsers.map { $0.id }
 </string>
 				<key>leading</key>
-				<string>}
-    
+				<string>            let filteredUsers = resposnse.users.filter { $0.locationId == locationId }
+                // make an array from the user ids
 </string>
 				<key>trailing</key>
-				<string>
-
-
+				<string>            
+            _ = try await ApiManager.shared.getDataNoDecode(from: .assignToClass(uuid: theuuid, students: justUserIds, teachers: []))
+            
 </string>
 			</dict>
 			<key>type</key>
@@ -57,13 +57,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>308</string>
+					<string>334</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>307</string>
+					<string>333</string>
 					<key>Timestamp</key>
-					<string>723485518.581417</string>
+					<string>723524426.796945</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -82,13 +82,13 @@
 				<string>    
 </string>
 				<key>leading</key>
-				<string>        //    var teacherItems = TeacherItems()
-    
+				<string>        }
+    }
 </string>
 				<key>trailing</key>
-				<string>    
-    var body: some View {
-        VStack(spacing: 12) {
+				<string>}
+
+
 </string>
 			</dict>
 			<key>type</key>
