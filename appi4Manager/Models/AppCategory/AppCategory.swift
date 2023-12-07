@@ -125,17 +125,17 @@ class CategoryViewModel: ObservableObject {
 //            print("done")
 //        }
 
-        
-        Task {
-            let appctgs = await FirestoreManager().fetchAndHandleAppCategories10(collectionName: "appCategories")
-            DispatchQueue.main.async {
-                self.appCategories = appctgs
-                self.isLoaded = true
-                dump(appctgs)
-                print("done")
+        if isLoaded == false {
+            Task {
+                let appctgs = await FirestoreManager().fetchAndHandleAppCategories10(collectionName: "appCategories")
+                DispatchQueue.main.async {
+                    self.appCategories = appctgs
+                    self.isLoaded = true
+                    dump(appctgs)
+                    print("done")
+                }
             }
         }
-
     }
 }
 

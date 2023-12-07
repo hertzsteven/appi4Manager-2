@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>764</string>
+					<string>278</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>763</string>
+					<string>277</string>
 					<key>Timestamp</key>
-					<string>723590633.9686249</string>
+					<string>723666467.501442</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -27,23 +27,23 @@
 					<key>payload</key>
 					<dict>
 						<key>relative-path</key>
-						<string>appi4Manager/ContentViews/Misc/TestOutView.swift</string>
+						<string>appi4Manager/ContentViews/StudentAppProfiWorking/CategoryDisclosureView.swift</string>
 					</dict>
 				</dict>
 			</dict>
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>            let justUserIds = filteredUsers.map { $0.id }
+				<string>            Task {
 </string>
 				<key>leading</key>
-				<string>            let filteredUsers = resposnse.users.filter { $0.locationId == locationId }
-                // make an array from the user ids
+				<string>            //        }
+        .onAppear {
 </string>
 				<key>trailing</key>
-				<string>            
-            _ = try await ApiManager.shared.getDataNoDecode(from: .assignToClass(uuid: theuuid, students: justUserIds, teachers: []))
-            
+				<string>                do {
+                    categoryViewModel.loadAppCategories()
+                    print("in task")
 </string>
 			</dict>
 			<key>type</key>
@@ -57,13 +57,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>378</string>
+					<string>45</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>377</string>
+					<string>44</string>
 					<key>Timestamp</key>
-					<string>723590633.968642</string>
+					<string>723648571.452003</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -72,25 +72,27 @@
 					<key>payload</key>
 					<dict>
 						<key>relative-path</key>
-						<string>appi4Manager/ContentViews/Misc/TestOutView.swift</string>
+						<string>appi4Manager/Models/App/AppxViewModel.swift</string>
 					</dict>
 				</dict>
 			</dict>
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>    }
+				<string>    func loadData2() async throws {
 </string>
 				<key>leading</key>
-				<string>            throw SchoolClassError.createClassError
-        }
+				<string>    
+    
 </string>
 				<key>trailing</key>
-				<string>}
-    
-
+				<string>        guard !isLoading else { return }
+        
+        isLoading = true
 </string>
 			</dict>
+			<key>title</key>
+			<string>fires up in the display of categories for a student</string>
 			<key>type</key>
 			<string>bookmark</string>
 		</dict>

@@ -65,7 +65,7 @@ struct CategoryDisclosureView: View {
     @Binding var isSheetPresented: Bool
     
     @EnvironmentObject var teacherItems: TeacherItems
-
+    
     @EnvironmentObject var appxViewModel :    AppxViewModel
     @EnvironmentObject var appWorkViewModel : AppWorkViewModel
     @EnvironmentObject var categoryViewModel: CategoryViewModel
@@ -80,11 +80,11 @@ struct CategoryDisclosureView: View {
     }
     
     @State var accumulatex: Double = 0
-
+    
     var filteredData: [Appx] {
         appxViewModel.appx.filter { appSelected.contains($0.id) }
     }
-
+    
     @State private var selectedSegment = 0
     @Binding var sessionLength          : Double
     @Binding var oneAppLock             : Bool
@@ -92,11 +92,14 @@ struct CategoryDisclosureView: View {
     @Binding var apps                   : [Int]
     
     var body: some View {
-        
-        if accumulatex > 0 {
-            GroupBox {
-//                appPickerView()
-                Text(" the new app code selected\(appCode)")
+        ZStack   {
+            if categoryViewModel.isLoaded   {
+                
+                
+                if accumulatex > 0 {
+                    GroupBox {
+                            //                appPickerView()
+                        Text(" the new app code selected\(appCode)")
                         Picker("Apps", selection: $selectedSegment) {
                             ForEach(appSelected, id: \.self) { appsel in
                                     //                        Text(appxViewModel.appx.filter { appSelected.contains($0.id) }[index].name).tag(index)
@@ -108,155 +111,157 @@ struct CategoryDisclosureView: View {
                                     }
                                 }
                             }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .pickerStyle(.menu)
-                }
-                Stepper("Session Length: \(Int(sessionLength))", value: $sessionLength, in: 5...60, step: 5)
-                
-                HStack {
-                    Toggle("Single App", isOn: $oneAppLock)
-                    Button("Reset") {
-                        withAnimation {
-                            accumulatex = 0
-                            appSelected.removeAll()
-                            sessionLength = 20
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .pickerStyle(.menu)
                         }
+                        Stepper("Session Length: \(Int(sessionLength))", value: $sessionLength, in: 5...60, step: 5)
                         
-                    }
-                }
-            }  label: {
-                HStack {
-                    Text("**App Profile App Count:** \(appSelected.count)")
-                    Spacer()
-                    Button("Done") {
-//                        withAnimation {
-//                            accumulatex = 0
-//                            appSelected.removeAll()
-//                            lengthOfSesssion = 20
-//                        }
-                        selectedSession = Session(apps: appSelected, sessionLength: sessionLength, oneAppLock: oneAppLock)
-                        isSheetPresented = false
-
-                        
-                    }
-                }
-            }
-            .padding()
-            .cornerRadius(12.0, antialiased: true)
-            .opacity(accumulatex > 0 ? 1 : 0)
-            .animation(Animation.easeInOut(duration: 2.0), value: accumulatex)
-            .groupBoxStyle(HeaderGroupBoxStyle())
-            
-        }
-        
-        ScrollView(.vertical, showsIndicators: false) {
-            ForEach(categoryViewModel.filterCategoriesinLocation(teacherItems.currentLocation.id)) { catg in
-                DisclosureGroup {
-                    ForEach(catg.appIds, id: \.self) { appId in
-                        
-                        if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
-//                        LblExtractedSubview(matchedApp: matchedApp)
-                            
-                            Button {
-                               if let idx = appSelected.firstIndex(of: appId) {
-                                    appSelected.remove(at: idx)
-                                    accumulatex -= 1
-                                } else {
-//                                if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
-                                    withAnimation {
-                                        accumulatex += 1
-                                        appSelected.append(matchedApp.id)
-                                        appCode = matchedApp.id
-                                    }
+                        HStack {
+                            Toggle("Single App", isOn: $oneAppLock)
+                            Button("Reset") {
+                                withAnimation {
+                                    accumulatex = 0
+                                    appSelected.removeAll()
+                                    sessionLength = 20
                                 }
-
-                            } label: {
-                                GroupBox {
-                                     HStack {
-                                         if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
-                                             if appSelected.contains(matchedApp.id) {
-                                                 Image(systemName: "checkmark.square")
-                                                     .foregroundColor(.blue)
-                                                     .scaleEffect(1.3)
-                                             } else {
-                                                 Image(systemName: "square")
-                                                     .foregroundColor(.blue)                                             }
-                                         }
-                                         
-                                         if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
-                                             AsyncImage(url: URL(string: matchedApp.icon)) { image in
-                                                 image.resizable()
-                                             } placeholder: {
-                                                 ProgressView()
-                                             }
-                                             .frame(width: 50, height: 50)
-                                             .padding([.leading])
-                                             
-                                         } else {
-                                             Text("the app Name is ")
-                                         }
-                                         
-                                         
-                                         if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
-                                             Text(" \(matchedApp.name)") // assuming Appx has a property name
-                                         } else {
-                                             Text("the app Name is ")
-                                         }
-                                         
-                                         Spacer()
-                                     }.frame(maxWidth: .infinity)
-                                }
-                                .groupBoxStyle(CardGroupBoxStyle(bgclr: UIColor(ciColor: .init(red: catg.colorRGB.red, green: catg.colorRGB.green, blue: catg.colorRGB.blue, alpha: catg.colorRGB.alpha))))
-                                .accentColor(Color.primary)
                                 
                             }
-
-
-
-                            /*
-                           .onTapGesture {
-                               
-                               if let idx = passedItemSelected.firstIndex(of: itm.id) {
-                                   passedItemSelected.remove(at: idx)
-                                   
-                               } else {
-                                   passedItemSelected.append(itm.id)
-                               }
-                           }
-        
-                           .onTapGesture {
-                               if (appSelected.firstIndex(where: { itm in
-                                   itm == matchedApp.id
-                               }) != nil)
-                               appSelected.append(matchedApp.id)
-                           }
- */
-                            
-                            
-                            
-                                //                        Text("the app Id is \(appId)")
+                        }
+                    }  label: {
+                        HStack {
+                            Text("**App Profile App Count:** \(appSelected.count)")
+                            Spacer()
+                            Button("Done") {
+                                    //                        withAnimation {
+                                    //                            accumulatex = 0
+                                    //                            appSelected.removeAll()
+                                    //                            lengthOfSesssion = 20
+                                    //                        }
+                                selectedSession = Session(apps: appSelected, sessionLength: sessionLength, oneAppLock: oneAppLock)
+                                isSheetPresented = false
+                                
+                                
+                            }
                         }
                     }
-                } label: {
-                    Label {
-                        Text(catg.title.capitalized)
-                            
-                    } icon: {
-                        Image(systemName: catg.symbolName)
-                    }
-                    .font(.title3)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color(.init(red: catg.colorRGB.red, green: catg.colorRGB.green, blue: catg.colorRGB.blue, alpha: catg.colorRGB.alpha)))
-//                    .background(Color.red)
-                    .cornerRadius(10)
-//                    .backgroundStyle(Color(.init(red: catg.colorRGB.red, green: catg.colorRGB.green, blue: catg.colorRGB.blue, alpha: catg.colorRGB.alpha)))
+                    .cornerRadius(12.0, antialiased: true)
+                    .opacity(accumulatex > 0 ? 1 : 0)
+                    .animation(Animation.easeInOut(duration: 2.0), value: accumulatex)
+                    .groupBoxStyle(HeaderGroupBoxStyle())
+                    
                 }
-                .padding()
                 
-            }.onAppear {
-                print("ckckc")
+                ScrollView(.vertical, showsIndicators: false) {
+                    ForEach(categoryViewModel.filterCategoriesinLocation(teacherItems.currentLocation.id)) { catg in
+                        DisclosureGroup {
+                            ForEach(catg.appIds, id: \.self) { appId in
+                                
+                                if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
+                                        //                        LblExtractedSubview(matchedApp: matchedApp)
+                                    
+                                    Button {
+                                        if let idx = appSelected.firstIndex(of: appId) {
+                                            appSelected.remove(at: idx)
+                                            accumulatex -= 1
+                                        } else {
+                                                //                                if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
+                                            withAnimation {
+                                                accumulatex += 1
+                                                appSelected.append(matchedApp.id)
+                                                appCode = matchedApp.id
+                                            }
+                                        }
+                                        
+                                    } label: {
+                                        GroupBox {
+                                            HStack {
+                                                if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
+                                                    if appSelected.contains(matchedApp.id) {
+                                                        Image(systemName: "checkmark.square")
+                                                            .foregroundColor(.blue)
+                                                            .scaleEffect(1.3)
+                                                    } else {
+                                                        Image(systemName: "square")
+                                                        .foregroundColor(.blue)                                             }
+                                                }
+                                                
+                                                if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
+                                                    AsyncImage(url: URL(string: matchedApp.icon)) { image in
+                                                        image.resizable()
+                                                    } placeholder: {
+                                                        ProgressView()
+                                                    }
+                                                    .frame(width: 50, height: 50)
+                                                    .padding([.leading])
+                                                    
+                                                } else {
+                                                    Text("the app Name is ")
+                                                }
+                                                
+                                                
+                                                if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
+                                                    Text(" \(matchedApp.name)") // assuming Appx has a property name
+                                                } else {
+                                                    Text("the app Name is ")
+                                                }
+                                                
+                                                Spacer()
+                                            }.frame(maxWidth: .infinity)
+                                        }
+                                        .groupBoxStyle(CardGroupBoxStyle(bgclr: UIColor(ciColor: .init(red: catg.colorRGB.red, green: catg.colorRGB.green, blue: catg.colorRGB.blue, alpha: catg.colorRGB.alpha))))
+                                        .accentColor(Color.primary)
+                                        
+                                    }
+                                    
+                                    
+                                    
+                                    /*
+                                     .onTapGesture {
+                                     
+                                     if let idx = passedItemSelected.firstIndex(of: itm.id) {
+                                     passedItemSelected.remove(at: idx)
+                                     
+                                     } else {
+                                     passedItemSelected.append(itm.id)
+                                     }
+                                     }
+                                     
+                                     .onTapGesture {
+                                     if (appSelected.firstIndex(where: { itm in
+                                     itm == matchedApp.id
+                                     }) != nil)
+                                     appSelected.append(matchedApp.id)
+                                     }
+                                     */
+                                    
+                                    
+                                    
+                                        //                        Text("the app Id is \(appId)")
+                                }
+                            }
+                        } label: {
+                            Label {
+                                Text(catg.title.capitalized)
+                                
+                            } icon: {
+                                Image(systemName: catg.symbolName)
+                            }
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color(.init(red: catg.colorRGB.red, green: catg.colorRGB.green, blue: catg.colorRGB.blue, alpha: catg.colorRGB.alpha)))
+                                //                    .background(Color.red)
+                            .cornerRadius(10)
+                                //                    .backgroundStyle(Color(.init(red: catg.colorRGB.red, green: catg.colorRGB.green, blue: catg.colorRGB.blue, alpha: catg.colorRGB.alpha)))
+                        }
+                        .padding()
+                        
+                    }.onAppear {
+                        print("ckckc")
+                    }
+                }
             }
         }
             //        .task {
@@ -272,17 +277,24 @@ struct CategoryDisclosureView: View {
         .onAppear {
             Task {
                 do {
+                    categoryViewModel.loadAppCategories()
                     print("in task")
                     try await appxViewModel.loadData2()
+                    print("before dump of apps in do 1")
                     dump(appxViewModel.appx)
-                    print("in xxxx")
+                    print("before dump of appCategories in do")
+                    dump(categoryViewModel.appCategories)
+                    print("before dump of apps in do ")
+                    dump(appxViewModel.appx)
+                    
                 } catch {
                     print("error loading apps")
                 }
             }
-            print("aaaa")
-            dump(categoryViewModel.appCategories)
-            dump(appxViewModel.appx)
+                //            print("before dump of appCategories in do")
+                //            dump(categoryViewModel.appCategories)
+                //            print("before dump of apps in do ")
+                //            dump(appxViewModel.appx)
         }
     }
     private func appPickerView() -> some View {
