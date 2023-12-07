@@ -140,7 +140,7 @@ struct SchoolClassEditorContDup: View {
     @EnvironmentObject var teacherItems: TeacherItems
 
     
-    @EnvironmentObject var appWorkViewModel: AppWorkViewModel
+    // @EnvironmentObject var appWorkViewModel: AppWorkViewModel
     
     
     @Environment(\.dismiss) private var dismiss

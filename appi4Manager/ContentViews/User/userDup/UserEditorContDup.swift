@@ -94,7 +94,7 @@ struct UserEditorContDup: View {
     @EnvironmentObject var teacherItems: TeacherItems
     @EnvironmentObject var classesViewModel: ClassesViewModel
     @EnvironmentObject var usersViewModel: UsersViewModel
-    @EnvironmentObject var appWorkViewModel: AppWorkViewModel
+    // @EnvironmentObject var appWorkViewModel: AppWorkViewModel
     @EnvironmentObject var studentPicStubViewModel: StudentPicStubViewModel
 
 //    @EnvironmentObject var classDetailViewModel: ClassDetailViewModel

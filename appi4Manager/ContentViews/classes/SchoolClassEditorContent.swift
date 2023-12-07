@@ -59,7 +59,7 @@ struct SchoolClassEditorContent: View {
     @EnvironmentObject var classDetailViewModel: ClassDetailViewModel
     @EnvironmentObject var studentPicStubViewModel: StudentPicStubViewModel
     
-    @EnvironmentObject var appWorkViewModel: AppWorkViewModel
+    // @EnvironmentObject var appWorkViewModel: AppWorkViewModel
     
     
     @Environment(\.dismiss) private var dismiss

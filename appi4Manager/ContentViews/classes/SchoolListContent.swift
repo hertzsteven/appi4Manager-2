@@ -19,7 +19,7 @@ struct SchoolListContent: View {
 //    @EnvironmentObject var classDetailViewModel: ClassDetailViewModel
     @EnvironmentObject var studentPicStubViewModel: StudentPicStubViewModel
     @EnvironmentObject var classesViewModel: ClassesViewModel
-    @EnvironmentObject var appWorkViewModel: AppWorkViewModel
+    // @EnvironmentObject var appWorkViewModel: AppWorkViewModel
     @EnvironmentObject var teacherItems: TeacherItems
 
     @State var newClass: SchoolClass

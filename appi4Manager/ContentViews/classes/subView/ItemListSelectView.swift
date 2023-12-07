@@ -10,7 +10,7 @@ import SwiftUI
 struct ItemListSelectView<theItemsToSelect: ItemsToSelectRepresentable> : View {
     
     @EnvironmentObject var teacherItems: TeacherItems
-    @EnvironmentObject var appWorkViewModel: AppWorkViewModel
+    // @EnvironmentObject var appWorkViewModel: AppWorkViewModel
 
     @Binding var passedItemSelected: Array<Int>
     

@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ItemListSelectViewWithPic<theItemsToSelect: ItemsToSelectRepresentablewithPic> : View {
     
-    @EnvironmentObject var appWorkViewModel: AppWorkViewModel
+    // @EnvironmentObject var appWorkViewModel: AppWorkViewModel
     
     @EnvironmentObject var teacherItems: TeacherItems
 

@@ -28,7 +28,7 @@ struct list_the_usersApp: App {
 
     }
     
-    @StateObject var appWorkViewModel           = AppWorkViewModel.instantiate()
+//    @StateObject var appWorkViewModel           = AppWorkViewModel()
     @StateObject var usersViewModel             = UsersViewModel()
     @StateObject var classDetailViewModel       = ClassDetailViewModel()
     @StateObject var studentPicStubViewModel    = StudentPicStubViewModel()
@@ -47,13 +47,14 @@ struct list_the_usersApp: App {
 //            TestOutView()
 // NavigateToStudentAppProfile()
 
-            if appWorkViewModel.isLoaded && teacherItems.isLoaded {
+//            if appWorkViewModel.isLoaded && teacherItems.isLoaded {
+            if teacherItems.isLoaded {
                 DashboardView()
                     .environmentObject(usersViewModel)
                     .environmentObject(classDetailViewModel)
                     .environmentObject(studentPicStubViewModel)
                     .environmentObject(classesViewModel)
-                    .environmentObject(appWorkViewModel)
+//                    .environmentObject(appWorkViewModel)
                     .environmentObject(appxViewModel)
                     .environmentObject(categoryViewModel)
                     .environmentObject(appsViewModel)

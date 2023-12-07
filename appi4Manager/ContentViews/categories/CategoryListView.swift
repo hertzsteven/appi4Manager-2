@@ -12,7 +12,7 @@ struct CategoryListView: View {
     @EnvironmentObject var teacherItems: TeacherItems
     
     @EnvironmentObject var appsViewModel : AppsViewModel
-    @EnvironmentObject var appWorkViewModel : AppWorkViewModel
+    // @EnvironmentObject var appWorkViewModel : AppWorkViewModel
     @EnvironmentObject var categoryViewModel: CategoryViewModel
 
     //    @EnvironmentObject var model: ViewModel

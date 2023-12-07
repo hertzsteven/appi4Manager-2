@@ -47,7 +47,7 @@ struct CategoryEditorContView: View {
     @EnvironmentObject  var appxViewModel:     AppxViewModel
     @StateObject        var appsViewModel:      AppsViewModel
     @EnvironmentObject  var categoryViewModel:  CategoryViewModel
-    @EnvironmentObject var appWorkViewModel : AppWorkViewModel
+    // @EnvironmentObject var appWorkViewModel : AppWorkViewModel
     @EnvironmentObject var teacherItems: TeacherItems
 
 

@@ -14,7 +14,8 @@ import Foundation
         //  MARK: -  For MYNFR
 //        static let baseURL =  "https://developitsnfrEDU.jamfcloud.com/api"
 //        static let apiKey = "Basic NjUzMTkwNzY6UFFMNjFaVUU2RlFOWDVKSlMzTE5CWlBDS1BETVhMSFA="
-        static let classuuid = "5660a0b6-7a4c-4749-abb2-735b3476a927"
+
+//        static let classuuid = "5660a0b6-7a4c-4749-abb2-735b3476a927"
 
 
         static let company = "2001128"

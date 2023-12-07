@@ -21,7 +21,7 @@ import SwiftUI
 struct ItemListSelectViewStr<theItemsToSelect: ItemsToSelectRepresentableStr> : View {
     
 // fix
-    @EnvironmentObject var appWorkViewModel: AppWorkViewModel
+    // @EnvironmentObject var appWorkViewModel: AppWorkViewModel
 
     @Binding var passedItemSelected: Array<String>
     

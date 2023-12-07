@@ -18,7 +18,7 @@ struct SchoolClassDetailContent: View {
     @Binding var isNew: Bool
     
     @EnvironmentObject var teacherItems: TeacherItems
-    @EnvironmentObject var appWorkViewModel: AppWorkViewModel
+    // @EnvironmentObject var appWorkViewModel: AppWorkViewModel
     @EnvironmentObject var classesViewModel: ClassesViewModel
     @Environment(\.dismiss) private var dismiss
     @Environment(\.editMode) var editMode

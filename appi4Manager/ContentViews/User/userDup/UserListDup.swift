@@ -21,7 +21,7 @@ struct UserListDup: View {
 
     @EnvironmentObject var usersViewModel: UsersViewModel
     @EnvironmentObject var studentPicStubViewModel: StudentPicStubViewModel
-    @EnvironmentObject var appWorkViewModel: AppWorkViewModel
+    // @EnvironmentObject var appWorkViewModel: AppWorkViewModel
     
     @State var newUser: User
     @State private var isAddingNewUser = false

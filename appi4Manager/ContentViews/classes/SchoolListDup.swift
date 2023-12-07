@@ -12,7 +12,7 @@ struct SchoolListDup: View {
     @EnvironmentObject var teacherItems: TeacherItems
 
     @EnvironmentObject var classesViewModel: ClassesViewModel
-    @EnvironmentObject var appWorkViewModel: AppWorkViewModel
+    // @EnvironmentObject var appWorkViewModel: AppWorkViewModel
     
     @State          var newClass: SchoolClass
     @State private  var isAddingNewSchoolClass = false

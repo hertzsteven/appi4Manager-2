@@ -12,7 +12,7 @@ struct UserDetailContent: View {
 
     @EnvironmentObject var studentPicStubViewModel: 	StudentPicStubViewModel
     @EnvironmentObject var usersViewModel: 			UsersViewModel
-    @EnvironmentObject var appWorkViewModel: 			AppWorkViewModel
+    // @EnvironmentObject var appWorkViewModel:             AppWorkViewModel
     @EnvironmentObject var teacherItems: TeacherItems
 
     @Environment(\.dismiss) private var dismiss

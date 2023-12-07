@@ -11,7 +11,7 @@ import SwiftUI
 //    
 //    @EnvironmentObject var usersViewModel: UsersViewModel
 //    @EnvironmentObject var classDetailViewModel: ClassDetailViewModel
-//    @EnvironmentObject var appWorkViewModel: AppWorkViewModel
+//    // @EnvironmentObject var appWorkViewModel: AppWorkViewModel
 //
 //    @Binding var selectedStudents: Array<Int>
 //    @Binding var selectedTeachers: Array<Int>

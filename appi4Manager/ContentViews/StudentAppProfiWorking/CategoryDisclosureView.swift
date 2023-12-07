@@ -67,7 +67,7 @@ struct CategoryDisclosureView: View {
     @EnvironmentObject var teacherItems: TeacherItems
     
     @EnvironmentObject var appxViewModel :    AppxViewModel
-    @EnvironmentObject var appWorkViewModel : AppWorkViewModel
+    // @EnvironmentObject var appWorkViewModel : AppWorkViewModel
     @EnvironmentObject var categoryViewModel: CategoryViewModel
     
     @State var appSelected: Array<Int> = [] {
@@ -92,7 +92,7 @@ struct CategoryDisclosureView: View {
     @Binding var apps                   : [Int]
     
     var body: some View {
-        ZStack   {
+        Group   {
             if categoryViewModel.isLoaded   {
                 
                 
