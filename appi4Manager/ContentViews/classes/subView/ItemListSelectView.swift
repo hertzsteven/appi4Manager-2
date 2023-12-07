@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ItemListSelectView<theItemsToSelect: ItemsToSelectRepresentable> : View {
     
+    @EnvironmentObject var teacherItems: TeacherItems
     @EnvironmentObject var appWorkViewModel: AppWorkViewModel
 
     @Binding var passedItemSelected: Array<Int>
@@ -29,7 +30,7 @@ struct ItemListSelectView<theItemsToSelect: ItemsToSelectRepresentable> : View {
             
             
             let itemFilter1: (theItemsToSelect) -> Bool = { item in
-                item.locationId == appWorkViewModel.currentLocation.id
+                item.locationId == teacherItems.currentLocation.id
             }
 
             let filteredItems = itemsToList.filter(itemFilter1)

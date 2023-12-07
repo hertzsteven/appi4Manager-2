@@ -20,6 +20,7 @@ struct SchoolListContent: View {
     @EnvironmentObject var studentPicStubViewModel: StudentPicStubViewModel
     @EnvironmentObject var classesViewModel: ClassesViewModel
     @EnvironmentObject var appWorkViewModel: AppWorkViewModel
+    @EnvironmentObject var teacherItems: TeacherItems
 
     @State var newClass: SchoolClass
     @State private var isAddingNewSchoolClass = false
@@ -32,7 +33,7 @@ struct SchoolListContent: View {
 //        NavigationView {
         List {
             ForEach($classesViewModel.schoolClasses.filter({ schoolClass in
-                schoolClass.locationId.wrappedValue == appWorkViewModel.currentLocation.id && !(schoolClass.uuid.wrappedValue == appWorkViewModel.getpicClass())
+                schoolClass.locationId.wrappedValue == teacherItems.currentLocation.id && !(schoolClass.uuid.wrappedValue == teacherItems.getpicClass())
             })) { theClass in
                 NavigationLink(value: theClass) {
                     VStack(alignment: .leading, spacing: 6.0) {
@@ -55,7 +56,7 @@ struct SchoolListContent: View {
                 Button {
                     newClass = SchoolClass.makeDefault()
                     isAddingNewSchoolClass = true
-                    appWorkViewModel.doingEdit = true
+                    teacherItems.doingEdit = true
                 } label: {
                     Image(systemName: "plus")
                 }
@@ -63,15 +64,15 @@ struct SchoolListContent: View {
       
             ToolbarItem(placement: .navigationBarLeading) {
                 Menu {
-                    Picker("Pick a location", selection: $appWorkViewModel.selectedLocationIdx) {
-                        ForEach(0 ..< appWorkViewModel.locations.count) { index in
-                            Text(appWorkViewModel.locations[index].name)
+                    Picker("Pick a location", selection: $teacherItems.selectedLocationIdx) {
+                        ForEach(0 ..< teacherItems.MDMlocations.count) { index in
+                            Text(teacherItems.MDMlocations[index].name)
                                 .tag(index)
                         }
                     }
                     .padding()
                 } label: {
-                    Text(appWorkViewModel.locations[appWorkViewModel.selectedLocationIdx].name).padding()
+                    Text(teacherItems.MDMlocations[teacherItems.selectedLocationIdx].name).padding()
                 }
                 .pickerStyle(.menu)
             }

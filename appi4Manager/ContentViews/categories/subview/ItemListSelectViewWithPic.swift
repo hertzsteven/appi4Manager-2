@@ -11,6 +11,9 @@ import SwiftUI
 struct ItemListSelectViewWithPic<theItemsToSelect: ItemsToSelectRepresentablewithPic> : View {
     
     @EnvironmentObject var appWorkViewModel: AppWorkViewModel
+    
+    @EnvironmentObject var teacherItems: TeacherItems
+
 
     @Binding var passedItemSelected: Array<Int>
     
@@ -30,7 +33,7 @@ struct ItemListSelectViewWithPic<theItemsToSelect: ItemsToSelectRepresentablewit
             
             
             let itemFilter1: (theItemsToSelect) -> Bool = { item in
-                item.locationId == appWorkViewModel.currentLocation.id
+                item.locationId == teacherItems.currentLocation.id
             }
 
             let filteredItems = itemsToList.filter(itemFilter1)

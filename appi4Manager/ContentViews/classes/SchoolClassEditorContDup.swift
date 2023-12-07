@@ -133,9 +133,12 @@ struct SchoolClassEditorContDup: View {
     
     @EnvironmentObject var classesViewModel: ClassesViewModel
     
+    
     @EnvironmentObject var usersViewModel: UsersViewModel
     @EnvironmentObject var classDetailViewModel: ClassDetailViewModel
     @EnvironmentObject var studentPicStubViewModel: StudentPicStubViewModel
+    @EnvironmentObject var teacherItems: TeacherItems
+
     
     @EnvironmentObject var appWorkViewModel: AppWorkViewModel
     
@@ -157,15 +160,15 @@ struct SchoolClassEditorContDup: View {
 //    @State var idxIntoClassList: Int
     
     var numberOfClassesInList :  Int {
-        classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).count
+        classesViewModel.filterSchoolClassesinLocation(teacherItems.currentLocation.id, dummyPicClassToIgnore: teacherItems.getpicClass() ).count
     }
     
     var listOfClasses: [SchoolClass]  {
-        classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() )
+        classesViewModel.filterSchoolClassesinLocation(teacherItems.currentLocation.id, dummyPicClassToIgnore: teacherItems.getpicClass() )
     }
     
     var idxLocationofClassInClassList: Int {
-             classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id, dummyPicClassToIgnore: appWorkViewModel.getpicClass() ).firstIndex(of: schoolClass) ?? 0
+             classesViewModel.filterSchoolClassesinLocation(teacherItems.currentLocation.id, dummyPicClassToIgnore: teacherItems.getpicClass() ).firstIndex(of: schoolClass) ?? 0
     }
     
 //   MARK: - Body View   * * * * * * * * * * * * * * * * * * * * * * * * 
@@ -206,7 +209,7 @@ struct SchoolClassEditorContDup: View {
             CollapsibleList(isListVisible: $isList1Visible, newItem: $newItem1, listData: $selectedStudents, title: "Students") {
                 Task {
                     do {
-                        teacherIds = try await appWorkViewModel.getUsersInTeacherGroup() ?? []
+                        teacherIds = try await teacherItems.getUsersInTeacherGroup() ?? []
                         passedItemSelected = selectedStudents
                         toShowStudentList.toggle()
                     } catch {
@@ -218,7 +221,7 @@ struct SchoolClassEditorContDup: View {
             CollapsibleList(isListVisible: $isList2Visible, newItem: $newItem2, listData: $selectedTeachers, title: "Teachers") {
                 Task {
                     do {
-                        teacherIds = try await appWorkViewModel.getUsersInTeacherGroup() ?? []
+                        teacherIds = try await teacherItems.getUsersInTeacherGroup() ?? []
                         passedItemSelected = selectedTeachers
                         toShowTeacherList.toggle()
                     } catch {
@@ -534,7 +537,7 @@ extension SchoolClassEditorContDup {
     
         //    fileprivate func addClassOld() {
         //
-        //        schoolClass.locationId = appWorkViewModel.currentLocation.id
+        //        schoolClass.locationId = teacherItems.currentLocation.id
         //
         //         Task {
         //             do {
@@ -806,7 +809,7 @@ struct SchoolClassEditorContDup_Previews: PreviewProvider {
                 .environmentObject(UsersViewModel())
                 .environmentObject(ClassDetailViewModel())
                 .environmentObject(StudentPicStubViewModel())
-                .environmentObject(AppWorkViewModel())
+//                .environmentObject(teacherItems())
         }
     }
 }

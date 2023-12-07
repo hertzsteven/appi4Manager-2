@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TabBarController : View {
   
-  @EnvironmentObject var appWorkViewModel: AppWorkViewModel
+//  @EnvironmentObject var appWorkViewModel: AppWorkViewModel
 
   
   var body: some View {

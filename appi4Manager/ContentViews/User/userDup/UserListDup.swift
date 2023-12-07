@@ -17,6 +17,8 @@ struct UserListDup: View {
     
     @State private var presentAlertSw: Bool = false
     
+    @EnvironmentObject var teacherItems: TeacherItems
+
     @EnvironmentObject var usersViewModel: UsersViewModel
     @EnvironmentObject var studentPicStubViewModel: StudentPicStubViewModel
     @EnvironmentObject var appWorkViewModel: AppWorkViewModel
@@ -57,9 +59,9 @@ struct UserListDup: View {
                     
                     LazyVGrid(columns: gridItems, spacing: 30) {
                         
-                        ForEach(usersViewModel.sortedUsersNonB(lastNameFilter: searchText, selectedLocationID: appWorkViewModel.selectedLocationIdx) ) {  theUser  in
+                        ForEach(usersViewModel.sortedUsersNonB(lastNameFilter: searchText, selectedLocationID: teacherItems.selectedLocationIdx) ) {  theUser  in
                             
-                            let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: appWorkViewModel.uniqueID)
+                            let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: teacherItems.uniqueID)
                             
                             UserCardVwDup(user: theUser, urlPic: imageURL)
                                 .foregroundColor(Color.primary)
@@ -88,18 +90,18 @@ struct UserListDup: View {
             ToolbarItem(placement: .navigationBarLeading , content: {
                 // select Location
                 Menu {
-                    Picker("Pick a location", selection: $appWorkViewModel.selectedLocationIdx) {
-                        ForEach(0..<appWorkViewModel.locations.count) { index in
-                            Text(appWorkViewModel.locations[index].name)
+                    Picker("Pick a location", selection: $teacherItems.selectedLocationIdx) {
+                        ForEach(0..<teacherItems.MDMlocations.count) { index in
+                            Text(teacherItems.MDMlocations[index].name)
                                 .tag(index)
                         }
                     }
                     .padding()
-                    .onChange(of:  $appWorkViewModel.selectedLocationIdx) { value in
+                    .onChange(of:  teacherItems.selectedLocationIdx) { value in
                             // Execute your code here
                         Task {
                             do {
-                                studentPicStubViewModel.reloadData(uuid: appWorkViewModel.getpicClass())
+                                studentPicStubViewModel.reloadData(uuid: teacherItems.getpicClass())
                                 print("--- Selected location picked")
                             } catch let error as ApiError {
                                 print(error.description)
@@ -107,12 +109,12 @@ struct UserListDup: View {
                             
                         }
                         
-                        print("--- Selected location: appWorkViewModel.locations[value].name")
+                        print("--- Selected location: tea.locations[value].name")
                     }
                     
                         //                    .pickerStyle(.wheel)
                 } label: {
-                    Text(appWorkViewModel.locations[appWorkViewModel.selectedLocationIdx].name).padding()
+                    Text(teacherItems.MDMlocations[teacherItems.selectedLocationIdx].name).padding()
                 }
                 .pickerStyle(.menu)
                 
@@ -155,7 +157,7 @@ struct UserListDup: View {
         
 //      MARK: - Navigation Destination   * * * * * * * * * * * * * * * * * * * * * *
         .navigationDestination(for: User.self) { theUser in
-            let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: appWorkViewModel.uniqueID)
+            let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: teacherItems.uniqueID)
             UserEditorContDup(path: $path, user: theUser,
                               urlPic: imageURL,
                               userInitialValues: theUser)
@@ -233,7 +235,7 @@ private extension UserListDup {
     
     func reloadPicStub() async {
         do {
-            try await studentPicStubViewModel.reloadData2(uuid: appWorkViewModel.getpicClass())
+            try await studentPicStubViewModel.reloadData2(uuid: teacherItems.getpicClass())
         } catch  {
             if let xerror = error as? ApiError {
                 self.hasError   = true

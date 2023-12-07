@@ -53,7 +53,8 @@ struct SchoolClassEditorContent: View {
     @State private var isDeleted = false
     
     @EnvironmentObject var classesViewModel: ClassesViewModel
-    
+    @EnvironmentObject var teacherItems: TeacherItems
+
     @EnvironmentObject var usersViewModel: UsersViewModel
     @EnvironmentObject var classDetailViewModel: ClassDetailViewModel
     @EnvironmentObject var studentPicStubViewModel: StudentPicStubViewModel
@@ -93,7 +94,7 @@ struct SchoolClassEditorContent: View {
                             usersViewModel.users.first(where: { $0.id == id })!
                         }), id: \.id) { student in
                             Text("\(student.firstName) \(student.lastName)")
-                                .foregroundColor(appWorkViewModel.doingEdit  ? .black : .gray)
+                                .foregroundColor(teacherItems.doingEdit  ? .black : .gray)
                         }
                     } header: {
                         HStack {
@@ -101,12 +102,12 @@ struct SchoolClassEditorContent: View {
                                 //                                .bold()
                                 .font(.title3)
                                 
-                            if appWorkViewModel.doingEdit || ( isNew == true && !schoolClassCopy.name.isEmpty ) {
+                            if teacherItems.doingEdit || ( isNew == true && !schoolClassCopy.name.isEmpty ) {
                                 Spacer()
                                 Button {
                                     Task {
                                         do {
-                                            teacherIds = try await appWorkViewModel.getUsersInTeacherGroup() ?? []
+                                            teacherIds = try await teacherItems.getUsersInTeacherGroup() ?? []
                                             passedItemSelected = selectedStudents
                                             toShowStudentList.toggle()
                                         } catch {
@@ -133,18 +134,18 @@ struct SchoolClassEditorContent: View {
                         }), id: \.id) { teacher in
                             Text("\(teacher.firstName) \(teacher.lastName)")
                         }
-                        .foregroundColor(appWorkViewModel.doingEdit  ? .black : .gray)
+                        .foregroundColor(teacherItems.doingEdit  ? .black : .gray)
                     } header: {
                         HStack {
                             Text("Teachers \(selectedTeachers.count)")
                                 //                                .bold()
                                 .font(.title3)
-                            if  appWorkViewModel.doingEdit ||  ( isNew == true && !schoolClassCopy.name.isEmpty ) {
+                            if  teacherItems.doingEdit ||  ( isNew == true && !schoolClassCopy.name.isEmpty ) {
                                 Spacer()
                                 Button {
                                     Task {
                                         do {
-                                            teacherIds = try await appWorkViewModel.getUsersInTeacherGroup() ?? []
+                                            teacherIds = try await teacherItems.getUsersInTeacherGroup() ?? []
                                             passedItemSelected = selectedTeachers
                                             toShowTeacherList.toggle()
                                         } catch {
@@ -175,9 +176,9 @@ struct SchoolClassEditorContent: View {
                     }, label: {
                         Text("Delete the Class")
                             .font(Font.custom("SF Pro", size: 17))
-                            .foregroundColor(appWorkViewModel.doingEdit ? Color(UIColor.systemRed) :  Color(UIColor.gray))
+                            .foregroundColor(teacherItems.doingEdit ? Color(UIColor.systemRed) :  Color(UIColor.gray))
                     })
-                    .disabled(!appWorkViewModel.doingEdit)
+                    .disabled(!teacherItems.doingEdit)
                 }
                 
 //              View: Spacer View
@@ -278,7 +279,7 @@ struct SchoolClassEditorContent: View {
                     schoolClass_start = schoolClass
                 }
                 // not monitoring students and teachers
-                .onChange(of: appWorkViewModel.doingEdit) { currentValue in
+                .onChange(of: teacherItems.doingEdit) { currentValue in
                     print("***** Current Value: \(currentValue)")
                 }
                 .onChange(of: schoolClassCopy){ _ in
@@ -286,7 +287,7 @@ struct SchoolClassEditorContent: View {
                         schoolClass = schoolClassCopy
                     }
                 }
-                .onChange(of: appWorkViewModel.doingEdit) { newValue in
+                .onChange(of: teacherItems.doingEdit) { newValue in
                     if newValue == false {
                         print("************* do the update")
                         upDateClass()
@@ -294,7 +295,7 @@ struct SchoolClassEditorContent: View {
                 }
                 .onDisappear {
                         // check if we should do the update process
-                    appWorkViewModel.doingEdit = false
+                    teacherItems.doingEdit = false
 //                    dismiss()
                 }
                 
@@ -331,7 +332,7 @@ struct SchoolClassEditorContent: View {
                 Button("Discard Changes - main", role: .destructive) {
                         // Do something when the user confirms
                     if isNew  {
-                        appWorkViewModel.doingEdit.toggle()
+                        teacherItems.doingEdit.toggle()
                         dismiss()
                     } 
                 }
@@ -353,12 +354,12 @@ struct SchoolClassEditorContent: View {
 extension SchoolClassEditorContent {
     
     fileprivate func addClass() {
-        schoolClassCopy.locationId = appWorkViewModel.currentLocation.id
+        schoolClassCopy.locationId = teacherItems.currentLocation.id
         
         Task {
             do {
                 
-                let resposnseCreateaClassResponse: CreateaClassResponse = try await ApiManager.shared.getData(from: .createaClass(name: schoolClassCopy.name, description: schoolClassCopy.description, locationId:  String(appWorkViewModel.currentLocation.id)))
+                let resposnseCreateaClassResponse: CreateaClassResponse = try await ApiManager.shared.getData(from: .createaClass(name: schoolClassCopy.name, description: schoolClassCopy.description, locationId:  String(teacherItems.currentLocation.id)))
                 saveSelectedStudents()
                 saveSelectedTeachers()
                 schoolClassCopy.uuid = resposnseCreateaClassResponse.uuid
@@ -639,7 +640,7 @@ struct SchoolClassEditorContent_Previews: PreviewProvider {
             .environmentObject(ClassesViewModel())
             .environmentObject(UsersViewModel())
             .environmentObject(ClassDetailViewModel())
-            .environmentObject(AppWorkViewModel())
+//            .environmentObject(teacherItems())
             .previewDevice("iPhone 12")
             .preferredColorScheme(.light)
     }

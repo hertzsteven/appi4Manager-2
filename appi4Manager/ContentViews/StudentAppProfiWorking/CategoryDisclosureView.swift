@@ -64,9 +64,10 @@ struct CategoryDisclosureView: View {
     @Binding var selectedSession: Session?
     @Binding var isSheetPresented: Bool
     
+    @EnvironmentObject var teacherItems: TeacherItems
+
     @EnvironmentObject var appxViewModel :    AppxViewModel
     @EnvironmentObject var appWorkViewModel : AppWorkViewModel
-    @EnvironmentObject var teacherItems : TeacherItems
     @EnvironmentObject var categoryViewModel: CategoryViewModel
     
     @State var appSelected: Array<Int> = [] {
@@ -149,7 +150,7 @@ struct CategoryDisclosureView: View {
         }
         
         ScrollView(.vertical, showsIndicators: false) {
-            ForEach(categoryViewModel.filterCategoriesinLocation(appWorkViewModel.currentLocation.id)) { catg in
+            ForEach(categoryViewModel.filterCategoriesinLocation(teacherItems.currentLocation.id)) { catg in
                 DisclosureGroup {
                     ForEach(catg.appIds, id: \.self) { appId in
                         

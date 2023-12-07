@@ -551,24 +551,24 @@ extension CategoryEditorContView {
     }
 }
 
-struct CategoryEditorContView_Previews: PreviewProvider {
-    static var previews: some View {
-        // You need to initialize a CategoryViewModel and AppCategory object with some initial values for the preview.
-        let categoryViewModel = CategoryViewModel()
-        var appWorkViewModel = AppWorkViewModel()
-
-        let appCategory = AppCategory(id: "1",
-                                      title: "Test Category",
-                                      symbolName: "star.fill",
-                                      colorRGB: ColorRGB(red: 1.0, green: 0.5, blue: 0.5, alpha: 1.0),
-                                      appIds: [], locationId: appWorkViewModel.currentLocation.id)
-        let appsViewModel = AppsViewModel()
-        
-        CategoryEditorContView(appCategoryInitialValues: appCategory,
-                               appCategory: appCategory,
-                               appsViewModel: appsViewModel)
-            .environmentObject(appsViewModel)
-            .environmentObject(categoryViewModel)  // Add this line
-    }
-}
-
+//struct CategoryEditorContView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        // You need to initialize a CategoryViewModel and AppCategory object with some initial values for the preview.
+//        let categoryViewModel = CategoryViewModel()
+//        var appWorkViewModel = AppWorkViewModel()
+//
+//        let appCategory = AppCategory(id: "1",
+//                                      title: "Test Category",
+//                                      symbolName: "star.fill",
+//                                      colorRGB: ColorRGB(red: 1.0, green: 0.5, blue: 0.5, alpha: 1.0),
+//                                      appIds: [], locationId: appWorkViewModel.currentLocation.id)
+//        let appsViewModel = AppsViewModel()
+//        
+//        CategoryEditorContView(appCategoryInitialValues: appCategory,
+//                               appCategory: appCategory,
+//                               appsViewModel: appsViewModel)
+//            .environmentObject(appsViewModel)
+//            .environmentObject(categoryViewModel)  // Add this line
+//    }
+//}
+//

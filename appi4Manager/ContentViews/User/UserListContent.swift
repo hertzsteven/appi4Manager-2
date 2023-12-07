@@ -17,6 +17,8 @@ struct UserListContent: View {
     @EnvironmentObject var usersViewModel: UsersViewModel
     @EnvironmentObject var studentPicStubViewModel: StudentPicStubViewModel   
     @EnvironmentObject var appWorkViewModel: AppWorkViewModel
+    @EnvironmentObject var teacherItems: TeacherItems
+
     
     @State var newUser: User
     @State private var isAddingNewUser = false
@@ -43,10 +45,10 @@ struct UserListContent: View {
                 
                 LazyVGrid(columns: gridItems, spacing: 30) {
                     
-                    ForEach(usersViewModel.sortedUsers(lastNameFilter: searchText, selectedLocationID: appWorkViewModel.selectedLocationIdx) )
+                    ForEach(usersViewModel.sortedUsers(lastNameFilter: searchText, selectedLocationID: teacherItems.selectedLocationIdx) )
                     {  $theUser  in
                         
-                        let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: appWorkViewModel.uniqueID)
+                        let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: teacherItems.uniqueID)
                         
                         NavigationLink {
                             UserEditorContent(user: $theUser, urlPic: imageURL)
@@ -63,7 +65,7 @@ struct UserListContent: View {
                 
             }
         /*
-            List(usersViewModel.sortedUsers(lastNameFilter: searchText, selectedLocationID: appWorkViewModel.selectedLocationIdx)) { $theUser in
+            List(usersViewModel.sortedUsers(lastNameFilter: searchText, selectedLocationID: teacherItems.selectedLocationIdx)) { $theUser in
                     NavigationLink {
                         UserEditorContent(user: $theUser)
                     } label: {
@@ -99,18 +101,18 @@ struct UserListContent: View {
             .toolbar {
               ToolbarItem(placement: .navigationBarLeading , content: {
                 Menu {
-                    Picker("Pick a location", selection: $appWorkViewModel.selectedLocationIdx) {
-                        ForEach(0..<appWorkViewModel.locations.count) { index in
-                            Text(appWorkViewModel.locations[index].name)
+                    Picker("Pick a location", selection: $teacherItems.selectedLocationIdx) {
+                        ForEach(0..<teacherItems.MDMlocations.count) { index in
+                            Text(teacherItems.MDMlocations[index].name)
                                 .tag(index)
                         }
                   }
                     .padding()
-                    .onChange(of:  $appWorkViewModel.selectedLocationIdx) { value in
+                    .onChange(of:  $teacherItems.selectedLocationIdx) { value in
                         // Execute your code here
                         Task {
                             do {
-                                studentPicStubViewModel.reloadData(uuid: appWorkViewModel.getpicClass())
+                                studentPicStubViewModel.reloadData(uuid: teacherItems.getpicClass())
                                 print("--- Selected location picked")
                             } catch let error as ApiError {
                                 print(error.description)
@@ -118,12 +120,12 @@ struct UserListContent: View {
                         
          }
 
-                        print("--- Selected location: appWorkViewModel.locations[value].name")
+                        print("--- Selected location: teacherItems.MDMlocations[value].name")
                     }
 
 //                    .pickerStyle(.wheel)
                 } label: {
-                    Text(appWorkViewModel.locations[appWorkViewModel.selectedLocationIdx].name).padding()
+                    Text(teacherItems.MDMlocations[teacherItems.selectedLocationIdx].name).padding()
                 }
                 .pickerStyle(.menu)
                 
@@ -151,8 +153,8 @@ struct UserListContent: View {
         .navigationBarTitleDisplayMode(.inline)
 
         .onAppear{
-            dump(appWorkViewModel.locations)
-            print(appWorkViewModel.locations)
+            dump(teacherItems.MDMlocations)
+            print(teacherItems.MDMlocations)
         }
         .task {
             print("🚘 In outer task")
@@ -161,7 +163,7 @@ struct UserListContent: View {
 
                 Task {
                     do {
-                        studentPicStubViewModel.reloadData(uuid: appWorkViewModel.getpicClass())
+                        studentPicStubViewModel.reloadData(uuid: teacherItems.getpicClass())
 //                        let resposnse: UserResponse = try await ApiManager.shared.getData(from: .getUsers)
 //                        self.usersViewModel.users = resposnse.users
 //                        let classDetailResponse: ClassDetailResponse = try await ApiManager.shared.getData(from: .getStudents(uuid: ApiHelper.classuuid))

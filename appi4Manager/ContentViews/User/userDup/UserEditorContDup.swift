@@ -91,6 +91,7 @@ struct UserEditorContDup: View {
     @State         var isNew = false
     @State private var isDeleted = false
     
+    @EnvironmentObject var teacherItems: TeacherItems
     @EnvironmentObject var classesViewModel: ClassesViewModel
     @EnvironmentObject var usersViewModel: UsersViewModel
     @EnvironmentObject var appWorkViewModel: AppWorkViewModel
@@ -134,7 +135,7 @@ struct UserEditorContDup: View {
                                                      print("-- in disappear")
                                                      task {
                                                          do {
-                                                             try await studentPicStubViewModel.reloadData(uuid: appWorkViewModel.getpicClass())
+                                                             try await studentPicStubViewModel.reloadData(uuid: teacherItems.getpicClass())
                                                          } catch {
                                                              print("ellelelell  Big error")
                                                          }
@@ -168,7 +169,7 @@ struct UserEditorContDup: View {
                                                     .stroke(Color.primary.opacity(0.2), lineWidth: 2)
                                             )
                                             .onAppear {
-                                                appWorkViewModel.uniqueID = UUID()
+                                                teacherItems.uniqueID = UUID()
                                             }
                                     } else if let image = imagePicker.savedImage {
                                         image
@@ -181,7 +182,7 @@ struct UserEditorContDup: View {
                                                     .stroke(Color.primary.opacity(0.2), lineWidth: 2)
                                             )
                                             .onAppear {
-                                                appWorkViewModel.uniqueID = UUID()
+                                                teacherItems.uniqueID = UUID()
                                             }
                                     }else {
                                         AsyncImage(url: urlPic) { phase in
@@ -252,8 +253,8 @@ struct UserEditorContDup: View {
                         Section {
                             
                             ForEach(selectedStudentClasses.compactMap({ id in
-                                (classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
-                                                                                                    dummyPicClassToIgnore: appWorkViewModel.getpicClass() ) )
+                                (classesViewModel.filterSchoolClassesinLocation(teacherItems.currentLocation.id,
+                                                                                                    dummyPicClassToIgnore: teacherItems.getpicClass() ) )
                                     .first(where: { $0.userGroupId == id })
                             }), id: \.id) { schoolClass in
                                 Text("\(schoolClass.name)")
@@ -269,7 +270,7 @@ struct UserEditorContDup: View {
                                     Button {
                                         Task {
                                             do {
-        //                                        teacherIds = try await appWorkViewModel.getUsersInTeacherGroup() ?? []
+        //                                        teacherIds = try await teacherItems.getUsersInTeacherGroup() ?? []
                                                 passedItemSelected = selectedStudentClasses
                                                 toShowStudentClassesList.toggle()
                                             } catch {
@@ -538,21 +539,21 @@ extension UserEditorContDup {
          if isNew {
  //        setup properties of User for doing the add
              user.username  = String(Array(UUID().uuidString.split(separator: "-")).last!)
-             user.locationId = appWorkViewModel.currentLocation.id
-             user.groupIds   = [appWorkViewModel.getIDpicClass()]
+             user.locationId = teacherItems.currentLocation.id
+             user.groupIds   = [teacherItems.getIDpicClass()]
              Task {
                  do {
                      let resposnseaddAUser: AddAUserResponse = try await ApiManager.shared.getData(from: .addUsr(user: user))
                      
                      user.id = resposnseaddAUser.id
-                     await imagePicker.loadTransferable2Update(teachAuth: appWorkViewModel.getTeacherAuth(), studentId: user.id)
+                     await imagePicker.loadTransferable2Update(teachAuth: teacherItems.getTeacherAuth(), studentId: user.id)
 
 
  //                   add user into existing user array
                      self.usersViewModel.users.append(self.user)
 
  //                 trigger a refresh of screen and not getting the image from cacheh
-                     self.appWorkViewModel.uniqueID = UUID()
+                     self.teacherItems.uniqueID = UUID()
 
                  } catch let error as ApiError {
                          //  FIXME: -  put in alert that will display approriate error message
@@ -596,7 +597,7 @@ extension UserEditorContDup {
         usersViewModel.users[index!] = user
         
         await imagePicker.loadTransferable2Update(teachAuth: TeacherItems.shared.teacherAuthToken, studentId: user.id)
-//        await imagePicker.loadTransferable2Update(teachAuth: appWorkViewModel.getTeacherAuth(), studentId: user.id)
+//        await imagePicker.loadTransferable2Update(teachAuth: teacherItems.getTeacherAuth(), studentId: user.id)
 
         // update the student Pic
 //        imagePicker.updateTheImage()

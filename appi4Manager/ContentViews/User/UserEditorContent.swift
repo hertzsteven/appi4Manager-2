@@ -41,6 +41,8 @@ struct UserEditorContent: View {
     @State         var isNew = false
     @State private var isDeleted = false
     
+    @EnvironmentObject var teacherItems: TeacherItems
+
     @EnvironmentObject var classesViewModel: ClassesViewModel
     @EnvironmentObject var usersViewModel: UsersViewModel
     @EnvironmentObject var appWorkViewModel: AppWorkViewModel
@@ -57,8 +59,8 @@ struct UserEditorContent: View {
         if isNew {
 //        setup properties of User for doing the add
             userCopy.username  = String(Array(UUID().uuidString.split(separator: "-")).last!)
-            userCopy.locationId = appWorkViewModel.currentLocation.id
-            userCopy.groupIds   = [appWorkViewModel.getIDpicClass()]
+            userCopy.locationId = teacherItems.currentLocation.id
+            userCopy.groupIds   = [teacherItems.getIDpicClass()]
             Task {
 //             add the user
                 do {
@@ -79,7 +81,7 @@ struct UserEditorContent: View {
                     userCopy.id = resposnseaddAUser.id
                     self.usersViewModel.users.append(self.userCopy)
 //                 trigger a refresh of screen and not getting the image from cacheh
-                    self.appWorkViewModel.uniqueID = UUID()
+                    self.teacherItems.uniqueID = UUID()
                 } catch let error as ApiError {
                         //  FIXME: -  put in alert that will display approriate error message
                     print(error)
@@ -134,7 +136,7 @@ struct UserEditorContent: View {
                                              print("-- in disappear")
                                              task {
                                                  do {
-                                                     try await studentPicStubViewModel.reloadData(uuid: appWorkViewModel.getpicClass())
+                                                     try await studentPicStubViewModel.reloadData(uuid: teacherItems.getpicClass())
                                                  } catch {
                                                      print("ellelelell  Big error")
                                                  }
@@ -168,7 +170,7 @@ struct UserEditorContent: View {
                                             .stroke(Color.primary.opacity(0.2), lineWidth: 2)
                                     )
                                     .onAppear {
-                                        appWorkViewModel.uniqueID = UUID()
+                                        teacherItems.uniqueID = UUID()
                                     }
                             } else {
                                 AsyncImage(url: urlPic) { phase in
@@ -232,8 +234,8 @@ struct UserEditorContent: View {
                     
                     ForEach(selectedStudentClasses.compactMap({ id in
 //                        classesViewModel.schoolClasses
-                        (classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
-                                                                                            dummyPicClassToIgnore: appWorkViewModel.getpicClass() ) )
+                        (classesViewModel.filterSchoolClassesinLocation(teacherItems.currentLocation.id,
+                                                                                            dummyPicClassToIgnore: teacherItems.getpicClass() ) )
                             .first(where: { $0.userGroupId == id })
                     }), id: \.id) { schoolClass in
                         Text("\(schoolClass.name)")
@@ -255,7 +257,7 @@ struct UserEditorContent: View {
                             Button {
                                 Task {
                                     do {
-//                                        teacherIds = try await appWorkViewModel.getUsersInTeacherGroup() ?? []
+//                                        teacherIds = try await teacherItems.getUsersInTeacherGroup() ?? []
                                         passedItemSelected = selectedStudentClasses
                                         toShowStudentClassesList.toggle()
                                     } catch {

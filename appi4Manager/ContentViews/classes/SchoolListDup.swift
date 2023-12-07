@@ -9,6 +9,8 @@ import SwiftUI
 
 struct SchoolListDup: View {
     
+    @EnvironmentObject var teacherItems: TeacherItems
+
     @EnvironmentObject var classesViewModel: ClassesViewModel
     @EnvironmentObject var appWorkViewModel: AppWorkViewModel
     
@@ -28,8 +30,8 @@ struct SchoolListDup: View {
                     ProgressView().controlSize(.large).scaleEffect(2)
                 }
             } else {
-                List(classesViewModel.filterSchoolClassesinLocation(appWorkViewModel.currentLocation.id,
-                                                                    dummyPicClassToIgnore: appWorkViewModel.getpicClass() ) )
+                List(classesViewModel.filterSchoolClassesinLocation(teacherItems.currentLocation.id,
+                                                                    dummyPicClassToIgnore: teacherItems.getpicClass() ) )
                 { schoolClass in
                     SchoolClassRow(schoolClass: schoolClass)
                 }
@@ -78,7 +80,7 @@ struct SchoolListDup: View {
                 Button {
                     newClass = SchoolClass.makeDefault()
                     isAddingNewSchoolClass = true
-                    appWorkViewModel.doingEdit = true
+                    teacherItems.doingEdit = true
                 } label: {
                     Image(systemName: "plus")
                 }
@@ -86,15 +88,15 @@ struct SchoolListDup: View {
 
             ToolbarItem(placement: .navigationBarLeading) {
                 Menu {
-                    Picker("Pick a location", selection: $appWorkViewModel.selectedLocationIdx) {
-                        ForEach(0 ..< appWorkViewModel.locations.count) { index in
-                            Text(appWorkViewModel.locations[index].name)
+                    Picker("Pick a location", selection: $teacherItems.selectedLocationIdx) {
+                        ForEach(0 ..< teacherItems.MDMlocations.count) { index in
+                            Text(teacherItems.MDMlocations[index].name)
                                 .tag(index)
                         }
                     }
                     .padding()
                 } label: {
-                    Text(appWorkViewModel.locations[appWorkViewModel.selectedLocationIdx].name).padding()
+                    Text(teacherItems.MDMlocations[teacherItems.selectedLocationIdx].name).padding()
                 }
                 .pickerStyle(.menu)
             }
@@ -163,6 +165,6 @@ private extension SchoolListDup {
 //
 //        return SchoolListDup(newClass: SchoolClass.makeDefault())
 //            .environmentObject(classesViewModel)
-//            .environmentObject(AppWorkViewModel())
+//            .environmentObject(teacherItems())
 //    }
 //}

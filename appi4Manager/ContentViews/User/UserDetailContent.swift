@@ -13,7 +13,8 @@ struct UserDetailContent: View {
     @EnvironmentObject var studentPicStubViewModel: 	StudentPicStubViewModel
     @EnvironmentObject var usersViewModel: 			UsersViewModel
     @EnvironmentObject var appWorkViewModel: 			AppWorkViewModel
-    
+    @EnvironmentObject var teacherItems: TeacherItems
+
     @Environment(\.dismiss) private var dismiss
 
     @Binding var user: 		User
@@ -81,7 +82,7 @@ struct UserDetailContent: View {
                             print("-- in disappear")
                             task {
                                 do {
-                                    try await studentPicStubViewModel.reloadData(uuid: appWorkViewModel.getpicClass())
+                                    try await studentPicStubViewModel.reloadData(uuid: teacherItems.getpicClass())
                                 } catch {
                                     print("ellelelell  Big error")
                                 }
@@ -115,7 +116,7 @@ struct UserDetailContent: View {
                                         .stroke(Color.primary.opacity(0.2), lineWidth: 2)
                                 )
                                 .onAppear {
-                                    appWorkViewModel.uniqueID = UUID()
+                                    teacherItems.uniqueID = UUID()
                                 }
                         } else {
                             AsyncImage(url: urlPic) { phase in

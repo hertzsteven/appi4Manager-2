@@ -17,6 +17,7 @@ struct SchoolClassDetailContent: View {
     @Binding var isDeleted: Bool
     @Binding var isNew: Bool
     
+    @EnvironmentObject var teacherItems: TeacherItems
     @EnvironmentObject var appWorkViewModel: AppWorkViewModel
     @EnvironmentObject var classesViewModel: ClassesViewModel
     @Environment(\.dismiss) private var dismiss
@@ -37,7 +38,7 @@ struct SchoolClassDetailContent: View {
         Form {
                 Section("Class Information") {
                     HStack {
-                        if appWorkViewModel.doingEdit {
+                        if teacherItems.doingEdit {
                             if !schoolClass.name.isEmpty {
                                 Text("Name: ")
                             }
@@ -45,11 +46,11 @@ struct SchoolClassDetailContent: View {
                                 //                    .font(.headline)
                                 .padding([.top, .bottom], 8)
                         } else {
-                            Text(schoolClass.name).foregroundColor(appWorkViewModel.doingEdit  ? .black : Color(.darkGray))
+                            Text(schoolClass.name).foregroundColor(teacherItems.doingEdit  ? .black : Color(.darkGray))
                         }
                     }
                     HStack {
-                        if appWorkViewModel.doingEdit {
+                        if teacherItems.doingEdit {
                             if !schoolClass.description.isEmpty {
                                 Text("Description: ")
                             }
@@ -58,7 +59,7 @@ struct SchoolClassDetailContent: View {
                                 .font(.subheadline)
                                 .padding([.top, .bottom], 8)
                         } else {
-                            Text(schoolClass.description).foregroundColor(appWorkViewModel.doingEdit  ? .black : Color("disabled"))
+                            Text(schoolClass.description).foregroundColor(teacherItems.doingEdit  ? .black : Color("disabled"))
                         }
                         
                     }
@@ -72,7 +73,7 @@ struct SchoolClassDetailContent: View {
             Button("Discard Changes detail", role: .destructive) {
                     // Do something when the user confirms
                 if isNew  {
-                    appWorkViewModel.doingEdit.toggle()
+                    teacherItems.doingEdit.toggle()
                     dismiss()
                 } else {
                 selectedStudents        = selectedStudentsSaved
@@ -80,7 +81,7 @@ struct SchoolClassDetailContent: View {
                 schoolClass.name        = schoolClassName
                 schoolClass.description = schoolClassDescription
                 dump(schoolClass)
-                appWorkViewModel.doingEdit.toggle()
+                teacherItems.doingEdit.toggle()
             }
             }
             Button("Keep Editing", role: .cancel) {
@@ -93,22 +94,22 @@ struct SchoolClassDetailContent: View {
             if !isNew {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     
-                    Button(appWorkViewModel.doingEdit ? "**Done**" : "Edit") {
-                        if appWorkViewModel.doingEdit {
-                            appWorkViewModel.doingEdit.toggle()
-                            appWorkViewModel.doUpdate.toggle()
+                    Button(teacherItems.doingEdit ? "**Done**" : "Edit") {
+                        if teacherItems.doingEdit {
+                            teacherItems.doingEdit.toggle()
+                            teacherItems.doUpdate.toggle()
                         } else {
-                            appWorkViewModel.doingEdit.toggle()
+                            teacherItems.doingEdit.toggle()
                         }
                     }.frame(height: 96, alignment: .trailing)
                 }
             }
         }
         
-        .navigationBarBackButtonHidden(appWorkViewModel.doingEdit)
+        .navigationBarBackButtonHidden(teacherItems.doingEdit)
         
 //          MARK: - Cancel Button For Update
-            .navigationBarItems(leading: appWorkViewModel.doingEdit && !isNew ? Button("Cancel", action: {
+            .navigationBarItems(leading: teacherItems.doingEdit && !isNew ? Button("Cancel", action: {
                 inCancel.toggle()
                 print("i am in cancel")
             } ).frame(height: 96, alignment: .trailing)
