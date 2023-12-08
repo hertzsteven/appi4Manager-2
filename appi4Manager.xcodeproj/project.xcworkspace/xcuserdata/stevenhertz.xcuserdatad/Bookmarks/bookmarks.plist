@@ -96,6 +96,96 @@
 			<key>type</key>
 			<string>bookmark</string>
 		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>0</string>
+					<key>EndingLineNumber</key>
+					<string>43</string>
+					<key>StartingColumnNumber</key>
+					<string>21</string>
+					<key>StartingLineNumber</key>
+					<string>42</string>
+					<key>Timestamp</key>
+					<string>723673247.499462</string>
+				</dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>appi4Manager/Api/ApiHelper.swift</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>
+</string>
+				<key>leading</key>
+				<string>}
+
+class APISchoolInfo {</string>
+				<key>trailing</key>
+				<string>    // Non-optional properties
+    let companyUrl:    String
+    let apiKey:         String
+</string>
+			</dict>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>0</string>
+					<key>EndingLineNumber</key>
+					<string>251</string>
+					<key>StartingColumnNumber</key>
+					<string>0</string>
+					<key>StartingLineNumber</key>
+					<string>250</string>
+					<key>Timestamp</key>
+					<string>723735986.958463</string>
+				</dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>            let userFilter2: ((any ItemsToSelectRepresentable) -&gt; Bool) = { usr in
+</string>
+				<key>leading</key>
+				<string>        .sheet(isPresented: $toShowStudentList) {
+            let superTeacherid = teacherItems.teacherUserDict[teacherItems.currentLocation.id]
+</string>
+				<key>trailing</key>
+				<string>                ( !teacherIds.contains(usr.id) ) &amp;&amp; (usr.id != superTeacherid!)
+            }
+            
+</string>
+			</dict>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
 	</array>
 </dict>
 </plist>

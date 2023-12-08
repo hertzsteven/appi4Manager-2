@@ -28,13 +28,14 @@ struct EnterNameView: View {
     
     @Binding var someText: String
     @Binding var mode: EditMode
-    let selectedColor: Color
+    let selectedColor: Color = .black
     
     var body: some View {
         AnimateTextField(textField: $someText, mode: $mode, label: "Title")
 //        TextField("Name", text: $someText)
 //            .font(.PoppinsBold(size: 24))
             .opacity(1.0)
+            .bold()
             .multilineTextAlignment(.center)
             .foregroundColor(selectedColor)
             .padding()

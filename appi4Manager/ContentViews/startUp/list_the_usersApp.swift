@@ -22,10 +22,6 @@ struct list_the_usersApp: App {
     init() {
         FirebaseApp.configure()
         print("Configured Firebase")
-        Task {
-                 await TeacherItems.shared.exSetup()
-        }
-
     }
     
 //    @StateObject var appWorkViewModel           = AppWorkViewModel()
@@ -36,7 +32,7 @@ struct list_the_usersApp: App {
     @StateObject var appxViewModel              = AppxViewModel()
     @StateObject var categoryViewModel          = CategoryViewModel()
     @StateObject var appsViewModel              = AppsViewModel()
-    @StateObject var teacherItems               = TeacherItems.shared
+    @StateObject var teacherItems               = TeacherItems()
     
     
     
@@ -58,10 +54,15 @@ struct list_the_usersApp: App {
                     .environmentObject(appxViewModel)
                     .environmentObject(categoryViewModel)
                     .environmentObject(appsViewModel)
-                    .environmentObject(TeacherItems.shared)
+                    .environmentObject(teacherItems)
 
             } else {
                 ProgressView()
+                    .onAppear {
+                        Task {
+                            await teacherItems.exSetup() // Call exSetup on the instance
+                        }
+                    }
             }
  /*
             if appWorkViewModel.isLoaded  {

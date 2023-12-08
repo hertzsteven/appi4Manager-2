@@ -30,8 +30,8 @@ struct SchoolListDup: View {
                     ProgressView().controlSize(.large).scaleEffect(2)
                 }
             } else {
-                List(classesViewModel.filterSchoolClassesinLocation(teacherItems.currentLocation.id,
-                                                                    dummyPicClassToIgnore: teacherItems.getpicClass() ) )
+                List(classesViewModel.filterSchoolClassesinLocation2(teacherItems.currentLocation.id,
+                                                                    dummyPicClassToIgnore: teacherItems.getpicClass() , schoolClassGroupID: teacherItems.schoolClassDictionaryGroupID[teacherItems.currentLocation.id]!) )
                 { schoolClass in
                     SchoolClassRow(schoolClass: schoolClass)
                 }

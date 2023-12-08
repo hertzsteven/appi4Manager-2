@@ -97,18 +97,30 @@ class ClassesViewModel: ObservableObject {
 
     
     
-    func filterSchoolClassesinLocation(_ locationId: Int, dummyPicClassToIgnore: String) -> Array<SchoolClass> {
+//    func filterSchoolClassesinLocation(_ locationId: Int,
+//                                       dummyPicClassToIgnore: String) -> Array<SchoolClass> {
+//        var filteredClassesbyLocation = [SchoolClass]()
+//        
+//        filteredClassesbyLocation = schoolClasses.filter{ schoolClass in
+//            schoolClass.locationId  == locationId &&
+//            (schoolClass.userGroupId  != TeacherItems.shared.schoolClassDictionaryGroupID[locationId]) && 
+//            !(schoolClass.uuid      == dummyPicClassToIgnore)
+//        }
+//        
+//        return filteredClassesbyLocation
+//    }
+    func filterSchoolClassesinLocation2(_ locationId: Int,
+                                        dummyPicClassToIgnore: String, schoolClassGroupID: Int) -> Array<SchoolClass> {
         var filteredClassesbyLocation = [SchoolClass]()
         
         filteredClassesbyLocation = schoolClasses.filter{ schoolClass in
             schoolClass.locationId  == locationId &&
-            (schoolClass.userGroupId  != TeacherItems.shared.schoolClassDictionaryGroupID[locationId]) && 
+            (schoolClass.userGroupId  != schoolClassGroupID) &&
             !(schoolClass.uuid      == dummyPicClassToIgnore)
         }
         
         return filteredClassesbyLocation
     }
-    
 
 //    init() {
 //    }

@@ -10,7 +10,7 @@ import PhotosUI
 
 @MainActor
 class TeacherItems: ObservableObject {
-    static let shared = TeacherItems()
+//    static let shared = TeacherItems()
     
     @Published var isLoaded = false
     @Published var isLoading = false
@@ -32,9 +32,9 @@ class TeacherItems: ObservableObject {
     @Published var teacherUserDict:                [Int : Int]     = [:]
     @Published var teacherAuthToken = ""
     
-    private init() {
-            // Private initializer to prevent external instantiation
-    }
+//    private init() {
+//            // Private initializer to prevent external instantiation
+//    }
 }
 
 extension TeacherItems {
@@ -283,9 +283,9 @@ extension TeacherItems {
         
         
         
-        let responseAuthenticate: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: "2001128",
-                                                                                                                            username: usr.username,
-                                                                                                                            password: "123456"))
+        let responseAuthenticate: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: String(APISchoolInfo.shared.companyId),
+                                                                                                                           username: usr.username,
+                                                                                                                           password: AppConstants.teacherPwd))
         teacherAuthToken = responseAuthenticate.token
         dump(responseAuthenticate)
     }
@@ -390,7 +390,7 @@ struct TestOutView: View {
     
     
     var body: some View {
-        if TeacherItems.shared.isLoaded {
+        if teacherItems.isLoaded {
             VStack(spacing: 12) {
                 
                 PhotosPicker(selection: $imagePicker.imageSelection,
@@ -481,13 +481,13 @@ struct TestOutView: View {
 //                            let classDetailResponse: ClassDetailResponse = try await ApiManager.shared.getData(from: .getStudents(uuid: ApiHelper.classuuid))
 //                            dump(classDetailResponse)
                             
-                            let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: ApiHelper.username, password: ApiHelper.password))
-                            dump(resposnse)
-                            print("break")
-                            
-                            let resposnseUserDetail: UserDetailResponse = try await ApiManager.shared.getData(from: .getaUser(id: resposnse.authenticatedAs.id))
-                            dump(resposnseUserDetail)
-                            print("resposnseUserDetail")
+//                            let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: ApiHelper.username, password: ApiHelper.password))
+//                            dump(resposnse)
+//                            print("break")
+//                            
+//                            let resposnseUserDetail: UserDetailResponse = try await ApiManager.shared.getData(from: .getaUser(id: resposnse.authenticatedAs.id))
+//                            dump(resposnseUserDetail)
+//                            print("resposnseUserDetail")
                             
                                 // get classes
                             let resposnseSchoolClasses: SchoolClassResponse = try await ApiManager.shared.getData(from: .getSchoolClasses)
@@ -517,8 +517,8 @@ struct TestOutView: View {
                         // Where you want to call the function
                     Task {
                             //                    await processSchoolClasses()
-                        await TeacherItems.shared.exSetup()
-                        dump(TeacherItems.shared)
+                        await teacherItems.exSetup()
+                        dump(teacherItems)
                         print("we will process the classes")
                     }
                 }
@@ -603,9 +603,9 @@ struct TestOutView: View {
                             //                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: ApiHelper.username, password: ApiHelper.password))
                             //                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "teacherlila", password: "123456"))
                             //                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "FC1E83770E22", password: "123456"))
-                        let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "coorddavid", password: "123456"))
-                        print(resposnse.token)
-                        dump(resposnse)
+//                        let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "coorddavid", password: "123456"))
+//                        print(resposnse.token)
+//                        dump(resposnse)
                     }
                 }
                 .alert(isPresented: $showAlert) {
@@ -732,11 +732,11 @@ struct TestOutView: View {
                 print("Location: \(location), UUID: \(uuid)")
             }
             
-            TeacherItems.shared.schoolClassDictionaryGroupID = filteredSchoolClasses.reduce(into: [Int: Int]()) { (dict, schoolClass) in
+            teacherItems.schoolClassDictionaryGroupID = filteredSchoolClasses.reduce(into: [Int: Int]()) { (dict, schoolClass) in
                 dict[schoolClass.locationId] = schoolClass.userGroupId
             }
                 // Output the dictionary
-            for (location, classGroupID) in TeacherItems.shared.schoolClassDictionaryGroupID {
+            for (location, classGroupID) in teacherItems.schoolClassDictionaryGroupID {
                 print("Location: \(location), userGroup: \(classGroupID)")
             }
             

@@ -18,12 +18,12 @@ import Foundation
 //        static let classuuid = "5660a0b6-7a4c-4749-abb2-735b3476a927"
 
 
-        static let company = "2001128"
-        static let username = "teacherlila"
-        static let password = "123456"
+//        static let company = "2001128"
+//        static let username = "teacherlila"
+//        static let password = "123456"
         
-        static let clssuserGroupId = 1
-        static let globalLocationId = 0
+//        static let clssuserGroupId = 1
+//        static let globalLocationId = 0
 
             //        static let authorizationCodeAlt = "Basic NjUzMTkwNzY6TUNTTUQ2VkM3TUNLVU5OOE1KNUNEQTk2UjFIWkJHQVY="
 

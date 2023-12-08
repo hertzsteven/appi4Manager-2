@@ -147,13 +147,13 @@ class UsersViewModel: ObservableObject {
         )
     }
     
-    func sortedUsersNonB(lastNameFilter searchStr: String = "", selectedLocationID: Int) -> [User] {
+    func sortedUsersNonB(lastNameFilter searchStr: String = "", selectedLocationID: Int, teacherUserID: Int) -> [User] {
         
         self.users
             .sorted { $0.lastName < $1.lastName }
         
             .filter({ usr in
-                usr.locationId == selectedLocationID && usr.id != TeacherItems.shared.teacherUserDict[selectedLocationID]
+                usr.locationId == selectedLocationID && usr.id != teacherUserID
             })
             .filter {
                 if searchStr.isEmpty  {

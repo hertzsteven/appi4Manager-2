@@ -234,8 +234,8 @@ struct UserEditorContent: View {
                     
                     ForEach(selectedStudentClasses.compactMap({ id in
 //                        classesViewModel.schoolClasses
-                        (classesViewModel.filterSchoolClassesinLocation(teacherItems.currentLocation.id,
-                                                                                            dummyPicClassToIgnore: teacherItems.getpicClass() ) )
+                        (classesViewModel.filterSchoolClassesinLocation2(teacherItems.currentLocation.id,
+                                                                                            dummyPicClassToIgnore: teacherItems.getpicClass(), schoolClassGroupID: teacherItems.schoolClassDictionaryGroupID[teacherItems.currentLocation.id]! ) )
                             .first(where: { $0.userGroupId == id })
                     }), id: \.id) { schoolClass in
                         Text("\(schoolClass.name)")

@@ -253,8 +253,8 @@ struct UserEditorContDup: View {
                         Section {
                             
                             ForEach(selectedStudentClasses.compactMap({ id in
-                                (classesViewModel.filterSchoolClassesinLocation(teacherItems.currentLocation.id,
-                                                                                                    dummyPicClassToIgnore: teacherItems.getpicClass() ) )
+                                (classesViewModel.filterSchoolClassesinLocation2(teacherItems.currentLocation.id,
+                                                                                                    dummyPicClassToIgnore: teacherItems.getpicClass() , schoolClassGroupID: teacherItems.schoolClassDictionaryGroupID[teacherItems.currentLocation.id]! ) )
                                     .first(where: { $0.userGroupId == id })
                             }), id: \.id) { schoolClass in
                                 Text("\(schoolClass.name)")
@@ -596,7 +596,7 @@ extension UserEditorContDup {
         }
         usersViewModel.users[index!] = user
         
-        await imagePicker.loadTransferable2Update(teachAuth: TeacherItems.shared.teacherAuthToken, studentId: user.id)
+        await imagePicker.loadTransferable2Update(teachAuth: teacherItems.teacherAuthToken, studentId: user.id)
 //        await imagePicker.loadTransferable2Update(teachAuth: teacherItems.getTeacherAuth(), studentId: user.id)
 
         // update the student Pic

@@ -53,7 +53,7 @@ extension SchoolClass {
 //        print("Total seconds from the start of today: \(totalSeconds)")
 
   
-        SchoolClass(uuid: UUID().uuidString, name: "", description: "", locationId: ApiHelper.globalLocationId, userGroupId: 0)
+        SchoolClass(uuid: UUID().uuidString, name: "", description: "", locationId: 0, userGroupId: 0)
 //        return User(id: totalSeconds, locationId: ApiHelper.globalLocationId, deviceCount: 0, email: "", groupIds: [], groups: [""], firstName: "", lastName: "", username: "", notes: "", modified: "")
     }
 }

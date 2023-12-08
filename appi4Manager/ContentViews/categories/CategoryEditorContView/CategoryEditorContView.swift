@@ -89,7 +89,7 @@ struct CategoryEditorContView: View {
                     
                     Form {
                         
-                        Text(appxViewModel.appx.first?.name ?? "empty")
+//                        Text(appxViewModel.appx.first?.name ?? "empty")
                         
                             //  Circle and Name
                         Section {
@@ -98,7 +98,8 @@ struct CategoryEditorContView: View {
                                 PopulateCircleView(selectedColor: $selectedColor, selectedSymbol: $appCategory.symbolName)
                             }
                                 // The name field
-                            EnterNameView(someText: $appCategory.title, mode: $mode, selectedColor: selectedColor )
+                            EnterNameView(someText: $appCategory.title, mode: $mode)
+//                            EnterNameView(someText: $appCategory.title, mode: $mode, selectedColor: selectedColor )
                         }
                         
                         

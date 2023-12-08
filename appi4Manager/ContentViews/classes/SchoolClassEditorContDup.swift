@@ -160,15 +160,15 @@ struct SchoolClassEditorContDup: View {
 //    @State var idxIntoClassList: Int
     
     var numberOfClassesInList :  Int {
-        classesViewModel.filterSchoolClassesinLocation(teacherItems.currentLocation.id, dummyPicClassToIgnore: teacherItems.getpicClass() ).count
+        classesViewModel.filterSchoolClassesinLocation2(teacherItems.currentLocation.id, dummyPicClassToIgnore: teacherItems.getpicClass(), schoolClassGroupID: teacherItems.schoolClassDictionaryGroupID[teacherItems.currentLocation.id]!).count
     }
     
     var listOfClasses: [SchoolClass]  {
-        classesViewModel.filterSchoolClassesinLocation(teacherItems.currentLocation.id, dummyPicClassToIgnore: teacherItems.getpicClass() )
+        classesViewModel.filterSchoolClassesinLocation2(teacherItems.currentLocation.id, dummyPicClassToIgnore: teacherItems.getpicClass() , schoolClassGroupID: teacherItems.schoolClassDictionaryGroupID[teacherItems.currentLocation.id]!)
     }
     
     var idxLocationofClassInClassList: Int {
-             classesViewModel.filterSchoolClassesinLocation(teacherItems.currentLocation.id, dummyPicClassToIgnore: teacherItems.getpicClass() ).firstIndex(of: schoolClass) ?? 0
+             classesViewModel.filterSchoolClassesinLocation2(teacherItems.currentLocation.id, dummyPicClassToIgnore: teacherItems.getpicClass(), schoolClassGroupID: teacherItems.schoolClassDictionaryGroupID[teacherItems.currentLocation.id]!).firstIndex(of: schoolClass) ?? 0
     }
     
 //   MARK: - Body View   * * * * * * * * * * * * * * * * * * * * * * * * 
@@ -247,9 +247,9 @@ struct SchoolClassEditorContDup: View {
         
 //       Select Students Popup
         .sheet(isPresented: $toShowStudentList) {
-            
+            let superTeacherid = teacherItems.teacherUserDict[teacherItems.currentLocation.id]
             let userFilter2: ((any ItemsToSelectRepresentable) -> Bool) = { usr in
-                !teacherIds.contains(usr.id)
+                ( !teacherIds.contains(usr.id) ) && (usr.id != superTeacherid!)
             }
             
             NavigationView {
