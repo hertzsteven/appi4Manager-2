@@ -30,6 +30,7 @@ enum AppConstants {
     static let teacherUserName                         = "**appi4Teacher-NoModification**"
     static let teacherGroupName                        = "**appi4TeacherGroup-NoModification**"
     static let pictureClassName                        = "**appi4PictureClass-NoModification**"
-    static let teacherPwd                              = "123456"
+    static let defaultTeacherPwd                       = "123456"
+    static let defaultUserPwd                          = "123456"
 
 }

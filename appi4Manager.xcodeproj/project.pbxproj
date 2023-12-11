@@ -41,6 +41,7 @@
 		464A2A022A829C890045B68C /* StudentAppProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 464A2A012A829C890045B68C /* StudentAppProfileView.swift */; };
 		464B6AD52A77D439008BF37F /* CategoryDisclosureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 464B6AD42A77D439008BF37F /* CategoryDisclosureView.swift */; };
 		464E54AB2A89BBC9000E0443 /* ParentAppPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 464E54AA2A89BBC9000E0443 /* ParentAppPickerView.swift */; };
+		465057852B23673100AC7F3C /* TeacherItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465057842B23673100AC7F3C /* TeacherItems.swift */; };
 		465669942B1A251900195925 /* MDMGroupsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465669932B1A251900195925 /* MDMGroupsResponse.swift */; };
 		465669962B1A257700195925 /* MDMGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465669952B1A257700195925 /* MDMGroup.swift */; };
 		46584FCA2993E1040025F539 /* list_the_usersApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46584FC92993E1040025F539 /* list_the_usersApp.swift */; };
@@ -128,6 +129,7 @@
 		464A2A012A829C890045B68C /* StudentAppProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentAppProfileView.swift; sourceTree = "<group>"; };
 		464B6AD42A77D439008BF37F /* CategoryDisclosureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDisclosureView.swift; sourceTree = "<group>"; };
 		464E54AA2A89BBC9000E0443 /* ParentAppPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentAppPickerView.swift; sourceTree = "<group>"; };
+		465057842B23673100AC7F3C /* TeacherItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherItems.swift; sourceTree = "<group>"; };
 		465669932B1A251900195925 /* MDMGroupsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MDMGroupsResponse.swift; sourceTree = "<group>"; };
 		465669952B1A257700195925 /* MDMGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MDMGroup.swift; sourceTree = "<group>"; };
 		46584FC62993E1040025F539 /* appi4Manager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = appi4Manager.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -267,6 +269,7 @@
 		461D89AB2A6D4E0400678391 /* protols+Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				465057842B23673100AC7F3C /* TeacherItems.swift */,
 				461D89AC2A6D4E3700678391 /* ItemsToSelectRepresentableStr.swift */,
 				46AE58A92AEBDB79005A3C20 /* MiscExtensions.swift */,
 				460CC64E2B1D03760050437D /* AppConstants.swift */,
@@ -734,6 +737,7 @@
 				46584FCA2993E1040025F539 /* list_the_usersApp.swift in Sources */,
 				461D89B52A6DC50100678391 /* CategoryEditorContView.swift in Sources */,
 				4633670229942D2C00CF5EA3 /* TabBarController.swift in Sources */,
+				465057852B23673100AC7F3C /* TeacherItems.swift in Sources */,
 				46E56DBA2996B33800CB2512 /* ClassDetailResponse.swift in Sources */,
 				46E56DB729969F5600CB2512 /* UserDetailResponse.swift in Sources */,
 				46786B7A2A24E5E7000F6716 /* UserCardVwDup.swift in Sources */,

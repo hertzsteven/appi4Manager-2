@@ -616,7 +616,7 @@ extension SchoolClassEditorContDup {
                             // Update the user
                         let responseFromUpdatingUser = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: userToUpdate.user.id,
                                                                                                                       username:     userToUpdate.user.username,
-                                                                                                                      password:     "123456",
+                                                                                                                      password:     AppConstants.defaultTeacherPwd,
                                                                                                                       email:        userToUpdate.user.email,
                                                                                                                       firstName:    userToUpdate.user.firstName,
                                                                                                                       lastName:     userToUpdate.user.lastName,
@@ -686,7 +686,7 @@ extension SchoolClassEditorContDup {
                             // Update the user
                         let responseFromUpdatingUser = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: userToUpdate.user.id,
                                                                                                                       username:     userToUpdate.user.username,
-                                                                                                                      password:     "123456",
+                                                                                                                      password:     AppConstants.defaultTeacherPwd,
                                                                                                                       email:        userToUpdate.user.email,
                                                                                                                       firstName:    userToUpdate.user.firstName,
                                                                                                                       lastName:     userToUpdate.user.lastName,

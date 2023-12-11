@@ -273,7 +273,7 @@ private extension ApiManager {
             let bodyString = """
             {
                "username": "\(user.username)",
-               "password": "123456",
+               "password": AppConstants.defaultUserPwd,
                "email": "\(user.email)",
                "firstName": "\(user.firstName)",
                "lastName": "\(user.lastName)",

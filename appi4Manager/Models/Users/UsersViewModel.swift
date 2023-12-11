@@ -49,7 +49,7 @@ class UsersViewModel: ObservableObject {
         isLoading = true
         defer { isLoading = false }
         
-        try await Task.sleep(nanoseconds: 1 * 1_000_000_000) // 1 second = 1_000_000_000 nanoseconds
+//        try await Task.sleep(nanoseconds: 1 * 1_000_000_000) // 1 second = 1_000_000_000 nanoseconds
 
         let resposnse: UserResponse = try await ApiManager.shared.getData(from: .getUsers)
         DispatchQueue.main.async {
@@ -78,7 +78,7 @@ class UsersViewModel: ObservableObject {
         do {
             _ = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: user.id,
                                                                                username: user.username,
-                                                                               password: "123456" ,
+                                                                               password: AppConstants.defaultUserPwd ,
                                                                                email: user.email,
                                                                                firstName: user.firstName,
                                                                                lastName: user.lastName,
@@ -101,7 +101,7 @@ class UsersViewModel: ObservableObject {
         do {
             _ = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: user.id,
                                                                                username: user.username,
-                                                                               password: "123456" ,
+                                                                               password: AppConstants.defaultUserPwd ,
                                                                                email: user.email,
                                                                                firstName: user.firstName,
                                                                                lastName: user.lastName,

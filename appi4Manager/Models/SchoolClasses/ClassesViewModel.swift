@@ -55,7 +55,7 @@ class ClassesViewModel: ObservableObject {
         isLoading = true
         defer { isLoading = false }
         
-        try await Task.sleep(nanoseconds: 3 * 1_000_000_000) // 1 second = 1_000_000_000 nanoseconds
+//        try await Task.sleep(nanoseconds: 3 * 1_000_000_000) // 1 second = 1_000_000_000 nanoseconds
 
         let resposnse: SchoolClassResponse = try await ApiManager.shared.getData(from: .getSchoolClasses)
         DispatchQueue.main.async {
