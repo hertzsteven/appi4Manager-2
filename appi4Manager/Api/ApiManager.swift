@@ -269,11 +269,11 @@ private extension ApiManager {
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
             request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
-            
+                       
             let bodyString = """
             {
                "username": "\(user.username)",
-               "password": AppConstants.defaultUserPwd,
+               "password": "\(AppConstants.defaultUserPwd)",
                "email": "\(user.email)",
                "firstName": "\(user.firstName)",
                "lastName": "\(user.lastName)",
@@ -287,6 +287,8 @@ private extension ApiManager {
                  "locationId": \(user.locationId)
             }
             """
+
+            
             
             request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
             
