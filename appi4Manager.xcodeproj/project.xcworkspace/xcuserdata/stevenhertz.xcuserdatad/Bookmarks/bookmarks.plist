@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>278</string>
+					<string>640</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>277</string>
+					<string>639</string>
 					<key>Timestamp</key>
-					<string>723666467.501442</string>
+					<string>724534988.8702689</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -27,115 +27,23 @@
 					<key>payload</key>
 					<dict>
 						<key>relative-path</key>
-						<string>appi4Manager/ContentViews/StudentAppProfiWorking/CategoryDisclosureView.swift</string>
+						<string>appi4Manager/ContentViews/User/userDup/UserEditorContDup.swift</string>
 					</dict>
 				</dict>
 			</dict>
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>            Task {
-</string>
-				<key>leading</key>
-				<string>            //        }
-        .onAppear {
-</string>
-				<key>trailing</key>
-				<string>                do {
-                    categoryViewModel.loadAppCategories()
-                    print("in task")
-</string>
-			</dict>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
-					<key>EndingLineNumber</key>
-					<string>45</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
-					<key>StartingLineNumber</key>
-					<string>44</string>
-					<key>Timestamp</key>
-					<string>723648571.452003</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>appi4Manager/Models/App/AppxViewModel.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>    func loadData2() async throws {
-</string>
-				<key>leading</key>
-				<string>    
-    
-</string>
-				<key>trailing</key>
-				<string>        guard !isLoading else { return }
-        
-        isLoading = true
-</string>
-			</dict>
-			<key>title</key>
-			<string>fires up in the display of categories for a student</string>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
-					<key>EndingLineNumber</key>
-					<string>43</string>
-					<key>StartingColumnNumber</key>
-					<string>21</string>
-					<key>StartingLineNumber</key>
-					<string>42</string>
-					<key>Timestamp</key>
-					<string>723673247.499462</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>appi4Manager/Api/ApiHelper.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>
+				<string>fileprivate func checkIfUserInAppProfile(studentID: Int) {
 </string>
 				<key>leading</key>
 				<string>}
 
-class APISchoolInfo {</string>
+</string>
 				<key>trailing</key>
-				<string>    // Non-optional properties
-    let companyUrl:    String
-    let apiKey:         String
+				<string>    
+    print(studentID)
+    
 </string>
 			</dict>
 			<key>type</key>
@@ -147,15 +55,15 @@ class APISchoolInfo {</string>
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>0</string>
+					<string>38</string>
 					<key>EndingLineNumber</key>
-					<string>251</string>
+					<string>663</string>
 					<key>StartingColumnNumber</key>
-					<string>0</string>
+					<string>22</string>
 					<key>StartingLineNumber</key>
-					<string>250</string>
+					<string>663</string>
 					<key>Timestamp</key>
-					<string>723735986.958463</string>
+					<string>724524591.632093</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -164,25 +72,119 @@ class APISchoolInfo {</string>
 					<key>payload</key>
 					<dict>
 						<key>relative-path</key>
-						<string>appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift</string>
+						<string>appi4Manager/ContentViews/Services/FirestoreManager.swift</string>
 					</dict>
 				</dict>
 			</dict>
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>            let userFilter2: ((any ItemsToSelectRepresentable) -&gt; Bool) = { usr in
-</string>
+				<string>writeStudentProf</string>
 				<key>leading</key>
-				<string>        .sheet(isPresented: $toShowStudentList) {
-            let superTeacherid = teacherItems.teacherUserDict[teacherItems.currentLocation.id]
-</string>
+				<string>    func writeHandleStudentProfileNew2(studentProfile: StudentAppProfilex)  async  {
+        do {
+            try await </string>
 				<key>trailing</key>
-				<string>                ( !teacherIds.contains(usr.id) ) &amp;&amp; (usr.id != superTeacherid!)
-            }
-            
+				<string>ileNew2(studentProfile: studentProfile)
+            print("add student worked")
+        }
 </string>
 			</dict>
+			<key>title</key>
+			<string>Find Result:             try await writeStudentProfileNew2(studentProfile: studentProfile)</string>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>25</string>
+					<key>EndingLineNumber</key>
+					<string>671</string>
+					<key>StartingColumnNumber</key>
+					<string>9</string>
+					<key>StartingLineNumber</key>
+					<string>671</string>
+					<key>Timestamp</key>
+					<string>724524591.632145</string>
+				</dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>appi4Manager/ContentViews/Services/FirestoreManager.swift</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>writeStudentProf</string>
+				<key>leading</key>
+				<string>    }
+    
+    func </string>
+				<key>trailing</key>
+				<string>ileNew2(studentProfile: StudentAppProfilex) async throws {
+        let db = Firestore.firestore()
+        let docRef = db.collection("studentProfiles").document("\(studentProfile.id)")
+</string>
+			</dict>
+			<key>title</key>
+			<string>Find Result:     func writeStudentProfileNew2(studentProfile: StudentAppProfilex) async throws {</string>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>0</string>
+					<key>EndingLineNumber</key>
+					<string>552</string>
+					<key>StartingColumnNumber</key>
+					<string>0</string>
+					<key>StartingLineNumber</key>
+					<string>551</string>
+					<key>Timestamp</key>
+					<string>724534988.870253</string>
+				</dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>appi4Manager/ContentViews/User/userDup/UserEditorContDup.swift</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>                     let stdntAppProfile = StudentAppProfileManager.makeDefaultfor(user.id, locationId: user.locationId)
+</string>
+				<key>leading</key>
+				<string>                     await imagePicker.loadTransferable2Update(teachAuth: teacherItems.getTeacherAuth(), studentId: user.id)
+                     
+</string>
+				<key>trailing</key>
+				<string>                     
+                     await studentAppProfileManager.addStudentAppProfile(newProfile: stdntAppProfile)
+                     
+</string>
+			</dict>
+			<key>title</key>
+			<string>adding a new student and maybe firestore manager needs to be communicated</string>
 			<key>type</key>
 			<string>bookmark</string>
 		</dict>

@@ -33,7 +33,8 @@ struct list_the_usersApp: App {
     @StateObject var categoryViewModel          = CategoryViewModel()
     @StateObject var appsViewModel              = AppsViewModel()
     @StateObject var teacherItems               = TeacherItems()
-    
+    @StateObject var studentAppProfileManager    = StudentAppProfileManager()
+
     
     
 
@@ -55,7 +56,7 @@ struct list_the_usersApp: App {
                     .environmentObject(categoryViewModel)
                     .environmentObject(appsViewModel)
                     .environmentObject(teacherItems)
-
+                    .environmentObject(studentAppProfileManager)
             } else {
                 ProgressView()
                     .onAppear {

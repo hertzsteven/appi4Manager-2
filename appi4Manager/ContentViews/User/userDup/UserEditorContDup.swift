@@ -96,6 +96,7 @@ struct UserEditorContDup: View {
     @EnvironmentObject var usersViewModel: UsersViewModel
     // @EnvironmentObject var appWorkViewModel: AppWorkViewModel
     @EnvironmentObject var studentPicStubViewModel: StudentPicStubViewModel
+    @EnvironmentObject var studentAppProfileManager: StudentAppProfileManager 
 
 //    @EnvironmentObject var classDetailViewModel: ClassDetailViewModel
     @Environment(\.dismiss) private var dismiss
@@ -547,6 +548,12 @@ extension UserEditorContDup {
                      
                      user.id = resposnseaddAUser.id
                      await imagePicker.loadTransferable2Update(teachAuth: teacherItems.getTeacherAuth(), studentId: user.id)
+                     
+                     let stdntAppProfile = StudentAppProfileManager.makeDefaultfor(user.id, locationId: user.locationId)
+                     
+                     await studentAppProfileManager.addStudentAppProfile(newProfile: stdntAppProfile)
+                     
+                    
 
 
  //                   add user into existing user array

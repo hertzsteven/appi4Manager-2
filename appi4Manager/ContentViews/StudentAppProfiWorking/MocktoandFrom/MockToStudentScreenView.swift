@@ -131,6 +131,14 @@ class StudentAppProfileManager: ObservableObject {
         return sampleprofiles
     }
 
+    func addStudentAppProfile(newProfile: StudentAppProfilex) async {
+        studentAppProfileFiles.append(newProfile)
+//        Task {
+            await  FirestoreManager().writeHandleStudentProfileNew2(studentProfile: newProfile)
+            print("added new student")
+//        }
+    }
+    
     func updateStudentAppProfile(newProfile: StudentAppProfilex) {
         if let idx = studentAppProfileFiles.firstIndex(where: { $0.id == newProfile.id }) {
             studentAppProfileFiles.remove(at: idx)
