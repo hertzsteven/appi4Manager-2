@@ -216,19 +216,6 @@ extension FirestoreManager {
 extension FirestoreManager {
     
     
-//    // write
-//    func writeAppCategory(appCategory: AppCategory) {
-//        let db = Firestore.firestore()
-//        let docRef = db.collection("appCategories").document("\(appCategory.id)")
-//        
-//        do {
-//            try docRef.setData(from: appCategory)
-//        } catch let error {
-//            print("Error writing studentProfile to Firestore: \(error)")
-//        }
-//    }
-//
-    
     // write
     func writeStudentProfileNew(studentProfile: StudentAppProfilex) {
         let db = Firestore.firestore()
@@ -452,35 +439,7 @@ extension FirestoreManager {
 
 
 
-//func handleError(_ error: Error) {
-//    if let err = error as? ProfileError {
-//        switch err {
-//        case .firestoreError(let message),
-//             .missingCollection(let message),
-//             .genericError(let message):
-//            print(message)
-//        case .decodingError(let decodingError):
-//            print("Decoding error: \(decodingError)")
-//        }
-//    } else if let err = error as? NSError {
-//        if err.domain == FirestoreErrorDomain {
-//            switch err.code {
-//            case FirestoreErrorCode.unavailable.rawValue:
-//                    // Handle network unavailable error
-//                print("No internet connection.")
-//            default:
-//                    // Handle other errors
-//                print("Firestore error: \(err.localizedDescription)")
-//            }
-//        }
-//        print("Firestore error: \(err.localizedDescription)")
-//    } else {
-//        print("Unknown error: \(error.localizedDescription)")
-//    }
-//}
-
-
-
+/*
 //  MARK: -  works but the old way before firestore support codable
 extension FirestoreManager {
     
@@ -542,6 +501,7 @@ extension FirestoreManager {
     }
 
 }
+*/
 
 extension FirestoreManager {
     
@@ -556,7 +516,6 @@ extension FirestoreManager {
             }
         }
     }
-
     
     
     //  MARK: -  Get Documents in a collection

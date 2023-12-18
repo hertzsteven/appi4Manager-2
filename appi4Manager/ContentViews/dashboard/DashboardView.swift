@@ -7,6 +7,22 @@
 
 import SwiftUI
 
+struct Category: Identifiable, Hashable {
+    static func == (lhs: Category, rhs: Category) -> Bool {
+        lhs.id == rhs.id
+    }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    var id = UUID().uuidString
+    let name: String
+    let color: Color
+    let image: Image
+    let count: Int
+//    let navTo: AnyView
+}
+
 
 struct DashboardView: View {
     @State private var isLoading = true // Example loading state
@@ -81,9 +97,10 @@ struct DashboardView: View {
                    AppxView()
 //                    MockFromStudentScreenView(path: $path)
    
-                case "NavigateToStudentAppProfile":
-//                    MockFromStudentScreenView()
-                    DummyStudentProfileLauncherView()
+                case "NavigateTo":
+                    MockFromStudentScreenView(path: $path)
+//                    Text("Nothing setup yet")
+//                    DummyStudentProfileLauncherView()
    
                 default:
                     Text("Nothing setup yet")

@@ -5,6 +5,7 @@
 //  Created by Steven Hertz on 8/31/23.
 //
 
+/*
 import SwiftUI
 
 struct MockSetupAppProfileView: View {
@@ -54,3 +55,5 @@ struct MockSetupAppProfileView: View {
 //        MockSetupAppProfileView()
 //    }
 //}
+
+*/
