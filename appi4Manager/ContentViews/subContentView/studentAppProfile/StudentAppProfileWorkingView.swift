@@ -11,10 +11,7 @@ enum LoadingState {
     case loading, loaded, failed
 }
 
-
-
-
-//  MARK: - extension for non view properties
+//  MARK: - 
 struct StudentAppProfileWorkingView {
     
     @State var noShow = true

@@ -217,7 +217,6 @@
 			isa = PBXGroup;
 			children = (
 				461D89A52A6D4D2E00678391 /* Apps.swift */,
-				469EFF222A6F40F30047E8BC /* AppxViewModel.swift */,
 				469EFF202A6ED33F0047E8BC /* AppResponse.swift */,
 			);
 			path = App;
@@ -238,6 +237,7 @@
 		461D89AE2A6D4E7900678391 /* categories */ = {
 			isa = PBXGroup;
 			children = (
+				464B6AD42A77D439008BF37F /* CategoryDisclosureView.swift */,
 				461D89B22A6DC4C800678391 /* CategoryListView.swift */,
 				461D89AF2A6D82BD00678391 /* subview */,
 				466FF03B2A70509F002946F7 /* CategoryEditorContView */,
@@ -265,14 +265,14 @@
 		46336708299528F900CF5EA3 /* ContentViews */ = {
 			isa = PBXGroup;
 			children = (
-				46BAB48C2B30979800C155B9 /* Need To Categorize */,
-				46BAB4822B307AE300C155B9 /* For Testing */,
-				461D89AE2A6D4E7900678391 /* categories */,
+				46BAB49A2B30B4F600C155B9 /* subContentView */,
 				4699A1132A1CDF4400D8829C /* startUp */,
 				46A2BCE929F1DA6B00882816 /* dashboard */,
-				46E76A0C29BE05BD00A85466 /* User */,
+				46E76A0C29BE05BD00A85466 /* user */,
 				46E76A0D29BE05DE00A85466 /* classes */,
-				46A2BCEA29F2E1D100882816 /* Misc */,
+				461D89AE2A6D4E7900678391 /* categories */,
+				469EFF242A6F6D1D0047E8BC /* apps */,
+				46BAB4822B307AE300C155B9 /* for testing */,
 			);
 			path = ContentViews;
 			sourceTree = "<group>";
@@ -322,9 +322,10 @@
 		46584FC82993E1040025F539 /* appi4Manager */ = {
 			isa = PBXGroup;
 			children = (
-				4634419A2AEB59130074741D /* Services */,
 				46336708299528F900CF5EA3 /* ContentViews */,
+				46BAB4992B30AC8F00C155B9 /* ViewModels */,
 				46584FD72993EA9C0025F539 /* Models */,
+				4634419A2AEB59130074741D /* Services */,
 				46584FE32993EFEF0025F539 /* Api */,
 				463367032994527E00CF5EA3 /* Custom Styles */,
 				461A82E82A6DD09A00DAC90C /* Sources */,
@@ -348,7 +349,6 @@
 		46584FD72993EA9C0025F539 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				46BAB4962B30A46500C155B9 /* need to categorize it */,
 				46BAB4832B30946100C155B9 /* StudentAppProfileGroup */,
 				461D89A22A6D4C7600678391 /* App */,
 				461D89A12A6D4C5D00678391 /* AppCategory */,
@@ -371,7 +371,6 @@
 				461D21CD299D8A64008B7BD2 /* Student.swift */,
 				46584FDA2993EAF40025F539 /* User.swift */,
 				46584FDC2993EB650025F539 /* UserResponse.swift */,
-				46584FDE2993ECD50025F539 /* UsersViewModel.swift */,
 				46E56DB629969F5600CB2512 /* UserDetailResponse.swift */,
 			);
 			path = Users;
@@ -389,6 +388,7 @@
 		46584FE32993EFEF0025F539 /* Api */ = {
 			isa = PBXGroup;
 			children = (
+				46BAB4972B30A48400C155B9 /* SchoolClassError.swift */,
 				46584FEA2993F10F0025F539 /* ApiEndpoint.swift */,
 				46584FE42993F03C0025F539 /* ApiManager.swift */,
 				46584FE62993F0960025F539 /* ApiHelper.swift */,
@@ -417,17 +417,6 @@
 			path = CategoryEditorContView;
 			sourceTree = "<group>";
 		};
-		46786B7B2A24E7C1000F6716 /* userDup */ = {
-			isa = PBXGroup;
-			children = (
-				46786B752A24D97C000F6716 /* UserListDup.swift */,
-				46786B792A24E5E7000F6716 /* UserCardVwDup.swift */,
-				46786B772A24D9A6000F6716 /* UserEditorContDup.swift */,
-				4698CA292A2E1FE200D8A888 /* BlockingOverlayView.swift */,
-			);
-			path = userDup;
-			sourceTree = "<group>";
-		};
 		4699A1132A1CDF4400D8829C /* startUp */ = {
 			isa = PBXGroup;
 			children = (
@@ -452,14 +441,6 @@
 			path = dashboard;
 			sourceTree = "<group>";
 		};
-		46A2BCEA29F2E1D100882816 /* Misc */ = {
-			isa = PBXGroup;
-			children = (
-				46E56DB02995E1C000CB2512 /* TestOutView.swift */,
-			);
-			path = Misc;
-			sourceTree = "<group>";
-		};
 		46AEA63F29C8E50500D2B994 /* Locations */ = {
 			isa = PBXGroup;
 			children = (
@@ -468,12 +449,13 @@
 			path = Locations;
 			sourceTree = "<group>";
 		};
-		46BAB4822B307AE300C155B9 /* For Testing */ = {
+		46BAB4822B307AE300C155B9 /* for testing */ = {
 			isa = PBXGroup;
 			children = (
+				46E56DB02995E1C000CB2512 /* TestOutView.swift */,
 				4619CE402A8D0F1A006CB8D1 /* StudentAppProfileMock */,
 			);
-			path = "For Testing";
+			path = "for testing";
 			sourceTree = "<group>";
 		};
 		46BAB4832B30946100C155B9 /* StudentAppProfileGroup */ = {
@@ -490,14 +472,12 @@
 			path = StudentAppProfileGroup;
 			sourceTree = "<group>";
 		};
-		46BAB48C2B30979800C155B9 /* Need To Categorize */ = {
+		46BAB48C2B30979800C155B9 /* studentAppProfile */ = {
 			isa = PBXGroup;
 			children = (
-				469EFF242A6F6D1D0047E8BC /* apps */,
 				46CEE1B32AADF11500EDDC96 /* StudentAppProfileWorkingView.swift */,
-				464B6AD42A77D439008BF37F /* CategoryDisclosureView.swift */,
 			);
-			path = "Need To Categorize";
+			path = studentAppProfile;
 			sourceTree = "<group>";
 		};
 		46BAB4932B30A04F00C155B9 /* theSessions */ = {
@@ -509,12 +489,24 @@
 			path = theSessions;
 			sourceTree = "<group>";
 		};
-		46BAB4962B30A46500C155B9 /* need to categorize it */ = {
+		46BAB4992B30AC8F00C155B9 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				46BAB4972B30A48400C155B9 /* SchoolClassError.swift */,
+				46492B1B29F5CA9300699F96 /* StudentPicStubViewModel.swift */,
+				461D21CB299D89DC008B7BD2 /* ClassDetailViewModel.swift */,
+				46584FDE2993ECD50025F539 /* UsersViewModel.swift */,
+				469EFF222A6F40F30047E8BC /* AppxViewModel.swift */,
+				46E76A0829BB9AEF00A85466 /* ClassesViewModel.swift */,
 			);
-			path = "need to categorize it";
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		46BAB49A2B30B4F600C155B9 /* subContentView */ = {
+			isa = PBXGroup;
+			children = (
+				46BAB48C2B30979800C155B9 /* studentAppProfile */,
+			);
+			path = subContentView;
 			sourceTree = "<group>";
 		};
 		46D2A9A229DB4CC1007B134E /* ImagePicker */ = {
@@ -547,8 +539,6 @@
 			isa = PBXGroup;
 			children = (
 				46E56DB92996B33800CB2512 /* ClassDetailResponse.swift */,
-				461D21CB299D89DC008B7BD2 /* ClassDetailViewModel.swift */,
-				46492B1B29F5CA9300699F96 /* StudentPicStubViewModel.swift */,
 			);
 			path = ClassDetail;
 			sourceTree = "<group>";
@@ -557,17 +547,19 @@
 			isa = PBXGroup;
 			children = (
 				46E56DBC2996B42500CB2512 /* SchoolClassResponse.swift */,
-				46E76A0829BB9AEF00A85466 /* ClassesViewModel.swift */,
 			);
 			path = SchoolClasses;
 			sourceTree = "<group>";
 		};
-		46E76A0C29BE05BD00A85466 /* User */ = {
+		46E76A0C29BE05BD00A85466 /* user */ = {
 			isa = PBXGroup;
 			children = (
-				46786B7B2A24E7C1000F6716 /* userDup */,
+				46786B752A24D97C000F6716 /* UserListDup.swift */,
+				46786B792A24E5E7000F6716 /* UserCardVwDup.swift */,
+				46786B772A24D9A6000F6716 /* UserEditorContDup.swift */,
+				4698CA292A2E1FE200D8A888 /* BlockingOverlayView.swift */,
 			);
-			path = User;
+			path = user;
 			sourceTree = "<group>";
 		};
 		46E76A0D29BE05DE00A85466 /* classes */ = {
