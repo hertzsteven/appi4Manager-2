@@ -407,11 +407,13 @@ struct UserEditorContDup: View {
 
 
         //       MARK: - Confirmation Dialog  * * * * * * * * * * * * * * * * * * * * * * * *
-                
-                .confirmationDialog("Are you sure you want to delete this class?", isPresented: $inDelete) {
-                    Button("Delete the Student", role: .destructive) {
-                        deleteTheUser()
-                    }
+                    .confirmationDialog("Are you sure you want to delete this student?", isPresented: $inDelete, titleVisibility: .visible) {
+//                    .confirmationDialog("Are you sure you want to delete this student?", isPresented: $inDelete) {
+
+                        Button("Delete the Student", role: .destructive) {
+                            deleteTheUser()
+                        }
+
                 }
                 // from edit
                 .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelEdit, titleVisibility: .visible) {

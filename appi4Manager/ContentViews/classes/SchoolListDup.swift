@@ -65,9 +65,9 @@ struct SchoolListDup: View {
         
 
 //      MARK: - Navigation Destimation   * * * * * * * * * * * * * * * * * * * * * *
-        .navigationDestination(for: Binding<SchoolClass>.self) { theClass in
-            SchoolClassEditorContent(schoolClass: theClass)
-        }
+//        .navigationDestination(for: Binding<SchoolClass>.self) { theClass in
+//            SchoolClassEditorContent(schoolClass: theClass)
+//        }
         .navigationDestination(for: SchoolClass.self) { theClass in
             SchoolClassEditorContDup(schoolClass: theClass)
         }

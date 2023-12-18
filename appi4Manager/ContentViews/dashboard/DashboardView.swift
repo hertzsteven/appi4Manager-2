@@ -9,9 +9,10 @@ import SwiftUI
 
 
 struct DashboardView: View {
-
+    @State private var isLoading = true // Example loading state
     @EnvironmentObject var classesViewModel: ClassesViewModel
     @EnvironmentObject var usersViewModel:  UsersViewModel
+    @EnvironmentObject var teacherItems: TeacherItems
     @State private var hasError = false
     @State private var error: ApiError?
 
@@ -26,11 +27,10 @@ struct DashboardView: View {
         Category(name: "Students", color: .yellow, image: Image(systemName: "dollarsign.circle.fill"), count: 6)
     ]
     
-//    @StateObject var model          = CategoryViewModel()
-//    @StateObject var appsViewModel  = AppsViewModel()
 
 
     var body: some View {
+         ZStack   {
         NavigationStack(path:$path ) {
             ScrollView {
                 LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 2), spacing: 20) {
@@ -51,29 +51,9 @@ struct DashboardView: View {
                 switch category.name {
                 case "Devices":
                     TestOutView()
-//                    IntegrateFireStore()
-//                    ParentAppPickerView()
                 case "Categories":
                     CategoryListView( newAppCategory: AppCategory.makeDefault())
-//                        .environmentObject(model)
-//                        .environmentObject(appsViewModel)
-                
 
-//                    UserListContent(newUser: User.makeDefault())
-//                        .task {
-//                            await loadTheClasses()
-//                        }
-//                        .alert(isPresented: $hasError,
-//                               error: error) {
-//                            Button {
-//                                Task {
-//                                    await loadTheClasses()
-//                                }
-//                            } label: {
-//                                Text("Retry")
-//                            }
-//                        }
-//
                 case "Students":
                     UserListDup(path: $path, newUser: User.makeDefault())
                         .task {
@@ -106,7 +86,7 @@ struct DashboardView: View {
                     DummyStudentProfileLauncherView()
    
                 default:
-                    SchoolListContent(path: $path, newClass: SchoolClass.makeDefault())
+                    Text("Nothing setup yet")
                 }
             })
             .background(Color(.systemGray5))
@@ -114,7 +94,29 @@ struct DashboardView: View {
             .navigationTitle("Dashboard")
             .navigationViewStyle(StackNavigationViewStyle())
         }
-       
+                 // Translucent Progress View
+             if !teacherItems.isLoaded {
+//                 if isLoading {
+                     ProgressView()
+                     .scaleEffect(2) // Increase the size of the progress view
+                     .progressViewStyle(CircularProgressViewStyle(tint: .white)) // Custom style
+                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                         .background(Color.black.opacity(0.7)) // Translucent background
+                         .edgesIgnoringSafeArea(.all)
+                 }
+}
+         .onAppear {
+             Task {
+                 await teacherItems.exSetup() // Call exSetup on the instance
+             }
+         }
+//         .onAppear {
+//              // Example of triggering loading state
+//              // Replace with your actual loading logic
+//              DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+//                  isLoading = false
+//              }
+//          }
     }
 }
 

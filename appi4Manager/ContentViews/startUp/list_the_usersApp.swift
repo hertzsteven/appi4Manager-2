@@ -45,26 +45,25 @@ struct list_the_usersApp: App {
 // NavigateToStudentAppProfile()
 
 //            if appWorkViewModel.isLoaded && teacherItems.isLoaded {
-            if teacherItems.isLoaded {
+//            if teacherItems.isLoaded {
                 DashboardView()
                     .environmentObject(usersViewModel)
                     .environmentObject(classDetailViewModel)
                     .environmentObject(studentPicStubViewModel)
                     .environmentObject(classesViewModel)
-//                    .environmentObject(appWorkViewModel)
                     .environmentObject(appxViewModel)
                     .environmentObject(categoryViewModel)
                     .environmentObject(appsViewModel)
                     .environmentObject(teacherItems)
                     .environmentObject(studentAppProfileManager)
-            } else {
-                ProgressView()
-                    .onAppear {
-                        Task {
-                            await teacherItems.exSetup() // Call exSetup on the instance
-                        }
-                    }
-            }
+//            } else {
+//                ProgressView()
+//                    .onAppear {
+//                        Task {
+//                            await teacherItems.exSetup() // Call exSetup on the instance
+//                        }
+//                    }
+//            }
  /*
             if appWorkViewModel.isLoaded  {
                 TestOutView()

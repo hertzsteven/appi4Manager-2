@@ -883,8 +883,8 @@
             filePath = "appi4Manager/ContentViews/User/userDup/UserEditorContDup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "542"
-            endingLineNumber = "542"
+            startingLineNumber = "544"
+            endingLineNumber = "544"
             landmarkName = "addTheUser()"
             landmarkType = "7">
          </BreakpointContent>
@@ -899,8 +899,8 @@
             filePath = "appi4Manager/ContentViews/User/userDup/UserEditorContDup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "560"
-            endingLineNumber = "560"
+            startingLineNumber = "562"
+            endingLineNumber = "562"
             landmarkName = "addTheUser()"
             landmarkType = "7">
          </BreakpointContent>
@@ -915,8 +915,8 @@
             filePath = "appi4Manager/ContentViews/User/userDup/UserEditorContDup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "547"
-            endingLineNumber = "547"
+            startingLineNumber = "549"
+            endingLineNumber = "549"
             landmarkName = "addTheUser()"
             landmarkType = "7">
             <Locations>
@@ -993,8 +993,8 @@
             filePath = "appi4Manager/ContentViews/User/userDup/UserEditorContDup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "563"
-            endingLineNumber = "563"
+            startingLineNumber = "565"
+            endingLineNumber = "565"
             landmarkName = "addTheUser()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1073,8 +1073,8 @@
             filePath = "appi4Manager/ContentViews/User/userDup/UserEditorContDup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "549"
-            endingLineNumber = "549"
+            startingLineNumber = "551"
+            endingLineNumber = "551"
             landmarkName = "addTheUser()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1089,8 +1089,8 @@
             filePath = "appi4Manager/ContentViews/User/userDup/UserEditorContDup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "642"
-            endingLineNumber = "642"
+            startingLineNumber = "644"
+            endingLineNumber = "644"
             landmarkName = "checkIfUserInAppProfile(studentID:)"
             landmarkType = "9">
             <Locations>
@@ -1153,8 +1153,8 @@
             filePath = "appi4Manager/ContentViews/User/userDup/UserEditorContDup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "651"
-            endingLineNumber = "651"
+            startingLineNumber = "653"
+            endingLineNumber = "653"
             landmarkName = "checkIfUserInAppProfile(studentID:)"
             landmarkType = "9">
             <Locations>
@@ -1201,8 +1201,8 @@
             filePath = "appi4Manager/ContentViews/User/userDup/UserEditorContDup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "654"
-            endingLineNumber = "654"
+            startingLineNumber = "656"
+            endingLineNumber = "656"
             landmarkName = "checkIfUserInAppProfile(studentID:)"
             landmarkType = "9">
             <Locations>
@@ -1249,8 +1249,8 @@
             filePath = "appi4Manager/ContentViews/User/userDup/UserEditorContDup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "657"
-            endingLineNumber = "657"
+            startingLineNumber = "659"
+            endingLineNumber = "659"
             landmarkName = "checkIfUserInAppProfile(studentID:)"
             landmarkType = "9">
             <Locations>

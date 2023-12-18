@@ -10,6 +10,11 @@
 import SwiftUI
 
 
+enum PersonType {
+    case student
+    case teacher
+}
+
 struct DeleteButtonView: View {
     
     var action: () -> Void
