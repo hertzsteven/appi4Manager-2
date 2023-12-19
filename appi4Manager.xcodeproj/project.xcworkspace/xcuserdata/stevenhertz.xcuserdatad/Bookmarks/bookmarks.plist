@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>642</string>
+					<string>233</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>641</string>
+					<string>232</string>
 					<key>Timestamp</key>
-					<string>724553185.530653</string>
+					<string>724633512.421767</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -27,164 +27,55 @@
 					<key>payload</key>
 					<dict>
 						<key>relative-path</key>
-						<string>appi4Manager/ContentViews/User/userDup/UserEditorContDup.swift</string>
+						<string>appi4Manager/ContentViews/user/UserEditorContDup.swift</string>
 					</dict>
 				</dict>
 			</dict>
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>fileprivate func checkIfUserInAppProfile(studentID: Int) {
-</string>
-				<key>leading</key>
-				<string>}
+				<string>                            Section(header: Text("Apps")) {
+                                Button(action: {
+                                    Task {
+                                        profilesx = await  StudentAppProfileManager.loadProfilesx()
+                                        print("-----")
+                                        dump(profilesx)
+                                        print("-----")
+                                        path.append(user.id)
+                                    }
+                                }) {
+                                    Label("Set The App Profile", systemImage: "arrowshape.turn.up.right.fill")
+//                                    Text("Set The App Profile")
+//                                        .padding(.horizontal)
+//                                    Image(systemName: "gift.fill")
+//                                    Image(systemName: "1arrowshape.turn.up.right")
+                                }
+                                .foregroundStyle(!itIsInEdit ? .gray : .blue)
+                                .disabled(!itIsInEdit)
+//                                Button {
+//                                    Task {
+//                                        profilesx = await  StudentAppProfileManager.loadProfilesx()
+//                                        print("-----")
+//                                        dump(profilesx)
+//                                        print("-----")
+//                                        path.append(user.id)
+//                                    }
+//                                } label: {
+//                                    Label("Set The App Profile", systemImage: "1arrowshape.turn.up.right")
+//                                }
+                               
 
 </string>
-				<key>trailing</key>
-				<string>    
-    print(studentID)
-    
-</string>
-			</dict>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>38</string>
-					<key>EndingLineNumber</key>
-					<string>663</string>
-					<key>StartingColumnNumber</key>
-					<string>22</string>
-					<key>StartingLineNumber</key>
-					<string>663</string>
-					<key>Timestamp</key>
-					<string>724524591.632093</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>appi4Manager/ContentViews/Services/FirestoreManager.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>writeStudentProf</string>
 				<key>leading</key>
-				<string>    func writeHandleStudentProfileNew2(studentProfile: StudentAppProfilex)  async  {
-        do {
-            try await </string>
-				<key>trailing</key>
-				<string>ileNew2(studentProfile: studentProfile)
-            print("add student worked")
-        }
-</string>
-			</dict>
-			<key>title</key>
-			<string>Find Result:             try await writeStudentProfileNew2(studentProfile: studentProfile)</string>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>25</string>
-					<key>EndingLineNumber</key>
-					<string>671</string>
-					<key>StartingColumnNumber</key>
-					<string>9</string>
-					<key>StartingLineNumber</key>
-					<string>671</string>
-					<key>Timestamp</key>
-					<string>724524591.632145</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>appi4Manager/ContentViews/Services/FirestoreManager.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>writeStudentProf</string>
-				<key>leading</key>
-				<string>    }
-    
-    func </string>
-				<key>trailing</key>
-				<string>ileNew2(studentProfile: StudentAppProfilex) async throws {
-        let db = Firestore.firestore()
-        let docRef = db.collection("studentProfiles").document("\(studentProfile.id)")
-</string>
-			</dict>
-			<key>title</key>
-			<string>Find Result:     func writeStudentProfileNew2(studentProfile: StudentAppProfilex) async throws {</string>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
-					<key>EndingLineNumber</key>
-					<string>554</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
-					<key>StartingLineNumber</key>
-					<string>553</string>
-					<key>Timestamp</key>
-					<string>724553185.5300111</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>appi4Manager/ContentViews/User/userDup/UserEditorContDup.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>                     let stdntAppProfile = StudentAppProfileManager.makeDefaultfor(user.id, locationId: user.locationId)
-</string>
-				<key>leading</key>
-				<string>                     await imagePicker.loadTransferable2Update(teachAuth: teacherItems.getTeacherAuth(), studentId: user.id)
-                     
+				<string>                        }
+                        if !isNew {
 </string>
 				<key>trailing</key>
-				<string>                     
-                     await studentAppProfileManager.addStudentAppProfile(newProfile: stdntAppProfile)
-                     
+				<string>//                                Button("Set the app profile")
+//                                {
+//
 </string>
 			</dict>
-			<key>title</key>
-			<string>adding a new student and maybe firestore manager needs to be communicated</string>
 			<key>type</key>
 			<string>bookmark</string>
 		</dict>

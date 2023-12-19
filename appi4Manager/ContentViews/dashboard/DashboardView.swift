@@ -20,15 +20,16 @@ struct Category: Identifiable, Hashable {
     let color: Color
     let image: Image
     let count: Int
-//    let navTo: AnyView
 }
 
 
 struct DashboardView: View {
     @State private var isLoading = true // Example loading state
+
     @EnvironmentObject var classesViewModel: ClassesViewModel
     @EnvironmentObject var usersViewModel:  UsersViewModel
     @EnvironmentObject var teacherItems: TeacherItems
+
     @State private var hasError = false
     @State private var error: ApiError?
 
@@ -127,13 +128,6 @@ struct DashboardView: View {
                  await teacherItems.exSetup() // Call exSetup on the instance
              }
          }
-//         .onAppear {
-//              // Example of triggering loading state
-//              // Replace with your actual loading logic
-//              DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-//                  isLoading = false
-//              }
-//          }
     }
 }
 
@@ -207,6 +201,7 @@ struct CategoryView: View {
                         .foregroundColor(.primary)
                         .padding([.top], 4)
                         .padding([.trailing], 18)
+                        .hidden() // rmmove to show the number
                     Spacer()
                 }
             }

@@ -15,8 +15,9 @@ struct AnimateTextField: View {
     var itIsInEdit: Bool {
         mode == .active
     }
+//    let nbrLines: Int = 1
     let label: String
-    
+
     var body: some View {
         
         HStack {
@@ -27,9 +28,11 @@ struct AnimateTextField: View {
             ZStack(alignment: .leading) {
                 TextField(label, text: $textField)
                     .opacity(itIsInEdit ? 1 : 0)
+                    .lineLimit(5)
                 Text(textField)
                     .opacity(itIsInEdit ? 0 : 1)
                     .foregroundColor(Color(.darkGray))
+                    .lineLimit(5)
             }
         }
     }
@@ -219,27 +222,52 @@ struct UserEditorContDup: View {
                         }
                         
                         Section(header: Text("Notes")) {
-                            AnimateTextField(textField: $user.notes, mode: $mode, label: "notes")
+//                             AnimateTextField(textField: $user.notes, mode: $mode, label: "notes")
+                            TextEditor(text: $user.notes)
+                                .font(.body)
+                                .frame(height: 100)
+                                .disabled(!itIsInEdit)
+//                                .border(Color.gray, width: 6) // Optional: Adds a border
                         }
-                        
-                        Section(header: Text("Apps")) {
-                            Button("App Profile For Student \(user.id)") {
-                                Task {
-                //                    profilesx =  await StudentAppProfileManager.loadProfilesx()
-                                    profilesx = await  StudentAppProfileManager.loadProfilesx()
-                                    print("-----")
-                                    dump(profilesx)
-                                    print("-----")
-                                    path.append(user.id)
+                        if !isNew {
+                            Section(header: Text("Apps")) {
+                                Button(action: {
+                                    Task {
+                                        profilesx = await  StudentAppProfileManager.loadProfilesx()
+                                        print("-----")
+                                        dump(profilesx)
+                                        print("-----")
+                                        path.append(user.id)
+                                    }
+                                }) {
+                                    Label("Set The App Profile", systemImage: "arrowshape.turn.up.right.fill")
+//                                    Text("Set The App Profile")
+//                                        .padding(.horizontal)
+//                                    Image(systemName: "gift.fill")
+//                                    Image(systemName: "1arrowshape.turn.up.right")
                                 }
-                            }
-//                            NavigationLink("Go To Student Profile For Student id 8", value: user.id)
-//                            NavigationLink("Student Apps") {
-//                                Text("Apps for Student \(user.id)")
-//                            }
-                            
-                        }
+                                .foregroundStyle(!itIsInEdit ? .gray : .blue)
+                                .disabled(!itIsInEdit)
+//                                Button {
+//                                    Task {
+//                                        profilesx = await  StudentAppProfileManager.loadProfilesx()
+//                                        print("-----")
+//                                        dump(profilesx)
+//                                        print("-----")
+//                                        path.append(user.id)
+//                                    }
+//                                } label: {
+//                                    Label("Set The App Profile", systemImage: "1arrowshape.turn.up.right")
+//                                }
+                               
 
+//                                Button("Set the app profile")
+//                                {
+//
+//                                }
+//                                .disabled(!itIsInEdit)
+                            }
+                        }
 
                         Section(header: Text("email")) {
                             AnimateTextField(textField: $user.email, mode: $mode, label: "email")

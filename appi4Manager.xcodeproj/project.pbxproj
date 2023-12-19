@@ -196,13 +196,12 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
-		461D21C8299C4A17008B7BD2 /* Responses */ = {
+		461D21C8299C4A17008B7BD2 /* createClass */ = {
 			isa = PBXGroup;
 			children = (
-				461D21C9299C4A37008B7BD2 /* AddAUserResponse.swift */,
 				46BD34E429BE236D002A8395 /* CreateaClassResponse.swift */,
 			);
-			path = Responses;
+			path = createClass;
 			sourceTree = "<group>";
 		};
 		461D89A12A6D4C5D00678391 /* AppCategory */ = {
@@ -350,14 +349,12 @@
 			isa = PBXGroup;
 			children = (
 				46BAB4832B30946100C155B9 /* StudentAppProfileGroup */,
+				46BAB49B2B30B78200C155B9 /* classesSchool */,
 				461D89A22A6D4C7600678391 /* App */,
 				461D89A12A6D4C5D00678391 /* AppCategory */,
 				463BEDC92A41503100A1FBD8 /* Lessons */,
 				46D2A9A229DB4CC1007B134E /* ImagePicker */,
 				46AEA63F29C8E50500D2B994 /* Locations */,
-				461D21C8299C4A17008B7BD2 /* Responses */,
-				46E56DBB2996B3FF00CB2512 /* SchoolClasses */,
-				46E56DB82996B31200CB2512 /* ClassDetail */,
 				46E56DB22996974400CB2512 /* TeacherAuthentication */,
 				465669922B1A24DA00195925 /* Groups */,
 				46584FD82993EAAC0025F539 /* Users */,
@@ -368,6 +365,7 @@
 		46584FD82993EAAC0025F539 /* Users */ = {
 			isa = PBXGroup;
 			children = (
+				461D21C9299C4A37008B7BD2 /* AddAUserResponse.swift */,
 				461D21CD299D8A64008B7BD2 /* Student.swift */,
 				46584FDA2993EAF40025F539 /* User.swift */,
 				46584FDC2993EB650025F539 /* UserResponse.swift */,
@@ -507,6 +505,16 @@
 				46BAB48C2B30979800C155B9 /* studentAppProfile */,
 			);
 			path = subContentView;
+			sourceTree = "<group>";
+		};
+		46BAB49B2B30B78200C155B9 /* classesSchool */ = {
+			isa = PBXGroup;
+			children = (
+				461D21C8299C4A17008B7BD2 /* createClass */,
+				46E56DB82996B31200CB2512 /* ClassDetail */,
+				46E56DBB2996B3FF00CB2512 /* SchoolClasses */,
+			);
+			path = classesSchool;
 			sourceTree = "<group>";
 		};
 		46D2A9A229DB4CC1007B134E /* ImagePicker */ = {

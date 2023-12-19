@@ -52,8 +52,8 @@ struct UserCardVwDup: View {
                 }
                 
                 VStack(alignment: .center, spacing: 0) {
-                    Text(user.firstName)
-                    Text(user.lastName)
+                    Text(user.firstName).lineLimit(1)
+                    Text(user.lastName).lineLimit(1)
                 }
                 .frame(width: 90)
                 .font(.body)
