@@ -494,8 +494,14 @@ extension StudentAppProfileWorkingView: View {
                 currentDayStudentAppProfile = currentDayStudentAppProfilefilxe
 
 //                setCurrentDateWith(selectedDay.asAString)
-                print("~~ fom onappear will it work ")
+                print("~~ from onappear will it work ")
                 dump(currentDayStudentAppProfile)
+                do {
+                    await proceesAppCodes()
+                    loadingState = .loaded
+                } catch {
+                    loadingState = .failed
+                }
                 noShow = false
             }
         }
@@ -513,16 +519,6 @@ extension StudentAppProfileWorkingView: View {
             }
         }
 
-        .task {
-            do {
-                await proceesAppCodes()
-                loadingState = .loaded
-            } catch {
-                loadingState = .failed
-            }
-        }
-
- 
     }
     
 }

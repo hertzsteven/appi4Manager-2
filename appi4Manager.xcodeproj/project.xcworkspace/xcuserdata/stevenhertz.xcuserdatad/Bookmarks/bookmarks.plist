@@ -10,15 +10,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>0</string>
+					<string>43</string>
 					<key>EndingLineNumber</key>
-					<string>233</string>
+					<string>40</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>232</string>
+					<string>40</string>
 					<key>Timestamp</key>
-					<string>724633512.421767</string>
+					<string>724644358.707446</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -27,53 +27,67 @@
 					<key>payload</key>
 					<dict>
 						<key>relative-path</key>
-						<string>appi4Manager/ContentViews/user/UserEditorContDup.swift</string>
+						<string>appi4Manager/ContentViews/subContentView/studentAppProfile/StudentAppProfileWorkingView.swift</string>
 					</dict>
 				</dict>
 			</dict>
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>                            Section(header: Text("Apps")) {
-                                Button(action: {
-                                    Task {
-                                        profilesx = await  StudentAppProfileManager.loadProfilesx()
-                                        print("-----")
-                                        dump(profilesx)
-                                        print("-----")
-                                        path.append(user.id)
-                                    }
-                                }) {
-                                    Label("Set The App Profile", systemImage: "arrowshape.turn.up.right.fill")
-//                                    Text("Set The App Profile")
-//                                        .padding(.horizontal)
-//                                    Image(systemName: "gift.fill")
-//                                    Image(systemName: "1arrowshape.turn.up.right")
-                                }
-                                .foregroundStyle(!itIsInEdit ? .gray : .blue)
-                                .disabled(!itIsInEdit)
-//                                Button {
-//                                    Task {
-//                                        profilesx = await  StudentAppProfileManager.loadProfilesx()
-//                                        print("-----")
-//                                        dump(profilesx)
-//                                        print("-----")
-//                                        path.append(user.id)
-//                                    }
-//                                } label: {
-//                                    Label("Set The App Profile", systemImage: "1arrowshape.turn.up.right")
-//                                }
-                               
-
-</string>
+				<string>    @State var appsAMinfo: Array&lt;Appx&gt; = []</string>
 				<key>leading</key>
-				<string>                        }
-                        if !isNew {
+				<string>    @State private var selectedSession: Session?
+    
 </string>
 				<key>trailing</key>
-				<string>//                                Button("Set the app profile")
-//                                {
-//
+				<string>
+    @State var appsPMinfo: Array&lt;Appx&gt; = []
+    @State var appsHomeinfo: Array&lt;Appx&gt; = []
+</string>
+			</dict>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>0</string>
+					<key>EndingLineNumber</key>
+					<string>567</string>
+					<key>StartingColumnNumber</key>
+					<string>0</string>
+					<key>StartingLineNumber</key>
+					<string>566</string>
+					<key>Timestamp</key>
+					<string>724647665.964124</string>
+				</dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>appi4Manager/ContentViews/subContentView/studentAppProfile/StudentAppProfileWorkingView.swift</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>    func proceesAppCodes() async  {
+</string>
+				<key>leading</key>
+				<string>extension StudentAppProfileWorkingView {
+    
+</string>
+				<key>trailing</key>
+				<string>        appsAMinfo.removeAll()
+        for appCode in currentDayStudentAppProfile.amSession.apps {
+            if let appx = await getAppInfoFor(appCode) {
 </string>
 			</dict>
 			<key>type</key>
