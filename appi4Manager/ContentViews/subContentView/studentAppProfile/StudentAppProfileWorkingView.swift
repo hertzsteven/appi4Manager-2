@@ -7,6 +7,47 @@
 
 import SwiftUI
 
+    // Define a custom view
+    struct AppInfoView: View {
+        var loadingState: LoadingState // Assuming LoadingState is an enum you've defined
+        var appsAMinfo: Array<Appx> // Assuming AppInfo is a struct or class you've defined
+        var appInfo: Appx
+
+        var body: some View {
+            HStack {
+                if loadingState == .loaded && !appsAMinfo.isEmpty {
+                    AsyncImage(url: URL(string: appInfo.icon)) { image in
+                        image.resizable()
+                    } placeholder: {
+                        ProgressView()
+                    }
+                    .frame(width: 50, height: 50)
+                    .padding([.leading])
+                } else if loadingState == .loading {
+                    ProgressView()
+                } else {
+                    Text("Failed to load data")
+                }
+                
+                VStack(alignment: .leading) {
+                    if loadingState == .loaded && !appsAMinfo.isEmpty {
+                        Text(appInfo.name)
+                    } else if loadingState == .loading {
+                        ProgressView()
+                    } else {
+                        Text("Failed to load data")
+                    }
+                    Text(appInfo.description ?? "")
+                        .foregroundColor(.gray)
+                        .font(.footnote)
+                        .lineLimit(1)
+                }.frame(width: 320)
+                Spacer()
+            }
+        }
+    }
+
+
 enum LoadingState {
     case loading, loaded, failed
 }
@@ -102,35 +143,146 @@ extension StudentAppProfileWorkingView: View {
     //  MARK: -  the sub view for the am group   
     var multipleAppsViewAM : some View {
         
-        Group {
-            Text("Apps")
-                .font(.subheadline)
-            if loadingState == .loaded && !appsAMinfo.isEmpty  {
-            Picker("jjjjjj", selection: $selectedOption) {
-                ForEach(0..<appsAMinfo.count) { index in
-                    let originalName = appsAMinfo[index].name
-                    let truncatedName = String(originalName.prefix(30))
-                    let displayName = originalName.count > 30 ? truncatedName + "..." : originalName
-                    Text(displayName).tag(index)
-
-//                    Text(String(appsAMinfo[index].name.prefix(30))).tag(index)
+        ScrollView(.horizontal, showsIndicators: true) {
+            HStack(spacing: 20) {
+                ForEach(appsAMinfo) { appInfo in
+                        //                    AppInfoView(loadingState: loadingState, appsAMinfo: appsAMinfo, appInfo: appInfo)
+                    
+                    HStack {
+                        if loadingState == .loaded && !appsAMinfo.isEmpty  {
+                            AsyncImage(url: URL(string: appInfo.icon)) { image in
+                                image.resizable()
+                                    .padding([.top, .leading, .bottom], 8)
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 100, height: 100)
+                            } placeholder: {
+                                ProgressView()
+                            }
+                                //                            .frame(width: 50, height: 50)
+                                //                            .padding([.leading])
+                        } else if loadingState == .loading {
+                            ProgressView()
+                        } else {
+                            Text("Failed to load data")
+                        }
+                        
+                        
+                        VStack(alignment: .leading) {
+                            if loadingState == .loaded && !appsAMinfo.isEmpty {
+                                Text(appInfo.name)
+                                    .lineLimit(1)
+                                    .padding(.horizontal, 8)
+                            } else if loadingState == .loading {
+                                ProgressView()
+                            } else {
+                                Text("Failed to load data")
+                            }
+                            Text(appInfo.description ?? "")
+                                .foregroundColor(.gray)
+                                .font(.footnote)
+                                .lineLimit(3, reservesSpace: true)
+                            Spacer()
+                        }
+                        
+                    }
+                    .frame(width: 350)
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(10)
+                    
+                    
+                    
+                    /*                     VStack {
+                     
+                     //                        if loadingState == .loaded && !appsAMinfo.isEmpty  {
+                     
+                     AsyncImage(url: URL(string: appInfo.icon)) { phase in
+                     switch phase {
+                     case .success(let image):
+                     image.resizable()
+                     .padding(.top, 8)
+                     .aspectRatio(contentMode: .fit)
+                     .frame(width: 100, height: 100)
+                     case .failure(_):
+                     Text("Failed to load image")
+                     case .empty:
+                     ProgressView()
+                     }
+                     }
+                     
+                     /*
+                      AsyncImage(url: URL(string: appInfo.icon)) { image in
+                      image.resizable()
+                      image.aspectRatio(contentMode: .fill)
+                      image.frame(width: 100, height: 100)
+                      image.clipped()
+                      } placeholder: {
+                      ProgressView()
+                      }
+                      
+                      .frame(width: 100, height: 100)
+                      */
+                     //                             .padding([.leading])
+                     //                        }
+                     //                        else if loadingState == .loading {
+                     //                            ProgressView()
+                     //                        }
+                     //                        else {
+                     //                            Text("Failed to load data")
+                     //                        }
+                     
+                     
+                     Text(appInfo.name)    // Use the title from the item
+                     Text(appInfo.description ?? "")
+                     .foregroundColor(.gray)
+                     .font(.footnote)
+                     }
+                     .frame(width: 150, height: 200)
+                     .background(Color.gray.opacity(0.2))
+                     .cornerRadius(10)
+                     }
+                     */
+                    
                 }
+                .padding()
             }
-            .tint(.black)
-            .frame(maxWidth: .infinity, alignment: .leading).border(.black, width: 1)
-            .onChange(of: selectedOption) { newValue in
-                lineToDisplay =  appsAMinfo[newValue].name
-            }
-        } else if loadingState == .loading {
-            ProgressView()
-        } else {
-            Text("Failed to load data")
-        }
-
-            Text(lineToDisplay)
         }
     }
  
+    
+        //  MARK: -  the sub view for the am group
+        var multipleAppsViewAMold : some View {
+            
+            Group {
+                Text("Apps")
+                    .font(.subheadline)
+                if loadingState == .loaded && !appsAMinfo.isEmpty  {
+                Picker("jjjjjj", selection: $selectedOption) {
+                    ForEach(0..<appsAMinfo.count) { index in
+                        let originalName = appsAMinfo[index].name
+                        let truncatedName = String(originalName.prefix(30))
+                        let displayName = originalName.count > 30 ? truncatedName + "..." : originalName
+                        Text(displayName).tag(index)
+
+    //                    Text(String(appsAMinfo[index].name.prefix(30))).tag(index)
+                    }
+                }
+                .tint(.black)
+                .frame(maxWidth: .infinity, alignment: .leading).border(.black, width: 1)
+                .onChange(of: selectedOption) { newValue in
+                    lineToDisplay =  appsAMinfo[newValue].name
+                }
+            } else if loadingState == .loading {
+                ProgressView()
+            } else {
+                Text("Failed to load data")
+            }
+
+                Text(lineToDisplay)
+            }
+        }
+
+    
+    
     var amGroupView: some View {
         GroupBox {
             VStack(alignment: .leading) {
@@ -155,9 +307,21 @@ extension StudentAppProfileWorkingView: View {
                     } maximumValueLabel: {
                         Text("60")
                     } onEditingChanged: { editing in
-                        isEditing = editing
+                        if !editing {
+                            // This code will be executed when the user has finished interacting with the slider
+                            print("Slider interaction finished. Current value: \(currentDayStudentAppProfile.amSession.sessionLength)")
+                            // Add any logic you need to handle the final slider value here
+                        }
+
+//                        isEditing = editing
                     }
-                    .disabled(true)
+//                    .onChange(of: currentDayStudentAppProfile.amSession.sessionLength) { newValue in
+//                        // This code will be executed whenever the slider's value changes
+//                        print("Slider value changed to \(newValue)")
+//                        // You can add any other logic you need here
+//                    }
+
+//                    .disabled(true)
                 }
                 Toggle("Single App", isOn: $currentDayStudentAppProfile.amSession.oneAppLock)
                     .disabled(true)

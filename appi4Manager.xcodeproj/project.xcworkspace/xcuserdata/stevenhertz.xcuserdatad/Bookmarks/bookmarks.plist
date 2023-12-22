@@ -10,15 +10,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>43</string>
+					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>40</string>
+					<string>82</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>40</string>
+					<string>81</string>
 					<key>Timestamp</key>
-					<string>724644358.707446</string>
+					<string>724910255.3561749</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -34,15 +34,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>    @State var appsAMinfo: Array&lt;Appx&gt; = []</string>
+				<string>    @State var appsAMinfo: Array&lt;Appx&gt; = []
+</string>
 				<key>leading</key>
 				<string>    @State private var selectedSession: Session?
     
 </string>
 				<key>trailing</key>
-				<string>
-    @State var appsPMinfo: Array&lt;Appx&gt; = []
+				<string>    @State var appsPMinfo: Array&lt;Appx&gt; = []
     @State var appsHomeinfo: Array&lt;Appx&gt; = []
+    
 </string>
 			</dict>
 			<key>type</key>
@@ -56,13 +57,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>567</string>
+					<string>698</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>566</string>
+					<string>697</string>
 					<key>Timestamp</key>
-					<string>724647665.964124</string>
+					<string>724950244.7942981</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -78,16 +79,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>    func proceesAppCodes() async  {
+				<string>            return $currentDayStudentAppProfile.pmSession.sessionLength
 </string>
 				<key>leading</key>
-				<string>extension StudentAppProfileWorkingView {
-    
+				<string>            return $currentDayStudentAppProfile.amSession.sessionLength
+        case .pm:
 </string>
 				<key>trailing</key>
-				<string>        appsAMinfo.removeAll()
-        for appCode in currentDayStudentAppProfile.amSession.apps {
-            if let appx = await getAppInfoFor(appCode) {
+				<string>        case .home:
+            return $currentDayStudentAppProfile.homeSession.sessionLength
+        }
 </string>
 			</dict>
 			<key>type</key>
