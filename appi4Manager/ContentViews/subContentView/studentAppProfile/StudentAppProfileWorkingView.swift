@@ -15,6 +15,47 @@ import SwiftUI
 
         var body: some View {
             HStack {
+               if loadingState == .loaded && !appsAMinfo.isEmpty  {
+                   AsyncImage(url: URL(string: appInfo.icon)) { image in
+                       image.resizable()
+                           .padding([.top, .leading, .bottom], 8)
+                           .aspectRatio(contentMode: .fit)
+                           .frame(width: 80, height: 80)
+                   } placeholder: {
+                       ProgressView()
+                   }
+                       //                            .frame(width: 50, height: 50)
+                       //                            .padding([.leading])
+               } else if loadingState == .loading {
+                   ProgressView()
+               } else {
+                   Text("Failed to load data")
+               }
+               
+               
+               VStack(alignment: .leading) {
+                   if loadingState == .loaded && !appsAMinfo.isEmpty {
+                       Text(appInfo.name)
+                           .lineLimit(1)
+                           .padding(.horizontal, 8)
+                   } else if loadingState == .loading {
+                       ProgressView()
+                   } else {
+                       Text("Failed to load data")
+                   }
+                   Text(appInfo.description ?? "")
+                       .foregroundColor(.gray)
+                       .font(.footnote)
+                       .lineLimit(3, reservesSpace: true)
+                   Spacer()
+               }
+               
+           }
+           .frame(width: 300)
+           .background(Color.gray.opacity(0.2))
+           .cornerRadius(10)
+/*
+            HStack {
                 if loadingState == .loaded && !appsAMinfo.isEmpty {
                     AsyncImage(url: URL(string: appInfo.icon)) { image in
                         image.resizable()
@@ -44,6 +85,7 @@ import SwiftUI
                 }.frame(width: 320)
                 Spacer()
             }
+            */
         }
     }
 
@@ -144,106 +186,56 @@ extension StudentAppProfileWorkingView: View {
     var multipleAppsViewAM : some View {
         
         ScrollView(.horizontal, showsIndicators: true) {
-            HStack(spacing: 20) {
+            HStack(spacing: 0) {
                 ForEach(appsAMinfo) { appInfo in
                         //                    AppInfoView(loadingState: loadingState, appsAMinfo: appsAMinfo, appInfo: appInfo)
                     
-                    HStack {
-                        if loadingState == .loaded && !appsAMinfo.isEmpty  {
-                            AsyncImage(url: URL(string: appInfo.icon)) { image in
-                                image.resizable()
-                                    .padding([.top, .leading, .bottom], 8)
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 100, height: 100)
-                            } placeholder: {
-                                ProgressView()
-                            }
-                                //                            .frame(width: 50, height: 50)
-                                //                            .padding([.leading])
-                        } else if loadingState == .loading {
-                            ProgressView()
-                        } else {
-                            Text("Failed to load data")
-                        }
-                        
-                        
-                        VStack(alignment: .leading) {
-                            if loadingState == .loaded && !appsAMinfo.isEmpty {
-                                Text(appInfo.name)
-                                    .lineLimit(1)
-                                    .padding(.horizontal, 8)
-                            } else if loadingState == .loading {
-                                ProgressView()
-                            } else {
-                                Text("Failed to load data")
-                            }
-                            Text(appInfo.description ?? "")
-                                .foregroundColor(.gray)
-                                .font(.footnote)
-                                .lineLimit(3, reservesSpace: true)
-                            Spacer()
-                        }
-                        
-                    }
-                    .frame(width: 350)
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(10)
+                    AppInfoView(loadingState: loadingState, appsAMinfo: appsAMinfo, appInfo: appInfo)
                     
-                    
-                    
-                    /*                     VStack {
-                     
-                     //                        if loadingState == .loaded && !appsAMinfo.isEmpty  {
-                     
-                     AsyncImage(url: URL(string: appInfo.icon)) { phase in
-                     switch phase {
-                     case .success(let image):
-                     image.resizable()
-                     .padding(.top, 8)
-                     .aspectRatio(contentMode: .fit)
-                     .frame(width: 100, height: 100)
-                     case .failure(_):
-                     Text("Failed to load image")
-                     case .empty:
-                     ProgressView()
-                     }
-                     }
-                     
-                     /*
-                      AsyncImage(url: URL(string: appInfo.icon)) { image in
-                      image.resizable()
-                      image.aspectRatio(contentMode: .fill)
-                      image.frame(width: 100, height: 100)
-                      image.clipped()
-                      } placeholder: {
-                      ProgressView()
-                      }
-                      
-                      .frame(width: 100, height: 100)
-                      */
-                     //                             .padding([.leading])
-                     //                        }
-                     //                        else if loadingState == .loading {
-                     //                            ProgressView()
-                     //                        }
-                     //                        else {
-                     //                            Text("Failed to load data")
-                     //                        }
-                     
-                     
-                     Text(appInfo.name)    // Use the title from the item
-                     Text(appInfo.description ?? "")
-                     .foregroundColor(.gray)
-                     .font(.footnote)
-                     }
-                     .frame(width: 150, height: 200)
-                     .background(Color.gray.opacity(0.2))
-                     .cornerRadius(10)
-                     }
-                     */
-                    
+//                    HStack {
+//                        if loadingState == .loaded && !appsAMinfo.isEmpty  {
+//                            AsyncImage(url: URL(string: appInfo.icon)) { image in
+//                                image.resizable()
+//                                    .padding([.top, .leading, .bottom], 8)
+//                                    .aspectRatio(contentMode: .fit)
+//                                    .frame(width: 100, height: 100)
+//                            } placeholder: {
+//                                ProgressView()
+//                            }
+//                                //                            .frame(width: 50, height: 50)
+//                                //                            .padding([.leading])
+//                        } else if loadingState == .loading {
+//                            ProgressView()
+//                        } else {
+//                            Text("Failed to load data")
+//                        }
+//                        
+//                        
+//                        VStack(alignment: .leading) {
+//                            if loadingState == .loaded && !appsAMinfo.isEmpty {
+//                                Text(appInfo.name)
+//                                    .lineLimit(1)
+//                                    .padding(.horizontal, 8)
+//                            } else if loadingState == .loading {
+//                                ProgressView()
+//                            } else {
+//                                Text("Failed to load data")
+//                            }
+//                            Text(appInfo.description ?? "")
+//                                .foregroundColor(.gray)
+//                                .font(.footnote)
+//                                .lineLimit(3, reservesSpace: true)
+//                            Spacer()
+//                        }
+//                        
+//                    }
+//                    .frame(width: 350)
+//                    .background(Color.gray.opacity(0.2))
+//                    .cornerRadius(10)
+//                    
+
                 }
-                .padding()
+                .padding(8)
             }
         }
     }

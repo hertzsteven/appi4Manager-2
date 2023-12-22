@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>82</string>
+					<string>186</string>
 					<key>StartingColumnNumber</key>
-					<string>0</string>
+					<string>1</string>
 					<key>StartingLineNumber</key>
-					<string>81</string>
+					<string>185</string>
 					<key>Timestamp</key>
-					<string>724910255.3561749</string>
+					<string>724950715.520854</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -34,61 +34,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>    @State var appsAMinfo: Array&lt;Appx&gt; = []
+				<string>   var multipleAppsViewAM : some View {
 </string>
 				<key>leading</key>
-				<string>    @State private var selectedSession: Session?
-    
-</string>
+				<string>    
+    //  MARK: -  the sub view for the am group   
+ </string>
 				<key>trailing</key>
-				<string>    @State var appsPMinfo: Array&lt;Appx&gt; = []
-    @State var appsHomeinfo: Array&lt;Appx&gt; = []
-    
-</string>
-			</dict>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
-					<key>EndingLineNumber</key>
-					<string>698</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
-					<key>StartingLineNumber</key>
-					<string>697</string>
-					<key>Timestamp</key>
-					<string>724950244.7942981</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>appi4Manager/ContentViews/subContentView/studentAppProfile/StudentAppProfileWorkingView.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>            return $currentDayStudentAppProfile.pmSession.sessionLength
-</string>
-				<key>leading</key>
-				<string>            return $currentDayStudentAppProfile.amSession.sessionLength
-        case .pm:
-</string>
-				<key>trailing</key>
-				<string>        case .home:
-            return $currentDayStudentAppProfile.homeSession.sessionLength
-        }
+				<string>        
+        ScrollView(.horizontal, showsIndicators: true) {
+            HStack(spacing: 0) {
 </string>
 			</dict>
 			<key>type</key>
