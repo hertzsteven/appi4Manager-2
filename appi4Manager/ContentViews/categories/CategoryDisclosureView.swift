@@ -117,7 +117,7 @@ struct CategoryDisclosureView: View {
                         Stepper("Session Length: \(Int(sessionLength))", value: $sessionLength, in: 5...60, step: 5)
                         
                         HStack {
-                            Toggle("Single App", isOn: $oneAppLock)
+//                            Toggle("Single App", isOn: $oneAppLock)
                             Button("Reset") {
                                 withAnimation {
                                     accumulatex = 0

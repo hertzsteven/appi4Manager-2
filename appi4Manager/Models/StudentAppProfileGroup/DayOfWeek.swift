@@ -27,4 +27,9 @@ enum DayOfWeek: Int, CaseIterable {
         case .saturday: return "Sat"
         }
     }
+    
+    func dayOfWeek(from dayNumber: Int) -> DayOfWeek? {
+        return DayOfWeek(rawValue: dayNumber)
+    }
+
 }

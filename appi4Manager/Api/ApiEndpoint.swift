@@ -156,8 +156,9 @@ extension ApiEndpoint {
     /// The URL parameters for the endpoint (in case it has any)
     var parameters: [URLQueryItem]? {
         switch self {
-        case .updatePhoto(id: _, teachAuth: _, data: _) :
-            return [URLQueryItem(name: "token", value: "9c74b8d6a4934ca986dfe46592896801")]
+        case .updatePhoto(id: _, let teachAuth, data: _) :
+            return [URLQueryItem(name: "token", value: teachAuth)]
+//            return [URLQueryItem(name: "token", value: "57b0d6d47bb8445ea107a5fa2d795a2c")]
         case .getUsersInGroup(let groupID) :
             return [URLQueryItem(name: "memberOf", value: String(groupID))]
         case .getLessons(teachAuth: let teachAuth):

@@ -178,6 +178,7 @@ private extension ApiManager {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         print(request.url?.absoluteString)
+        print("pause")
 
 
         /* part replacing

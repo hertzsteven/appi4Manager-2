@@ -133,7 +133,9 @@ struct UserEditorContDup: View {
 //                                                     imagePicker.studentId = user.id
                                                     // imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
                                                      print("-*- in onAppear student id is \(user.id)")
-                                                     checkIfUserInAppProfile(studentID: user.id)
+                                                     Task {
+                                                         await checkIfUserInAppProfile(studentID: user.id)
+                                                     }
                                                  }
                                                  .onDisappear {
                                                      print("-- in disappear")
@@ -634,7 +636,6 @@ extension UserEditorContDup {
         usersViewModel.users[index!] = user
         
         await imagePicker.loadTransferable2Update(teachAuth: teacherItems.teacherAuthToken, studentId: user.id)
-//        await imagePicker.loadTransferable2Update(teachAuth: teacherItems.getTeacherAuth(), studentId: user.id)
 
         // update the student Pic
 //        imagePicker.updateTheImage()
@@ -667,12 +668,14 @@ fileprivate func saveselectedStudentClasses() {
     
 }
 
-fileprivate func checkIfUserInAppProfile(studentID: Int) {
+fileprivate func checkIfUserInAppProfile(studentID: Int) async {
     
     print(studentID)
     
-    var studentProfiles = StudentAppProfileManager.loadProfilesxUserDefaukts()
+//    var studentProfiles = StudentAppProfileManager.loadProfilesxUserDefaukts()
     
+    var studentProfiles = await StudentAppProfileManager.loadProfilesx()
+
     
     if  !studentProfiles.contains(where: { prf in
         prf.id == studentID

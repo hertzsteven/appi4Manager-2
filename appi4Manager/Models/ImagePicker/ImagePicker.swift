@@ -215,10 +215,13 @@ func resizeImage(image: UIImage, toSizeInKB maxSizeKB: Double) -> Data? {
 // Using api Update Student Photo
 func updatePhoto(id: Int, teachAuth: String, data: Data) async throws {
     do {
-        let networkResponse: ApiManager.NetworkResponse = try await ApiManager.shared.getDataNoDecode(from: .updatePhoto(id: id, teachAuth: teachAuth, data: data))
+        let networkResponse: ApiManager.NetworkResponse = try await ApiManager.shared.getDataNoDecode(from: .updatePhoto(id: id,
+                                                                                                                         teachAuth: teachAuth,
+                                                                                                                         data: data))
         dump(networkResponse)
         // try classDetailViewModel.reloadData()
     } catch {
+        print(error)
         print(error.localizedDescription)
     }
 }

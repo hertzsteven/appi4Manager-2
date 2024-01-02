@@ -10,12 +10,12 @@ import SwiftUI
     // Define a custom view
     struct AppInfoView: View {
         var loadingState: LoadingState // Assuming LoadingState is an enum you've defined
-        var appsAMinfo: Array<Appx> // Assuming AppInfo is a struct or class you've defined
+        var appsInfo: Array<Appx> // Assuming AppInfo is a struct or class you've defined
         var appInfo: Appx
 
         var body: some View {
             HStack {
-               if loadingState == .loaded && !appsAMinfo.isEmpty  {
+               if loadingState == .loaded && !appsInfo.isEmpty  {
                    AsyncImage(url: URL(string: appInfo.icon)) { image in
                        image.resizable()
                            .padding([.top, .leading, .bottom], 8)
@@ -34,7 +34,7 @@ import SwiftUI
                
                
                VStack(alignment: .leading) {
-                   if loadingState == .loaded && !appsAMinfo.isEmpty {
+                   if loadingState == .loaded && !appsInfo.isEmpty {
                        Text(appInfo.name)
                            .lineLimit(1)
                            .padding(.horizontal, 8)
@@ -141,6 +141,40 @@ extension StudentAppProfileWorkingView: View {
     //  MARK: - headerView - Top subview
     var headerView: some View {
         Group {
+            
+            VStack {
+                HStack {
+                     ForEach(DayOfWeek.allCases, id:\.self) { day in
+                        Button(action: {
+                            selectedDay = day
+                        }) {
+                            Text(day.asAString)
+                                .padding()
+                                .foregroundColor(self.selectedDay == day ? .white : .blue)
+                                .background(self.selectedDay == day ? Color.blue : Color.clear)
+                                .cornerRadius(5)
+                        }
+                    }
+                }
+                .padding()
+                .overlay(
+                    RoundedRectangle(cornerRadius: 5)
+                        .stroke(Color.blue, lineWidth: 1)
+                )
+                
+    //            if let selectedDirection = selectedDirection {
+    //                Text("Selected direction: \(selectedDirection)")
+    //                    .padding()
+    //            } else {
+    //                Text("No selection")
+    //                    .padding()
+    //            }
+            }
+
+            
+            
+            
+            
             Picker("Select a day of the week", selection: $selectedDay) {
                 ForEach(DayOfWeek.allCases, id:\.self) { day in
                     Text(day.asAString).tag(day.rawValue)
@@ -190,7 +224,7 @@ extension StudentAppProfileWorkingView: View {
                 ForEach(appsAMinfo) { appInfo in
                         //                    AppInfoView(loadingState: loadingState, appsAMinfo: appsAMinfo, appInfo: appInfo)
                     
-                    AppInfoView(loadingState: loadingState, appsAMinfo: appsAMinfo, appInfo: appInfo)
+                    AppInfoView(loadingState: loadingState, appsInfo: appsAMinfo, appInfo: appInfo)
                     
 //                    HStack {
 //                        if loadingState == .loaded && !appsAMinfo.isEmpty  {
@@ -315,8 +349,8 @@ extension StudentAppProfileWorkingView: View {
 
 //                    .disabled(true)
                 }
-                Toggle("Single App", isOn: $currentDayStudentAppProfile.amSession.oneAppLock)
-                    .disabled(true)
+//                Toggle("Single App", isOn: $currentDayStudentAppProfile.amSession.oneAppLock)
+//                    .disabled(true)
                 
             }
         } label: {
@@ -378,34 +412,44 @@ extension StudentAppProfileWorkingView: View {
     }
 
     var multipleAppsViewPM : some View {
-        
-        Group {
-            Text("Apps")
-                .font(.subheadline)
-            if loadingState == .loaded && !appsPMinfo.isEmpty  {
-            Picker("jjjjjj", selection: $selectedOption) {
-                ForEach(0..<appsPMinfo.count) { index in
-                    let originalName = appsPMinfo[index].name
-                    let truncatedName = String(originalName.prefix(30))
-                    let displayName = originalName.count > 30 ? truncatedName + "..." : originalName
-                    Text(displayName).tag(index)
-
-//                    Text(String(appsPMinfo[index].name.prefix(30))).tag(index)
+        ScrollView(.horizontal, showsIndicators: true) {
+            HStack(spacing: 0) {
+                ForEach(appsPMinfo) { appInfo in
+                        //                    AppInfoView(loadingState: loadingState, appsAMinfo: appsAMinfo, appInfo: appInfo)
+                    
+                    AppInfoView(loadingState: loadingState, appsInfo: appsPMinfo, appInfo: appInfo)
                 }
+                .padding(8)
             }
-            .tint(.black)
-            .frame(maxWidth: .infinity, alignment: .leading).border(.black, width: 1)
-            .onChange(of: selectedOption) { newValue in
-                lineToDisplay =  appsPMinfo[newValue].name
-            }
-        } else if loadingState == .loading {
-            ProgressView()
-        } else {
-            Text("Failed to load data")
         }
-
-            Text(lineToDisplay)
-        }
+        
+//        Group {
+//            Text("Apps")
+//                .font(.subheadline)
+//            if loadingState == .loaded && !appsPMinfo.isEmpty  {
+//            Picker("jjjjjj", selection: $selectedOption) {
+//                ForEach(0..<appsPMinfo.count) { index in
+//                    let originalName = appsPMinfo[index].name
+//                    let truncatedName = String(originalName.prefix(30))
+//                    let displayName = originalName.count > 30 ? truncatedName + "..." : originalName
+//                    Text(displayName).tag(index)
+//
+////                    Text(String(appsPMinfo[index].name.prefix(30))).tag(index)
+//                }
+//            }
+//            .tint(.black)
+//            .frame(maxWidth: .infinity, alignment: .leading).border(.black, width: 1)
+//            .onChange(of: selectedOption) { newValue in
+//                lineToDisplay =  appsPMinfo[newValue].name
+//            }
+//        } else if loadingState == .loading {
+//            ProgressView()
+//        } else {
+//            Text("Failed to load data")
+//        }
+//
+//            Text(lineToDisplay)
+//        }
     }
 
     var pmGroupView: some View {
@@ -435,8 +479,8 @@ extension StudentAppProfileWorkingView: View {
                     }
                     .disabled(true)
                 }
-                Toggle("Single App", isOn: $currentDayStudentAppProfile.pmSession.oneAppLock)
-                    .disabled(true)
+//                Toggle("Single App", isOn: $currentDayStudentAppProfile.pmSession.oneAppLock)
+//                    .disabled(true)
                 
             }
         }label: {
@@ -492,34 +536,42 @@ extension StudentAppProfileWorkingView: View {
     
     //  MARK: -  the sub view for the home group   
     var multipleAppsViewHome : some View {
-        
-        Group {
-            Text("Apps")
-                .font(.subheadline)
-            if loadingState == .loaded && !appsHomeinfo.isEmpty  {
-            Picker("jjjjjj", selection: $selectedOption) {
-                ForEach(0..<appsHomeinfo.count) { index in
-                    let originalName = appsHomeinfo[index].name
-                    let truncatedName = String(originalName.prefix(30))
-                    let displayName = originalName.count > 30 ? truncatedName + "..." : originalName
-                    Text(displayName).tag(index)
-
-//                    Text(String(appsHomeinfo[index].name.prefix(30))).tag(index)
+        ScrollView(.horizontal, showsIndicators: true) {
+            HStack(spacing: 0) {
+                ForEach(appsHomeinfo) { appInfo in
+                    AppInfoView(loadingState: loadingState, appsInfo: appsHomeinfo, appInfo: appInfo)
                 }
+                .padding(8)
             }
-            .tint(.black)
-            .frame(maxWidth: .infinity, alignment: .leading).border(.black, width: 1)
-            .onChange(of: selectedOption) { newValue in
-                lineToDisplay =  appsHomeinfo[newValue].name
-            }
-        } else if loadingState == .loading {
-            ProgressView()
-        } else {
-            Text("Failed to load data")
         }
-
-            Text(lineToDisplay)
-        }
+        
+//        Group {
+//            Text("Apps")
+//                .font(.subheadline)
+//            if loadingState == .loaded && !appsHomeinfo.isEmpty  {
+//            Picker("jjjjjj", selection: $selectedOption) {
+//                ForEach(0..<appsHomeinfo.count) { index in
+//                    let originalName = appsHomeinfo[index].name
+//                    let truncatedName = String(originalName.prefix(30))
+//                    let displayName = originalName.count > 30 ? truncatedName + "..." : originalName
+//                    Text(displayName).tag(index)
+//
+////                    Text(String(appsHomeinfo[index].name.prefix(30))).tag(index)
+//                }
+//            }
+//            .tint(.black)
+//            .frame(maxWidth: .infinity, alignment: .leading).border(.black, width: 1)
+//            .onChange(of: selectedOption) { newValue in
+//                lineToDisplay =  appsHomeinfo[newValue].name
+//            }
+//        } else if loadingState == .loading {
+//            ProgressView()
+//        } else {
+//            Text("Failed to load data")
+//        }
+//
+//            Text(lineToDisplay)
+//        }
     }
  
     var homeGroupView: some View {
@@ -550,8 +602,8 @@ extension StudentAppProfileWorkingView: View {
                     }
                     .disabled(true)
                 }
-                Toggle("Single App", isOn: $currentDayStudentAppProfile.homeSession.oneAppLock)
-                    .disabled(true)
+//                Toggle("Single App", isOn: $currentDayStudentAppProfile.homeSession.oneAppLock)
+//                    .disabled(true)
                 
             }
         } label: {
@@ -634,6 +686,10 @@ extension StudentAppProfileWorkingView: View {
                }
         
         .onAppear {
+            let calendar = Calendar.current
+            let dayNbr = calendar.component(.weekday, from: Date())
+            selectedDay = DayOfWeek(rawValue: dayNbr)!
+            
             Task {
                 studentAppProfilefiles = await  StudentAppProfileManager.loadProfilesx()
                 if let studentFound = studentAppProfilefiles.first { $0.id == studentId} {
