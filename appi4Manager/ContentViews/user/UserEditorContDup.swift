@@ -337,11 +337,11 @@ struct UserEditorContDup: View {
                         
                      let profilesx =  StudentAppProfileManager.loadProfilesxUserDefaukts()
                         
-                        if let studentFound = profilesx.first { $0.id == studentId} {
+                        if let studentFound = studentAppProfileManager.studentAppProfileFiles.first { $0.id == studentId} {
                             
                             StudentAppProfileWorkingView(
                                 studentId                   : studentId,
-                                studentAppProfilefiles      : profilesx,
+                                studentAppProfilefiles      : studentAppProfileManager.studentAppProfileFiles,
                                 profileManager: StudentAppProfileManager(),
                                 studentAppprofile           :  studentFound)
                         }
@@ -469,7 +469,9 @@ struct UserEditorContDup: View {
                 }
             
 
-
+                .task {
+                    studentAppProfileManager.studentAppProfileFiles = await StudentAppProfileManager.loadProfilesx()
+                }
         //      MARK: - Appear and Disappear   * * * * * * * * * * * * * * * * * * * * * *
                         .onAppear {
                             usersViewModel.ignoreLoading = true

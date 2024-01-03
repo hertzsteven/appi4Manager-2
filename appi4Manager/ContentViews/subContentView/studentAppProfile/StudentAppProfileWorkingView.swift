@@ -142,34 +142,34 @@ extension StudentAppProfileWorkingView: View {
     var headerView: some View {
         Group {
             
-            VStack {
-                HStack {
-                     ForEach(DayOfWeek.allCases, id:\.self) { day in
-                        Button(action: {
-                            selectedDay = day
-                        }) {
-                            Text(day.asAString)
-                                .padding()
-                                .foregroundColor(self.selectedDay == day ? .white : .blue)
-                                .background(self.selectedDay == day ? Color.blue : Color.clear)
-                                .cornerRadius(5)
-                        }
-                    }
-                }
-                .padding()
-                .overlay(
-                    RoundedRectangle(cornerRadius: 5)
-                        .stroke(Color.blue, lineWidth: 1)
-                )
-                
-    //            if let selectedDirection = selectedDirection {
-    //                Text("Selected direction: \(selectedDirection)")
-    //                    .padding()
-    //            } else {
-    //                Text("No selection")
-    //                    .padding()
-    //            }
-            }
+//            VStack {
+//                HStack {
+//                    ForEach(DayOfWeek.allCases, id: \.self) { day in
+//                        Button(action: {
+//                            selectedDay = day
+//                        }) {
+//                            Text(day.asAString)
+//                                .padding()
+//                                .foregroundColor(self.selectedDay == day ? .white : .blue)
+//                                .background(self.selectedDay == day ? Color.blue : Color.clear)
+//                                .cornerRadius(5)
+//                        }
+//                    }
+//                }
+//                    .padding()
+//                    .overlay(
+//                    RoundedRectangle(cornerRadius: 5)
+//                        .stroke(Color.blue, lineWidth: 1)
+//                )
+//
+//                //            if let selectedDirection = selectedDirection {
+//                //                Text("Selected direction: \(selectedDirection)")
+//                //                    .padding()
+//                //            } else {
+//                //                Text("No selection")
+//                //                    .padding()
+//                //            }
+//            }
 
             
             
@@ -685,6 +685,7 @@ extension StudentAppProfileWorkingView: View {
                                           apps             : getappsBinding() )
                }
         
+
         .onAppear {
             let calendar = Calendar.current
             let dayNbr = calendar.component(.weekday, from: Date())
