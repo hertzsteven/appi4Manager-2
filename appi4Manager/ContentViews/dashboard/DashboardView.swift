@@ -26,6 +26,7 @@ struct Category: Identifiable, Hashable {
 struct DashboardView: View {
     @State private var isLoading = true // Example loading state
 
+    @EnvironmentObject var devicesViewModel: DevicesViewModel
     @EnvironmentObject var classesViewModel: ClassesViewModel
     @EnvironmentObject var usersViewModel:  UsersViewModel
     @EnvironmentObject var teacherItems: TeacherItems
@@ -67,7 +68,8 @@ struct DashboardView: View {
             .navigationDestination(for: Category.self, destination: { category in
                 switch category.name {
                 case "Devices":
-                    TestOutView()
+                    DeviceListVW(isPresented: .constant(true))
+//                    TestOutView()
                 case "Categories":
                     CategoryListView( newAppCategory: AppCategory.makeDefault())
 
@@ -92,6 +94,7 @@ struct DashboardView: View {
                     SchoolListDup( newClass: SchoolClass.makeDefault())
                         .task {
                             await loadTheUsers()
+                            await loadTheDevices()
                        }
 
                 case "Apps":
@@ -147,6 +150,20 @@ private extension DashboardView {
     func loadTheUsers() async {
         do {
             try await usersViewModel.loadData2()
+        } catch  {
+            if let xerror = error as? ApiError {
+                self.hasError   = true
+                self.error      = xerror
+            }
+        }
+    }
+    
+    
+    func loadTheDevices() async {
+        do {
+            try await devicesViewModel.loadData2()
+            dump(devicesViewModel)
+            print("pause")
         } catch  {
             if let xerror = error as? ApiError {
                 self.hasError   = true

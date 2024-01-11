@@ -40,6 +40,8 @@ enum ApiEndpoint {
     case getLessonDetail(teachAuth: String, id: Int)
     case getApps
     case getanApp(appId: Int)
+    case getDevices(assettag: String?)
+    case updateDevice(uuid: String, assetTag: String)
 
 }
 
@@ -94,6 +96,10 @@ extension ApiEndpoint {
             return "/apps"
         case .getanApp(let appId):
             return "/apps/\(appId)"
+        case .getDevices(assettag: let assettag):
+            return "/devices"
+        case .updateDevice(let uuid,let assetTag):
+            return "/devices/\(uuid)/details"
         }
     }
     
@@ -128,6 +134,8 @@ extension ApiEndpoint {
             return .GET
         case .getLessonDetail(teachAuth: _, id: _):
             return .GET
+        case .updateDevice(uuid: _, assetTag: _):
+            return .POST 
         default:
             return .GET
         }
@@ -165,7 +173,12 @@ extension ApiEndpoint {
             return [URLQueryItem(name: "token", value: teachAuth)]
         case .getLessonDetail(teachAuth: let teachAuth, id: _ ):
             return [URLQueryItem(name: "token", value: teachAuth)]
-
+        case .getDevices(let assettag):
+            if let assettag = assettag {
+                return [URLQueryItem(name: "assettag", value: assettag)]
+            } else {
+                return nil
+            }
 //        case .getStudents(uuid: _):
 //            return [URLQueryItem(name: "token", value: "9c74b8d6a4934ca986dfe46592896801")]
         default:

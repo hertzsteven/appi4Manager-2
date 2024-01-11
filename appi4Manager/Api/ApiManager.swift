@@ -210,7 +210,12 @@ private extension ApiManager {
         case .getUsers:
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
-            
+ 
+        case .getDevices(assettag: _):
+            request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+            request.addValue("1", forHTTPHeaderField: "X-Server-Protocol-Version")
+            request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
+
         case .getGroups:
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
@@ -481,6 +486,20 @@ private extension ApiManager {
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
             
+        case .updateDevice(let uuid, let assetTag):
+            
+            request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+            request.addValue("1", forHTTPHeaderField: "X-Server-Protocol-Version")
+            request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
+            
+            let bodyString = """
+            {
+               "assetTag": "\(assetTag)"
+            }
+            """
+            print(bodyString)
+            request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
+  
 
             // what is left look at other
             

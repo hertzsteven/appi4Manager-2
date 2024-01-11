@@ -142,13 +142,16 @@ struct TestOutView: View {
                     Text("get the students")
                 }
                 
-                Button("Process the classes") {
+                Button("Process the devices") {
                         // Where you want to call the function
                     Task {
+                        let z = try await ApiManager.shared.getDataNoDecode(from: .updateDevice(uuid: "c1da27daaf6a62836f996fee8cb3c45c3154e0ca", assetTag: "9876"))
+                        dump(z)
+                        print(z)
                             //                    await processSchoolClasses()
-                        await teacherItems.exSetup()
-                        dump(teacherItems)
-                        print("we will process the classes")
+//                        await teacherItems.exSetup()
+//                        dump(teacherItems)
+//                        print("we will process the classes")
                     }
                 }
                 .alert(isPresented: $showAlert) {
@@ -240,6 +243,41 @@ struct TestOutView: View {
                 .alert(isPresented: $showAlert) {
                     Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
                 }
+                
+                Button {
+                    print("getting the devices")
+                    Task {
+                        do {
+                            let deviceListResponse: DeviceListResponse = try await ApiManager.shared.getData(from: .getDevices(assettag: "2") )
+                            dump(deviceListResponse)
+                            print(deviceListResponse)
+                            
+//                            for app in appResponse.apps {
+//                                    //                            let record = CKRecord(recordType: "appProfiles", recordID: CKRecord.ID(recordName: "\(app.bundleId)"))
+//                                do {
+//                                    print(app.name, app.bundleId, app.icon)
+//                                    
+//                                }
+//                                
+//                                catch {
+//                                    print("Error fetching records: \(error.localizedDescription)")
+//                                }
+//                            }
+                            
+                        } catch let error as ApiError {
+                                //  FIXME: -  put in alert that will display approriate error message
+                            print(error.description)
+                        }
+                        
+                        print("in task after do")
+                        
+                    }
+                    print("after task")
+                    
+                } label: {
+                    Text("get the devices")
+                }
+                
                 
                 Button {
                     print("getting the apps")

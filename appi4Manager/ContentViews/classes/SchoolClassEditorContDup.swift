@@ -88,6 +88,60 @@ struct CollapsibleList: View {
     }
 }
 
+struct CollapsibleListtheDevice: View {
+    @EnvironmentObject var usersViewModel: UsersViewModel
+    @Environment(\.editMode) var editMode
+    
+    @Binding var isListVisible: Bool
+    @Binding var newItem: String
+    @Binding var listData:   [TheDevice]
+    let title:      String
+    
+    var action: () -> Void
+    
+    var itIsInEdit: Bool {
+        editMode?.wrappedValue == .active
+    }
+    
+    var body: some View {
+        
+        Section(header: HStack {
+       
+            TextField("Add new \(title)", text: $newItem)
+            Spacer()
+       
+            if itIsInEdit {
+                Button {
+                    action()
+                } label: {
+                    Image(systemName: "plusminus")
+                }
+                Divider()
+            }
+       
+            Button {
+                isListVisible.toggle()
+            } label: {
+                Image(systemName: isListVisible ? "chevron.down" : "chevron.right")
+            }
+       
+        })  { if isListVisible {
+            ForEach(listData) { theDevice in
+                Text("\(theDevice.serialNumber) \(theDevice.name)")
+                    .foregroundColor(itIsInEdit ? .black :  Color(.darkGray))
+            }
+        }
+/*           {
+            ForEach(listData.map({ id in
+                usersViewModel.users.first(where: { $0.id == id })!
+            }), id: \.id) { student in
+                Text("\(student.firstName) \(student.lastName)")
+                    .foregroundColor(itIsInEdit ? .black :  Color(.darkGray))
+            }
+          } */
+        }
+    }
+}
 
 struct SchoolClassEditorContDup: View {
     
@@ -95,7 +149,9 @@ struct SchoolClassEditorContDup: View {
     @State var newItem1: String = ""
     @State var isList2Visible: Bool = true
     @State var newItem2: String = ""
-    
+    @State var isList3Visible: Bool = true
+    @State var newItem3: String = ""
+
     @State var mode: EditMode = .inactive
     
     var itIsInEdit: Bool {
@@ -109,12 +165,16 @@ struct SchoolClassEditorContDup: View {
 
     @State var passedItemSelected:      Array<Int> = []
     
-    @State var selectedStudents:        Array<Int> = []
-    @State var selectedTeachers:        Array<Int> = []
+    @State var selectedStudents:        Array<Int>          = []
+    @State var selectedTeachers:        Array<Int>          = []
+    @State var selectedDevices:         Array<TheDevice>    = []
+
     
     
     @State private var toShowStudentList: Bool = false
     @State private var toShowTeacherList: Bool = false
+    @State private var toShowDeviceList:  Bool = false
+
     
     @State var personType: PersonType = PersonType.student
     
@@ -131,6 +191,8 @@ struct SchoolClassEditorContDup: View {
     @State private var schoolClassInitialValues   = SchoolClass.makeDefault()  // this gets done by the update
     @State var selectedStudentsInitialValues:   Array<Int> = []
     @State var selectedTeachersInitialValues:   Array<Int> = []
+    @State var selectedDevicesInitialValues:   Array<TheDevice> = []
+
     
     
     @State         var isNew = false
@@ -138,7 +200,7 @@ struct SchoolClassEditorContDup: View {
     
     @EnvironmentObject var classesViewModel: ClassesViewModel
     
-    
+    @EnvironmentObject var devicesViewModel: DevicesViewModel
     @EnvironmentObject var usersViewModel: UsersViewModel
     @EnvironmentObject var classDetailViewModel: ClassDetailViewModel
     @EnvironmentObject var studentPicStubViewModel: StudentPicStubViewModel
@@ -234,6 +296,24 @@ struct SchoolClassEditorContDup: View {
                     }
                 }
             }
+            CollapsibleListtheDevice(isListVisible: $isList3Visible, newItem: $newItem3, listData: $selectedDevices, title: "Devices") {
+                Task {
+                    do {
+//                        teacherIds = try await deviceview.getUsersInTeacherGroup() ?? []
+                        toShowDeviceList.toggle()
+                    } catch {
+                            // Handle error
+                    }
+                }
+            }
+
+            
+//            Button {
+//                toShowDeviceList.toggle()
+//            } label: {
+//                Text("Select Device")
+//            }
+
 
             if !isNew {
                 DeleteButtonView(action: {
@@ -286,7 +366,21 @@ struct SchoolClassEditorContDup: View {
                 selectedTeachers = passedItemSelected                
             }
         }
-      
+//       Select Device Popup
+        .sheet(isPresented: $toShowDeviceList) {
+            NavigationView {
+                ItemListSelectViewDVC(
+                    passedItemSelected: $selectedDevices,
+                                      itemsToList: devicesViewModel.devices, 
+                    listTitle: "dkdkkd")
+            }
+            
+            .onDisappear {
+//                selectedDevices = passedItemSelected
+            }
+        }
+                  
+             
         
         
 //       MARK: - Confirmation Dialog  * * * * * * * * * * * * * * * * * * * * * * * * 
@@ -469,6 +563,8 @@ struct SchoolClassEditorContDup: View {
             } else {
                 mode = .active
             }
+            
+//            selectedDevices = devicesViewModel.filterdevicesBySchoolClass(schoolClassGroupID: schoolClass.userGroupId)
         }
 
         .onDisappear {
@@ -501,6 +597,7 @@ extension SchoolClassEditorContDup {
             schoolClass.uuid = x  // maybe not needed
             saveSelectedStudents()
             saveSelectedTeachers()
+            saveSelectedDevices()
         } catch  {
             print("Failed to create class: \(error)")
         }
@@ -515,7 +612,9 @@ extension SchoolClassEditorContDup {
        
         guard   schoolClassInitialValues   != schoolClass ||
                 selectedStudents    != selectedStudentsInitialValues ||
-                selectedTeachers    != selectedTeachersInitialValues else {
+                selectedTeachers    != selectedTeachersInitialValues ||
+                selectedDevices     != selectedDevicesInitialValues
+        else {
             return
         } // there was a change
         
@@ -526,6 +625,7 @@ extension SchoolClassEditorContDup {
                 // do the update and leave
             saveSelectedStudents()
             saveSelectedTeachers()
+            saveSelectedDevices()
             
             let index = classesViewModel.schoolClasses.firstIndex { sc in
                 sc.uuid == schoolClass.uuid
@@ -730,6 +830,31 @@ extension SchoolClassEditorContDup {
         
     }
     
+        // Update the devices belonging to the class
+    fileprivate func saveSelectedDevices() {
+        print("in save selected devices")
+            // capture students added and removed
+        let selectedDevicesRemoved = Set(selectedDevicesInitialValues).subtracting(Set(selectedDevices))
+        let selectedDevicesAdded   = Set(selectedDevices).subtracting(Set(selectedDevicesInitialValues))
+        
+        for deviceToRemove in selectedDevicesRemoved {
+            Task {
+                let z = try await ApiManager.shared.getDataNoDecode(from: .updateDevice(uuid: deviceToRemove.UDID, assetTag: "None"))
+                
+                print("Removing \(deviceToRemove.name)")
+            }
+        }
+        for deviceToAdd in selectedDevicesAdded {
+            Task {
+                let z = try await ApiManager.shared.getDataNoDecode(from: .updateDevice(uuid: deviceToAdd.UDID, assetTag: String(schoolClass.userGroupId)))
+                print("adding \(deviceToAdd.name)")
+            }
+           
+        }
+        
+        selectedDevicesInitialValues = selectedDevices
+        
+    }
     
     /*
      Executes on appear.
@@ -786,6 +911,10 @@ extension SchoolClassEditorContDup {
         
             // initialize the saved list
         selectedTeachersInitialValues = selectedTeachers
+        
+            //  FIXME: -  Maybe take devices from deviceViewModel and put it here
+        selectedDevices = devicesViewModel.filterdevicesBySchoolClass(schoolClassGroupID: schoolClass.userGroupId)
+        selectedDevicesInitialValues = selectedDevices
     }
 
 }
