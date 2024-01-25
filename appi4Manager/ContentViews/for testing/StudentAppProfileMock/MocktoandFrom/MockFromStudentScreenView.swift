@@ -32,7 +32,7 @@ struct MockFromStudentScreenView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: Int.self) { studentId in
          
-            StudentAppProfileWorkingView(studentId: studentId, profileManager: StudentAppProfileManager())
+//            StudentAppProfileWorkingView(studentId: studentId, profileManager: StudentAppProfileManager())
         
 //         let profilesx =  StudentAppProfileManager.loadProfilesxUserDefaukts()
             

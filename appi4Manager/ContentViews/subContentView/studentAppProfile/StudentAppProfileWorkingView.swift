@@ -103,6 +103,7 @@ struct StudentAppProfileWorkingView {
     @State private var selectedDay = DayOfWeek.sunday
     
     @State var studentId: Int
+    @State var studentName: String
     
     //  MARK: Manage Student Profile
     @State var studentAppProfilefiles: [StudentAppProfilex]        = []
@@ -174,7 +175,8 @@ extension StudentAppProfileWorkingView: View {
             
             
             
-            
+//            Text("Hello").padding()
+
             Picker("Select a day of the week", selection: $selectedDay) {
                 ForEach(DayOfWeek.allCases, id:\.self) { day in
                     Text(day.asAString).tag(day.rawValue)
@@ -182,6 +184,7 @@ extension StudentAppProfileWorkingView: View {
             }.pickerStyle(.segmented)
                 .padding([.top, .horizontal] )
         }
+        .navigationTitle(studentName)
     }
     
     var appSelectedViewAM:    some View {

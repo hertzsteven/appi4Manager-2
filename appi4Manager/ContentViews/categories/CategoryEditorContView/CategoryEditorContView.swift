@@ -82,8 +82,14 @@ struct CategoryEditorContView: View {
         GeometryReader { geometry in
             ZStack {
                 if appxViewModel.isLoaded == false {
-                    VStack {
-                        ProgressView().controlSize(.large).scaleEffect(2)
+                    VStack(alignment: .center) {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            ProgressView().controlSize(.large).scaleEffect(2)
+                            Spacer()
+                        }
+                        Spacer()
                     }
                 } else {
                     

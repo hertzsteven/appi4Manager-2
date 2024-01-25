@@ -31,7 +31,7 @@ struct UserListDup: View {
     @Environment(\.horizontalSizeClass)     var horizontalSizeClass
     @Environment(\.verticalSizeClass)         var verticalSizeClass
     
-    
+    @State var doGrid = true
     private var gridItems: [GridItem] {
         Array(repeating: GridItem(.flexible(minimum: 100, maximum: .infinity)), count: numberOfColumns)
     }
@@ -54,14 +54,15 @@ struct UserListDup: View {
                     ProgressView().controlSize(.large).scaleEffect(2)
                 }
             } else {
-                
-                ScrollView {
+                if doGrid {
+                    ScrollView {
                     
                     LazyVGrid(columns: gridItems, spacing: 30) {
                         
                         ForEach(usersViewModel.sortedUsersNonB(lastNameFilter: searchText, selectedLocationID: teacherItems.selectedLocationIdx, teacherUserID: teacherItems.teacherUserDict[teacherItems.selectedLocationIdx]!) ) {  theUser  in
                             
                             let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: teacherItems.uniqueID)
+                                //                            let imageURL = imageURLWithUniqueID( URL(string: "https://developitsnfredu.jamfcloud.com/application/views/default/assets/image/avatar/avatar.png")!, uniqueID: teacherItems.uniqueID)
                             
                             UserCardVwDup(user: theUser, urlPic: imageURL)
                                 .foregroundColor(Color.primary)
@@ -72,8 +73,15 @@ struct UserListDup: View {
                     } // end of for each
                 } // end of list
             }
+            }
+        }
+        .onAppear {
+            doGrid = true
         }
 
+        .onDisappear {
+            doGrid = false
+        }
 
 //      MARK: - Toolbar   * * * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
         .toolbar {

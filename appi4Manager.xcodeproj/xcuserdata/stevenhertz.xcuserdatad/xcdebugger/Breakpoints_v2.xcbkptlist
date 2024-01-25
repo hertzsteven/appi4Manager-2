@@ -3,4 +3,1164 @@
    uuid = "C2AFD0AB-3B4C-46B5-A6E1-E09EE84E1FD9"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D68F3F62-A150-4DE1-AF1F-736D0E6F2160"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/Models/StudentAppProfileGroup/StudentAppProfileManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "18"
+            endingLineNumber = "18"
+            landmarkName = "loadProfilesx()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "D68F3F62-A150-4DE1-AF1F-736D0E6F2160 - d7298006fdbe489b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for static appi4Manager.StudentAppProfileManager.loadProfilesx() async -&gt; Swift.Array&lt;appi4Manager.StudentAppProfilex&gt;"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/Models/StudentAppProfileGroup/StudentAppProfileManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "18"
+                  endingLineNumber = "18"
+                  offsetFromSymbolStart = "52">
+               </Location>
+               <Location
+                  uuid = "D68F3F62-A150-4DE1-AF1F-736D0E6F2160 - 7eda04aefc73eebb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for static appi4Manager.StudentAppProfileManager.loadProfilesx() async -&gt; Swift.Array&lt;appi4Manager.StudentAppProfilex&gt;"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/Models/StudentAppProfileGroup/StudentAppProfileManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "18"
+                  endingLineNumber = "18"
+                  offsetFromSymbolStart = "44">
+               </Location>
+               <Location
+                  uuid = "D68F3F62-A150-4DE1-AF1F-736D0E6F2160 - 61983f3b50470c99"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for static appi4Manager.StudentAppProfileManager.loadProfilesx() async -&gt; Swift.Array&lt;appi4Manager.StudentAppProfilex&gt;"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/Models/StudentAppProfileGroup/StudentAppProfileManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "18"
+                  endingLineNumber = "18"
+                  offsetFromSymbolStart = "56">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FA2B8F93-50D0-42B7-9F92-F963892BD0F2"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/user/UserEditorContDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "345"
+            endingLineNumber = "345"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "FA2B8F93-50D0-42B7-9F92-F963892BD0F2 - 699da8b487e783c5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Int) -&gt; Swift.Optional&lt;appi4Manager.StudentAppProfileWorkingView&gt; in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.onDisappear(perform: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.overlay&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(alignment: SwiftUI.Alignment, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0, appi4Manager.BlockingOverlayView)&gt; in appi4Manager.UserEditorContDup.body.getter : some"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "340"
+                  endingLineNumber = "340"
+                  offsetFromSymbolStart = "832">
+               </Location>
+               <Location
+                  uuid = "FA2B8F93-50D0-42B7-9F92-F963892BD0F2 - 6b5db26478f14efe"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (appi4Manager.StudentAppProfilex) -&gt; Swift.Bool in closure #2 (Swift.Int) -&gt; Swift.Optional&lt;appi4Manager.StudentAppProfileWorkingView&gt; in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.onDisappear(perform: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.overlay&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(alignment: SwiftUI.Alignment, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0, appi4Manager.BlockingOverlayView)&gt; in appi4Manager.UserEditorContDup.body.getter : some"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "340"
+                  endingLineNumber = "340"
+                  offsetFromSymbolStart = "48">
+               </Location>
+               <Location
+                  uuid = "FA2B8F93-50D0-42B7-9F92-F963892BD0F2 - 699da8b487e783c5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Int) -&gt; Swift.Optional&lt;appi4Manager.StudentAppProfileWorkingView&gt; in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.onDisappear(perform: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.overlay&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(alignment: SwiftUI.Alignment, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0, appi4Manager.BlockingOverlayView)&gt; in appi4Manager.UserEditorContDup.body.getter : some"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "340"
+                  endingLineNumber = "340"
+                  offsetFromSymbolStart = "472">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "30E685B8-2263-4BC5-934C-C9D63422A7D6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "Yes"
+            filePath = "appi4Manager/ViewModels/StudentPicStubViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "24"
+            endingLineNumber = "24"
+            landmarkName = "getURLpicForStudentWith(_:)"
+            landmarkType = "7">
+            <Actions>
+               <BreakpointActionProxy
+                  ActionExtensionID = "Xcode.BreakpointAction.DebuggerCommand">
+                  <ActionContent
+                     consoleCommand = "po id">
+                  </ActionContent>
+               </BreakpointActionProxy>
+            </Actions>
+            <Locations>
+               <Location
+                  uuid = "30E685B8-2263-4BC5-934C-C9D63422A7D6 - ca5dd676d383eac3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "appi4Manager.StudentPicStubViewModel.getURLpicForStudentWith(Swift.Int) -&gt; Foundation.URL"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ViewModels/StudentPicStubViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "24"
+                  endingLineNumber = "24"
+                  offsetFromSymbolStart = "368">
+               </Location>
+               <Location
+                  uuid = "30E685B8-2263-4BC5-934C-C9D63422A7D6 - ca5dd676d383eac3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "appi4Manager.StudentPicStubViewModel.getURLpicForStudentWith(Swift.Int) -&gt; Foundation.URL"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ViewModels/StudentPicStubViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "24"
+                  endingLineNumber = "24"
+                  offsetFromSymbolStart = "312">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "02AFA9D5-1389-4158-B188-305E90173904"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/user/UserEditorContDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "649"
+            endingLineNumber = "649"
+            landmarkName = "upDateUser()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "02AFA9D5-1389-4158-B188-305E90173904 - bc75e50b72f1f3ea"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for appi4Manager.UserEditorContDup.upDateUser() async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "651"
+                  endingLineNumber = "651"
+                  offsetFromSymbolStart = "76">
+               </Location>
+               <Location
+                  uuid = "02AFA9D5-1389-4158-B188-305E90173904 - 5642bb568112ccdf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for appi4Manager.UserEditorContDup.upDateUser() async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "651"
+                  endingLineNumber = "651"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  uuid = "02AFA9D5-1389-4158-B188-305E90173904 - a3261872046435ec"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for appi4Manager.UserEditorContDup.upDateUser() async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "651"
+                  endingLineNumber = "651"
+                  offsetFromSymbolStart = "152">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C1124AD0-370B-42F8-A8D7-670523547F35"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/user/UserEditorContDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "657"
+            endingLineNumber = "657"
+            landmarkName = "upDateUser()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "C1124AD0-370B-42F8-A8D7-670523547F35 - a3261872046436d4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for appi4Manager.UserEditorContDup.upDateUser() async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "659"
+                  endingLineNumber = "659"
+                  offsetFromSymbolStart = "924">
+               </Location>
+               <Location
+                  uuid = "C1124AD0-370B-42F8-A8D7-670523547F35 - 6490242c071319e9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) await resume partial function for appi4Manager.UserEditorContDup.upDateUser() async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "659"
+                  endingLineNumber = "659"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  uuid = "C1124AD0-370B-42F8-A8D7-670523547F35 - 91d04eb517174cd6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for appi4Manager.UserEditorContDup.upDateUser() async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "659"
+                  endingLineNumber = "659"
+                  offsetFromSymbolStart = "112">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "41E19F33-DB90-478A-A9D2-9C25B51EBF2B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/Models/ImagePicker/ImagePicker.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "147"
+            endingLineNumber = "147"
+            landmarkName = "loadTransferable2Update(teachAuth:studentId:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "04A31ECD-04CD-473E-9B88-5B192907034D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/Models/ImagePicker/ImagePicker.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "151"
+            endingLineNumber = "151"
+            landmarkName = "loadTransferable2Update(teachAuth:studentId:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1FAF6CBB-D992-416C-AB4F-4914A0A3D20F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/Models/ImagePicker/ImagePicker.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "155"
+            endingLineNumber = "155"
+            landmarkName = "loadTransferable2Update(teachAuth:studentId:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "565B59BE-7E24-4CDE-A91C-2038711F6BE3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/Models/ImagePicker/ImagePicker.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "180"
+            endingLineNumber = "180"
+            landmarkName = "loadTransferable2Update(teachAuth:studentId:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "550576CE-5E31-4379-922F-2CA828D9C7A4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/Models/ImagePicker/ImagePicker.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "189"
+            endingLineNumber = "189"
+            landmarkName = "loadTransferable2Update(teachAuth:studentId:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D8A24AC4-BF95-45A3-8B5F-617E28A06338"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/Models/ImagePicker/ImagePicker.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "193"
+            endingLineNumber = "193"
+            landmarkName = "loadTransferable2Update(teachAuth:studentId:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "D8A24AC4-BF95-45A3-8B5F-617E28A06338 - e6da776bb1f21816"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for appi4Manager.ImagePicker.loadTransferable2Update(teachAuth: Swift.String, studentId: Swift.Int) async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/Models/ImagePicker/ImagePicker.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "193"
+                  endingLineNumber = "193"
+                  offsetFromSymbolStart = "1564">
+               </Location>
+               <Location
+                  uuid = "D8A24AC4-BF95-45A3-8B5F-617E28A06338 - d535bb55e84c2615"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for appi4Manager.ImagePicker.loadTransferable2Update(teachAuth: Swift.String, studentId: Swift.Int) async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/Models/ImagePicker/ImagePicker.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "193"
+                  endingLineNumber = "193"
+                  offsetFromSymbolStart = "440">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0AA31ADB-1562-4516-A9EA-9E8CDC474489"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/Models/ImagePicker/ImagePicker.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "195"
+            endingLineNumber = "195"
+            landmarkName = "loadTransferable2Update(teachAuth:studentId:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "0AA31ADB-1562-4516-A9EA-9E8CDC474489 - e6da776bb1f218d0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for appi4Manager.ImagePicker.loadTransferable2Update(teachAuth: Swift.String, studentId: Swift.Int) async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/Models/ImagePicker/ImagePicker.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "195"
+                  endingLineNumber = "195"
+                  offsetFromSymbolStart = "1952">
+               </Location>
+               <Location
+                  uuid = "0AA31ADB-1562-4516-A9EA-9E8CDC474489 - d535bb55e84c26d3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for appi4Manager.ImagePicker.loadTransferable2Update(teachAuth: Swift.String, studentId: Swift.Int) async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/Models/ImagePicker/ImagePicker.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "195"
+                  endingLineNumber = "195"
+                  offsetFromSymbolStart = "832">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "811B47B4-FBED-42CF-AF29-E081D6403A7B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/user/UserEditorContDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "561"
+            endingLineNumber = "561"
+            landmarkName = "storeUserDetailStartingPoint()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "39F3726B-28A2-479D-86E4-E7DC549D0EC1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/user/UserEditorContDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "567"
+            endingLineNumber = "567"
+            landmarkName = "storeUserDetailStartingPoint()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "19EFE9AD-3BE0-4381-A75F-793438B3DAD1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/user/UserEditorContDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "663"
+            endingLineNumber = "663"
+            landmarkName = "upDateUser()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "673E2D3C-CFA5-4206-BDFE-E2776074808A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/Models/ImagePicker/ImagePicker.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "188"
+            endingLineNumber = "188"
+            landmarkName = "loadTransferable2Update(teachAuth:studentId:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "673E2D3C-CFA5-4206-BDFE-E2776074808A - e6da776bb1f219ab"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for appi4Manager.ImagePicker.loadTransferable2Update(teachAuth: Swift.String, studentId: Swift.Int) async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/Models/ImagePicker/ImagePicker.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "188"
+                  endingLineNumber = "188"
+                  offsetFromSymbolStart = "1080">
+               </Location>
+               <Location
+                  uuid = "673E2D3C-CFA5-4206-BDFE-E2776074808A - 6d6c331c829e18d1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for appi4Manager.ImagePicker.loadTransferable2Update(teachAuth: Swift.String, studentId: Swift.Int) async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/Models/ImagePicker/ImagePicker.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "188"
+                  endingLineNumber = "188"
+                  offsetFromSymbolStart = "36">
+               </Location>
+               <Location
+                  uuid = "673E2D3C-CFA5-4206-BDFE-E2776074808A - d047a40177294604"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for appi4Manager.ImagePicker.loadTransferable2Update(teachAuth: Swift.String, studentId: Swift.Int) async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/Models/ImagePicker/ImagePicker.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "177"
+                  endingLineNumber = "177"
+                  offsetFromSymbolStart = "84">
+               </Location>
+               <Location
+                  uuid = "673E2D3C-CFA5-4206-BDFE-E2776074808A - d047a401772945a9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for appi4Manager.ImagePicker.loadTransferable2Update(teachAuth: Swift.String, studentId: Swift.Int) async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/Models/ImagePicker/ImagePicker.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "188"
+                  endingLineNumber = "188"
+                  offsetFromSymbolStart = "124">
+               </Location>
+               <Location
+                  uuid = "673E2D3C-CFA5-4206-BDFE-E2776074808A - d535bb55e84c2405"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for appi4Manager.ImagePicker.loadTransferable2Update(teachAuth: Swift.String, studentId: Swift.Int) async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/Models/ImagePicker/ImagePicker.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "177"
+                  endingLineNumber = "177"
+                  offsetFromSymbolStart = "124">
+               </Location>
+               <Location
+                  uuid = "673E2D3C-CFA5-4206-BDFE-E2776074808A - d535bb55e84c27a8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for appi4Manager.ImagePicker.loadTransferable2Update(teachAuth: Swift.String, studentId: Swift.Int) async -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/Models/ImagePicker/ImagePicker.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "188"
+                  endingLineNumber = "188"
+                  offsetFromSymbolStart = "156">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5633D719-53F7-47CF-B724-EB4D7B420FF1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ViewModels/StudentPicStubViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "25"
+            endingLineNumber = "25"
+            landmarkName = "getURLpicForStudentWith(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "5633D719-53F7-47CF-B724-EB4D7B420FF1 - ca5dd676d383eae2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "appi4Manager.StudentPicStubViewModel.getURLpicForStudentWith(Swift.Int) -&gt; Foundation.URL"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ViewModels/StudentPicStubViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "25"
+                  endingLineNumber = "25"
+                  offsetFromSymbolStart = "672">
+               </Location>
+               <Location
+                  uuid = "5633D719-53F7-47CF-B724-EB4D7B420FF1 - c310857f9f096e36"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (appi4Manager.Student) -&gt; Swift.Bool in appi4Manager.StudentPicStubViewModel.getURLpicForStudentWith(Swift.Int) -&gt; Foundation.URL"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ViewModels/StudentPicStubViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "26"
+                  endingLineNumber = "26"
+                  offsetFromSymbolStart = "24">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "31875581-4567-4CE9-8D5D-A6CDD8E539E6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "Yes"
+            filePath = "appi4Manager/ContentViews/user/UserListDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "224"
+            endingLineNumber = "224"
+            landmarkName = "imageURLWithUniqueID(_:uniqueID:)"
+            landmarkType = "7">
+            <Actions>
+               <BreakpointActionProxy
+                  ActionExtensionID = "Xcode.BreakpointAction.DebuggerCommand">
+                  <ActionContent
+                     consoleCommand = "po photoURL.absoluteString">
+                  </ActionContent>
+               </BreakpointActionProxy>
+            </Actions>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1C02BD0C-75C4-41CB-ABDF-B0DDDB4BC7D3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "Yes"
+            filePath = "appi4Manager/ContentViews/user/UserListDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "64"
+            endingLineNumber = "64"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Actions>
+               <BreakpointActionProxy
+                  ActionExtensionID = "Xcode.BreakpointAction.Log">
+                  <ActionContent
+                     message = "&quot;in let imageurl&quot;"
+                     conveyanceType = "0">
+                  </ActionContent>
+               </BreakpointActionProxy>
+            </Actions>
+            <Locations>
+               <Location
+                  uuid = "1C02BD0C-75C4-41CB-ABDF-B0DDDB4BC7D3 - f68b7d47673d0393"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (appi4Manager.User) -&gt; &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; SwiftUI.ForEach&lt;Swift.Array&lt;appi4Manager.User&gt;, Swift.Int, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0&gt; in closure #2 () -&gt; SwiftUI.LazyVGrid&lt;SwiftUI.ForEach&lt;Swift.Array&lt;appi4Manager.User&gt;, Swift.Int, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0&gt;&gt; in closure #1 () -&gt; SwiftUI._ConditionalContent&lt;SwiftUI.VStack&lt;&lt;&lt;opaque return type of SwiftUI.View.scaleEffect(_: CoreGraphics.CGFloat, anchor: SwiftUI.UnitPoint) -&gt; some&gt;&gt;.0&gt;, SwiftUI.ScrollView&lt;SwiftUI.LazyVGrid&lt;SwiftUI.ForEach&lt;Swift.Array&lt;appi4Manager.User&gt;, Swift.Int, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0&gt;&gt;&gt;&gt; in appi4Manager.UserListDup.body.getter : some"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserListDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "64"
+                  endingLineNumber = "64"
+                  offsetFromSymbolStart = "608">
+               </Location>
+               <Location
+                  uuid = "1C02BD0C-75C4-41CB-ABDF-B0DDDB4BC7D3 - ef7fff664c46fe7c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (appi4Manager.User) -&gt; &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; SwiftUI.ForEach&lt;Swift.Array&lt;appi4Manager.User&gt;, Swift.Int, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0&gt; in closure #2 () -&gt; SwiftUI.LazyVGrid&lt;SwiftUI.ForEach&lt;Swift.Array&lt;appi4Manager.User&gt;, Swift.Int, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0&gt;&gt; in closure #1 () -&gt; SwiftUI._ConditionalContent&lt;SwiftUI.VStack&lt;&lt;&lt;opaque return type of SwiftUI.View.scaleEffect(_: CoreGraphics.CGFloat, anchor: SwiftUI.UnitPoint) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;SwiftUI.ScrollView&lt;SwiftUI.LazyVGrid&lt;SwiftUI.ForEach&lt;Swift.Array&lt;appi4Manager.User&gt;, Swift.Int, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0&gt;&gt;&gt;&gt;&gt; in appi4Manager.UserListDup.body.getter : some"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserListDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "64"
+                  endingLineNumber = "64"
+                  offsetFromSymbolStart = "608">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2010B490-B8F0-4CC4-A589-B124998D018E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/user/UserListDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "168"
+            endingLineNumber = "168"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "2010B490-B8F0-4CC4-A589-B124998D018E - 345c5d126ef410ac"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #6 (appi4Manager.User) -&gt; appi4Manager.UserEditorContDup in appi4Manager.UserListDup.body.getter : some"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserListDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "161"
+                  endingLineNumber = "161"
+                  offsetFromSymbolStart = "580">
+               </Location>
+               <Location
+                  uuid = "2010B490-B8F0-4CC4-A589-B124998D018E - 45b2a88f604447b7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #8 (appi4Manager.User) -&gt; appi4Manager.UserEditorContDup in appi4Manager.UserListDup.body.getter : some"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserListDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "168"
+                  endingLineNumber = "168"
+                  offsetFromSymbolStart = "580">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3996F535-6FFC-4DF9-BF1A-1CBB1508BFF7"
+            shouldBeEnabled = "No"
+            nameForDebugger = "dumUserBeforAdd"
+            ignoreCount = "0"
+            continueAfterRunningActions = "Yes"
+            filePath = "appi4Manager/ContentViews/user/UserEditorContDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "600"
+            endingLineNumber = "600"
+            landmarkName = "addTheUser()"
+            landmarkType = "7">
+            <Actions>
+               <BreakpointActionProxy
+                  ActionExtensionID = "Xcode.BreakpointAction.DebuggerCommand">
+                  <ActionContent
+                     consoleCommand = "po user">
+                  </ActionContent>
+               </BreakpointActionProxy>
+            </Actions>
+            <Locations>
+               <Location
+                  uuid = "3996F535-6FFC-4DF9-BF1A-1CBB1508BFF7 - 38fbbb1a11352989"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(7) suspend resume partial function for closure #1 @Sendable () async throws -&gt; () in appi4Manager.UserEditorContDup.addTheUser() -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "602"
+                  endingLineNumber = "602"
+                  offsetFromSymbolStart = "484">
+               </Location>
+               <Location
+                  uuid = "3996F535-6FFC-4DF9-BF1A-1CBB1508BFF7 - 531620325a734b06"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(8) suspend resume partial function for closure #1 @Sendable () async throws -&gt; () in appi4Manager.UserEditorContDup.addTheUser() -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "602"
+                  endingLineNumber = "602"
+                  offsetFromSymbolStart = "776">
+               </Location>
+               <Location
+                  uuid = "3996F535-6FFC-4DF9-BF1A-1CBB1508BFF7 - 75b2a92aa4b0ec87"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(9) suspend resume partial function for closure #1 @Sendable () async throws -&gt; () in appi4Manager.UserEditorContDup.addTheUser() -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "602"
+                  endingLineNumber = "602"
+                  offsetFromSymbolStart = "132">
+               </Location>
+               <Location
+                  uuid = "3996F535-6FFC-4DF9-BF1A-1CBB1508BFF7 - 75b2a92aa4b0ecc1"
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(9) suspend resume partial function for closure #1 @Sendable () async throws -&gt; () in appi4Manager.UserEditorContDup.addTheUser() -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "604"
+                  endingLineNumber = "604"
+                  offsetFromSymbolStart = "132">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F48FE3E6-9F25-4519-B556-1500857F7031"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/user/UserEditorContDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "584"
+            endingLineNumber = "584"
+            landmarkName = "addTheUser()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E840403C-B379-47EE-B978-3B2F40203FD3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/user/UserEditorContDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "603"
+            endingLineNumber = "603"
+            landmarkName = "addTheUser()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AF26CA09-7896-4735-A26B-18E12E5C6D21"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ViewModels/StudentPicStubViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "28"
+            endingLineNumber = "28"
+            landmarkName = "getURLpicForStudentWith(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "AF26CA09-7896-4735-A26B-18E12E5C6D21 - ca5dd676d383ea47"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "appi4Manager.StudentPicStubViewModel.getURLpicForStudentWith(Swift.Int) -&gt; Foundation.URL"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ViewModels/StudentPicStubViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "28"
+                  endingLineNumber = "28"
+                  offsetFromSymbolStart = "1076">
+               </Location>
+               <Location
+                  uuid = "AF26CA09-7896-4735-A26B-18E12E5C6D21 - ca5dd676d383ea47"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "appi4Manager.StudentPicStubViewModel.getURLpicForStudentWith(Swift.Int) -&gt; Foundation.URL"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ViewModels/StudentPicStubViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "28"
+                  endingLineNumber = "28"
+                  offsetFromSymbolStart = "1132">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1F6F0EFA-131F-4448-809A-8336E122DEB9"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/Models/ImagePicker/ImagePicker.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "190"
+            endingLineNumber = "190"
+            landmarkName = "loadTransferable2Update(teachAuth:studentId:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D21EFDCD-D6CA-4EAC-88C3-233D41A7F455"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/user/UserEditorContDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "594"
+            endingLineNumber = "594"
+            landmarkName = "addTheUser()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "D21EFDCD-D6CA-4EAC-88C3-233D41A7F455 - ec3ccd4bffba67c5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for closure #1 @Sendable () async throws -&gt; () in appi4Manager.UserEditorContDup.addTheUser() -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "596"
+                  endingLineNumber = "596"
+                  offsetFromSymbolStart = "276">
+               </Location>
+               <Location
+                  uuid = "D21EFDCD-D6CA-4EAC-88C3-233D41A7F455 - b9eefe106fed5b39"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(6) await resume partial function for closure #1 @Sendable () async throws -&gt; () in appi4Manager.UserEditorContDup.addTheUser() -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "596"
+                  endingLineNumber = "596"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  uuid = "D21EFDCD-D6CA-4EAC-88C3-233D41A7F455 - 38fbbb1a113528c7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(7) suspend resume partial function for closure #1 @Sendable () async throws -&gt; () in appi4Manager.UserEditorContDup.addTheUser() -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "596"
+                  endingLineNumber = "596"
+                  offsetFromSymbolStart = "36">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F92CD597-D06C-40C3-B52B-2854B29F57CE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/Services/FirestoreManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "632"
+            endingLineNumber = "632"
+            landmarkName = "writeStudentProfileNew2(studentProfile:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "52AF1783-7B2C-4269-B21D-1DCD85C4D13E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/Services/FirestoreManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "624"
+            endingLineNumber = "624"
+            landmarkName = "writeHandleStudentProfileNew2(studentProfile:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EFC4ABB5-CECB-4A3E-9323-AA9A59405C82"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "appi4Manager/ContentViews/user/UserEditorContDup.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "597"
+            endingLineNumber = "597"
+            landmarkName = "addTheUser()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "EFC4ABB5-CECB-4A3E-9323-AA9A59405C82 - 38fbbb1a11352868"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(7) suspend resume partial function for closure #1 @Sendable () async throws -&gt; () in appi4Manager.UserEditorContDup.addTheUser() -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "601"
+                  endingLineNumber = "601"
+                  offsetFromSymbolStart = "72">
+               </Location>
+               <Location
+                  uuid = "EFC4ABB5-CECB-4A3E-9323-AA9A59405C82 - ef0661e6d0ee9c54"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(8) await resume partial function for closure #1 @Sendable () async throws -&gt; () in appi4Manager.UserEditorContDup.addTheUser() -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "601"
+                  endingLineNumber = "601"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  uuid = "EFC4ABB5-CECB-4A3E-9323-AA9A59405C82 - 75b2a92aa4b0ed66"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(9) suspend resume partial function for closure #1 @Sendable () async throws -&gt; () in appi4Manager.UserEditorContDup.addTheUser() -&gt; ()"
+                  moduleName = "appi4Manager"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/stevenhertz/Documents/%E2%98%90%20Projects%20Good%20Code/%E2%97%A6%20The%20Apps/apps/appi4Manager%202/appi4Manager/ContentViews/user/UserEditorContDup.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "601"
+                  endingLineNumber = "601"
+                  offsetFromSymbolStart = "112">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

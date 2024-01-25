@@ -51,7 +51,7 @@ extension AppCategory {
     static func makeDefault() -> AppCategory {
         let uiColor = UIColor(CategoryColors.random())
         let rgba = uiColor.rgba
-        return AppCategory(title: "Test Firestore",
+        return AppCategory(title: "Enter Name",
                            symbolName: CategorySymbols.randomName(),
                            colorRGB: ColorRGB(red: rgba.red, green: rgba.green, blue: rgba.blue, alpha: rgba.alpha),
                            appIds: [1], locationId:0

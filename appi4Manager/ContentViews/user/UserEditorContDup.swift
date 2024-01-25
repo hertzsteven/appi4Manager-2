@@ -94,6 +94,11 @@ struct UserEditorContDup: View {
     @State         var isNew = false
     @State private var isDeleted = false
     
+    
+    @State private var hasError = false
+    @State private var error: ApiError?
+
+    
     @EnvironmentObject var teacherItems: TeacherItems
     @EnvironmentObject var classesViewModel: ClassesViewModel
     @EnvironmentObject var usersViewModel: UsersViewModel
@@ -335,12 +340,13 @@ struct UserEditorContDup: View {
 
                     .navigationDestination(for: Int.self) { studentId in
                         
-                     let profilesx =  StudentAppProfileManager.loadProfilesxUserDefaukts()
+//                     let profilesx =  StudentAppProfileManager.loadProfilesxUserDefaukts()
                         
                         if let studentFound = studentAppProfileManager.studentAppProfileFiles.first { $0.id == studentId} {
                             
                             StudentAppProfileWorkingView(
                                 studentId                   : studentId,
+                                studentName                 : "\(user.firstName) \(user.lastName)",
                                 studentAppProfilefiles      : studentAppProfileManager.studentAppProfileFiles,
                                 profileManager: StudentAppProfileManager(),
                                 studentAppprofile           :  studentFound)
@@ -587,8 +593,8 @@ extension UserEditorContDup {
                      
                      await studentAppProfileManager.addStudentAppProfile(newProfile: stdntAppProfile)
                      
-                    
-
+                     
+                     await reloadPicStub()
 
  //                   add user into existing user array
                      self.usersViewModel.users.append(self.user)
@@ -603,6 +609,18 @@ extension UserEditorContDup {
              }
          }
      }
+    
+    func reloadPicStub() async {
+        do {
+            try await studentPicStubViewModel.reloadData2(uuid: teacherItems.getpicClass())
+        } catch  {
+            if let xerror = error as? ApiError {
+                self.hasError   = true
+                self.error      = xerror
+            }
+        }
+    }
+
     
     fileprivate func deleteTheUser() {
         print("we are about to delete the user \(user.id)")
@@ -623,7 +641,6 @@ extension UserEditorContDup {
         }
         dismiss()
     }
-
 
     
     fileprivate func upDateUser() async {

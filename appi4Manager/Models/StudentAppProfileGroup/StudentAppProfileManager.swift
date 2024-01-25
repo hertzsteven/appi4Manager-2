@@ -44,7 +44,9 @@ class StudentAppProfileManager: ObservableObject {
     }
 
     func addStudentAppProfile(newProfile: StudentAppProfilex) async {
-        studentAppProfileFiles.append(newProfile)
+        DispatchQueue.main.async {
+            self.studentAppProfileFiles.append(newProfile)
+        }
 //        Task {
             await  FirestoreManager().writeHandleStudentProfileNew2(studentProfile: newProfile)
             print("added new student")

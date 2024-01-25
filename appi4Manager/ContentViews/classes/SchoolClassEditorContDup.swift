@@ -58,9 +58,22 @@ struct CollapsibleList: View {
         
         Section(header: HStack {
        
-            TextField("Add new \(title)", text: $newItem)
+//            if itIsInEdit {
+//                TextField("Add or Remove \(title)", text: $newItem)
+//                    .bold()
+//            } else {
+//                TextField("\(title)", text: $newItem)
+//            }
+
+            if itIsInEdit {
+                Text("Add or Remove \(title)")
+                    .bold()
+            } else {
+                Text("\(title)")
+            }
+            
             Spacer()
-       
+
             if itIsInEdit {
                 Button {
                     action()
@@ -107,7 +120,11 @@ struct CollapsibleListtheDevice: View {
         
         Section(header: HStack {
        
-            TextField("Add new \(title)", text: $newItem)
+            if itIsInEdit {
+                Text("Add or Remove \(title)").bold()
+            } else {
+                Text("\(title)")
+            }
             Spacer()
        
             if itIsInEdit {
@@ -263,7 +280,7 @@ struct SchoolClassEditorContDup: View {
                         }
                         
                         TextField("Description", text: $schoolClass.description )
-                            .font(.subheadline)
+//                            .font(.largeTitle)
                             .padding([.top, .bottom], 8)
                     } else {
                         Text(schoolClass.description).foregroundColor(itIsInEdit  ? .black : Color("disabled"))
@@ -486,35 +503,35 @@ struct SchoolClassEditorContDup: View {
                 .controlGroupStyle(.navigation)
             }
             
-            ToolbarItemGroup(placement: .secondaryAction) {
-                Button(action: {
-                    print("Item 1 tapped")
-                }) {
-                    HStack(spacing: -10) {
-                        Image(systemName: "1.circle")
-                        Text("Item 1")
-                    }
-                }
-
-                Button(action: {
-                    print("Item 2 tapped")
-                }) {
-                    HStack(spacing: -10) {
-                        Image(systemName: "2.circle")
-                        Text("Item 2")
-                    }
-                }
-
-                Button(action: {
-                    print("Item 3 tapped")
-                }) {
-                    HStack(spacing: -10) {
-                        Image(systemName: "3.circle")
-                        Text("Item 3")
-                    }
-                }
-
-            }
+//            ToolbarItemGroup(placement: .secondaryAction) {
+//                Button(action: {
+//                    print("Item 1 tapped")
+//                }) {
+//                    HStack(spacing: -10) {
+//                        Image(systemName: "1.circle")
+//                        Text("Item 1")
+//                    }
+//                }
+//
+//                Button(action: {
+//                    print("Item 2 tapped")
+//                }) {
+//                    HStack(spacing: -10) {
+//                        Image(systemName: "2.circle")
+//                        Text("Item 2")
+//                    }
+//                }
+//
+//                Button(action: {
+//                    print("Item 3 tapped")
+//                }) {
+//                    HStack(spacing: -10) {
+//                        Image(systemName: "3.circle")
+//                        Text("Item 3")
+//                    }
+//                }
+//
+//            }
 
             
 //          Add button New Class

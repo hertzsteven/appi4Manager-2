@@ -21,7 +21,7 @@ class StudentPicStubViewModel: ObservableObject {
     
         //  FIXME:   Make this a throwing function
     func getURLpicForStudentWith(_ id: Int) -> URL {
-        print("--- good in geturl student id \(id)")
+        print("--- about to geturl student id \(id)")
         guard let idx = students.firstIndex(where: { student in
             student.id == id
         }) else {
@@ -72,9 +72,9 @@ class StudentPicStubViewModel: ObservableObject {
         
         let classDetailResponse: ClassDetailResponse = try await ApiManager.shared.getData(from: .getStudents(uuid: uuid))
         
-        DispatchQueue.main.async {
+//        DispatchQueue.main.async {
             self.students = classDetailResponse.class.students
             self.name = classDetailResponse.class.name
-        }
+//        }
     }
 }
