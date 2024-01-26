@@ -367,9 +367,14 @@ struct SchoolClassEditorContDup: View {
         
 //       Select Teachers Popup
         .sheet(isPresented: $toShowTeacherList) {
+            let superTeacherid = teacherItems.teacherUserDict[teacherItems.currentLocation.id]
             let userFilter2: ((any ItemsToSelectRepresentable) -> Bool) = { usr in
-                teacherIds.contains(usr.id)
+                 ( teacherIds.contains(usr.id) ) && (usr.id != superTeacherid!)
             }
+
+//            let userFilter2: ((any ItemsToSelectRepresentable) -> Bool) = { usr in
+//                teacherIds.contains(usr.id)
+//            }
             
             NavigationView {
                 ItemListSelectView(passedItemSelected: $passedItemSelected,

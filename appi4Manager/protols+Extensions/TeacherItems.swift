@@ -64,6 +64,14 @@ extension TeacherItems {
         return nil
     }
     
+    public func checkIfUserInTeacherGroup(_ userID: Int) async -> Bool {
+        let teacherIds = await getUsersInTeacherGroup() ?? []
+        let isAteacherID = teacherIds.contains { usrID in
+            usrID == userID
+        }
+        return isAteacherID
+    }
+    
     public func getTeacherAuth() -> String {
         teacherAuthToken
 //        "9c74b8d6a4934ca986dfe46592896801"

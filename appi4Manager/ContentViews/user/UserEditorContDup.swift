@@ -40,6 +40,10 @@ struct AnimateTextField: View {
 
 struct UserEditorContDup: View {
     
+    @State  var toggleText = "Is a teache"
+    @State  var isTeacherToggle = true
+    @State  var buttonToggle = true
+    
     @State var profilesx: [StudentAppProfilex] = []
     
     @Binding var path: NavigationPath
@@ -80,6 +84,7 @@ struct UserEditorContDup: View {
     var urlPic: URL
     
     @State var userInitialValues: User
+    @State var isTeacherToggleInitalValue: Bool = false
     @State var selectedStudentsClassesInitialValues:   Array<Int> = []
     @State var selectedTeachersClassesInitialValues:   Array<Int> = []
     
@@ -236,6 +241,18 @@ struct UserEditorContDup: View {
                                 .disabled(!itIsInEdit)
 //                                .border(Color.gray, width: 6) // Optional: Adds a border
                         }
+
+                        Section(header: Text("Teacher")) {
+                            Toggle("Is a teacher", isOn: $isTeacherToggle)
+                                .toggleStyle(.switch)
+                                .disabled(!itIsInEdit)
+                                .onChange(of: isTeacherToggle) { newValue in
+                                        // Execute your code here
+                                        // 'newValue' will contain the new state of the toggle
+                                    print("Switch Toggle is now \(newValue ? "ON" : "OFF")")
+                                }
+                        }
+
                         if !isNew {
                             Section(header: Text("Apps")) {
                                 Button(action: {
@@ -326,7 +343,7 @@ struct UserEditorContDup: View {
         //               }
         //                .headerProminence(.standard)
                     }
-                        
+
                         if !isNew {
                             DeleteButtonView(action: {
                                 inDelete.toggle()
@@ -404,7 +421,6 @@ struct UserEditorContDup: View {
                         }
                     }
                     
-                    
                         ToolbarItem(placement: .cancellationAction) {
                             if isNew {
                                 Button("Cancel") {
@@ -464,6 +480,7 @@ struct UserEditorContDup: View {
                         imagePicker.image           = nil
                         imagePicker.theUIImage      = nil
                         imagePicker.savedImage      = nil
+                        isTeacherToggle				 = isTeacherToggleInitalValue
                     }
                 }
                 // from add
@@ -477,21 +494,23 @@ struct UserEditorContDup: View {
 
                 .task {
                     studentAppProfileManager.studentAppProfileFiles = await StudentAppProfileManager.loadProfilesx()
+                    isTeacherToggle = await teacherItems.checkIfUserInTeacherGroup(user.id)
+                    isTeacherToggleInitalValue = isTeacherToggle
                 }
-        //      MARK: - Appear and Disappear   * * * * * * * * * * * * * * * * * * * * * *
-                        .onAppear {
-                            usersViewModel.ignoreLoading = true
-
-                            if !isNew {
-                                toDoWithNewUserToProcess()
-                            } else {
-                                mode = .active
-                            }
-                        }
-
-                        .onDisappear {
-                            mode = .inactive
-                        }
+                    //      MARK: - Appear and Disappear   * * * * * * * * * * * * * * * * * * * * * *
+                .onAppear {
+                    usersViewModel.ignoreLoading = true
+                    
+                    if !isNew {
+                        toDoWithNewUserToProcess()
+                    } else {
+                        mode = .active
+                    }
+                }
+                
+                .onDisappear {
+                    mode = .inactive
+                }
 
                 }
 
@@ -524,7 +543,6 @@ extension UserEditorContDup {
         storeUserDetailStartingPoint()
         mode = .inactive
     }
-
     
     fileprivate func getUserDetail() {
     
@@ -554,11 +572,13 @@ extension UserEditorContDup {
 //            }
 //        }
     }
-    
+
     fileprivate func storeUserDetailStartingPoint() {
     
         // save for restore and compare
         userInitialValues = user
+
+		isTeacherToggleInitalValue = isTeacherToggle
 
         // put the ids into selected students array
         selectedStudentClasses = user.groupIds
@@ -577,38 +597,43 @@ extension UserEditorContDup {
 extension UserEditorContDup {
     
     fileprivate func addTheUser() {
-         if isNew {
- //        setup properties of User for doing the add
-             user.username  = String(Array(UUID().uuidString.split(separator: "-")).last!)
-             user.locationId = teacherItems.currentLocation.id
-             user.groupIds   = [teacherItems.getIDpicClass()]
-             Task {
-                 do {
-                     let resposnseaddAUser: AddAUserResponse = try await ApiManager.shared.getData(from: .addUsr(user: user))
-                     
-                     user.id = resposnseaddAUser.id
-                     await imagePicker.loadTransferable2Update(teachAuth: teacherItems.getTeacherAuth(), studentId: user.id)
-                     
-                     let stdntAppProfile = StudentAppProfileManager.makeDefaultfor(user.id, locationId: user.locationId)
-                     
-                     await studentAppProfileManager.addStudentAppProfile(newProfile: stdntAppProfile)
-                     
-                     
-                     await reloadPicStub()
+        if isNew {
+                //        setup properties of User for doing the add
+            user.username  = String(Array(UUID().uuidString.split(separator: "-")).last!)
+            user.locationId = teacherItems.currentLocation.id
+            user.groupIds   = [teacherItems.getIDpicClass()]
+            Task {
+                do {
+                    let resposnseaddAUser: AddAUserResponse = try await ApiManager.shared.getData(from: .addUsr(user: user))
+                    
+                    user.id = resposnseaddAUser.id
+                    await imagePicker.loadTransferable2Update(teachAuth: teacherItems.getTeacherAuth(), studentId: user.id)
+                    
+                    let stdntAppProfile = StudentAppProfileManager.makeDefaultfor(user.id, locationId: user.locationId)
+                    
+                    if isTeacherToggle == true {
+                        addToTeacherGroup()
+                    }
 
- //                   add user into existing user array
-                     self.usersViewModel.users.append(self.user)
-
- //                 trigger a refresh of screen and not getting the image from cacheh
-                     self.teacherItems.uniqueID = UUID()
-
-                 } catch let error as ApiError {
-                         //  FIXME: -  put in alert that will display approriate error message
-                     print(error)
-                 }
-             }
-         }
-     }
+                    
+                    await studentAppProfileManager.addStudentAppProfile(newProfile: stdntAppProfile)
+                    
+                    
+                    await reloadPicStub()
+                    
+                        //                   add user into existing user array
+                    self.usersViewModel.users.append(self.user)
+                    
+                        //                 trigger a refresh of screen and not getting the image from cacheh
+                    self.teacherItems.uniqueID = UUID()
+                    
+                } catch let error as ApiError {
+                        //  FIXME: -  put in alert that will display approriate error message
+                    print(error)
+                }
+            }
+        }
+    }
     
     func reloadPicStub() async {
         do {
@@ -620,7 +645,7 @@ extension UserEditorContDup {
             }
         }
     }
-
+    
     
     fileprivate func deleteTheUser() {
         print("we are about to delete the user \(user.id)")
@@ -632,7 +657,7 @@ extension UserEditorContDup {
                 let response = try await ApiManager.shared.getDataNoDecode(from: .deleteaUser(id: user.id))
                 dump(response)
                 usersViewModel.delete(user)
-
+                
                 
             } catch let error as ApiError {
                     //  FIXME: -  put in alert that will display approriate error message
@@ -641,27 +666,36 @@ extension UserEditorContDup {
         }
         dismiss()
     }
-
+    
     
     fileprivate func upDateUser() async {
-
-    	// update user in JAMF
+        
+            // update user in JAMF
         await usersViewModel.updateUser2(user: user)
         
-        // update user in array of users being shown
+            // update user in array of users being shown
         let index = usersViewModel.users.firstIndex { usr in
             usr.id == user.id
         }
         usersViewModel.users[index!] = user
         
-        await imagePicker.loadTransferable2Update(teachAuth: teacherItems.teacherAuthToken, studentId: user.id)
-
-        // update the student Pic
-//        imagePicker.updateTheImage()
+        if isTeacherToggle != isTeacherToggleInitalValue {
+            if isTeacherToggle == true {
+                addToTeacherGroup()
+            }
+            if isTeacherToggle == false {
+                removeFromTeacherGroup()
+            }
+        }
         
-        // do housekeeping - start a new starting point
+        await imagePicker.loadTransferable2Update(teachAuth: teacherItems.teacherAuthToken, studentId: user.id)
+        
+            // update the student Pic
+            //        imagePicker.updateTheImage()
+        
+            // do housekeeping - start a new starting point
         storeUserDetailStartingPoint()
-
+        
     }
     
     
@@ -681,33 +715,100 @@ extension UserEditorContDup {
             // initialize the saved list
         selectedTeacherClassesSaved = selectedTeacherClasses
     }
-}
-
-fileprivate func saveselectedStudentClasses() {
     
-}
-
-fileprivate func checkIfUserInAppProfile(studentID: Int) async {
     
-    print(studentID)
-    
-//    var studentProfiles = StudentAppProfileManager.loadProfilesxUserDefaukts()
-    
-    var studentProfiles = await StudentAppProfileManager.loadProfilesx()
-
-    
-    if  !studentProfiles.contains(where: { prf in
-        prf.id == studentID
-    } ) {
-        // need to make a mock
-        let newProfile = StudentAppProfileManager.makeDefaultfor(studentID, locationId: 1)
+    fileprivate func saveselectedStudentClasses() {
         
-        // load it into array
-        studentProfiles.append(newProfile)
-        
-        // save it
-        StudentAppProfileManager.savePassedProfiles(profilesToSave: studentProfiles)
     }
+    
+    
+    fileprivate func checkIfUserInAppProfile(studentID: Int) async {
+        
+        print(studentID)
+        
+            //    var studentProfiles = StudentAppProfileManager.loadProfilesxUserDefaukts()
+        
+        var studentProfiles = await StudentAppProfileManager.loadProfilesx()
+        
+        
+        if  !studentProfiles.contains(where: { prf in
+            prf.id == studentID
+        } ) {
+                // need to make a mock
+            let newProfile = StudentAppProfileManager.makeDefaultfor(studentID, locationId: 1)
+            
+                // load it into array
+            studentProfiles.append(newProfile)
+            
+                // save it
+            StudentAppProfileManager.savePassedProfiles(profilesToSave: studentProfiles)
+        }
+        
+        
+    }
+    
+    fileprivate func addToTeacherGroup() {
+        Task {
+            do {
+                    // get the user that we need to update
+                var userToUpdate: UserDetailResponse = try await ApiManager.shared.getData(from: .getaUser(id: user.id))
+                var groupIdsNoDups = userToUpdate.user.groupIds.removingDuplicates()
+                
+                    // remove the group being deleted from
+                print(teacherItems.getTeacherGroup())
+                
+                groupIdsNoDups.append(teacherItems.getTeacherGroup())
+                userToUpdate.user.groupIds = groupIdsNoDups
+                
+                    // Update the user
+                let responseFromUpdatingUser = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: userToUpdate.user.id,
+                                                                                                              username:     userToUpdate.user.username,
+                                                                                                              password:     AppConstants.defaultTeacherPwd,
+                                                                                                              email:        userToUpdate.user.email,
+                                                                                                              firstName:    userToUpdate.user.firstName,
+                                                                                                              lastName:     userToUpdate.user.lastName,
+                                                                                                              notes:        userToUpdate.user.notes,
+                                                                                                              locationId:   userToUpdate.user.locationId,
+                                                                                                              groupIds:     userToUpdate.user.groupIds,
+                                                                                                              teacherGroups: userToUpdate.user.teacherGroups))
+            } catch let error as ApiError {
+                    //  FIXME: -  put in alert that will display approriate error message
+                print(error.description)
+            }
+        }
+    }
+
+    fileprivate func removeFromTeacherGroup() {
+        Task {
+            do {
+                    // get the user that we need to update
+                var userToUpdate: UserDetailResponse = try await ApiManager.shared.getData(from: .getaUser(id: user.id))
+                var groupIdsNoDups = userToUpdate.user.groupIds.removingDuplicates()
+                
+                    // remove the group being deleted from
+                print(teacherItems.getTeacherGroup())
+                guard let idx = groupIdsNoDups.firstIndex(of: teacherItems.getTeacherGroup()) else { fatalError("no match") }
+                groupIdsNoDups.remove(at: idx)
+                userToUpdate.user.groupIds = groupIdsNoDups
+                
+                    // Update the user
+                let responseFromUpdatingUser = try await ApiManager.shared.getDataNoDecode(from: .updateaUser(id: userToUpdate.user.id,
+                                                                                                              username:     userToUpdate.user.username,
+                                                                                                              password:     AppConstants.defaultTeacherPwd,
+                                                                                                              email:        userToUpdate.user.email,
+                                                                                                              firstName:    userToUpdate.user.firstName,
+                                                                                                              lastName:     userToUpdate.user.lastName,
+                                                                                                              notes:        userToUpdate.user.notes,
+                                                                                                              locationId:   userToUpdate.user.locationId,
+                                                                                                              groupIds:     userToUpdate.user.groupIds,
+                                                                                                              teacherGroups: userToUpdate.user.teacherGroups))
+            } catch let error as ApiError {
+                    //  FIXME: -  put in alert that will display approriate error message
+                print(error.description)
+            }
+        }
+    }
+
 
     
 }
