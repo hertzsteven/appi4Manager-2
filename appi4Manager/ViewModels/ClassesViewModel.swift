@@ -13,6 +13,8 @@ class ClassesViewModel: ObservableObject {
     @Published var schoolClasses = [SchoolClass]()
     @Published var isLoading = false
     @Published var ignoreLoading = false
+    @Published var selectedClassIdx: Int = 0
+    @Published var isLoaded = false
 
     init(schoolClasses: [SchoolClass] = []) {
          self.schoolClasses = schoolClasses
@@ -53,14 +55,15 @@ class ClassesViewModel: ObservableObject {
         guard !isLoading else { return }
         
         isLoading = true
-        defer { isLoading = false }
+        defer { isLoading = false}
         
 //        try await Task.sleep(nanoseconds: 3 * 1_000_000_000) // 1 second = 1_000_000_000 nanoseconds
 
         let resposnse: SchoolClassResponse = try await ApiManager.shared.getData(from: .getSchoolClasses)
-        DispatchQueue.main.async {
+//        DispatchQueue.main.async {
             self.schoolClasses = resposnse.classes
-        }
+        self.isLoaded = true
+//        }
         
     }
     
@@ -110,7 +113,8 @@ class ClassesViewModel: ObservableObject {
 //        return filteredClassesbyLocation
 //    }
     func filterSchoolClassesinLocation2(_ locationId: Int,
-                                        dummyPicClassToIgnore: String, schoolClassGroupID: Int) -> Array<SchoolClass> {
+                                        dummyPicClassToIgnore: String, 
+                                        schoolClassGroupID: Int) -> Array<SchoolClass> {
         var filteredClassesbyLocation = [SchoolClass]()
         
         filteredClassesbyLocation = schoolClasses.filter{ schoolClass in

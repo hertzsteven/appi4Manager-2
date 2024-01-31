@@ -40,7 +40,7 @@ struct AnimateTextField: View {
 
 struct UserEditorContDup: View {
     
-    @State  var toggleText = "Is a teache"
+    @State  var toggleText = "Is a teacher"
     @State  var isTeacherToggle = true
     @State  var buttonToggle = true
     

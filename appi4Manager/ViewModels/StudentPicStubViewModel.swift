@@ -16,6 +16,7 @@ class StudentPicStubViewModel: ObservableObject {
     @Published var description: String = ""
     @Published var students = [Student]()
     @Published var teachers = [Student]()
+    @Published var needsToLoad = false
     
     @Published var isLoading = false
     
@@ -65,6 +66,7 @@ class StudentPicStubViewModel: ObservableObject {
     }
     
     func  reloadData2(uuid: String) async throws  {
+
         guard !isLoading else { return }
         
         isLoading = true
@@ -75,6 +77,8 @@ class StudentPicStubViewModel: ObservableObject {
 //        DispatchQueue.main.async {
             self.students = classDetailResponse.class.students
             self.name = classDetailResponse.class.name
+            needsToLoad = false
+    
 //        }
     }
 }

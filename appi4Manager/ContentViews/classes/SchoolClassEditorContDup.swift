@@ -53,7 +53,8 @@ struct CollapsibleList: View {
     var itIsInEdit: Bool {
         editMode?.wrappedValue == .active
     }
-    
+    @State var path: NavigationPath = NavigationPath()
+
     var body: some View {
         
         Section(header: HStack {
@@ -89,15 +90,35 @@ struct CollapsibleList: View {
                 Image(systemName: isListVisible ? "chevron.down" : "chevron.right")
             }
        
-        })  { if isListVisible {
-            ForEach(listData.map({ id in
-                usersViewModel.users.first(where: { $0.id == id })!
-            }), id: \.id) { student in
-                Text("\(student.firstName) \(student.lastName)")
-                    .foregroundColor(itIsInEdit ? .black :  Color(.darkGray))
+        })  { 
+            if isListVisible {
+                
+                ForEach(listData.map({ id in
+                    usersViewModel.users.first(where: { $0.id == id })!
+                }), id: \.id) { student in
+                    
+                        //                Text("\(student.firstName) \(student.lastName)")
+                        //                    .foregroundColor(itIsInEdit ? .black :  Color(.darkGray))
+                    
+                    NavigationLink(value: student.id) {
+                        Text("\(student.firstName) \(student.lastName)")
+                            .foregroundColor(itIsInEdit ? .black :  Color(.darkGray))
+                        
+                    }
+                }
+                
+                
+                    //            ForEach(listData.map({ id in
+                    //                usersViewModel.users.first(where: { $0.id == id })!
+                    //            }), id: \.id) { student in
+                    //                Text("\(student.firstName) \(student.lastName)")
+                    //                    .foregroundColor(itIsInEdit ? .black :  Color(.darkGray))
+                    //            }
             }
-          }
-        }
+            
+      }
+
+
     }
 }
 
@@ -253,7 +274,10 @@ struct SchoolClassEditorContDup: View {
     
     var idxLocationofClassInClassList: Int {
              classesViewModel.filterSchoolClassesinLocation2(teacherItems.currentLocation.id, dummyPicClassToIgnore: teacherItems.getpicClass(), schoolClassGroupID: teacherItems.schoolClassDictionaryGroupID[teacherItems.currentLocation.id]!).firstIndex(of: schoolClass) ?? 0
-    }
+    }   
+    
+    @EnvironmentObject var studentAppProfileManager: StudentAppProfileManager
+
     
 //   MARK: - Body View   * * * * * * * * * * * * * * * * * * * * * * * * 
     
@@ -340,7 +364,28 @@ struct SchoolClassEditorContDup: View {
                 .disabled(!itIsInEdit ? true : false)
             }
             
-        }  // end of form
+        } 
+        .navigationDestination(for: Int.self) { theNbr in
+            if let studentFound = studentAppProfileManager.studentAppProfileFiles.first { $0.id == theNbr} {
+                    //                TestDestFromClassView(mssg: theNbr)
+                StudentAppProfileWorkingView(
+                    studentId                   : theNbr,
+                    studentName                 : "Sam John",
+                    studentAppProfilefiles      : studentAppProfileManager.studentAppProfileFiles,
+                    profileManager: StudentAppProfileManager(),
+                    studentAppprofile           :  studentFound)
+            } else {
+                Text("Nothing")
+            }
+        }
+
+            // end of form
+//        .navigationDestination(for: Int.self) { detailIdentifier in
+//            // Detail view based on the navigation link's value
+//            TestDestFromClassView(mssg: "Detail View for \(detailIdentifier)")
+////            Text("Detail View for \(detailIdentifier)")
+//        }
+
 
 //        .padding(.bottom, UIApplication.shared.windows.first?.safeAreaInsets.bottom)
         
@@ -486,26 +531,27 @@ struct SchoolClassEditorContDup: View {
                     }.frame(height: 96, alignment: .trailing)
                 }
             }
-            
-            ToolbarItem(placement: .bottomBar) {
-                ControlGroup {
-                
-                    Button(action: getPrevClassFromList) {
-                        Image(systemName: "chevron.backward.circle")
+            if !isNew {
+                ToolbarItem(placement: .bottomBar) {
+                    ControlGroup {
+                        
+                        Button(action: getPrevClassFromList) {
+                            Image(systemName: "chevron.backward.circle")
+                        }
+                        .disabled(idxLocationofClassInClassList == 0 || itIsInEdit)
+                        
+                        if !isNew {
+                            Text("\(String(idxLocationofClassInClassList + 1)) of \(String(numberOfClassesInList)) classes")
+                        }
+                        
+                        Button(action: getNextClassFromList) {
+                            Image(systemName: "chevron.forward.circle")
+                        }
+                        .disabled((numberOfClassesInList - 1) == idxLocationofClassInClassList || itIsInEdit)
+                        
                     }
-                    .disabled(idxLocationofClassInClassList == 0 || itIsInEdit)
-                    
-                    if !isNew {
-                        Text("\(String(idxLocationofClassInClassList + 1)) of \(String(numberOfClassesInList)) classes")
-                    }
-                    
-                    Button(action: getNextClassFromList) {
-                        Image(systemName: "chevron.forward.circle")
-                    }
-                    .disabled((numberOfClassesInList - 1) == idxLocationofClassInClassList || itIsInEdit)
-                
+                    .controlGroupStyle(.navigation)
                 }
-                .controlGroupStyle(.navigation)
             }
             
 //            ToolbarItemGroup(placement: .secondaryAction) {
@@ -591,6 +637,9 @@ struct SchoolClassEditorContDup: View {
 
         .onDisappear {
             mode = .inactive
+        }
+        .task {
+            studentAppProfileManager.studentAppProfileFiles = await StudentAppProfileManager.loadProfilesx()
         }
     }
 }

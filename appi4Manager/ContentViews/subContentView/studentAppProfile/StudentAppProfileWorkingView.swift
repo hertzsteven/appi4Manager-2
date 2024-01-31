@@ -640,23 +640,24 @@ extension StudentAppProfileWorkingView: View {
 
     //  MARK: - mainview - Top subview
     var body: some View {
-       
-            ScrollView {
-                if noShow == false {
+//        if  loadingState == .loaded {
+        ScrollView {
+            if noShow == false &&  loadingState == .loaded {
                 VStack(alignment: .leading, spacing: 8) {
                     headerView
                     mainView
                 }
-                .frame(width: 380)
+                    //                .frame(width: 380)
+                .frame(width: UIScreen.main.bounds.width * 1.0)
                 .background(Color.white)
                 .cornerRadius(10)
                 .shadow(radius: 10)
                 .padding()
-                } else {
-                    ProgressView()
-                }
+//            } else {
+//                ProgressView()
+//            }
         }
-
+        }
         .sheet(isPresented: $presentMakeAppProfile, onDismiss: {
             print("~~ dismissed makeAppProfile")
             if currentDayStudentAppProfile != currentDayStudentAppProfileSave {
@@ -704,21 +705,21 @@ extension StudentAppProfileWorkingView: View {
 //                studentAppprofile.setStudentProfile(studentID: studentId)
                 profileManager.studentAppProfileFiles = studentAppProfilefiles
 
-                guard let currentDayStudentAppProfilefilxe = studentAppprofile.sessions["Sun"] else {
-                    fatalError("big error")
-                }
-                currentDayStudentAppProfile = currentDayStudentAppProfilefilxe
-
+//                guard let currentDayStudentAppProfilefilxe = studentAppprofile.sessions["Sun"] else {
+//                    fatalError("big error")
+//                }
+//                currentDayStudentAppProfile = currentDayStudentAppProfilefilxe
+//
 //                setCurrentDateWith(selectedDay.asAString)
                 print("~~ from onappear will it work ")
-                dump(currentDayStudentAppProfile)
-                do {
-                    await proceesAppCodes()
-                    loadingState = .loaded
-                } catch {
-                    loadingState = .failed
-                }
-                noShow = false
+//                dump(currentDayStudentAppProfile)
+//                do {
+//                    await proceesAppCodes()
+//                    loadingState = .loaded
+//                } catch {
+//                    loadingState = .failed
+//                }
+                
             }
         }
         
@@ -729,6 +730,7 @@ extension StudentAppProfileWorkingView: View {
                     loadingState = .loading
                     await proceesAppCodes()
                     loadingState = .loaded
+                    noShow = false
                 } catch {
                     loadingState = .failed
                 }
@@ -782,11 +784,13 @@ extension StudentAppProfileWorkingView {
     
     func proceesAppCodes() async  {
         appsAMinfo.removeAll()
+        dump(currentDayStudentAppProfile.amSession)
         for appCode in currentDayStudentAppProfile.amSession.apps {
             if let appx = await getAppInfoFor(appCode) {
                 appsAMinfo.append(appx)
             }
         }
+        dump(currentDayStudentAppProfile.amSession)
         appsPMinfo.removeAll()
         for appCode in currentDayStudentAppProfile.pmSession.apps {
             if let appx = await getAppInfoFor(appCode) {
@@ -936,7 +940,46 @@ extension SessionGroupVw: View {
     
 }
 */
+
+    // Preview provider
+    struct StudentAppProfileWorkingView_Previews: PreviewProvider {
+        static var previews: some View {
+            Group {
+                // Example with specific studentId and studentName
+                StudentAppProfileWorkingView(studentId: 3, studentName: "John Doe", profileManager: StudentAppProfileManager()) // Replace with actual default values
+                    .previewDevice(PreviewDevice(rawValue: "iPad Pro (12.9-inch)"))
+                    .previewDisplayName("iPad Pro (12.9-inch)")
+                    .previewLayout(.fixed(width: 1024, height: 1366)) // Landscape
+
+                // Other device previews...
+            }
+        }
+    }
  
+//    // Preview provider
+//    struct StudentAppProfileWorkingView_Previews: PreviewProvider {
+//        static var previews: some View {
+//            Group {
+//                // Preview for iPad Pro (12.9-inch)
+//                StudentAppProfileWorkingView(profileManager: StudentAppProfileManager()) // Add other required initializers
+//                    .previewDevice(PreviewDevice(rawValue: "iPad Pro (12.9-inch)"))
+//                    .previewDisplayName("iPad Pro (12.9-inch)")
+//                    .previewLayout(.fixed(width: 1024, height: 1366)) // Landscape
+//                
+//                // Preview for iPad Pro (12.9-inch) in Portrait
+//                StudentAppProfileWorkingView(profileManager: StudentAppProfileManager()) // Add other required initializers
+//                    .previewDevice(PreviewDevice(rawValue: "iPad Pro (12.9-inch)"))
+//                    .previewDisplayName("iPad Pro (12.9-inch) Portrait")
+//                    .previewLayout(.fixed(width: 1366, height: 1024)) // Portrait
+//
+//                // Preview for iPhone 12
+//                StudentAppProfileWorkingView(profileManager: StudentAppProfileManager()) // Add other required initializers
+//                    .previewDevice(PreviewDevice(rawValue: "iPhone 12"))
+//                    .previewDisplayName("iPhone 12")
+//                    .previewLayout(.device)
+//            }
+//        }
+//    }
  
 //struct StudentAppProfileWorkingView_Previews: PreviewProvider {
 //    static var previews: some View {

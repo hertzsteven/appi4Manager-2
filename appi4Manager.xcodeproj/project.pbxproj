@@ -63,6 +63,9 @@
 		469EFF212A6ED33F0047E8BC /* AppResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 469EFF202A6ED33F0047E8BC /* AppResponse.swift */; };
 		469EFF232A6F40F30047E8BC /* AppxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 469EFF222A6F40F30047E8BC /* AppxViewModel.swift */; };
 		469EFF262A6F6D400047E8BC /* AppxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 469EFF252A6F6D400047E8BC /* AppxView.swift */; };
+		469F90CA2B63DEDD00E85AF2 /* TestDEstFromClassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 469F90C92B63DEDD00E85AF2 /* TestDEstFromClassView.swift */; };
+		469F90CC2B63E00700E85AF2 /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 469F90CB2B63E00700E85AF2 /* SwiftUIView.swift */; };
+		469F90CE2B6419F400E85AF2 /* TestSchoolListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 469F90CD2B6419F400E85AF2 /* TestSchoolListView.swift */; };
 		46A80E192A1153A2008B936D /* SchoolClassEditorContDup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A80E182A1153A2008B936D /* SchoolClassEditorContDup.swift */; };
 		46A8BF7B2B47248600E5FF2D /* DeviceListVW.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A8BF7A2B47248600E5FF2D /* DeviceListVW.swift */; };
 		46AE58AA2AEBDB79005A3C20 /* MiscExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46AE58A92AEBDB79005A3C20 /* MiscExtensions.swift */; };
@@ -146,6 +149,9 @@
 		469EFF202A6ED33F0047E8BC /* AppResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppResponse.swift; sourceTree = "<group>"; };
 		469EFF222A6F40F30047E8BC /* AppxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppxViewModel.swift; sourceTree = "<group>"; };
 		469EFF252A6F6D400047E8BC /* AppxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppxView.swift; sourceTree = "<group>"; };
+		469F90C92B63DEDD00E85AF2 /* TestDEstFromClassView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDEstFromClassView.swift; sourceTree = "<group>"; };
+		469F90CB2B63E00700E85AF2 /* SwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIView.swift; sourceTree = "<group>"; };
+		469F90CD2B6419F400E85AF2 /* TestSchoolListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSchoolListView.swift; sourceTree = "<group>"; };
 		46A80E182A1153A2008B936D /* SchoolClassEditorContDup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolClassEditorContDup.swift; sourceTree = "<group>"; };
 		46A8BF7A2B47248600E5FF2D /* DeviceListVW.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceListVW.swift; sourceTree = "<group>"; };
 		46AE58A92AEBDB79005A3C20 /* MiscExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiscExtensions.swift; sourceTree = "<group>"; };
@@ -193,6 +199,7 @@
 			isa = PBXGroup;
 			children = (
 				46690D7B2A9D5D7300C899FF /* MocktoandFrom */,
+				469F90CB2B63E00700E85AF2 /* SwiftUIView.swift */,
 			);
 			path = StudentAppProfileMock;
 			sourceTree = "<group>";
@@ -482,6 +489,8 @@
 			children = (
 				46E56DB02995E1C000CB2512 /* TestOutView.swift */,
 				4619CE402A8D0F1A006CB8D1 /* StudentAppProfileMock */,
+				469F90C92B63DEDD00E85AF2 /* TestDEstFromClassView.swift */,
+				469F90CD2B6419F400E85AF2 /* TestSchoolListView.swift */,
 			);
 			path = "for testing";
 			sourceTree = "<group>";
@@ -715,6 +724,7 @@
 				4664639B2B46EABF0017A639 /* TheDevice.swift in Sources */,
 				461D89A82A6D4D6900678391 /* CategorySymbols.swift in Sources */,
 				4609120229D0811B000337E8 /* DashboardView.swift in Sources */,
+				469F90CE2B6419F400E85AF2 /* TestSchoolListView.swift in Sources */,
 				46E56DBD2996B42500CB2512 /* SchoolClassResponse.swift in Sources */,
 				46584FDD2993EB650025F539 /* UserResponse.swift in Sources */,
 				46BAB4982B30A48400C155B9 /* SchoolClassError.swift in Sources */,
@@ -758,10 +768,12 @@
 				46584FE72993F0960025F539 /* ApiHelper.swift in Sources */,
 				46BAB4922B30A01400C155B9 /* DailySessions.swift in Sources */,
 				461D21CC299D89DD008B7BD2 /* ClassDetailViewModel.swift in Sources */,
+				469F90CC2B63E00700E85AF2 /* SwiftUIView.swift in Sources */,
 				466EC6FD2A42609D007EEEDB /* LessonDetailResponse.swift in Sources */,
 				461D21CE299D8A64008B7BD2 /* Student.swift in Sources */,
 				46B8239C2A71CEC100C85942 /* ItemListSelectViewWithPic.swift in Sources */,
 				46584FEB2993F10F0025F539 /* ApiEndpoint.swift in Sources */,
+				469F90CA2B63DEDD00E85AF2 /* TestDEstFromClassView.swift in Sources */,
 				469420F229C7ED67004B8CB4 /* ExtensionsAndMore.swift in Sources */,
 				46492B1C29F5CA9300699F96 /* StudentPicStubViewModel.swift in Sources */,
 				46BD34E529BE236D002A8395 /* CreateaClassResponse.swift in Sources */,

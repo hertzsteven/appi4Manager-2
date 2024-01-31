@@ -13,6 +13,7 @@ class UsersViewModel: ObservableObject {
     @Published var users = [User]()
     @Published var isLoading = false
     @Published var ignoreLoading = false
+    @Published var isLoaded = false
 
 //    init() {
 //        Task {
@@ -54,6 +55,7 @@ class UsersViewModel: ObservableObject {
         let resposnse: UserResponse = try await ApiManager.shared.getData(from: .getUsers)
         DispatchQueue.main.async {
             self.users = resposnse.users
+            self.isLoaded = true
         }
         
     }
@@ -153,7 +155,7 @@ class UsersViewModel: ObservableObject {
             .sorted { $0.lastName < $1.lastName }
         
             .filter({ usr in
-                usr.locationId == selectedLocationID && usr.id != teacherUserID
+                usr.locationId == selectedLocationID && usr.id != teacherUserID 
             })
             .filter {
                 if searchStr.isEmpty  {
@@ -163,4 +165,23 @@ class UsersViewModel: ObservableObject {
                 }
             }
     }
+    func sortedUsersNonBClass(lastNameFilter searchStr: String = "", selectedLocationID: Int, teacherUserID: Int, scGroupid: Int) -> [User] {
+        print("location is \(selectedLocationID)")
+        print("the group id is \(scGroupid)")
+         
+        return self.users
+             .sorted { $0.lastName < $1.lastName }
+         
+             .filter({ usr in
+                 usr.locationId == selectedLocationID && usr.id != teacherUserID && usr.groupIds.contains(scGroupid)
+             })
+             .filter {
+                 if searchStr.isEmpty  {
+                     return  true
+                 } else {
+                     return  $0.lastName.lowercased().contains(searchStr.lowercased())
+                 }
+             }
+     }
+
 }
