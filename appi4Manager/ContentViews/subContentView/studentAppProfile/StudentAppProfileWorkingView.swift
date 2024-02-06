@@ -691,10 +691,6 @@ extension StudentAppProfileWorkingView: View {
         
 
         .onAppear {
-            let calendar = Calendar.current
-            let dayNbr = calendar.component(.weekday, from: Date())
-            selectedDay = DayOfWeek(rawValue: dayNbr)!
-            
             Task {
                 studentAppProfilefiles = await  StudentAppProfileManager.loadProfilesx()
                 if let studentFound = studentAppProfilefiles.first { $0.id == studentId} {
@@ -704,6 +700,10 @@ extension StudentAppProfileWorkingView: View {
                 }
 //                studentAppprofile.setStudentProfile(studentID: studentId)
                 profileManager.studentAppProfileFiles = studentAppProfilefiles
+                let calendar = Calendar.current
+                let dayNbr = calendar.component(.weekday, from: Date())
+                selectedDay = DayOfWeek(rawValue: dayNbr)!
+                
 
 //                guard let currentDayStudentAppProfilefilxe = studentAppprofile.sessions["Sun"] else {
 //                    fatalError("big error")
@@ -711,7 +711,7 @@ extension StudentAppProfileWorkingView: View {
 //                currentDayStudentAppProfile = currentDayStudentAppProfilefilxe
 //
 //                setCurrentDateWith(selectedDay.asAString)
-                print("~~ from onappear will it work ")
+//                print("~~ from onappear will it work ")
 //                dump(currentDayStudentAppProfile)
 //                do {
 //                    await proceesAppCodes()

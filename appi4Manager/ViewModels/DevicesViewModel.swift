@@ -69,10 +69,10 @@ class DevicesViewModel: ObservableObject {
         
 //        try await Task.sleep(nanoseconds: 3 * 1_000_000_000) // 1 second = 1_000_000_000 nanoseconds
         let resposnse: DeviceListResponse = try await ApiManager.shared.getData(from: .getDevices(assettag: nil) )
-        DispatchQueue.main.async {
+//        DispatchQueue.main.async {
             self.devices = resposnse.devices
             print(self.devices.first)
-        }
+//        }
         
     }
     

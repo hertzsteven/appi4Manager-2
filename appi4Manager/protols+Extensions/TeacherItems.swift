@@ -296,6 +296,7 @@ extension TeacherItems {
                                                                                                                            password: AppConstants.defaultTeacherPwd))
         teacherAuthToken = responseAuthenticate.token
         dump(responseAuthenticate)
+        print(responseAuthenticate)
     }
     
     /* -------------------------- */

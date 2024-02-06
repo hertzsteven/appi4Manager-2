@@ -42,8 +42,12 @@ enum ApiEndpoint {
     case getanApp(appId: Int)
     case getDevices(assettag: String?)
     case updateDevice(uuid: String, assetTag: String)
+    case clearRestrictionsAll(teachAuth: String, scope: String, scopeId:String)
+    case lockIntoApp(appBundleId: String, studentID: String, teachAuth: String)
+    case clearRestrictionsStudent(teachAuth: String, students: String)
 
 }
+
 
 extension ApiEndpoint {
 
@@ -100,6 +104,12 @@ extension ApiEndpoint {
             return "/devices"
         case .updateDevice(let uuid,let assetTag):
             return "/devices/\(uuid)/details"
+        case .clearRestrictionsAll(teachAuth: _,scope: let scope, scopeId: let scopeId):
+            return "/teacher/lessons/stop"
+        case .lockIntoApp(appBundleId: _, studentID: _, teachAuth: _):
+            return "/teacher/apply/applock"
+        case .clearRestrictionsStudent(teachAuth: let teachAuth, students: let students):
+            return "/teacher/lessons/stop"
         }
     }
     
@@ -136,6 +146,12 @@ extension ApiEndpoint {
             return .GET
         case .updateDevice(uuid: _, assetTag: _):
             return .POST 
+        case .clearRestrictionsAll(teachAuth: _, scope: _, scopeId: _):
+            return .POST
+        case .lockIntoApp(appBundleId: _, studentID: _, teachAuth: _):
+            return .POST
+        case .clearRestrictionsStudent(teachAuth: _, students: _):
+            return .POST
         default:
             return .GET
         }
@@ -172,6 +188,12 @@ extension ApiEndpoint {
         case .getLessons(teachAuth: let teachAuth):
             return [URLQueryItem(name: "token", value: teachAuth)]
         case .getLessonDetail(teachAuth: let teachAuth, id: _ ):
+            return [URLQueryItem(name: "token", value: teachAuth)]
+        case .clearRestrictionsAll(teachAuth: let teachAuth, scope: _, scopeId: _):
+            return [URLQueryItem(name: "token", value: teachAuth)]
+        case .lockIntoApp(appBundleId: _, studentID: _, teachAuth: let teachAuth):
+            return [URLQueryItem(name: "token", value: teachAuth)]
+        case .clearRestrictionsStudent(teachAuth: let teachAuth, students: _):
             return [URLQueryItem(name: "token", value: teachAuth)]
         case .getDevices(let assettag):
             if let assettag = assettag {

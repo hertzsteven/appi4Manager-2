@@ -66,9 +66,9 @@ struct DashboardView: View {
                     switch category.name {
                     
                     case "Devices":
-                        TestSchoolListView()
+//                        TestSchoolListView()
                             //                    TestDestFromClassView(mssg: 2323)
-                            //                    DeviceListVW(isPresented: .constant(true))
+                                                DeviceListVW(isPresented: .constant(true))
                             //                    TestOutView()
                     case "Categories":
                         CategoryListView( newAppCategory: AppCategory.makeDefault())

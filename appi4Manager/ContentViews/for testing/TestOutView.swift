@@ -52,6 +52,7 @@ struct TestOutView: View {
                     print("getting the lessons")
                     Task {
                         do {
+                           
                             let appxOne: Appx = try await ApiManager.shared.getData(from: .getanApp(appId: 9))
                             dump(appxOne)
                             print("appxOne")

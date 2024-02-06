@@ -18,25 +18,27 @@ enum PersonType {
 struct DeleteButtonView: View {
     
     var action: () -> Void
-    
+    var buttonText: String = "Delete" // Default button text
+    var buttonColor: Color = .red // Default button color
+
     var body: some View {
         Button(role: .destructive) {
             action()
+        } label: {
+            Text(buttonText)
+                .foregroundColor(.white)
+                .bold()
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(buttonColor)
+                .cornerRadius(10)
         }
-    label: {
-        Text("Delete")
-            .foregroundColor(.white)
-            .bold()
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(Color.red)
-            .cornerRadius(10)
-    }
-    .buttonStyle(PlainButtonStyle())
-    .frame(maxWidth: .infinity)
-    .listRowInsets(EdgeInsets())
+        .buttonStyle(PlainButtonStyle())
+        .frame(maxWidth: .infinity)
+        .listRowInsets(EdgeInsets())
     }
 }
+
 
 
 struct CollapsibleList: View {
@@ -189,6 +191,7 @@ struct SchoolClassEditorContDup: View {
     @State var newItem2: String = ""
     @State var isList3Visible: Bool = true
     @State var newItem3: String = ""
+    @State var disableButton = false
 
     @State var mode: EditMode = .inactive
     
@@ -356,6 +359,25 @@ struct SchoolClassEditorContDup: View {
 //            }
 
 
+//            Button(action: {
+//                Task {
+//                    do {
+//                        let resultx =   try await ApiManager.shared.getDataNoDecode(from: .clearRestrictionsAll(teachAuth: "df717a3bdb73448a8ec52101a4f59727", scope: "class", scopeId: "1") )
+//                        dump(resultx)
+//                        print(resultx)
+//                    } catch {
+//                        print(error)
+//                    }
+//                }
+//            }) {
+//                Text("clear restrictions")
+//                    .frame(maxWidth: .infinity) // Stretch button horizontally
+//                    .padding(.vertical, 16) // Increase button's height by adding vertical padding
+//
+//            }
+//            .buttonStyle(.borderedProminent)
+//            .tint(.blue)
+
             if !isNew {
                 DeleteButtonView(action: {
                     inDelete.toggle()
@@ -364,6 +386,83 @@ struct SchoolClassEditorContDup: View {
                 .disabled(!itIsInEdit ? true : false)
             }
             
+            
+            Section("Control Devices") {
+                if !isNew {
+                    ZStack {
+                        DeleteButtonView(action: {
+                           let ownerIDs = devicesViewModel.devices.compactMap { $0.owner?.id }.filter {selectedStudents.contains($0) }
+                            if !ownerIDs.isEmpty {
+                               disableButton = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                    disableButton = false
+                                }
+     
+                                let stringIDsJoined = ownerIDs.map { String($0) }.joined(separator: ",")
+                                Task {
+                                    do {
+                                        let resultx =   try await ApiManager.shared.getDataNoDecode(from: .clearRestrictionsStudent(teachAuth: teacherItems.getTeacherAuth(), students: stringIDsJoined))
+                                        dump(resultx)
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
+                            }
+                        }, buttonText: "Clear Restrictions", buttonColor: .blue)
+                        .listRowInsets(EdgeInsets())
+                        .disabled(!itIsInEdit ? true : false || disableButton)
+                        .padding([.top, .bottom], 16)
+                        
+                        if disableButton {
+                                // Show a semi-transparent overlay with a progress view when the button is disabled
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                                .background(Color.black.opacity(0.1)) // Semi-transparent overlay
+                                .scaleEffect(1.5) // Optional: Scale the progress view to make it larger
+                        }
+                    }
+                    
+                    
+                    
+                    ZStack {
+                        DeleteButtonView(action: {
+                            let ownerIDs = devicesViewModel.devices.compactMap { $0.owner?.id }.filter {selectedStudents.contains($0) }
+                            if !ownerIDs.isEmpty {
+                                disableButton = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                    disableButton = false
+                                }
+                                
+                                let stringIDsJoined = ownerIDs.map { String($0) }.joined(separator: ",")
+                                Task {
+                                    do {
+                                        let resultx =   try await ApiManager.shared.getDataNoDecode(from: .lockIntoApp(appBundleId: "com.dia.studentLoginFire", studentID: stringIDsJoined, teachAuth: teacherItems.getTeacherAuth()))
+                                        
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
+                            }
+                    }, buttonText: "Lock Into Login", buttonColor: .blue)
+                    .listRowInsets(EdgeInsets())
+                    .disabled(!itIsInEdit ? true : false || disableButton)
+                    .padding([.bottom], 16)
+                    if disableButton {
+                            // Show a semi-transparent overlay with a progress view when the button is disabled
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                            .background(Color.black.opacity(0.1)) // Semi-transparent overlay
+                            .scaleEffect(1.5) // Optional: Scale the progress view to make it larger
+                    }
+                        
+                }
+                    
+                    
+                    
+                }
+            }
+            
+
         } 
         .navigationDestination(for: Int.self) { theNbr in
             if let studentFound = studentAppProfileManager.studentAppProfileFiles.first { $0.id == theNbr} {

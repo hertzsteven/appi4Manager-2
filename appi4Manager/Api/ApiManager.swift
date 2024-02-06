@@ -164,41 +164,41 @@ private extension ApiManager {
         }
         
         
-        // Check if the URLComponents can form a valid URL
+            // Check if the URLComponents can form a valid URL
         guard let url = urlComponents.url else {
             fatalError("Failed to create URL from URLComponents")
         }
-
+        
         print(url.absoluteString)
-
-        // Create URLRequest from the URL
+        
+            // Create URLRequest from the URL
         var request = URLRequest(url: url)
-
+        
         request.httpMethod = endpoint.method.rawValue
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         print(request.url?.absoluteString)
         print("pause")
-
-
+        
+        
         /* part replacing
-        guard
-            let urlPath = URL(string: APISchoolInfo.shared.companyUrl.appending(endpoint.path)),
-            var urlComponents = URLComponents(string: urlPath.path)
-        else {
-            throw ApiError.invalidPath
-        }
-        
-        if let parameters = endpoint.parameters {
-            urlComponents.queryItems = parameters
-        }
-        
-        var request = URLRequest(url: urlPath)
+         guard
+         let urlPath = URL(string: APISchoolInfo.shared.companyUrl.appending(endpoint.path)),
+         var urlComponents = URLComponents(string: urlPath.path)
+         else {
+         throw ApiError.invalidPath
+         }
+         
+         if let parameters = endpoint.parameters {
+         urlComponents.queryItems = parameters
+         }
+         
+         var request = URLRequest(url: urlPath)
          part replacing
-        
-        
-        request.httpMethod = endpoint.method.rawValue
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+         
+         
+         request.httpMethod = endpoint.method.rawValue
+         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
          */
         
         switch endpoint {
@@ -206,20 +206,20 @@ private extension ApiManager {
         case .getUsersInGroup(groupID: _):
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
- 
+            
         case .getUsers:
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
- 
+            
         case .getDevices(assettag: _):
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("1", forHTTPHeaderField: "X-Server-Protocol-Version")
             request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
-
+            
         case .getGroups:
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
-
+            
         case .getStudents(uuid: let uuid):
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("3", forHTTPHeaderField: "X-Server-Protocol-Version")
@@ -230,12 +230,20 @@ private extension ApiManager {
             request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
                 //            request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
             request.addValue("hash=d687b1f23f348e501ab1947f47f66310", forHTTPHeaderField: "Cookie")
+                //            let bodyObject: [String : Any] = [
+                //                "company": company,
+                //                "username": username,
+                //                "password": password
+                //            ]
+                // JSON Body
+            
             let bodyObject: [String : Any] = [
-                "company": company,
-                "username": username,
-                "password": password
+                "company": "2001128",
+                "username": "teacherlila",
+                "password": "123456"
             ]
             request.httpBody = try! JSONSerialization.data(withJSONObject: bodyObject, options: [])
+                //            request.httpBody = try! JSONSerialization.data(withJSONObject: bodyObject, options: [])
             
         case .getaUser(let id):
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
@@ -275,7 +283,7 @@ private extension ApiManager {
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
             request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
-                       
+            
             let bodyString = """
             {
                "username": "\(user.username)",
@@ -293,12 +301,12 @@ private extension ApiManager {
                  "locationId": \(user.locationId)
             }
             """
-
+            
             
             
             request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
             
-
+            
         case .deleteaUser(id: let id):
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             
@@ -326,15 +334,15 @@ private extension ApiManager {
             request.addValue("1", forHTTPHeaderField: "X-Server-Protocol-Version")
             request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
             
-//            let bodyString = """
-//            {
-//               "name": "AAAAPI Updated Group2",
-//               "acl": {
-//                  "teacher": "inherit"
-//               }
-//            }
-//            """
-
+                //            let bodyString = """
+                //            {
+                //               "name": "AAAAPI Updated Group2",
+                //               "acl": {
+                //                  "teacher": "inherit"
+                //               }
+                //            }
+                //            """
+            
             let bodyString = """
               {
                 "name": "\(mdmGroup2.name)",
@@ -342,10 +350,10 @@ private extension ApiManager {
                    "teacher": "\(mdmGroup2.acl.teacher)"
               }
               """
-             
+            
             request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
             
-
+            
         case .updateaUser(let id, let username, let password, let email, let firstName, let lastName,let notes, let locationId, let groupIds, let teacherGroups):
             
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
@@ -392,54 +400,125 @@ private extension ApiManager {
              */
             
             request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
+        case .updateaGroup(let mdmGroup2):
             
-        case .createaClass(let name, let description, let locationId):
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
-            request.addValue("3", forHTTPHeaderField: "X-Server-Protocol-Version")
+            request.addValue("1", forHTTPHeaderField: "X-Server-Protocol-Version")
             request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
             
+                //            let bodyString = """
+                //            {
+                //               "name": "AAAAPI Updated Group2",
+                //               "acl": {
+                //                  "teacher": "inherit"
+                //               }
+                //            }
+                //            """
+            
             let bodyString = """
+              {
+                "name": "\(mdmGroup2.name)",
+                "acl": {
+                   "teacher": "\(mdmGroup2.acl.teacher)"
+              }
+              """
+            
+            request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
+            
+        case .clearRestrictionsStudent(teachAuth: let teachAuth, students: let students):
+            request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+            request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
+            request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
+            
+            
+            let bodyString = """
+              {
+                 "students": "\(students)"
+               }
+              """
+            request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
+            
+        
+        
+    case .clearRestrictionsAll(let teachAuth, let scope, let scopeId):
+        
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("4", forHTTPHeaderField: "X-Server-Protocol-Version")
+        request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        
+        
+        let bodyString = """
+              {
+                 "scope": "\(scope)",
+                 "scopeId": "\(scopeId)"
+              }
+              """
+        request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
+        
+    case .lockIntoApp(appBundleId: let appBundleId , studentID: let studentID, teachAuth: let teachAuth):
+        
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
+        request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        
+        
+        let bodyString = """
+              {
+                 "apps": "\(appBundleId)",
+                 "students": "\(studentID)",
+                 "clearAfter": "3000"
+              }
+              """
+        request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
+        
+        
+    case .createaClass(let name, let description, let locationId):
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("3", forHTTPHeaderField: "X-Server-Protocol-Version")
+        request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        
+        let bodyString = """
             {
                "name": "\(name)",
                "description": "\(description)",
                "locationId": "\(locationId)"
              }
             """
-            request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
-            
-        case .updateaClass(let uuid, let name, let description):
-            
-            request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
-            request.addValue("3", forHTTPHeaderField: "X-Server-Protocol-Version")
-            request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
-            
-            
-            
-            let bodyString = """
+        request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
+        
+    case .updateaClass(let uuid, let name, let description):
+        
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("3", forHTTPHeaderField: "X-Server-Protocol-Version")
+        request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        
+        
+        
+        let bodyString = """
             {
                "name": "\(name)",
                "description": "\(description)"
               }
             """
-            print(bodyString)
-            request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
-            
-            
-        case .deleteaClass(uuid: let uuid):
-            
-            request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
-            request.addValue("3", forHTTPHeaderField: "X-Server-Protocol-Version")
-            
-            
-        case .assignToClass(let uuid, let students, let teachers):
-            
-            request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
-            request.addValue("3", forHTTPHeaderField: "X-Server-Protocol-Version")
-            request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
-            
-            
-            
-            let bodyString = """
+        print(bodyString)
+        request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
+        
+        
+    case .deleteaClass(uuid: let uuid):
+        
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("3", forHTTPHeaderField: "X-Server-Protocol-Version")
+        
+        
+    case .assignToClass(let uuid, let students, let teachers):
+        
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("3", forHTTPHeaderField: "X-Server-Protocol-Version")
+        request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        
+        
+        
+        let bodyString = """
              {
                  "students": [
                     \(FormatIntArrayForCommaDelimitedString(this: students))
@@ -449,58 +528,58 @@ private extension ApiManager {
                  ]
              }
              """
-            print(bodyString)
-            request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
-            
-        case .getLocations :
-            request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
-            request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
-            request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
+        print(bodyString)
+        request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
         
-        case .getApps:
-             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
-
-            
-        case .updatePhoto(_, _, let fileData) :
-            request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
-            request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
-            request.addValue("hash=c64e55136eb38f1b90eb21e1887bcb74", forHTTPHeaderField: "Cookie")
-            
-            let boundary = generateBoundaryString()
-            request.httpBody = try createBody(with: nil, filePathKey: "photo", data: fileData, boundary: boundary)
-            
-            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-            
-        case .getLessons( _ ):
-             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
-             request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
-             request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
-  
-        case .getLessonDetail(teachAuth: _, id: _):
-             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
-             request.addValue("3", forHTTPHeaderField: "X-Server-Protocol-Version")
-             request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
-  
-
-        case .getanApp(let appId):
-            request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
-            request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
-            
-        case .updateDevice(let uuid, let assetTag):
-            
-            request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
-            request.addValue("1", forHTTPHeaderField: "X-Server-Protocol-Version")
-            request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
-            
-            let bodyString = """
+    case .getLocations :
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
+        request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
+        
+    case .getApps:
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        
+        
+    case .updatePhoto(_, _, let fileData) :
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
+        request.addValue("hash=c64e55136eb38f1b90eb21e1887bcb74", forHTTPHeaderField: "Cookie")
+        
+        let boundary = generateBoundaryString()
+        request.httpBody = try createBody(with: nil, filePathKey: "photo", data: fileData, boundary: boundary)
+        
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+    case .getLessons( _ ):
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
+        request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
+        
+    case .getLessonDetail(teachAuth: _, id: _):
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("3", forHTTPHeaderField: "X-Server-Protocol-Version")
+        request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
+        
+        
+    case .getanApp(let appId):
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
+        
+    case .updateDevice(let uuid, let assetTag):
+        
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("1", forHTTPHeaderField: "X-Server-Protocol-Version")
+        request.addValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        
+        let bodyString = """
             {
                "assetTag": "\(assetTag)"
             }
             """
-            print(bodyString)
-            request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
-  
-
+        print(bodyString)
+        request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
+        
+    }
             // what is left look at other
             
             
@@ -529,7 +608,6 @@ private extension ApiManager {
 //            // Create a URLRequest using the modified URL
 //            request.url = modifiedURL
             
-        }
         
         return request
         
