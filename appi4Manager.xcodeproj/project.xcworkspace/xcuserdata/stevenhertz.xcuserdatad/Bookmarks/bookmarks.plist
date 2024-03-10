@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>390</string>
+					<string>154</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>389</string>
+					<string>153</string>
 					<key>Timestamp</key>
-					<string>728867551.043013</string>
+					<string>731784890.247552</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -27,115 +27,27 @@
 					<key>payload</key>
 					<dict>
 						<key>relative-path</key>
-						<string>appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift</string>
+						<string>appi4Manager/ContentViews/user/UserEditorContDup.swift</string>
 					</dict>
 				</dict>
 			</dict>
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>            Section("Control Devices") {
+				<string>                                                         do {
 </string>
 				<key>leading</key>
-				<string>            
-            
+				<string>                                                     /*
+                                                     task {
 </string>
 				<key>trailing</key>
-				<string>                if !isNew {
-                    ZStack {
-                        DeleteButtonView(action: {
+				<string>                                                             try await studentPicStubViewModel.reloadData(uuid: teacherItems.getpicClass())
+                                                         } catch {
+                                                             print("ellelelell  Big error")
 </string>
 			</dict>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
-					<key>EndingLineNumber</key>
-					<string>391</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
-					<key>StartingLineNumber</key>
-					<string>390</string>
-					<key>Timestamp</key>
-					<string>728867551.0430239</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>                if !isNew {
-</string>
-				<key>leading</key>
-				<string>            
-            Section("Control Devices") {
-</string>
-				<key>trailing</key>
-				<string>                    ZStack {
-                        DeleteButtonView(action: {
-                           let ownerIDs = devicesViewModel.devices.compactMap { $0.owner?.id }.filter {selectedStudents.contains($0) }
-</string>
-			</dict>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
-					<key>EndingLineNumber</key>
-					<string>411</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
-					<key>StartingLineNumber</key>
-					<string>410</string>
-					<key>Timestamp</key>
-					<string>728890780.711694</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>appi4Manager/ContentViews/classes/SchoolClassEditorContDup.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>                        }, buttonText: "Clear Restrictions", buttonColor: .blue)
-</string>
-				<key>leading</key>
-				<string>                                }
-                            }
-</string>
-				<key>trailing</key>
-				<string>                        .listRowInsets(EdgeInsets())
-                        .disabled(!itIsInEdit ? true : false || disableButton)
-                        .padding([.top, .bottom], 16)
-</string>
-			</dict>
+			<key>title</key>
+			<string>Commented out onDisappear by photoPicker</string>
 			<key>type</key>
 			<string>bookmark</string>
 		</dict>

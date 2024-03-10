@@ -149,6 +149,7 @@ struct UserEditorContDup: View {
                                                  }
                                                  .onDisappear {
                                                      print("-- in disappear")
+                                                     /*
                                                      task {
                                                          do {
                                                              try await studentPicStubViewModel.reloadData(uuid: teacherItems.getpicClass())
@@ -156,6 +157,7 @@ struct UserEditorContDup: View {
                                                              print("ellelelell  Big error")
                                                          }
                                                      }
+                                                     */
                                                  }
                                     
                                         // delete button

@@ -653,10 +653,10 @@ extension StudentAppProfileWorkingView: View {
                 .cornerRadius(10)
                 .shadow(radius: 10)
                 .padding()
-//            } else {
-//                ProgressView()
-//            }
-        }
+            } else {
+                ProgressView()
+            }
+        
         }
         .sheet(isPresented: $presentMakeAppProfile, onDismiss: {
             print("~~ dismissed makeAppProfile")
@@ -703,6 +703,17 @@ extension StudentAppProfileWorkingView: View {
                 let calendar = Calendar.current
                 let dayNbr = calendar.component(.weekday, from: Date())
                 selectedDay = DayOfWeek(rawValue: dayNbr)!
+                guard let shortWeekdayText = DayOfWeek(rawValue: dayNbr) else {fatalError()}
+                
+                setCurrentDateWith(shortWeekdayText.asAString)
+                do {
+                    loadingState = .loading
+                    await proceesAppCodes()
+                    loadingState = .loaded
+                    noShow = false
+                } catch {
+                    loadingState = .failed
+                }
                 
 
 //                guard let currentDayStudentAppProfilefilxe = studentAppprofile.sessions["Sun"] else {

@@ -436,8 +436,9 @@ struct SchoolClassEditorContDup: View {
                                 let stringIDsJoined = ownerIDs.map { String($0) }.joined(separator: ",")
                                 Task {
                                     do {
-                                        let resultx =   try await ApiManager.shared.getDataNoDecode(from: .lockIntoApp(appBundleId: "com.dia.studentLoginFire", studentID: stringIDsJoined, teachAuth: teacherItems.getTeacherAuth()))
-                                        
+                                        let resultx = try await ApiManager.shared.getDataNoDecode(from: .lockIntoApp(appBundleId: LiteralThings.studentLoginApp,
+                                                                                                                     studentID: stringIDsJoined,
+                                                                                                                     teachAuth: teacherItems.getTeacherAuth()))
                                     } catch {
                                         print(error)
                                     }

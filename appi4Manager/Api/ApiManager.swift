@@ -466,7 +466,7 @@ private extension ApiManager {
               {
                  "apps": "\(appBundleId)",
                  "students": "\(studentID)",
-                 "clearAfter": "3000"
+                 "clearAfter": "\(LiteralThings.legthOfStudentLoginLock)"
               }
               """
         request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
