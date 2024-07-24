@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>154</string>
+					<string>156</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>153</string>
+					<string>155</string>
 					<key>Timestamp</key>
-					<string>731784890.247552</string>
+					<string>743282367.9073581</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -48,6 +48,53 @@
 			</dict>
 			<key>title</key>
 			<string>Commented out onDisappear by photoPicker</string>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>0</string>
+					<key>EndingLineNumber</key>
+					<string>695</string>
+					<key>StartingColumnNumber</key>
+					<string>0</string>
+					<key>StartingLineNumber</key>
+					<string>694</string>
+					<key>Timestamp</key>
+					<string>743292964.4839621</string>
+				</dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>appi4Manager/ContentViews/subContentView/studentAppProfile/StudentAppProfileWorkingView.swift</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>                studentAppProfilefiles = await  StudentAppProfileManager.loadProfilesx()
+</string>
+				<key>leading</key>
+				<string>        .onAppear {
+            Task {
+</string>
+				<key>trailing</key>
+				<string>                if let studentFound = studentAppProfilefiles.first { $0.id == studentId} {
+                    studentAppprofile.id          = studentFound.id
+                    studentAppprofile.locationId  = studentFound.locationId
+</string>
+			</dict>
+			<key>title</key>
+			<string>on appear  StudentAppProfileManager.loadProfilesx()</string>
 			<key>type</key>
 			<string>bookmark</string>
 		</dict>

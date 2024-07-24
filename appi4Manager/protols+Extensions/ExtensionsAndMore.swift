@@ -69,3 +69,12 @@ extension View {
     }
 }
 
+extension View {
+    func printViewsg(_ msg: String) {
+        let _ = {
+            print(msg)
+            let x = "something new -func"
+            print(x)
+        }()
+    }
+}

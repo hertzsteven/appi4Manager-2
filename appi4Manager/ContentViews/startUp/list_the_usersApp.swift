@@ -42,11 +42,16 @@ struct list_the_usersApp: App {
 
     var body: some Scene {
         WindowGroup {
+//            MockFromStudentScreenView(path: <#T##Binding<NavigationPath>#>, profilesx: <#T##[StudentAppProfilex]#>)
+//            MockToStudentScreenView(studentId: <#Int#>, profileManager: <#StudentAppProfileManager#>, studentAppprofile: <#StudentAppProfilex#>)
 //            TestOutView()
 // NavigateToStudentAppProfile()
 
 //            if appWorkViewModel.isLoaded && teacherItems.isLoaded {
 //            if teacherItems.isLoaded {
+            
+            TestMVVMView(studentId: 5, locationID: 1)
+            /*
                 DashboardView()
                     .environmentObject(usersViewModel)
                     .environmentObject(classDetailViewModel)
@@ -58,6 +63,10 @@ struct list_the_usersApp: App {
                     .environmentObject(teacherItems)
                     .environmentObject(studentAppProfileManager)
                     .environmentObject(devicesViewModel)
+            
+            */
+            
+            
 //            } else {
 //                ProgressView()
 //                    .onAppear {

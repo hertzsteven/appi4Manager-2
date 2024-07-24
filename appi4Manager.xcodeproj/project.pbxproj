@@ -57,9 +57,11 @@
 		46786B762A24D97C000F6716 /* UserListDup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46786B752A24D97C000F6716 /* UserListDup.swift */; };
 		46786B782A24D9A6000F6716 /* UserEditorContDup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46786B772A24D9A6000F6716 /* UserEditorContDup.swift */; };
 		46786B7A2A24E5E7000F6716 /* UserCardVwDup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46786B792A24E5E7000F6716 /* UserCardVwDup.swift */; };
+		4681B1F52C4E8C0D001DB2F4 /* TestMVVMView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4681B1F42C4E8C0D001DB2F4 /* TestMVVMView.swift */; };
 		469420F229C7ED67004B8CB4 /* ExtensionsAndMore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 469420F129C7ED67004B8CB4 /* ExtensionsAndMore.swift */; };
 		4698CA282A2D600A00D8A888 /* ImageProcessingError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4698CA272A2D600A00D8A888 /* ImageProcessingError.swift */; };
 		4698CA2A2A2E1FE200D8A888 /* BlockingOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4698CA292A2E1FE200D8A888 /* BlockingOverlayView.swift */; };
+		469990202C4F14E200C102A8 /* StudentAppProfileFS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4699901F2C4F14E200C102A8 /* StudentAppProfileFS.swift */; };
 		469EFF212A6ED33F0047E8BC /* AppResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 469EFF202A6ED33F0047E8BC /* AppResponse.swift */; };
 		469EFF232A6F40F30047E8BC /* AppxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 469EFF222A6F40F30047E8BC /* AppxViewModel.swift */; };
 		469EFF262A6F6D400047E8BC /* AppxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 469EFF252A6F6D400047E8BC /* AppxView.swift */; };
@@ -144,9 +146,11 @@
 		46786B752A24D97C000F6716 /* UserListDup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListDup.swift; sourceTree = "<group>"; };
 		46786B772A24D9A6000F6716 /* UserEditorContDup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditorContDup.swift; sourceTree = "<group>"; };
 		46786B792A24E5E7000F6716 /* UserCardVwDup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCardVwDup.swift; sourceTree = "<group>"; };
+		4681B1F42C4E8C0D001DB2F4 /* TestMVVMView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestMVVMView.swift; sourceTree = "<group>"; };
 		469420F129C7ED67004B8CB4 /* ExtensionsAndMore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsAndMore.swift; sourceTree = "<group>"; };
 		4698CA272A2D600A00D8A888 /* ImageProcessingError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessingError.swift; sourceTree = "<group>"; };
 		4698CA292A2E1FE200D8A888 /* BlockingOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingOverlayView.swift; sourceTree = "<group>"; };
+		4699901F2C4F14E200C102A8 /* StudentAppProfileFS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentAppProfileFS.swift; sourceTree = "<group>"; };
 		469EFF202A6ED33F0047E8BC /* AppResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppResponse.swift; sourceTree = "<group>"; };
 		469EFF222A6F40F30047E8BC /* AppxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppxViewModel.swift; sourceTree = "<group>"; };
 		469EFF252A6F6D400047E8BC /* AppxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppxView.swift; sourceTree = "<group>"; };
@@ -351,6 +355,7 @@
 				461A82E82A6DD09A00DAC90C /* Sources */,
 				461D89AB2A6D4E0400678391 /* protols+Extensions */,
 				46584FE02993EE460025F539 /* Resources */,
+				4681B1F32C4E8BD9001DB2F4 /* Explore */,
 				46584FCF2993E1060025F539 /* Preview Content */,
 				46584FCD2993E1060025F539 /* Assets.xcassets */,
 				4634418C2AEB3DAD0074741D /* GoogleService-Info.plist */,
@@ -455,6 +460,14 @@
 			path = CategoryEditorContView;
 			sourceTree = "<group>";
 		};
+		4681B1F32C4E8BD9001DB2F4 /* Explore */ = {
+			isa = PBXGroup;
+			children = (
+				4681B1F42C4E8C0D001DB2F4 /* TestMVVMView.swift */,
+			);
+			path = Explore;
+			sourceTree = "<group>";
+		};
 		4699A1132A1CDF4400D8829C /* startUp */ = {
 			isa = PBXGroup;
 			children = (
@@ -504,6 +517,7 @@
 				46BAB4842B30949A00C155B9 /* TimeOfDay.swift */,
 				46BAB4862B3094D900C155B9 /* DayOfWeek.swift */,
 				46BAB4882B30956600C155B9 /* StudentAppProfilex.swift */,
+				4699901F2C4F14E200C102A8 /* StudentAppProfileFS.swift */,
 				46BAB48A2B30959B00C155B9 /* StudentAppProfileManager.swift */,
 				46BAB48D2B309F5000C155B9 /* ProfileErrors.swift */,
 				46BAB48F2B309F7500C155B9 /* DailySessionConfiguration.swift */,
@@ -716,6 +730,7 @@
 				465057852B23673100AC7F3C /* TeacherItems.swift in Sources */,
 				46E56DBA2996B33800CB2512 /* ClassDetailResponse.swift in Sources */,
 				46D07D8F2B742A7100D04B5B /* LiteralThings.swift in Sources */,
+				4681B1F52C4E8C0D001DB2F4 /* TestMVVMView.swift in Sources */,
 				46E56DB729969F5600CB2512 /* UserDetailResponse.swift in Sources */,
 				46786B7A2A24E5E7000F6716 /* UserCardVwDup.swift in Sources */,
 				461D89A62A6D4D2E00678391 /* Apps.swift in Sources */,
@@ -773,6 +788,7 @@
 				46BAB4922B30A01400C155B9 /* DailySessions.swift in Sources */,
 				461D21CC299D89DD008B7BD2 /* ClassDetailViewModel.swift in Sources */,
 				469F90CC2B63E00700E85AF2 /* SwiftUIView.swift in Sources */,
+				469990202C4F14E200C102A8 /* StudentAppProfileFS.swift in Sources */,
 				466EC6FD2A42609D007EEEDB /* LessonDetailResponse.swift in Sources */,
 				461D21CE299D8A64008B7BD2 /* Student.swift in Sources */,
 				46B8239C2A71CEC100C85942 /* ItemListSelectViewWithPic.swift in Sources */,

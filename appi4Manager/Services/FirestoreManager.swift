@@ -269,9 +269,9 @@ extension FirestoreManager {
             }
         }
         
-        let source = FirestoreSource.server
-
-        docRef.getDocument(source: source) { (documentSnapshot, error) in
+//        let source = FirestoreSource.server
+//
+        docRef.getDocument() { (documentSnapshot, error) in
         
 //        docRef.getDocument { (documentSnapshot, error) in
             if let error = error {

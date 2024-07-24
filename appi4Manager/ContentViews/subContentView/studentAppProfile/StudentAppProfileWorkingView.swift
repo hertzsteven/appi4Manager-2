@@ -694,16 +694,16 @@ extension StudentAppProfileWorkingView: View {
             Task {
                 studentAppProfilefiles = await  StudentAppProfileManager.loadProfilesx()
                 if let studentFound = studentAppProfilefiles.first { $0.id == studentId} {
-                    studentAppprofile.id = studentFound.id
-                    studentAppprofile.locationId = studentFound.locationId
-                    studentAppprofile.sessions = studentFound.sessions
+                    studentAppprofile.id          = studentFound.id
+                    studentAppprofile.locationId  = studentFound.locationId
+                    studentAppprofile.sessions    = studentFound.sessions
                 }
 //                studentAppprofile.setStudentProfile(studentID: studentId)
-                profileManager.studentAppProfileFiles = studentAppProfilefiles
-                let calendar = Calendar.current
-                let dayNbr = calendar.component(.weekday, from: Date())
-                selectedDay = DayOfWeek(rawValue: dayNbr)!
-                guard let shortWeekdayText = DayOfWeek(rawValue: dayNbr) else {fatalError()}
+                profileManager.studentAppProfileFiles    = studentAppProfilefiles
+                let calendar                             = Calendar.current
+                let dayNbr                               = calendar.component(.weekday, from: Date())
+                selectedDay                              = DayOfWeek(rawValue: dayNbr)!
+                guard let shortWeekdayText               = DayOfWeek(rawValue: dayNbr) else {fatalError()}
                 
                 setCurrentDateWith(shortWeekdayText.asAString)
                 do {

@@ -40,6 +40,8 @@ struct AnimateTextField: View {
 
 struct UserEditorContDup: View {
     
+    @State  var studentFoundx: StudentAppProfilex?
+        
     @State  var toggleText = "Is a teacher"
     @State  var isTeacherToggle = true
     @State  var buttonToggle = true
@@ -261,9 +263,17 @@ struct UserEditorContDup: View {
                                     Task {
                                         profilesx = await  StudentAppProfileManager.loadProfilesx()
                                         print("-----")
-                                        dump(profilesx)
-                                        print("-----")
-                                        path.append(user.id)
+//                                        dump(profilesx)
+                                        print("----- \(user.id)")
+                                        if let studentFound = studentAppProfileManager.studentAppProfileFiles.first { $0.id == user.id} {
+                                            studentFoundx = studentFound
+//                                            dump(studentFound)
+                                            print("student found \(studentFoundx)")
+                                            path.append(user.id)
+                                        } else {
+                                            print("student not found")
+                                        }
+//                                        path.append(user.id)
                                     }
                                 }) {
                                     Label("Set The App Profile", systemImage: "arrowshape.turn.up.right.fill")
@@ -359,19 +369,20 @@ struct UserEditorContDup: View {
 
                     .navigationDestination(for: Int.self) { studentId in
                         
-//                     let profilesx =  StudentAppProfileManager.loadProfilesxUserDefaukts()
+                            //                     let profilesx =  StudentAppProfileManager.loadProfilesxUserDefaukts()
                         
-                        if let studentFound = studentAppProfileManager.studentAppProfileFiles.first { $0.id == studentId} {
-                            
+                            //                        if let studentFound = studentAppProfileManager.studentAppProfileFiles.first { $0.id == studentId} {
+//                        if let studentFound = profilesx.first { $0.id == studentId} {
                             StudentAppProfileWorkingView(
                                 studentId                   : studentId,
                                 studentName                 : "\(user.firstName) \(user.lastName)",
                                 studentAppProfilefiles      : studentAppProfileManager.studentAppProfileFiles,
                                 profileManager: StudentAppProfileManager(),
-                                studentAppprofile           :  studentFound)
+                                studentAppprofile           :  studentFoundx!)
                         }
+//                    }
 
-                    }
+//                    }
                 
                     
                     .environment(\.editMode, $mode)
