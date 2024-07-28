@@ -372,7 +372,7 @@ struct UserEditorContDup: View {
                             //                     let profilesx =  StudentAppProfileManager.loadProfilesxUserDefaukts()
                         
                             //                        if let studentFound = studentAppProfileManager.studentAppProfileFiles.first { $0.id == studentId} {
-//                        if let studentFound = profilesx.first { $0.id == studentId} {
+                        if let studentFound = profilesx.first { $0.id == studentId} {
                             StudentAppProfileWorkingView(
                                 studentId                   : studentId,
                                 studentName                 : "\(user.firstName) \(user.lastName)",
@@ -380,7 +380,7 @@ struct UserEditorContDup: View {
                                 profileManager: StudentAppProfileManager(),
                                 studentAppprofile           :  studentFoundx!)
                         }
-//                    }
+                    }
 
 //                    }
                 

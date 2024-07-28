@@ -98,6 +98,150 @@
 			<key>type</key>
 			<string>bookmark</string>
 		</dict>
+		<dict>
+			<key>children</key>
+			<array>
+				<dict>
+					<key>destination</key>
+					<dict>
+						<key>location-parameters</key>
+						<dict>
+							<key>EndingColumnNumber</key>
+							<string>0</string>
+							<key>EndingLineNumber</key>
+							<string>133</string>
+							<key>StartingColumnNumber</key>
+							<string>0</string>
+							<key>StartingLineNumber</key>
+							<string>132</string>
+							<key>Timestamp</key>
+							<string>743828046.029003</string>
+						</dict>
+						<key>rebasable-url</key>
+						<dict>
+							<key>base</key>
+							<string>workspace</string>
+							<key>payload</key>
+							<dict>
+								<key>relative-path</key>
+								<string>appi4Manager/ContentViews/subContentView/studentAppProfile/StudentAppProfilxWorkingView.swift</string>
+							</dict>
+						</dict>
+					</dict>
+					<key>text-context</key>
+					<dict>
+						<key>focused</key>
+						<string>                ForEach(appsAMinfo) { appInfo in
+</string>
+						<key>leading</key>
+						<string>        ScrollView(.horizontal, showsIndicators: true) {
+            HStack(spacing: 0) {
+</string>
+						<key>trailing</key>
+						<string>                        //                    AppInfxView(loadingState: loadingState, appsAMinfo: appsAMinfo, appInfo: appInfo)
+                    AppInfxView(loadingState: loadingState, appsInfo: appsAMinfo, appInfo: appInfo)
+                }
+</string>
+					</dict>
+					<key>type</key>
+					<string>bookmark</string>
+				</dict>
+				<dict>
+					<key>destination</key>
+					<dict>
+						<key>location-parameters</key>
+						<dict>
+							<key>EndingColumnNumber</key>
+							<string>0</string>
+							<key>EndingLineNumber</key>
+							<string>259</string>
+							<key>StartingColumnNumber</key>
+							<string>0</string>
+							<key>StartingLineNumber</key>
+							<string>258</string>
+							<key>Timestamp</key>
+							<string>743828046.028993</string>
+						</dict>
+						<key>rebasable-url</key>
+						<dict>
+							<key>base</key>
+							<string>workspace</string>
+							<key>payload</key>
+							<dict>
+								<key>relative-path</key>
+								<string>appi4Manager/ContentViews/subContentView/studentAppProfile/StudentAppProfilxWorkingView.swift</string>
+							</dict>
+						</dict>
+					</dict>
+					<key>text-context</key>
+					<dict>
+						<key>focused</key>
+						<string>                ForEach(appsPMinfo) { appInfo in
+</string>
+						<key>leading</key>
+						<string>        ScrollView(.horizontal, showsIndicators: true) {
+            HStack(spacing: 0) {
+</string>
+						<key>trailing</key>
+						<string>                        //                    AppInfxView(loadingState: loadingState, appsAMinfo: appsAMinfo, appInfo: appInfo)
+                    AppInfxView(loadingState: loadingState, appsInfo: appsPMinfo, appInfo: appInfo)
+                }
+</string>
+					</dict>
+					<key>type</key>
+					<string>bookmark</string>
+				</dict>
+				<dict>
+					<key>destination</key>
+					<dict>
+						<key>location-parameters</key>
+						<dict>
+							<key>EndingColumnNumber</key>
+							<string>0</string>
+							<key>EndingLineNumber</key>
+							<string>343</string>
+							<key>StartingColumnNumber</key>
+							<string>0</string>
+							<key>StartingLineNumber</key>
+							<string>342</string>
+							<key>Timestamp</key>
+							<string>743828046.028971</string>
+						</dict>
+						<key>rebasable-url</key>
+						<dict>
+							<key>base</key>
+							<string>workspace</string>
+							<key>payload</key>
+							<dict>
+								<key>relative-path</key>
+								<string>appi4Manager/ContentViews/subContentView/studentAppProfile/StudentAppProfilxWorkingView.swift</string>
+							</dict>
+						</dict>
+					</dict>
+					<key>text-context</key>
+					<dict>
+						<key>focused</key>
+						<string>                    AppInfxView(loadingState: loadingState, appsInfo: appsHomeinfo, appInfo: appInfo)
+</string>
+						<key>leading</key>
+						<string>            HStack(spacing: 0) {
+                ForEach(appsHomeinfo) { appInfo in
+</string>
+						<key>trailing</key>
+						<string>                }
+                .padding(8)
+            }
+</string>
+					</dict>
+					<key>type</key>
+					<string>bookmark</string>
+				</dict>
+			</array>
+			<key>title</key>
+			<string>foreach loop</string>
+			<key>type</key>
+			<string>group</string>
+		</dict>
 	</array>
 </dict>
 </plist>

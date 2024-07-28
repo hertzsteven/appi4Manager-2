@@ -39,7 +39,7 @@ struct DashboardView: View {
     let categories = [
         Category(name: "Devices", color: .blue, image: Image(systemName: "ipad.and.iphone"), count: 5),
         Category(name: "Categories", color: .green, image: Image(systemName: "folder.fill"), count: 12),
-//        Category(name: "Apps", color: .red, image: Image(systemName: "apps.ipad"), count: 3),
+        Category(name: "Apps", color: .red, image: Image(systemName: "apps.ipad"), count: 3),
 //        Category(name: "NavigateToStudentAppProfile", color: .purple, image: Image(systemName: "person.3.sequence.fill"), count: 8),
         Category(name: "Classes", color: .orange, image: Image(systemName: "person.3.sequence.fill"), count: 2),
         Category(name: "Students", color: .yellow, image: Image(systemName: "person.crop.square"), count: 6)
@@ -113,8 +113,8 @@ struct DashboardView: View {
                             }
                         
                     case "Apps":
-                        AppxView()
-                            //                    MockFromStudentScreenView(path: $path)
+//                        AppxView()
+                                                MockFromStudentScreenView(path: $path)
                         
                     case "NavigateTo":
                         MockFromStudentScreenView(path: $path)

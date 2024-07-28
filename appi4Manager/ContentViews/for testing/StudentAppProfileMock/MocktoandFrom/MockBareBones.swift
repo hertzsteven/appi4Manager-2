@@ -11,10 +11,15 @@ import SwiftUI
 
 
 struct MockBareBones: View {
+    @ObservedObject var studentAppprofile: StudentAppProfileFS
+
+    init(studentId: Int, locationID: Int) {
+        self.studentAppprofile = StudentAppProfileFS(id: studentId, locationId: locationID)
+    }
     
                  var studentAppProfilefiles           : [StudentAppProfilex] = []
-    @StateObject var profileManager                   : StudentAppProfileManager
-    @StateObject var studentAppprofile                : StudentAppProfilex
+    @StateObject var profileManager                   : StudentAppProfileManager = StudentAppProfileManager()
+//    @StateObject var studentAppprofile                : StudentAppProfilex
 
     var body: some View {
         VStack {
@@ -33,17 +38,27 @@ struct MockBareBones: View {
                     studentAppprofile.sessions["Monday"]?.amSession.apps.removeAll()
                     studentAppprofile.sessions["Monday"]?.amSession.apps.append(contentsOf: [555,444])
                     dump(studentAppprofile)
-                    profileManager.updateStudentAppProfile(newProfile: studentAppprofile)
-                    dump(profileManager.studentAppProfileFiles)
+//                    profileManager.updateStudentAppProfile(newProfile: studentAppprofile)
+//                    dump(profileManager.studentAppProfileFiles)
                     print("finished")
                 }
             }
         }
         .onAppear {
-            profileManager.studentAppProfileFiles = studentAppProfilefiles
+//            profileManager.studentAppProfileFiles = studentAppProfilefiles
         }
     }
     
 
 }
 
+struct MockBareBones_Previews: PreviewProvider {
+    static var previews: some View {
+        // Create a mock or sample StudentAppProfileFS instance
+        let mockProfile = StudentAppProfileFS(id: 5, locationId: 1)
+        
+        // Provide the mockProfile to the view
+        MockBareBones(studentId: 5, locationID: 1)
+            .environmentObject(mockProfile) // Adjust as necessary for your environment setup
+    }
+}
