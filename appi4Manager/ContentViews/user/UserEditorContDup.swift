@@ -39,7 +39,9 @@ struct AnimateTextField: View {
 }
 
 struct UserEditorContDup: View {
-    
+        //    @Binding var path: NavigationPath
+            @StateObject private var profilesViewModel = ProfilesViewModel()
+
     @State  var studentFoundx: StudentAppProfilex?
         
     @State  var toggleText = "Is a teacher"
@@ -365,22 +367,34 @@ struct UserEditorContDup: View {
                         }
                         
                     }
-                    
-
                     .navigationDestination(for: Int.self) { studentId in
-                        
-                            //                     let profilesx =  StudentAppProfileManager.loadProfilesxUserDefaukts()
-                        
-                            //                        if let studentFound = studentAppProfileManager.studentAppProfileFiles.first { $0.id == studentId} {
-                        if let studentFound = profilesx.first { $0.id == studentId} {
-                            StudentAppProfileWorkingView(
-                                studentId                   : studentId,
-                                studentName                 : "\(user.firstName) \(user.lastName)",
-                                studentAppProfilefiles      : studentAppProfileManager.studentAppProfileFiles,
-                                profileManager: StudentAppProfileManager(),
-                                studentAppprofile           :  studentFoundx!)
-                        }
-                    }
+//                                    let _ = print(studentId, "jdjdjdjdj \(profilesViewModel.profilesx[2].id)")
+                                                    if let studentFound = profilesViewModel.profilesx.first { $0.id == studentId} {
+                                                        StudentAppProfilxWorkingView(
+                                                            studentId                   : studentId,
+                                                            studentName                 : "Sam Ashe",
+                    //                                        studentAppProfilefiles: profilesViewModel.profilesx,
+                                                            profileManager: StudentAppProfileManager(),
+                                                            studentAppprofile           :  studentFound)
+                                                    } else {
+                                                        Text("not found")
+                                                    }
+                                }
+
+//                    .navigationDestination(for: Int.self) { studentId in
+//                        
+//                            //                     let profilesx =  StudentAppProfileManager.loadProfilesxUserDefaukts()
+//                        
+//                            //                        if let studentFound = studentAppProfileManager.studentAppProfileFiles.first { $0.id == studentId} {
+//                        if let studentFound = profilesx.first { $0.id == studentId} {
+//                            StudentAppProfileWorkingView(
+//                                studentId                   : studentId,
+//                                studentName                 : "\(user.firstName) \(user.lastName)",
+//                                studentAppProfilefiles      : studentAppProfileManager.studentAppProfileFiles,
+//                                profileManager: StudentAppProfileManager(),
+//                                studentAppprofile           :  studentFoundx!)
+//                        }
+//                    }
 
 //                    }
                 

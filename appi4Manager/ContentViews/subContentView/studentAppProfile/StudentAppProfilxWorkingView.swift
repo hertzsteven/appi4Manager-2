@@ -62,7 +62,9 @@ struct StudentAppProfilxWorkingView {
     @State var studentId: Int
     @State var studentName: String
     //  MARK: Manage Student Profile
-    @State var studentAppProfilefiles: [StudentAppProfilex]
+    
+//    @State var studentAppProfilefiles: [StudentAppProfilex]
+    
     @StateObject var profileManager                         : StudentAppProfileManager
     @StateObject var studentAppprofile                      = StudentAppProfilex()
     @State var currentDayStudentAppProfile: DailySessions   = DailySessions.makeDefaultDailySession()
@@ -449,22 +451,24 @@ extension StudentAppProfilxWorkingView: View {
             Task {
                 /* I took this out*/
 //                studentAppProfilefiles = await  StudentAppProfileManager.loadProfilesx()
-                if let studentFound = studentAppProfilefiles.first { $0.id == studentId} {
-                    studentAppprofile.id          = studentFound.id
-                    studentAppprofile.locationId  = studentFound.locationId
-                    studentAppprofile.sessions    = studentFound.sessions
-                }
-//                studentAppprofile.setStudentProfile(studentID: studentId)
-                /* I took this out*/
+//                if let studentFound = studentAppProfilefiles.first { $0.id == studentId} {
+//                    studentAppprofile.id          = studentFound.id
+//                    studentAppprofile.locationId  = studentFound.locationId
+//                    studentAppprofile.sessions    = studentFound.sessions
+//                }
+                studentAppprofile.setStudentProfile(studentID: studentId)
+
+                /* I took this out  -- */
 //                profileManager.studentAppProfileFiles    = studentAppProfilefiles
                 let calendar                             = Calendar.current
                 let dayNbr                               = calendar.component(.weekday, from: Date())
+                print("the location is \(studentAppprofile.locationId)")
                 selectedDay                              = DayOfWeek(rawValue: dayNbr)!
                 guard let shortWeekdayText               = DayOfWeek(rawValue: dayNbr) else {fatalError()}
                 setCurrentDateWith(shortWeekdayText.asAString)
                 do {
                     loadingState = .loading
-                    /* I took this out*/
+                    /* I took this out -- */
 //                    await proceesAppCodes()
                     loadingState = .loaded
                     noShow = false
@@ -587,7 +591,7 @@ extension StudentAppProfilxWorkingView {
         static var previews: some View {
             Group {
                 // Example with specific studentId and studentName
-                StudentAppProfilxWorkingView(studentId: 3, studentName: "John Doe", studentAppProfilefiles: [], profileManager: StudentAppProfileManager()) // Replace with actual default values
+                StudentAppProfilxWorkingView(studentId: 3, studentName: "John Doe",  profileManager: StudentAppProfileManager()) // Replace with actual default values
                     .previewDevice(PreviewDevice(rawValue: "iPad Pro (12.9-inch)"))
                     .previewDisplayName("iPad Pro (12.9-inch)")
                     .previewLayout(.fixed(width: 1024, height: 1366)) // Landscape

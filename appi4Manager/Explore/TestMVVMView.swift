@@ -105,9 +105,9 @@ struct TestMVVMView: View {
                                     StudentAppProfilxWorkingView(
                                         studentId                   : studentId,
                                         studentName                 : "Sam Ashe",
-                                        studentAppProfilefiles: profilesViewModel.profilesx,
-                                        profileManager: StudentAppProfileManager(),
-                                        studentAppprofile           :  studentFound)
+//                                        studentAppProfilefiles: profilesViewModel.profilesx,
+                                        profileManager: StudentAppProfileManager())
+//                                        studentAppprofile           :  studentFound)
                                 } else {
                                     Text("not found")
                                 }

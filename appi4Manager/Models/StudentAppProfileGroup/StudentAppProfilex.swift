@@ -49,9 +49,11 @@ class StudentAppProfilex: Identifiable, Codable, ObservableObject {
             guard let studentAppProfilex = studentAppProfilex else {
                 fatalError("could not retreive the student profile")
             }
-            self.id          = studentAppProfilex.id
-            self.locationId  = studentAppProfilex.locationId
-            self.sessions    = studentAppProfilex.sessions
+//            DispatchQueue.main.async {
+                self.id          = studentAppProfilex.id
+                self.locationId  = studentAppProfilex.locationId
+                self.sessions    = studentAppProfilex.sessions
+//            }
         }
     }
     
