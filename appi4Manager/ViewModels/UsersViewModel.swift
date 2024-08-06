@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+
+enum UserError: Error {
+    case userNotFound
+}
+
 @MainActor
 class UsersViewModel: ObservableObject {
     
@@ -59,7 +64,28 @@ class UsersViewModel: ObservableObject {
         }
         
     }
- 
+
+  func getWithId(_ id: Int) throws -> User {
+      if let user = users.first(where: { $0.id == id }) {
+          return user
+      } else {
+          throw UserError.userNotFound
+      }
+  }
+
+//  func getWithId(_ id: Int) -> User {
+//    let x = users.first(where: { usr in
+//      usr.id == id
+//    })
+//
+//    if x != nil {
+//      return x!
+//    } else {
+//      fatalError("did not work")
+//    }
+//  }
+//  
+
 
     func delete(_ user: User) {
         users.removeAll { $0.id == user.id }

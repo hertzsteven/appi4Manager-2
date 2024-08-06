@@ -77,6 +77,17 @@ struct TestMVVMView: View {
                         .progressViewStyle(CircularProgressViewStyle())
                         .padding()
                 }
+          Button {
+                      Task {
+                        let prf = await FirestoreManager().getaStudent(studentID: 5)
+                        dump(prf)
+                        print("finished")
+                      }
+                      print("hello")
+                    } label: {
+                      Text("get Student")
+                    }
+           
             Button {
                 Task {
 //                    profilesx = await StudentAppProfileManager.loadProfilesx()
@@ -104,9 +115,9 @@ struct TestMVVMView: View {
                                 if let studentFound = profilesViewModel.profilesx.first { $0.id == studentId} {
                                     StudentAppProfilxWorkingView(
                                         studentId                   : studentId,
-                                        studentName                 : "Sam Ashe",
+                                        studentName                 : "Sam Ashe")
 //                                        studentAppProfilefiles: profilesViewModel.profilesx,
-                                        profileManager: StudentAppProfileManager())
+//                                        profileManager: StudentAppProfileManager())
 //                                        studentAppprofile           :  studentFound)
                                 } else {
                                     Text("not found")

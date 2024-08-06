@@ -735,6 +735,42 @@ extension FirestoreManager {
             print("Unknown error: \(profileError.localizedDescription)")
         }
     }
+  
+  func getaStudentFB(collectionName: String = "studentProfiles", studentID: Int) async throws -> DocumentSnapshot {
+    
+    var docRef: DocumentReference {
+      let db = Firestore.firestore()
+      let docRef = db.collection("studentProfiles").document("\(studentID)")
+      return docRef
+    }
+    
+    let docSnapshot = try await docRef.getDocument(source: FirestoreSource.server)
+    
+    if !docSnapshot.exists  {
+      throw ProfileError.missingCollection("collection name returned no ducuments")
+    }
+    
+    return docSnapshot
+  }
+  
+  
+
+
+  func getaStudent(collectionName: String = "studentProfiles", studentID: Int) async -> StudentAppProfilex {
+    var prf: StudentAppProfilex?
+    
+    do {
+      let docSnapshot = try await self.getaStudentFB(collectionName: collectionName,  studentID: studentID)
+      prf = try docSnapshot.data(as: StudentAppProfilex.self)
+    }
+    catch {
+      handleError(error: error, funcName: #function)
+    }
+    
+    guard let prf = prf else { fatalError("prf error")}
+    return prf
+  }
+  
 
 }
 

@@ -39,8 +39,8 @@ struct AnimateTextField: View {
 }
 
 struct UserEditorContDup: View {
-        //    @Binding var path: NavigationPath
-            @StateObject private var profilesViewModel = ProfilesViewModel()
+
+    @StateObject private var profilesViewModel = ProfilesViewModel()
 
     @State  var studentFoundx: StudentAppProfilex?
         
@@ -124,433 +124,461 @@ struct UserEditorContDup: View {
     
     var body: some View {
 
-        ZStack {
-            VStack {
-                    
-                    Form {
-                        Section(header: Text("Photo")) {
-                            VStack(alignment: .center) {
-                                
-                                HStack {
-                                    
-                                        // photo picker
-                                    PhotosPicker(selection: $imagePicker.imageSelection,
-                                                 matching: .images) {
-                                        Text("Select a photo")
-                                    }
-                                                 .disabled(!itIsInEdit ? true : false)
-                                                 .tint(.purple)
-                                                 .controlSize(.large)
-                                                 .buttonStyle(.borderedProminent)
-                                                 .padding()
-                                                 .onAppear {
-//                                                     imagePicker.studentId = user.id
-                                                    // imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
-                                                     print("-*- in onAppear student id is \(user.id)")
-                                                     Task {
-                                                         await checkIfUserInAppProfile(studentID: user.id)
-                                                     }
-                                                 }
-                                                 .onDisappear {
-                                                     print("-- in disappear")
-                                                     /*
-                                                     task {
-                                                         do {
-                                                             try await studentPicStubViewModel.reloadData(uuid: teacherItems.getpicClass())
-                                                         } catch {
-                                                             print("ellelelell  Big error")
-                                                         }
-                                                     }
-                                                     */
-                                                 }
-                                    
-                                        // delete button
-                                    if userImage != nil {
-                                        Button(action: {
-                                            self.userImage = nil
-                                        }) {
-                                            Text("Delete Image")
-                                                .padding()
-                                                .background(Color.red)
-                                                .foregroundColor(.white)
-                                                .cornerRadius(10)
-                                        }
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                        // if an image exists
-                                    if let image = imagePicker.image {
-                                        image
-                                            .resizable()
-                                            .scaledToFit() // Display the loaded image
-                                            .clipShape(Circle())
-                                            .frame(width: 100, height: 100)
-                                            .overlay(
-                                                Circle()
-                                                    .stroke(Color.primary.opacity(0.2), lineWidth: 2)
-                                            )
-                                            .onAppear {
-                                                teacherItems.uniqueID = UUID()
-                                            }
-                                    } else if let image = imagePicker.savedImage {
-                                        image
-                                            .resizable()
-                                            .scaledToFit() // Display the loaded image
-                                            .clipShape(Circle())
-                                            .frame(width: 100, height: 100)
-                                            .overlay(
-                                                Circle()
-                                                    .stroke(Color.primary.opacity(0.2), lineWidth: 2)
-                                            )
-                                            .onAppear {
-                                                teacherItems.uniqueID = UUID()
-                                            }
-                                    }else {
-                                        AsyncImage(url: urlPic) { phase in
-                                            switch phase {
-                                            case .empty:
-                                                ProgressView() // Display a progress view while the image is loading
-                                            case .success(let image):
-                                                image
-                                                    .resizable()
-                                                    .scaledToFit() // Display the loaded image
-                                                    .clipShape(Circle())
-                                                    .frame(width: 100, height: 100)
-                                                    .overlay(
-                                                        Circle()
-                                                            .stroke(Color.primary.opacity(0.2), lineWidth: 2)
-                                                    )
-                                                
-                                            case .failure:
-                                                Text("Failed to load image") // Display an error message if the image fails to load
-                                            @unknown default:
-                                                fatalError()
-                                            }
-                                        }
-                                    }
-                                } // Hstack end
-                            }
-                        }
-                        
-                        
-                        Section(header: Text("Name")) {
-                            AnimateTextField(textField: $user.firstName, mode: $mode, label: "First Name")
-                            AnimateTextField(textField: $user.lastName, mode: $mode, label: "Last Name")
-                        }
-                        
-                        Section(header: Text("Notes")) {
-//                             AnimateTextField(textField: $user.notes, mode: $mode, label: "notes")
-                            TextEditor(text: $user.notes)
-                                .font(.body)
-                                .frame(height: 100)
-                                .disabled(!itIsInEdit)
-//                                .border(Color.gray, width: 6) // Optional: Adds a border
-                        }
-
-                        Section(header: Text("Teacher")) {
-                            Toggle("Is a teacher", isOn: $isTeacherToggle)
-                                .toggleStyle(.switch)
-                                .disabled(!itIsInEdit)
-                                .onChange(of: isTeacherToggle) { newValue in
-                                        // Execute your code here
-                                        // 'newValue' will contain the new state of the toggle
-                                    print("Switch Toggle is now \(newValue ? "ON" : "OFF")")
-                                }
-                        }
-
-                        if !isNew {
-                            Section(header: Text("Apps")) {
-                                Button(action: {
-                                    Task {
-                                        profilesx = await  StudentAppProfileManager.loadProfilesx()
-                                        print("-----")
-//                                        dump(profilesx)
-                                        print("----- \(user.id)")
-                                        if let studentFound = studentAppProfileManager.studentAppProfileFiles.first { $0.id == user.id} {
-                                            studentFoundx = studentFound
-//                                            dump(studentFound)
-                                            print("student found \(studentFoundx)")
-                                            path.append(user.id)
-                                        } else {
-                                            print("student not found")
-                                        }
-//                                        path.append(user.id)
-                                    }
-                                }) {
-                                    Label("Set The App Profile", systemImage: "arrowshape.turn.up.right.fill")
-//                                    Text("Set The App Profile")
-//                                        .padding(.horizontal)
-//                                    Image(systemName: "gift.fill")
-//                                    Image(systemName: "1arrowshape.turn.up.right")
-                                }
-                                .foregroundStyle(!itIsInEdit ? .gray : .blue)
-                                .disabled(!itIsInEdit)
-//                                Button {
-//                                    Task {
-//                                        profilesx = await  StudentAppProfileManager.loadProfilesx()
-//                                        print("-----")
-//                                        dump(profilesx)
-//                                        print("-----")
-//                                        path.append(user.id)
-//                                    }
-//                                } label: {
-//                                    Label("Set The App Profile", systemImage: "1arrowshape.turn.up.right")
-//                                }
-                               
-
-//                                Button("Set the app profile")
-//                                {
-//
-//                                }
-//                                .disabled(!itIsInEdit)
-                            }
-                        }
-
-                        Section(header: Text("email")) {
-                            AnimateTextField(textField: $user.email, mode: $mode, label: "email")
-                            
-                        }
-                        
-                        .textCase(nil)
-                        
-                        .environment(\.editMode, $mode)
-
-                    List {
-                        Section {
-                            
-                            ForEach(selectedStudentClasses.compactMap({ id in
-                                (classesViewModel.filterSchoolClassesinLocation2(teacherItems.currentLocation.id,
-                                                                                                    dummyPicClassToIgnore: teacherItems.getpicClass() , schoolClassGroupID: teacherItems.schoolClassDictionaryGroupID[teacherItems.currentLocation.id]! ) )
-                                    .first(where: { $0.userGroupId == id })
-                            }), id: \.id) { schoolClass in
-                                Text("\(schoolClass.name)")
-                            }
-
-                        } header: {
-                            HStack {
-                                Text("Classes ")
-                                    //                                .bold()
-        //                            .font(.title3)
-                                if editMode == .active || ( isNew == true && !userCopy.lastName.isEmpty ) {
-                                    Spacer()
-                                    Button {
-                                        Task {
-                                            do {
-        //                                        teacherIds = try await teacherItems.getUsersInTeacherGroup() ?? []
-                                                passedItemSelected = selectedStudentClasses
-                                                toShowStudentClassesList.toggle()
-                                            } catch {
-                                                // Handle error
-                                            }
-                                        }
-                                     } label: {
-                                        Image(systemName: "plus.forwardslash.minus")
-                                            .foregroundColor(.blue)
-                                    }
-                                    Divider()
-                                }
-                            }
-                        }
-        //           footer: {
-        //                   Text("Number of classes: \(selectedStudentClasses.count)")
-        //               }
-        //                .headerProminence(.standard)
-                    }
-
-                        if !isNew {
-                            DeleteButtonView(action: {
-                                inDelete.toggle()
-                            })
-                            .listRowInsets(EdgeInsets())
-                            .disabled(!itIsInEdit ? true : false)
-                        }
-                        
-                    }
-                    .navigationDestination(for: Int.self) { studentId in
-//                                    let _ = print(studentId, "jdjdjdjdj \(profilesViewModel.profilesx[2].id)")
-                                                    if let studentFound = profilesViewModel.profilesx.first { $0.id == studentId} {
-                                                        StudentAppProfilxWorkingView(
-                                                            studentId                   : studentId,
-                                                            studentName                 : "Sam Ashe",
-                    //                                        studentAppProfilefiles: profilesViewModel.profilesx,
-                                                            profileManager: StudentAppProfileManager(),
-                                                            studentAppprofile           :  studentFound)
-                                                    } else {
-                                                        Text("not found")
-                                                    }
-                                }
-
-//                    .navigationDestination(for: Int.self) { studentId in
-//                        
-//                            //                     let profilesx =  StudentAppProfileManager.loadProfilesxUserDefaukts()
-//                        
-//                            //                        if let studentFound = studentAppProfileManager.studentAppProfileFiles.first { $0.id == studentId} {
-//                        if let studentFound = profilesx.first { $0.id == studentId} {
-//                            StudentAppProfileWorkingView(
-//                                studentId                   : studentId,
-//                                studentName                 : "\(user.firstName) \(user.lastName)",
-//                                studentAppProfilefiles      : studentAppProfileManager.studentAppProfileFiles,
-//                                profileManager: StudentAppProfileManager(),
-//                                studentAppprofile           :  studentFoundx!)
-//                        }
-//                    }
-
-//                    }
-                
-                    
-                    .environment(\.editMode, $mode)
-                    .listStyle(SidebarListStyle())
-                    
-
-        //      MARK: - toolbar   * * * * * * * * * * * * * * * * * * * * * *
-                    .toolbar(content: {
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                        if !isNew {
-                            Button(!itIsInEdit ? "Edit" : "**Done**") {
-                                if itIsInEdit {
-                                    if inUpdate {
-                                        return
-                                    }
-                                    
-                                    Task {
-                                        isBlocking = true
-                                       
-                                        do {
-                                            inUpdate = true
-                                            await upDateUser()
-                                            inUpdate = false
-                                            isBlocking = false
-                                            if !itIsInEdit {
-                                                updateModeWithAnimation()
-                                            } else {
-                                                updateModeWithAnimation(switchTo: .inactive)
-                                            }
-                                        } catch {
-                                            print("Failed in task")
-                                        }
-                                    }
-                                } else {
-                                    updateModeWithAnimation()
-                                }
-                            }.frame(height: 96, alignment: .trailing)
-                                .disabled(isBlocking)
-                            
-                        }
-                    }
-                    // 			Cancel button from editing not adding
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        if itIsInEdit && !isNew {
-                            Button("Cancel") {
-                                inCancelEdit.toggle()
-                            }.frame(height: 96, alignment: .trailing)
-                                .disabled(isBlocking)
-                        }
-                    }
-                    
-                        ToolbarItem(placement: .cancellationAction) {
-                            if isNew {
-                                Button("Cancel") {
-                                    inCancelAdd = true
-                                }
-                            }
-                        }
-                        ToolbarItem {
-                            Button {
-                                if isNew {
-                                    if inAdd {
-                                        return
-                                    }
-                                    Task {
-                                        do {
-                                            inAdd = true
-                                            await addTheUser()
-                                            usersViewModel.ignoreLoading = false
-                                            dismiss()
-                                            inAdd = false
-                                        } catch {
-                                            print("Failed in task")
-                                        }
-                                    }
-                                }
-                            } label: {
-                                Text(isNew ? "Add" : "")
-                            }
-                            .disabled(user.lastName.isEmpty || user.firstName.isEmpty)
-                        }
-                    } )
-                
-                    
-        //      MARK: - Navigation Bar  * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
-                    .navigationBarBackButtonHidden(mode == .active ? true : false)
-
-
-        //       MARK: - Confirmation Dialog  * * * * * * * * * * * * * * * * * * * * * * * *
-                    .confirmationDialog("Are you sure you want to delete this student?", isPresented: $inDelete, titleVisibility: .visible) {
-//                    .confirmationDialog("Are you sure you want to delete this student?", isPresented: $inDelete) {
-
-                        Button("Delete the Student", role: .destructive) {
-                            deleteTheUser()
-                        }
-
-                }
-                // from edit
-                .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelEdit, titleVisibility: .visible) {
-                    Button("Discard Changes edit ", role: .destructive) {
-                            // Do something when the user confirms
-                        mode = .inactive
-                        user.lastName               = userInitialValues.lastName
-                        user.firstName              = userInitialValues.firstName
-                        user.notes                  = userInitialValues.notes
-                        user.email                  = userInitialValues.email
-                        imagePicker.imageSelection  = nil
-                        imagePicker.image           = nil
-                        imagePicker.theUIImage      = nil
-                        imagePicker.savedImage      = nil
-                        isTeacherToggle				 = isTeacherToggleInitalValue
-                    }
-                }
-                // from add
-                .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelAdd, titleVisibility: .visible) {
-                    Button("Discard Changes", role: .destructive) {
-                            // Do something when the user confirms
-                        dismiss()
-                    }
-                }
+         ZStack {
+          VStack {
             
-
-                .task {
-                    studentAppProfileManager.studentAppProfileFiles = await StudentAppProfileManager.loadProfilesx()
-                    isTeacherToggle = await teacherItems.checkIfUserInTeacherGroup(user.id)
-                    isTeacherToggleInitalValue = isTeacherToggle
-                }
-                    //      MARK: - Appear and Disappear   * * * * * * * * * * * * * * * * * * * * * *
-                .onAppear {
-                    usersViewModel.ignoreLoading = true
+            Form {
+              Section(header: Text("Photo")) {
+                VStack(alignment: .center) {
+                  
+                  HStack {
                     
-                    if !isNew {
-                        toDoWithNewUserToProcess()
-                    } else {
-                        mode = .active
+                      // photo picker
+                    PhotosPicker(selection: $imagePicker.imageSelection,
+                                 matching: .images) {
+                      Text("Select a photo")
                     }
+                                 .disabled(!itIsInEdit ? true : false)
+                                 .tint(.purple)
+                                 .controlSize(.large)
+                                 .buttonStyle(.borderedProminent)
+                                 .padding()
+                                 .onAppear {
+                                     //                                                     imagePicker.studentId = user.id
+                                     // imagePicker.teachAuth = "9c74b8d6a4934ca986dfe46592896801"
+                                   print("-*- in onAppear student id is \(user.id)")
+                                   Task {
+                                     await checkIfUserInAppProfile(studentID: user.id)
+                                   }
+                                 }
+                                 .onDisappear {
+                                   print("-- in disappear")
+                                   /*
+                                    task {
+                                    do {
+                                    try await studentPicStubViewModel.reloadData(uuid: teacherItems.getpicClass())
+                                    } catch {
+                                    print("ellelelell  Big error")
+                                    }
+                                    }
+                                    */
+                                 }
+                    
+                      // delete button
+                    if userImage != nil {
+                      Button(action: {
+                        self.userImage = nil
+                      }) {
+                        Text("Delete Image")
+                          .padding()
+                          .background(Color.red)
+                          .foregroundColor(.white)
+                          .cornerRadius(10)
+                      }
+                    }
+                    
+                    Spacer()
+                    
+                      // if an image exists
+                    if let image = imagePicker.image {
+                      image
+                        .resizable()
+                        .scaledToFit() // Display the loaded image
+                        .clipShape(Circle())
+                        .frame(width: 100, height: 100)
+                        .overlay(
+                          Circle()
+                            .stroke(Color.primary.opacity(0.2), lineWidth: 2)
+                        )
+                        .onAppear {
+                          teacherItems.uniqueID = UUID()
+                        }
+                    } else if let image = imagePicker.savedImage {
+                      image
+                        .resizable()
+                        .scaledToFit() // Display the loaded image
+                        .clipShape(Circle())
+                        .frame(width: 100, height: 100)
+                        .overlay(
+                          Circle()
+                            .stroke(Color.primary.opacity(0.2), lineWidth: 2)
+                        )
+                        .onAppear {
+                          teacherItems.uniqueID = UUID()
+                        }
+                    }else {
+                       AsyncImage(url: urlPic) { phase in
+                        switch phase {
+                        case .empty:
+                          ProgressView() // Display a progress view while the image is loading
+                        case .success(let image):
+                          image
+                            .resizable()
+                            .scaledToFit() // Display the loaded image
+                            .clipShape(Circle())
+                            .frame(width: 100, height: 100)
+                            .overlay(
+                              Circle()
+                                .stroke(Color.primary.opacity(0.2), lineWidth: 2)
+                            )
+                          
+                        case .failure:
+                          Text("Failed to load image") // Display an error message if the image fails to load
+                        @unknown default:
+                          fatalError()
+                        }
+                      }
+                    }
+                  } // Hstack end
                 }
+              }
+              
+              
+              Section(header: Text("Name")) {
+                AnimateTextField(textField: $user.firstName, mode: $mode, label: "First Name")
+                AnimateTextField(textField: $user.lastName, mode: $mode, label: "Last Name")
                 
-                .onDisappear {
-                    mode = .inactive
+              }
+              
+              Section(header: Text("Test navigate")) {
+                Button {
+                  print("before")
+                //  var xx: Double = 2.4
+                  path.append(5)
+                  print("after")
+                } label: {
+                  Text("Navigate append 5")
                 }
-
-                }
-
-                .overlay(alignment: .center) {
-                    if isUserDeleted {
-                        Color(UIColor.systemBackground)
-                        Text("User Deleted. Select an User.")
-                            .foregroundStyle(.secondary)
+              }
+              
+              
+              Section(header: Text("Notes")) {
+                  //                             AnimateTextField(textField: $user.notes, mode: $mode, label: "notes")
+                TextEditor(text: $user.notes)
+                  .font(.body)
+                  .frame(height: 100)
+                  .disabled(!itIsInEdit)
+                  //                                .border(Color.gray, width: 6) // Optional: Adds a border
+              }
+              
+              Section(header: Text("Teacher")) {
+                Toggle("Is a teacher", isOn: $isTeacherToggle)
+                  .toggleStyle(.switch)
+                  .disabled(!itIsInEdit)
+                  .onChange(of: isTeacherToggle) { newValue in
+                      // Execute your code here
+                      // 'newValue' will contain the new state of the toggle
+                    print("Switch Toggle is now \(newValue ? "ON" : "OFF")")
+                  }
+              }
+              
+              if !isNew {
+                Section(header: Text("Apps")) {
+                  Button(action: {
+                    Task {
+                      /*
+                       profilesx = await  StudentAppProfileManager.loadProfilesx()
+                       print("-----")
+                       //                                        dump(profilesx)
+                       print("----- \(user.id)")
+                       if let studentFound = studentAppProfileManager.studentAppProfileFiles.first { $0.id == user.id} {
+                       studentFoundx = studentFound
+                       //                                            dump(studentFound)
+                       print("student found \(studentFoundx)")
+                       */
+                      path.append(user.id)
+                        //                                        } else {
+                        //                                            print("student not found")
+                        //                                        }
+                        //                                        path.append(user.id)
                     }
-                    
+                  }) {
+                    Label("Set The App Profile", systemImage: "arrowshape.turn.up.right.fill")
+                      //                                    Text("Set The App Profile")
+                      //                                        .padding(.horizontal)
+                      //                                    Image(systemName: "gift.fill")
+                      //                                    Image(systemName: "1arrowshape.turn.up.right")
+                  }
+                  .foregroundStyle(!itIsInEdit ? .gray : .blue)
+                  .disabled(!itIsInEdit)
+                    //                                Button {
+                    //                                    Task {
+                    //                                        profilesx = await  StudentAppProfileManager.loadProfilesx()
+                    //                                        print("-----")
+                    //                                        dump(profilesx)
+                    //                                        print("-----")
+                    //                                        path.append(user.id)
+                    //                                    }
+                    //                                } label: {
+                    //                                    Label("Set The App Profile", systemImage: "1arrowshape.turn.up.right")
+                    //                                }
+                  
+                  
+                    //                                Button("Set the app profile")
+                    //                                {
+                    //
+                    //                                }
+                    //                                .disabled(!itIsInEdit)
+                }
+              }
+              
+              Section(header: Text("email")) {
+                AnimateTextField(textField: $user.email, mode: $mode, label: "email")
+                
+              }
+              
+              .textCase(nil)
+              
+              .environment(\.editMode, $mode)
+              
+              List {
+                Section {
+                  
+                  ForEach(selectedStudentClasses.compactMap({ id in
+                    (classesViewModel.filterSchoolClassesinLocation2(teacherItems.currentLocation.id,
+                                                                     dummyPicClassToIgnore: teacherItems.getpicClass() , schoolClassGroupID: teacherItems.schoolClassDictionaryGroupID[teacherItems.currentLocation.id]! ) )
+                    .first(where: { $0.userGroupId == id })
+                  }), id: \.id) { schoolClass in
+                    Text("\(schoolClass.name)")
+                  }
+                  
+                } header: {
+                  HStack {
+                    Text("Classes ")
+                      //                                .bold()
+                      //                            .font(.title3)
+                    if editMode == .active || ( isNew == true && !userCopy.lastName.isEmpty ) {
+                      Spacer()
+                      Button {
+                        Task {
+                          do {
+                              //                                        teacherIds = try await teacherItems.getUsersInTeacherGroup() ?? []
+                            passedItemSelected = selectedStudentClasses
+                            toShowStudentClassesList.toggle()
+                          } catch {
+                              // Handle error
+                          }
+                        }
+                      } label: {
+                        Image(systemName: "plus.forwardslash.minus")
+                          .foregroundColor(.blue)
+                      }
+                      Divider()
+                    }
+                  }
+                }
+                  //           footer: {
+                  //                   Text("Number of classes: \(selectedStudentClasses.count)")
+                  //               }
+                  //                .headerProminence(.standard)
+              }
+              
+              if !isNew {
+                DeleteButtonView(action: {
+                  inDelete.toggle()
+                })
+                .listRowInsets(EdgeInsets())
+                .disabled(!itIsInEdit ? true : false)
+              }
+              
             }
-            BlockingOverlayView(isBlocking: $isBlocking)
 
+            
+            .navigationDestination(for: Int.self) { studentId in
+              let _ = print(studentId, "jdjdjdjdj ")
+//              if let studentFound = profilesViewModel.profilesx.first { $0.id == studentId} {
+//                Text("Student found")
+                StudentAppProfilxWorkingView(
+                  studentId                   : studentId,
+                  studentName                 : "user.lastName")
+                  //                                        studentAppProfilefiles: profilesViewModel.profilesx,
+//                  profileManager: StudentAppProfileManager() )
+//                  studentAppprofile           :  studentFound)
+//              } else {
+//                Text("not found")
+//              }
+            }
+        /*
+            .navigationDestination(for: Int.self) { studentId in
+//              if let studentFound = profilesViewModel.profilesx.first { $0.id == studentId} {
+                Text("the message is \(studentId)")
+//            } else {
+//              Text("not found")
+//            }
+
+            }
+         */
+            
+              //                    .navigationDestination(for: Int.self) { studentId in
+              //                        
+              //                            //                     let profilesx =  StudentAppProfileManager.loadProfilesxUserDefaukts()
+              //                        
+              //                            //                        if let studentFound = studentAppProfileManager.studentAppProfileFiles.first { $0.id == studentId} {
+              //                        if let studentFound = profilesx.first { $0.id == studentId} {
+              //                            StudentAppProfileWorkingView(
+              //                                studentId                   : studentId,
+              //                                studentName                 : "\(user.firstName) \(user.lastName)",
+              //                                studentAppProfilefiles      : studentAppProfileManager.studentAppProfileFiles,
+              //                                profileManager: StudentAppProfileManager(),
+              //                                studentAppprofile           :  studentFoundx!)
+              //                        }
+              //                    }
+            
+              //                    }
+            
+            
+            .environment(\.editMode, $mode)
+            .listStyle(SidebarListStyle())
+            
+            
+              //      MARK: - toolbar   * * * * * * * * * * * * * * * * * * * * * *
+            .toolbar(content: {
+              ToolbarItem(placement: .navigationBarTrailing) {
+                if !isNew {
+                  Button(!itIsInEdit ? "Edit" : "**Done**") {
+                    if itIsInEdit {
+                      if inUpdate {
+                        return
+                      }
+                      
+                      Task {
+                        isBlocking = true
+                        
+                        do {
+                          inUpdate = true
+                          await upDateUser()
+                          inUpdate = false
+                          isBlocking = false
+                          if !itIsInEdit {
+                            updateModeWithAnimation()
+                          } else {
+                            updateModeWithAnimation(switchTo: .inactive)
+                          }
+                        } catch {
+                          print("Failed in task")
+                        }
+                      }
+                    } else {
+                      updateModeWithAnimation()
+                    }
+                  }.frame(height: 96, alignment: .trailing)
+                    .disabled(isBlocking)
+                  
+                }
+              }
+                // 			Cancel button from editing not adding
+              ToolbarItem(placement: .navigationBarLeading) {
+                if itIsInEdit && !isNew {
+                  Button("Cancel") {
+                    inCancelEdit.toggle()
+                  }.frame(height: 96, alignment: .trailing)
+                    .disabled(isBlocking)
+                }
+              }
+              
+              ToolbarItem(placement: .cancellationAction) {
+                if isNew {
+                  Button("Cancel") {
+                    inCancelAdd = true
+                  }
+                }
+              }
+              ToolbarItem {
+                Button {
+                  if isNew {
+                    if inAdd {
+                      return
+                    }
+                    Task {
+                      do {
+                        inAdd = true
+                        await addTheUser()
+                        usersViewModel.ignoreLoading = false
+                        dismiss()
+                        inAdd = false
+                      } catch {
+                        print("Failed in task")
+                      }
+                    }
+                  }
+                } label: {
+                  Text(isNew ? "Add" : "")
+                }
+                .disabled(user.lastName.isEmpty || user.firstName.isEmpty)
+              }
+            } )
+            
+            
+              //      MARK: - Navigation Bar  * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
+            .navigationBarBackButtonHidden(mode == .active ? true : false)
+            
+            
+              //       MARK: - Confirmation Dialog  * * * * * * * * * * * * * * * * * * * * * * * *
+            .confirmationDialog("Are you sure you want to delete this student?", isPresented: $inDelete, titleVisibility: .visible) {
+                //                    .confirmationDialog("Are you sure you want to delete this student?", isPresented: $inDelete) {
+              
+              Button("Delete the Student", role: .destructive) {
+                deleteTheUser()
+              }
+              
+            }
+              // from edit
+            .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelEdit, titleVisibility: .visible) {
+              Button("Discard Changes edit ", role: .destructive) {
+                  // Do something when the user confirms
+                mode = .inactive
+                user.lastName               = userInitialValues.lastName
+                user.firstName              = userInitialValues.firstName
+                user.notes                  = userInitialValues.notes
+                user.email                  = userInitialValues.email
+                imagePicker.imageSelection  = nil
+                imagePicker.image           = nil
+                imagePicker.theUIImage      = nil
+                imagePicker.savedImage      = nil
+                isTeacherToggle				 = isTeacherToggleInitalValue
+              }
+            }
+              // from add
+            .confirmationDialog("Are you sure you want to discard changes?", isPresented: $inCancelAdd, titleVisibility: .visible) {
+              Button("Discard Changes", role: .destructive) {
+                  // Do something when the user confirms
+                dismiss()
+              }
+            }
+            
+            
+            .task {
+              studentAppProfileManager.studentAppProfileFiles = await StudentAppProfileManager.loadProfilesx()
+              isTeacherToggle = await teacherItems.checkIfUserInTeacherGroup(user.id)
+              isTeacherToggleInitalValue = isTeacherToggle
+            }
+              //      MARK: - Appear and Disappear   * * * * * * * * * * * * * * * * * * * * * *
+            .onAppear {
+              usersViewModel.ignoreLoading = true
+              
+              if !isNew {
+                toDoWithNewUserToProcess()
+              } else {
+                mode = .active
+              }
+            }
+            
+            .onDisappear {
+              mode = .inactive
+            }
+            
+          }
+          
+          .overlay(alignment: .center) {
+            if isUserDeleted {
+              Color(UIColor.systemBackground)
+              Text("User Deleted. Select an User.")
+                .foregroundStyle(.secondary)
+            }
+            
+          }
+          BlockingOverlayView(isBlocking: $isBlocking)
+          
         }
         }
     }

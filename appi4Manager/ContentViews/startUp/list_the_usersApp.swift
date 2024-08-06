@@ -51,10 +51,10 @@ struct list_the_usersApp: App {
 //            if teacherItems.isLoaded {
             
 //            MockBareBones(studentId: 5, locationID: 1)
-            TestMVVMView(studentId: 5, locationID: 1)
-                .environmentObject(studentAppProfileManager)
+//            TestMVVMView(studentId: 5, locationID: 1)
+//                .environmentObject(studentAppProfileManager)
 
-/*
+
             DashboardView()
                     .environmentObject(usersViewModel)
                     .environmentObject(classDetailViewModel)
@@ -66,7 +66,7 @@ struct list_the_usersApp: App {
                     .environmentObject(teacherItems)
                     .environmentObject(studentAppProfileManager)
                     .environmentObject(devicesViewModel)
-*/
+
 
             
             

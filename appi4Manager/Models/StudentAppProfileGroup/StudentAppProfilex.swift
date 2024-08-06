@@ -44,7 +44,21 @@ class StudentAppProfilex: Identifiable, Codable, ObservableObject {
         self.sessions    = sessions
     }
     
-    func setStudentProfile(studentID: Int)  {
+  func setStudentProfile(studentID: Int) async  {
+
+//      Task {
+        let prf = await FirestoreManager().getaStudent(studentID: 5)
+        dump(prf)
+        print("finished")
+    DispatchQueue.main.async {
+        self.id          = prf.id
+        self.locationId  = prf.locationId
+        self.sessions    = prf.sessions
+    }
+
+//      }
+
+      /*
         FirestoreManager().readStudentProfileNew(studentID: studentID) { studentAppProfilex, err in
             guard let studentAppProfilex = studentAppProfilex else {
                 fatalError("could not retreive the student profile")
@@ -55,6 +69,7 @@ class StudentAppProfilex: Identifiable, Codable, ObservableObject {
                 self.sessions    = studentAppProfilex.sessions
 //            }
         }
+      */
     }
     
     func convertToDictionary() -> [String: Any]? {

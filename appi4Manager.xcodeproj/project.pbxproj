@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4609120229D0811B000337E8 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4609120129D0811B000337E8 /* DashboardView.swift */; };
 		460CC64F2B1D03760050437D /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460CC64E2B1D03760050437D /* AppConstants.swift */; };
+		461044AB2C5D446100760FCE /* UserEditorContDPRepl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461044AA2C5D446100760FCE /* UserEditorContDPRepl.swift */; };
 		461D21CA299C4A37008B7BD2 /* AddAUserResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461D21C9299C4A37008B7BD2 /* AddAUserResponse.swift */; };
 		461D21CC299D89DD008B7BD2 /* ClassDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461D21CB299D89DC008B7BD2 /* ClassDetailViewModel.swift */; };
 		461D21CE299D8A64008B7BD2 /* Student.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461D21CD299D8A64008B7BD2 /* Student.swift */; };
@@ -101,6 +102,7 @@
 /* Begin PBXFileReference section */
 		4609120129D0811B000337E8 /* DashboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		460CC64E2B1D03760050437D /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
+		461044AA2C5D446100760FCE /* UserEditorContDPRepl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditorContDPRepl.swift; sourceTree = "<group>"; };
 		461D21C9299C4A37008B7BD2 /* AddAUserResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAUserResponse.swift; sourceTree = "<group>"; };
 		461D21CB299D89DC008B7BD2 /* ClassDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassDetailViewModel.swift; sourceTree = "<group>"; };
 		461D21CD299D8A64008B7BD2 /* Student.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Student.swift; sourceTree = "<group>"; };
@@ -466,6 +468,7 @@
 			isa = PBXGroup;
 			children = (
 				4681B1F42C4E8C0D001DB2F4 /* TestMVVMView.swift */,
+				461044AA2C5D446100760FCE /* UserEditorContDPRepl.swift */,
 			);
 			path = Explore;
 			sourceTree = "<group>";
@@ -787,6 +790,7 @@
 				466FF03D2A7050C8002946F7 /* Components.swift in Sources */,
 				46584FE92993F0C40025F539 /* ApiError.swift in Sources */,
 				46584FDF2993ECD50025F539 /* UsersViewModel.swift in Sources */,
+				461044AB2C5D446100760FCE /* UserEditorContDPRepl.swift in Sources */,
 				46336705299452A600CF5EA3 /* CustomLabelStyle.swift in Sources */,
 				46584FE72993F0960025F539 /* ApiHelper.swift in Sources */,
 				46BAB4922B30A01400C155B9 /* DailySessions.swift in Sources */,

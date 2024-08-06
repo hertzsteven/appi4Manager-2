@@ -56,6 +56,8 @@ enum LoadinxState {
 }
 //  MARK: -
 struct StudentAppProfilxWorkingView {
+  
+    @EnvironmentObject var usersViewModel: UsersViewModel
     @State var noShow = true
     //  MARK:  Properties
     @State private var selectedDay = DayOfWeek.sunday
@@ -64,8 +66,7 @@ struct StudentAppProfilxWorkingView {
     //  MARK: Manage Student Profile
     
 //    @State var studentAppProfilefiles: [StudentAppProfilex]
-    
-    @StateObject var profileManager                         : StudentAppProfileManager
+    @StateObject var profileManager                         : StudentAppProfileManager = StudentAppProfileManager()
     @StateObject var studentAppprofile                      = StudentAppProfilex()
     @State var currentDayStudentAppProfile: DailySessions   = DailySessions.makeDefaultDailySession()
     //  MARK: Properties to help with processes
@@ -456,13 +457,18 @@ extension StudentAppProfilxWorkingView: View {
 //                    studentAppprofile.locationId  = studentFound.locationId
 //                    studentAppprofile.sessions    = studentFound.sessions
 //                }
-                studentAppprofile.setStudentProfile(studentID: studentId)
+              await studentAppprofile.setStudentProfile(studentID: studentId)
+              print("--- Finishe Loading in setStudentProfile")
+              let user = getTheStudent(studentID: studentId)
+              studentName = user.firstName + " " + user.lastName
+              print(studentName)
+              print("pause")
+              
 
                 /* I took this out  -- */
 //                profileManager.studentAppProfileFiles    = studentAppProfilefiles
                 let calendar                             = Calendar.current
                 let dayNbr                               = calendar.component(.weekday, from: Date())
-                print("the location is \(studentAppprofile.locationId)")
                 selectedDay                              = DayOfWeek(rawValue: dayNbr)!
                 guard let shortWeekdayText               = DayOfWeek(rawValue: dayNbr) else {fatalError()}
                 setCurrentDateWith(shortWeekdayText.asAString)
@@ -470,7 +476,7 @@ extension StudentAppProfilxWorkingView: View {
                     loadingState = .loading
                     /* I took this out -- */
 //                    await proceesAppCodes()
-                    loadingState = .loaded
+//                    loadingState = .loaded
                     noShow = false
                 } catch {
                     loadingState = .failed
@@ -584,21 +590,99 @@ extension StudentAppProfilxWorkingView {
             studentAppprofile.sessions[selectedDay.asAString]?.homeSession.oneAppLock = currentDayStudentAppProfile.homeSession.oneAppLock
         }
     }
-}
-
-    // Preview provider
-    struct StudentAppProfilxWorkingView_Previews: PreviewProvider {
-        static var previews: some View {
-            Group {
-                // Example with specific studentId and studentName
-                StudentAppProfilxWorkingView(studentId: 3, studentName: "John Doe",  profileManager: StudentAppProfileManager()) // Replace with actual default values
-                    .previewDevice(PreviewDevice(rawValue: "iPad Pro (12.9-inch)"))
-                    .previewDisplayName("iPad Pro (12.9-inch)")
-                    .previewLayout(.fixed(width: 1024, height: 1366)) // Landscape
-                // Other device previews...
-            }
-        }
+  
+  func getTheStudent(studentID: Int) -> User {
+    var user = User.makeDefault()
+    do {
+      user = try usersViewModel.getWithId(studentId)
+//        let user = try getWithId(1)
+        print("Found user: \(user)")
+    } catch UserError.userNotFound {
+        print("User not found")
+    } catch {
+        print("An unexpected error occurred: \(error)")
     }
+    return user
+
+  }
+}
+  // Mock User Data
+  extension User {
+      static func makeMockUser(
+          id: Int,
+          locationId: Int = 101,
+          deviceCount: Int = 1,
+          email: String = "example@example.com",
+          groupIds: [Int] = [1, 2],
+          groups: [String] = ["Group A", "Group B"],
+          teacherGroups: [Int] = [101, 102],
+          firstName: String,
+          lastName: String,
+          username: String = "username",
+          notes: String = "No additional notes.",
+          modified: String = "2023-08-04"
+      ) -> User {
+          return User(
+              id: id,
+              locationId: locationId,
+              deviceCount: deviceCount,
+              email: email,
+              groupIds: groupIds,
+              groups: groups,
+              teacherGroups: teacherGroups,
+              firstName: firstName,
+              lastName: lastName,
+              username: username,
+              notes: notes,
+              modified: modified
+          )
+      }
+  }
+
+  // Mock ViewModel
+  class MockUsersViewModel: ObservableObject {
+      @Published var users: [User] = [
+//          User.makeMockUser(id: 1, firstName: "John", lastName: "Doe"),
+//          User.makeMockUser(id: 2, firstName: "Jane", lastName: "Smith")
+      ]
+      
+      func getWithId(_ id: Int) throws -> User {
+          if let user = users.first(where: { $0.id == id }) {
+              return user
+          } else {
+              throw UserError.userNotFound
+          }
+      }
+  }
+
+  // Mock Data for other required types like Appx
+  extension Appx {
+      static func makeMockAppx() -> Appx {
+        Appx(id: 123, locationId: 1, isBook: false, bundleId: "wkmdknk.wlwjj", icon: "https://example.com/icon.png", name:  "Mock App", description: "This is a mock app description.")
+      }
+  }
+
+
+
+  // Preview provider
+  struct StudentAppProfilxWorkingView_Previews: PreviewProvider {
+      static var previews: some View {
+          Group {
+              // Example with specific studentId and studentName
+              StudentAppProfilxWorkingView(studentId: 3, studentName: "John Doe",  profileManager: StudentAppProfileManager()) // Replace with actual default values
+                  .previewDevice(PreviewDevice(rawValue: "iPad Pro (12.9-inch)"))
+                  .previewDisplayName("iPad Pro (12.9-inch)")
+                  .previewLayout(.fixed(width: 1024, height: 1366)) // Landscape
+              // Other device previews...
+          }
+      }
+  }
+
+
+// Mock User Data
+
+
+
 //    // Preview provider
 //    struct StudentAppProfilxWorkingView_Previews: PreviewProvider {
 //        static var previews: some View {

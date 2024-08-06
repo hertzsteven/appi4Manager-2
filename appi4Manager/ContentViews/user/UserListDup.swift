@@ -206,7 +206,11 @@ struct UserListDup: View {
 //      MARK: - Navigation Destination   * * * * * * * * * * * * * * * * * * * * * *
         .navigationDestination(for: User.self) { theUser in
             let imageURL = imageURLWithUniqueID(studentPicStubViewModel.getURLpicForStudentWith(theUser.id), uniqueID: teacherItems.uniqueID)
-            UserEditorContDup(path: $path, 
+//          let imageURL = imageURLWithUniqueID( URL(string: "https://developitsnfredu.jamfcloud.com/application/views/default/assets/image/avatar/avatar.png")!, uniqueID: teacherItems.uniqueID)
+         
+
+//          UserEditorContDPRepl(path: $path)
+            UserEditorContDup(path: $path,
                               user: theUser,
                               urlPic: imageURL,
                               userInitialValues: theUser)
