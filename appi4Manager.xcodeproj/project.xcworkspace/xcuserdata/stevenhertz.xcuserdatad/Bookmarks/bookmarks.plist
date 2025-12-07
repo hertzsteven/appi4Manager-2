@@ -18,7 +18,7 @@
 					<key>StartingLineNumber</key>
 					<string>157</string>
 					<key>Timestamp</key>
-					<string>744307499.44949</string>
+					<string>743972579.420825</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -34,16 +34,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>                                    do {
+				<string>                                                         do {
 </string>
 				<key>leading</key>
-				<string>                                   /*
-                                    task {
+				<string>                                                     /*
+                                                     task {
 </string>
 				<key>trailing</key>
-				<string>                                    try await studentPicStubViewModel.reloadData(uuid: teacherItems.getpicClass())
-                                    } catch {
-                                    print("ellelelell  Big error")
+				<string>                                                             try await studentPicStubViewModel.reloadData(uuid: teacherItems.getpicClass())
+                                                         } catch {
+                                                             print("ellelelell  Big error")
 </string>
 			</dict>
 			<key>title</key>
@@ -81,16 +81,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>                studentAppProfilefiles = await  StudentAppProfileManager.loadProfilesx()
+				<string>                                          isSheetPresented : $presentMakeAppProfile,
 </string>
 				<key>leading</key>
-				<string>        .onAppear {
-            Task {
+				<string>        {
+                   CategoryDisclosureView(selectedSession  : $selectedSession,
 </string>
 				<key>trailing</key>
-				<string>                if let studentFound = studentAppProfilefiles.first { $0.id == studentId} {
-                    studentAppprofile.id          = studentFound.id
-                    studentAppprofile.locationId  = studentFound.locationId
+				<string>                                          sessionLength    : getSessionLengthBinding(),
+                                          oneAppLock       : getoneAppLockBinding(),
+                                          appCode          : $appCode,
 </string>
 			</dict>
 			<key>title</key>
@@ -109,58 +109,13 @@
 							<key>EndingColumnNumber</key>
 							<string>0</string>
 							<key>EndingLineNumber</key>
-							<string>136</string>
-							<key>StartingColumnNumber</key>
-							<string>0</string>
-							<key>StartingLineNumber</key>
 							<string>135</string>
-							<key>Timestamp</key>
-							<string>744471386.387201</string>
-						</dict>
-						<key>rebasable-url</key>
-						<dict>
-							<key>base</key>
-							<string>workspace</string>
-							<key>payload</key>
-							<dict>
-								<key>relative-path</key>
-								<string>appi4Manager/ContentViews/subContentView/studentAppProfile/StudentAppProfilxWorkingView.swift</string>
-							</dict>
-						</dict>
-					</dict>
-					<key>text-context</key>
-					<dict>
-						<key>focused</key>
-						<string>                ForEach(appsAMinfo) { appInfo in
-</string>
-						<key>leading</key>
-						<string>        ScrollView(.horizontal, showsIndicators: true) {
-            HStack(spacing: 0) {
-</string>
-						<key>trailing</key>
-						<string>                        //                    AppInfxView(loadingState: loadingState, appsAMinfo: appsAMinfo, appInfo: appInfo)
-                    AppInfxView(loadingState: loadingState, appsInfo: appsAMinfo, appInfo: appInfo)
-                }
-</string>
-					</dict>
-					<key>type</key>
-					<string>bookmark</string>
-				</dict>
-				<dict>
-					<key>destination</key>
-					<dict>
-						<key>location-parameters</key>
-						<dict>
-							<key>EndingColumnNumber</key>
-							<string>0</string>
-							<key>EndingLineNumber</key>
-							<string>262</string>
 							<key>StartingColumnNumber</key>
 							<string>0</string>
 							<key>StartingLineNumber</key>
-							<string>261</string>
+							<string>134</string>
 							<key>Timestamp</key>
-							<string>744471386.387123</string>
+							<string>743971528.140201</string>
 						</dict>
 						<key>rebasable-url</key>
 						<dict>
@@ -176,61 +131,106 @@
 					<key>text-context</key>
 					<dict>
 						<key>focused</key>
-						<string>                ForEach(appsPMinfo) { appInfo in
-</string>
-						<key>leading</key>
-						<string>        ScrollView(.horizontal, showsIndicators: true) {
-            HStack(spacing: 0) {
-</string>
-						<key>trailing</key>
-						<string>                        //                    AppInfxView(loadingState: loadingState, appsAMinfo: appsAMinfo, appInfo: appInfo)
-                    AppInfxView(loadingState: loadingState, appsInfo: appsPMinfo, appInfo: appInfo)
-                }
-</string>
-					</dict>
-					<key>type</key>
-					<string>bookmark</string>
-				</dict>
-				<dict>
-					<key>destination</key>
-					<dict>
-						<key>location-parameters</key>
-						<dict>
-							<key>EndingColumnNumber</key>
-							<string>0</string>
-							<key>EndingLineNumber</key>
-							<string>346</string>
-							<key>StartingColumnNumber</key>
-							<string>0</string>
-							<key>StartingLineNumber</key>
-							<string>345</string>
-							<key>Timestamp</key>
-							<string>744471386.386964</string>
-						</dict>
-						<key>rebasable-url</key>
-						<dict>
-							<key>base</key>
-							<string>workspace</string>
-							<key>payload</key>
-							<dict>
-								<key>relative-path</key>
-								<string>appi4Manager/ContentViews/subContentView/studentAppProfile/StudentAppProfilxWorkingView.swift</string>
-							</dict>
-						</dict>
-					</dict>
-					<key>text-context</key>
-					<dict>
-						<key>focused</key>
-						<string>                    AppInfxView(loadingState: loadingState, appsInfo: appsHomeinfo, appInfo: appInfo)
-</string>
-						<key>leading</key>
 						<string>            HStack(spacing: 0) {
-                ForEach(appsHomeinfo) { appInfo in
+</string>
+						<key>leading</key>
+						<string>    var multipleAppsViewAM : some View {
+        ScrollView(.horizontal, showsIndicators: true) {
 </string>
 						<key>trailing</key>
-						<string>                }
+						<string>                ForEach(appsAMinfo) { appInfo in
+                        //                    AppInfxView(loadingState: loadingState, appsAMinfo: appsAMinfo, appInfo: appInfo)
+                    AppInfxView(loadingState: loadingState, appsInfo: appsAMinfo, appInfo: appInfo)
+</string>
+					</dict>
+					<key>type</key>
+					<string>bookmark</string>
+				</dict>
+				<dict>
+					<key>destination</key>
+					<dict>
+						<key>location-parameters</key>
+						<dict>
+							<key>EndingColumnNumber</key>
+							<string>0</string>
+							<key>EndingLineNumber</key>
+							<string>261</string>
+							<key>StartingColumnNumber</key>
+							<string>0</string>
+							<key>StartingLineNumber</key>
+							<string>260</string>
+							<key>Timestamp</key>
+							<string>743971528.1402121</string>
+						</dict>
+						<key>rebasable-url</key>
+						<dict>
+							<key>base</key>
+							<string>workspace</string>
+							<key>payload</key>
+							<dict>
+								<key>relative-path</key>
+								<string>appi4Manager/ContentViews/subContentView/studentAppProfile/StudentAppProfilxWorkingView.swift</string>
+							</dict>
+						</dict>
+					</dict>
+					<key>text-context</key>
+					<dict>
+						<key>focused</key>
+						<string>            HStack(spacing: 0) {
+</string>
+						<key>leading</key>
+						<string>    var multipleAppsViewPM : some View {
+        ScrollView(.horizontal, showsIndicators: true) {
+</string>
+						<key>trailing</key>
+						<string>                ForEach(appsPMinfo) { appInfo in
+                        //                    AppInfxView(loadingState: loadingState, appsAMinfo: appsAMinfo, appInfo: appInfo)
+                    AppInfxView(loadingState: loadingState, appsInfo: appsPMinfo, appInfo: appInfo)
+</string>
+					</dict>
+					<key>type</key>
+					<string>bookmark</string>
+				</dict>
+				<dict>
+					<key>destination</key>
+					<dict>
+						<key>location-parameters</key>
+						<dict>
+							<key>EndingColumnNumber</key>
+							<string>0</string>
+							<key>EndingLineNumber</key>
+							<string>345</string>
+							<key>StartingColumnNumber</key>
+							<string>0</string>
+							<key>StartingLineNumber</key>
+							<string>344</string>
+							<key>Timestamp</key>
+							<string>743971528.140173</string>
+						</dict>
+						<key>rebasable-url</key>
+						<dict>
+							<key>base</key>
+							<string>workspace</string>
+							<key>payload</key>
+							<dict>
+								<key>relative-path</key>
+								<string>appi4Manager/ContentViews/subContentView/studentAppProfile/StudentAppProfilxWorkingView.swift</string>
+							</dict>
+						</dict>
+					</dict>
+					<key>text-context</key>
+					<dict>
+						<key>focused</key>
+						<string>                ForEach(appsHomeinfo) { appInfo in
+</string>
+						<key>leading</key>
+						<string>        ScrollView(.horizontal, showsIndicators: true) {
+            HStack(spacing: 0) {
+</string>
+						<key>trailing</key>
+						<string>                    AppInfxView(loadingState: loadingState, appsInfo: appsHomeinfo, appInfo: appInfo)
+                }
                 .padding(8)
-            }
 </string>
 					</dict>
 					<key>type</key>
@@ -239,62 +239,6 @@
 			</array>
 			<key>title</key>
 			<string>foreach loop</string>
-			<key>type</key>
-			<string>group</string>
-		</dict>
-		<dict>
-			<key>children</key>
-			<array>
-				<dict>
-					<key>destination</key>
-					<dict>
-						<key>location-parameters</key>
-						<dict>
-							<key>EndingColumnNumber</key>
-							<string>0</string>
-							<key>EndingLineNumber</key>
-							<string>275</string>
-							<key>StartingColumnNumber</key>
-							<string>0</string>
-							<key>StartingLineNumber</key>
-							<string>274</string>
-							<key>Timestamp</key>
-							<string>744309507.612815</string>
-						</dict>
-						<key>rebasable-url</key>
-						<dict>
-							<key>base</key>
-							<string>workspace</string>
-							<key>payload</key>
-							<dict>
-								<key>relative-path</key>
-								<string>appi4Manager/ContentViews/user/UserEditorContDup.swift</string>
-							</dict>
-						</dict>
-					</dict>
-					<key>text-context</key>
-					<dict>
-						<key>focused</key>
-						<string>              if !isNew {
-</string>
-						<key>leading</key>
-						<string>              }
-              
-</string>
-						<key>trailing</key>
-						<string>                Section(header: Text("Apps")) {
-                  Button(action: {
-                    Task {
-</string>
-					</dict>
-					<key>title</key>
-					<string>The button to initiate</string>
-					<key>type</key>
-					<string>bookmark</string>
-				</dict>
-			</array>
-			<key>title</key>
-			<string>calling the studentprofilex</string>
 			<key>type</key>
 			<string>group</string>
 		</dict>

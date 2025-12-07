@@ -54,16 +54,17 @@ class StudentAppProfileManager: ObservableObject {
     }
     
     func updateStudentAppProfile(newProfile: StudentAppProfilex) {
+        // Update local array if profile exists there
         if let idx = studentAppProfileFiles.firstIndex(where: { $0.id == newProfile.id }) {
             studentAppProfileFiles.remove(at: idx)
             studentAppProfileFiles.append(newProfile)
-            Task {
-                 await  FirestoreManager().writeHandleStudentProfileNew2(studentProfile: newProfile)
-                 print("added new student")
-             }
-
         }
         
+        // Always write to Firestore regardless of local array
+        Task {
+            await FirestoreManager().writeHandleStudentProfileNew2(studentProfile: newProfile)
+            print("Updated student profile in Firestore")
+        }
     }
     func saveProfiles() {
         if let encoded = try? JSONEncoder().encode(studentAppProfileFiles) {

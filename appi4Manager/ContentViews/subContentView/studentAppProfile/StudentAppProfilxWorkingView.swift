@@ -474,9 +474,8 @@ extension StudentAppProfilxWorkingView: View {
                 setCurrentDateWith(shortWeekdayText.asAString)
                 do {
                     loadingState = .loading
-                    /* I took this out -- */
-//                    await proceesAppCodes()
-//                    loadingState = .loaded
+                    await proceesAppCodes()
+                    loadingState = .loaded
                     noShow = false
                 } catch {
                     loadingState = .failed
