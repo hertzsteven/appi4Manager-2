@@ -160,8 +160,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "599"
             endingLineNumber = "599"
-            landmarkName = "getTheStudent(studentID:)"
-            landmarkType = "7">
+            landmarkName = "StudentAppProfilxWorkingView"
+            landmarkType = "21">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -176,8 +176,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "601"
             endingLineNumber = "601"
-            landmarkName = "getTheStudent(studentID:)"
-            landmarkType = "7">
+            landmarkName = "User"
+            landmarkType = "21">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -192,7 +192,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "603"
             endingLineNumber = "603"
-            landmarkName = "getTheStudent(studentID:)"
+            landmarkName = "makeMockUser(id:locationId:deviceCount:email:groupIds:groups:teacherGroups:firstName:lastName:username:notes:modified:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -208,7 +208,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "605"
             endingLineNumber = "605"
-            landmarkName = "getTheStudent(studentID:)"
+            landmarkName = "makeMockUser(id:locationId:deviceCount:email:groupIds:groups:teacherGroups:firstName:lastName:username:notes:modified:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -469,18 +469,10 @@ extension StudentAppProfilxWorkingView: View {
 //                profileManager.studentAppProfileFiles    = studentAppProfilefiles
                 let calendar                             = Calendar.current
                 let dayNbr                               = calendar.component(.weekday, from: Date())
-                selectedDay                              = DayOfWeek(rawValue: dayNbr)!
                 guard let shortWeekdayText               = DayOfWeek(rawValue: dayNbr) else {fatalError()}
                 setCurrentDateWith(shortWeekdayText.asAString)
-                do {
-                    loadingState = .loading
-                    await proceesAppCodes()
-                    loadingState = .loaded
-                    noShow = false
-                } catch {
-                    loadingState = .failed
-                }
-
+                // Setting selectedDay will trigger .onChange which calls proceesAppCodes()
+                selectedDay                              = DayOfWeek(rawValue: dayNbr)!
             }
         }
         .onChange(of: selectedDay) { newValue in
