@@ -62,8 +62,13 @@ class StudentAppProfileManager: ObservableObject {
         
         // Always write to Firestore regardless of local array
         Task {
-            await FirestoreManager().writeHandleStudentProfileNew2(studentProfile: newProfile)
-            print("Updated student profile in Firestore")
+            do {
+                try await FirestoreManager().writeStudentProfileNew2(studentProfile: newProfile)
+                print("✅ Successfully updated student profile in Firestore server")
+            } catch {
+                print("❌ Failed to update student profile in Firestore: \(error.localizedDescription)")
+                // Note: You may want to show an alert to the user here
+            }
         }
     }
     func saveProfiles() {

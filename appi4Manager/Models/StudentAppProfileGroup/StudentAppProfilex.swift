@@ -47,9 +47,9 @@ class StudentAppProfilex: Identifiable, Codable, ObservableObject {
   func setStudentProfile(studentID: Int) async  {
 
 //      Task {
-        let prf = await FirestoreManager().getaStudent(studentID: 5)
+        let prf = await FirestoreManager().getaStudent(studentID: studentID)
         dump(prf)
-        print("finished")
+        print("finished loading student profile for ID: \(studentID)")
     DispatchQueue.main.async {
         self.id          = prf.id
         self.locationId  = prf.locationId

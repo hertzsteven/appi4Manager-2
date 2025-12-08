@@ -632,7 +632,22 @@ extension FirestoreManager {
         let db = Firestore.firestore()
         let docRef = db.collection("studentProfiles").document("\(studentProfile.id)")
 
-        try docRef.setData(from: studentProfile,merge: true)
+        // Use withCheckedThrowingContinuation to properly wait for server confirmation
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            do {
+                try docRef.setData(from: studentProfile, merge: true) { error in
+                    if let error = error {
+                        print("Error writing to Firestore server: \(error.localizedDescription)")
+                        continuation.resume(throwing: error)
+                    } else {
+                        print("Successfully wrote student profile to Firestore server")
+                        continuation.resume()
+                    }
+                }
+            } catch {
+                continuation.resume(throwing: error)
+            }
+        }
     }
 
 
