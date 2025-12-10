@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(AuthenticationManager.self) private var authManager
+    @EnvironmentObject var teacherItems: TeacherItems
     
     var body: some View {
         List {
@@ -33,6 +34,17 @@ struct SettingsView: View {
                 }
             } header: {
                 Text("Account")
+            }
+            
+            // MARK: - Teacher Class Info Section (only visible when authenticated)
+            if authManager.isAuthenticated {
+                Section {
+                    teacherClassInfoLink
+                } header: {
+                    Text("Teacher Data")
+                } footer: {
+                    Text("View class UUID and group ID information for API integration.")
+                }
             }
         }
         .navigationTitle("Settings")
@@ -101,6 +113,22 @@ struct SettingsView: View {
         }
     }
     
+    // MARK: - Teacher Class Info Link
+    
+    private var teacherClassInfoLink: some View {
+        NavigationLink {
+            TeacherClassInfoView()
+        } label: {
+            HStack {
+                Label("Class & Group Info", systemImage: "info.circle.fill")
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+    
     // MARK: - Authenticated Account View
     
     private var authenticatedAccountView: some View {
@@ -162,5 +190,6 @@ struct SettingsView: View {
     NavigationStack {
         SettingsView()
             .environment(AuthenticationManager())
+            .environmentObject(TeacherItems())
     }
 }

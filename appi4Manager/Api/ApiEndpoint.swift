@@ -45,6 +45,7 @@ enum ApiEndpoint {
     case clearRestrictionsAll(teachAuth: String, scope: String, scopeId:String)
     case lockIntoApp(appBundleId: String, studentID: String, teachAuth: String)
     case clearRestrictionsStudent(teachAuth: String, students: String)
+    case validateTeacherToken(token: String)
 
 }
 
@@ -110,6 +111,8 @@ extension ApiEndpoint {
             return "/teacher/apply/applock"
         case .clearRestrictionsStudent(teachAuth: let teachAuth, students: let students):
             return "/teacher/lessons/stop"
+        case .validateTeacherToken(token: _):
+            return "/teacher/lessons"
         }
     }
     
@@ -195,6 +198,8 @@ extension ApiEndpoint {
             return [URLQueryItem(name: "token", value: teachAuth)]
         case .clearRestrictionsStudent(teachAuth: let teachAuth, students: _):
             return [URLQueryItem(name: "token", value: teachAuth)]
+        case .validateTeacherToken(token: let token):
+            return [URLQueryItem(name: "token", value: token)]
         case .getDevices(let assettag):
             if let assettag = assettag {
                 return [URLQueryItem(name: "assettag", value: assettag)]

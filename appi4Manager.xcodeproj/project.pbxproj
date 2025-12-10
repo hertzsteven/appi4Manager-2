@@ -11,6 +11,7 @@
 		4608AC362EEA30E5000523F0 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC352EEA30E5000523F0 /* KeychainHelper.swift */; };
 		4608AC3A2EEA3179000523F0 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC372EEA3179000523F0 /* SettingsView.swift */; };
 		4608AC3B2EEA3179000523F0 /* TeacherLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC382EEA3179000523F0 /* TeacherLoginView.swift */; };
+		4608AC3D2EEA34C4000523F0 /* TeacherClassInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC3C2EEA34C4000523F0 /* TeacherClassInfoView.swift */; };
 		4609120229D0811B000337E8 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4609120129D0811B000337E8 /* DashboardView.swift */; };
 		460CC64F2B1D03760050437D /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460CC64E2B1D03760050437D /* AppConstants.swift */; };
 		461044AB2C5D446100760FCE /* UserEditorContDPRepl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461044AA2C5D446100760FCE /* UserEditorContDPRepl.swift */; };
@@ -108,6 +109,7 @@
 		4608AC352EEA30E5000523F0 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		4608AC372EEA3179000523F0 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4608AC382EEA3179000523F0 /* TeacherLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherLoginView.swift; sourceTree = "<group>"; };
+		4608AC3C2EEA34C4000523F0 /* TeacherClassInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherClassInfoView.swift; sourceTree = "<group>"; };
 		4609120129D0811B000337E8 /* DashboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		460CC64E2B1D03760050437D /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		461044AA2C5D446100760FCE /* UserEditorContDPRepl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditorContDPRepl.swift; sourceTree = "<group>"; };
@@ -216,6 +218,7 @@
 		4608AC392EEA3179000523F0 /* settings */ = {
 			isa = PBXGroup;
 			children = (
+				4608AC3C2EEA34C4000523F0 /* TeacherClassInfoView.swift */,
 				4608AC372EEA3179000523F0 /* SettingsView.swift */,
 				4608AC382EEA3179000523F0 /* TeacherLoginView.swift */,
 			);
@@ -748,6 +751,7 @@
 				461D89B32A6DC4C800678391 /* CategoryListView.swift in Sources */,
 				463BEDCB2A41507000A1FBD8 /* LessonsListResponse.swift in Sources */,
 				461D89AD2A6D4E3700678391 /* ItemsToSelectRepresentableStr.swift in Sources */,
+				4608AC3D2EEA34C4000523F0 /* TeacherClassInfoView.swift in Sources */,
 				465669942B1A251900195925 /* MDMGroupsResponse.swift in Sources */,
 				46D6C83029FE9D66009861FD /* ItemListSelectView.swift in Sources */,
 				460CC64F2B1D03760050437D /* AppConstants.swift in Sources */,

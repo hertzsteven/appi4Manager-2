@@ -73,15 +73,37 @@ final class AuthenticationManager {
             }
         }
         
-        // For now, we trust the cached token if it exists
-        // A more robust implementation would call a /teacher/validate endpoint
-        // but the existing ApiEndpoint doesn't have one yet
-        
-        #if DEBUG
-        print("🔍 Token validation: using cached token for \(authenticatedUser?.name ?? "unknown")")
-        #endif
-        
-        return true
+        do {
+            // Try to fetch lessons with the token - if it succeeds, token is valid
+            _ = try await ApiManager.shared.getDataNoDecode(from: .validateTeacherToken(token: token))
+            
+            #if DEBUG
+            print("✅ Token validation successful for \(authenticatedUser?.name ?? "unknown")")
+            #endif
+            
+            return true
+            
+        } catch let error as ApiError {
+            switch error {
+            case .clientUnauthorized, .clientForbidden:
+                #if DEBUG
+                print("❌ Token validation failed: unauthorized or forbidden")
+                #endif
+                return false
+            default:
+                // For other errors (network issues, etc.), we'll trust the cached token
+                #if DEBUG
+                print("⚠️ Token validation error (trusting cache): \(error.localizedDescription)")
+                #endif
+                return true
+            }
+        } catch {
+            // For unexpected errors, trust the cached token
+            #if DEBUG
+            print("⚠️ Token validation unexpected error (trusting cache): \(error.localizedDescription)")
+            #endif
+            return true
+        }
     }
     
     /// Logout and clear stored credentials
