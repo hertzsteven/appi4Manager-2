@@ -125,8 +125,13 @@ struct DashboardView: View {
                     }
                 }
                 
-                .navigationDestination(for: String.self) { theNbr in
-                    TestDestFromClassView(mssg: theNbr)
+                .navigationDestination(for: String.self) { value in
+                    switch value {
+                    case "Settings":
+                        SettingsView()
+                    default:
+                        TestDestFromClassView(mssg: value)
+                    }
                 }
                 
                 
@@ -134,6 +139,13 @@ struct DashboardView: View {
                 .edgesIgnoringSafeArea(.bottom)
                 .navigationTitle("Dashboard")
                 .navigationViewStyle(StackNavigationViewStyle())
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        NavigationLink(value: "Settings") {
+                            Image(systemName: "gearshape")
+                        }
+                    }
+                }
             }
                 // Translucent Progress View
             if !teacherItems.isLoaded {

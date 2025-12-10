@@ -35,6 +35,9 @@ struct list_the_usersApp: App {
     @StateObject var teacherItems               = TeacherItems()
     @StateObject var studentAppProfileManager   = StudentAppProfileManager()
     @StateObject var devicesViewModel           = DevicesViewModel()
+    
+    // Authentication Manager using @Observable pattern
+    @State private var authManager              = AuthenticationManager()
 
     
     
@@ -56,6 +59,7 @@ struct list_the_usersApp: App {
 
 
             DashboardView()
+                    .environment(authManager)
                     .environmentObject(usersViewModel)
                     .environmentObject(classDetailViewModel)
                     .environmentObject(studentPicStubViewModel)

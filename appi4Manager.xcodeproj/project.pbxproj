@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4608AC342EEA305B000523F0 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC332EEA305B000523F0 /* AuthenticationManager.swift */; };
+		4608AC362EEA30E5000523F0 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC352EEA30E5000523F0 /* KeychainHelper.swift */; };
+		4608AC3A2EEA3179000523F0 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC372EEA3179000523F0 /* SettingsView.swift */; };
+		4608AC3B2EEA3179000523F0 /* TeacherLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC382EEA3179000523F0 /* TeacherLoginView.swift */; };
 		4609120229D0811B000337E8 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4609120129D0811B000337E8 /* DashboardView.swift */; };
 		460CC64F2B1D03760050437D /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460CC64E2B1D03760050437D /* AppConstants.swift */; };
 		461044AB2C5D446100760FCE /* UserEditorContDPRepl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461044AA2C5D446100760FCE /* UserEditorContDPRepl.swift */; };
@@ -100,6 +104,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4608AC332EEA305B000523F0 /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
+		4608AC352EEA30E5000523F0 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
+		4608AC372EEA3179000523F0 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		4608AC382EEA3179000523F0 /* TeacherLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherLoginView.swift; sourceTree = "<group>"; };
 		4609120129D0811B000337E8 /* DashboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		460CC64E2B1D03760050437D /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		461044AA2C5D446100760FCE /* UserEditorContDPRepl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditorContDPRepl.swift; sourceTree = "<group>"; };
@@ -205,6 +213,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4608AC392EEA3179000523F0 /* settings */ = {
+			isa = PBXGroup;
+			children = (
+				4608AC372EEA3179000523F0 /* SettingsView.swift */,
+				4608AC382EEA3179000523F0 /* TeacherLoginView.swift */,
+			);
+			path = settings;
+			sourceTree = "<group>";
+		};
 		4619CE402A8D0F1A006CB8D1 /* StudentAppProfileMock */ = {
 			isa = PBXGroup;
 			children = (
@@ -292,6 +309,7 @@
 		46336708299528F900CF5EA3 /* ContentViews */ = {
 			isa = PBXGroup;
 			children = (
+				4608AC392EEA3179000523F0 /* settings */,
 				46BAB49A2B30B4F600C155B9 /* subContentView */,
 				4699A1132A1CDF4400D8829C /* startUp */,
 				46A2BCE929F1DA6B00882816 /* dashboard */,
@@ -308,6 +326,8 @@
 		4634419A2AEB59130074741D /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				4608AC352EEA30E5000523F0 /* KeychainHelper.swift */,
+				4608AC332EEA305B000523F0 /* AuthenticationManager.swift */,
 				4634419B2AEB59530074741D /* FirestoreManager.swift */,
 			);
 			path = Services;
@@ -770,6 +790,7 @@
 				46CEE1B42AADF11500EDDC96 /* StudentAppProfileWorkingView.swift in Sources */,
 				46A8BF7B2B47248600E5FF2D /* DeviceListVW.swift in Sources */,
 				4698CA282A2D600A00D8A888 /* ImageProcessingError.swift in Sources */,
+				4608AC342EEA305B000523F0 /* AuthenticationManager.swift in Sources */,
 				46AEA64129C8E57900D2B994 /* LocationsResponse.swift in Sources */,
 				46BAB4852B30949A00C155B9 /* TimeOfDay.swift in Sources */,
 				469EFF212A6ED33F0047E8BC /* AppResponse.swift in Sources */,
@@ -782,6 +803,8 @@
 				46BAB4872B3094D900C155B9 /* DayOfWeek.swift in Sources */,
 				46BD73142A0EC7A000AE23B1 /* SchoolListDup.swift in Sources */,
 				464B6AD52A77D439008BF37F /* CategoryDisclosureView.swift in Sources */,
+				4608AC3A2EEA3179000523F0 /* SettingsView.swift in Sources */,
+				4608AC3B2EEA3179000523F0 /* TeacherLoginView.swift in Sources */,
 				46E56DB42996977A00CB2512 /* AuthenticateReturnObjct.swift in Sources */,
 				465B16522AA14D28000ED633 /* MockBareBones.swift in Sources */,
 				461D89A42A6D4CA700678391 /* AppCategory.swift in Sources */,
@@ -790,6 +813,7 @@
 				466FF03D2A7050C8002946F7 /* Components.swift in Sources */,
 				46584FE92993F0C40025F539 /* ApiError.swift in Sources */,
 				46584FDF2993ECD50025F539 /* UsersViewModel.swift in Sources */,
+				4608AC362EEA30E5000523F0 /* KeychainHelper.swift in Sources */,
 				461044AB2C5D446100760FCE /* UserEditorContDPRepl.swift in Sources */,
 				46336705299452A600CF5EA3 /* CustomLabelStyle.swift in Sources */,
 				46584FE72993F0960025F539 /* ApiHelper.swift in Sources */,
@@ -942,7 +966,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -972,7 +996,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
