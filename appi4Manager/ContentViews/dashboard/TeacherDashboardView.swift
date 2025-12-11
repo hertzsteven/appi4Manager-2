@@ -144,34 +144,136 @@ struct TeacherDashboardView: View {
     
     private var classesContentView: some View {
         ScrollView {
-            LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 2), spacing: 20) {
-                // Students Category
-                NavigationLink(destination: TeacherStudentsView(teacherClasses: teacherClasses)) {
-                    TeacherCategoryCard(
-                        name: "Students",
-                        color: .blue,
-                        iconName: "person.crop.square.fill",
-                        count: totalStudents
-                    )
-                }
-                .buttonStyle(.plain)
+            VStack(spacing: 20) {
+                // MARK: - Welcome Header
+                welcomeHeader
                 
-                // Devices Category
-                NavigationLink(destination: TeacherDevicesView(teacherClasses: teacherClasses)) {
-                    TeacherCategoryCard(
-                        name: "Devices",
-                        color: .green,
-                        iconName: "ipad.landscape",
-                        count: totalDevices
-                    )
-                }
-                .buttonStyle(.plain)
+                // MARK: - Class Info Card
+                classInfoCard
+                
+                // MARK: - Category Cards
+                categoryCards
             }
             .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
         }
         .background(Color(.systemGray5))
         .refreshable {
             await loadTeacherData()
+        }
+    }
+    
+    // MARK: - Welcome Header
+    
+    private var welcomeHeader: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Welcome back,")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+            
+            Text(authManager.authenticatedUser?.firstName ?? "Teacher")
+                .font(.title)
+                .fontWeight(.bold)
+            
+            // Current date and session
+            HStack(spacing: 12) {
+                Label(currentDateString, systemImage: "calendar")
+                Label(currentSessionString, systemImage: "clock")
+            }
+            .font(.caption)
+            .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(Color(.systemBackground))
+        .cornerRadius(12)
+    }
+    
+    // MARK: - Class Info Card
+    
+    private var classInfoCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "book.closed.fill")
+                    .foregroundColor(.accentColor)
+                Text("Your Class")
+                    .font(.headline)
+            }
+            
+            if let classInfo = teacherClasses.first {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(classInfo.className)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                    
+                    if let groupName = classInfo.userGroupName {
+                        Text(groupName)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    HStack(spacing: 16) {
+                        Label("\(classInfo.students.count) Students", systemImage: "person.2.fill")
+                        Label("\(classInfo.devices.count) Devices", systemImage: "ipad.landscape")
+                    }
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding()
+                .background(Color.accentColor.opacity(0.1))
+                .cornerRadius(10)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(Color(.systemBackground))
+        .cornerRadius(12)
+    }
+    
+    // MARK: - Category Cards
+    
+    private var categoryCards: some View {
+        LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 2), spacing: 20) {
+            // Students Category
+            NavigationLink(destination: TeacherStudentsView(teacherClasses: teacherClasses)) {
+                TeacherCategoryCard(
+                    name: "Students",
+                    color: .blue,
+                    iconName: "person.crop.square.fill",
+                    count: totalStudents
+                )
+            }
+            .buttonStyle(.plain)
+            
+            // Devices Category
+            NavigationLink(destination: TeacherDevicesView(teacherClasses: teacherClasses)) {
+                TeacherCategoryCard(
+                    name: "Devices",
+                    color: .green,
+                    iconName: "ipad.landscape",
+                    count: totalDevices
+                )
+            }
+            .buttonStyle(.plain)
+        }
+    }
+    
+    // MARK: - Helper Computed Properties
+    
+    private var currentDateString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, MMM d"
+        return formatter.string(from: Date())
+    }
+    
+    private var currentSessionString: String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        if hour < 12 {
+            return "Morning Session"
+        } else if hour < 17 {
+            return "Afternoon Session"
+        } else {
+            return "After School"
         }
     }
     
@@ -516,12 +618,15 @@ struct TeacherCategoryCard: View {
 struct TeacherStudentsView: View {
     let teacherClasses: [TeacherClassInfo]
     
+    /// Data provider for real Firebase student profiles
+    @State private var dataProvider = StudentAppProfileDataProvider()
+    
     /// Selected timeslot for viewing app profiles
-    @State private var selectedTimeslot: TimeOfDay = MockStudentAppProfileProvider.currentTimeslot()
+    @State private var selectedTimeslot: TimeOfDay = StudentAppProfileDataProvider.currentTimeslot()
     
     /// Current day string for profile lookup
     private var currentDayString: String {
-        MockStudentAppProfileProvider.currentDayString()
+        StudentAppProfileDataProvider.currentDayString()
     }
     
     /// All students flattened from all classes
@@ -541,25 +646,64 @@ struct TeacherStudentsView: View {
                 .padding(.top, 12)
                 .padding(.bottom, 8)
             
-            // Students Grid with Profile Cards
-            ScrollView {
-                LazyVGrid(columns: [
-                    GridItem(.adaptive(minimum: 150), spacing: 16)
-                ], spacing: 16) {
-                    ForEach(allStudents, id: \.id) { student in
-                        StudentProfileCard(
-                            student: student,
-                            timeslot: selectedTimeslot,
-                            dayString: currentDayString
-                        )
-                    }
+            // Content based on loading state
+            if dataProvider.isLoading {
+                Spacer()
+                VStack(spacing: 16) {
+                    ProgressView()
+                        .scaleEffect(1.5)
+                    Text("Loading student profiles...")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
                 }
-                .padding()
+                Spacer()
+            } else if let error = dataProvider.errorMessage {
+                Spacer()
+                VStack(spacing: 16) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 48))
+                        .foregroundColor(.orange)
+                    Text("Error Loading Profiles")
+                        .font(.headline)
+                    Text(error)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                    Button("Retry") {
+                        Task {
+                            await dataProvider.loadProfiles(for: allStudents.map { $0.id })
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+                Spacer()
+            } else {
+                // Students Grid with Profile Cards
+                ScrollView {
+                    LazyVGrid(columns: [
+                        GridItem(.adaptive(minimum: 150), spacing: 16)
+                    ], spacing: 16) {
+                        ForEach(allStudents, id: \.id) { student in
+                            StudentProfileCard(
+                                student: student,
+                                timeslot: selectedTimeslot,
+                                dayString: currentDayString,
+                                dataProvider: dataProvider
+                            )
+                        }
+                    }
+                    .padding()
+                }
+                .background(Color(.systemGray6))
             }
-            .background(Color(.systemGray6))
         }
         .navigationTitle("Students")
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            // Load profiles when view appears
+            await dataProvider.loadProfiles(for: allStudents.map { $0.id })
+        }
     }
     
     // MARK: - Timeslot Picker

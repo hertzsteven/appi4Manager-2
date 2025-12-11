@@ -2,7 +2,7 @@
 //  StudentProfileCard.swift
 //  appi4Manager
 //
-//  Enhanced student card that shows app profile information
+//  Enhanced student card that shows app profile information from Firebase
 //
 
 import SwiftUI
@@ -12,36 +12,43 @@ struct StudentProfileCard: View {
     let student: Student
     let timeslot: TimeOfDay
     let dayString: String
+    let dataProvider: StudentAppProfileDataProvider
     
-    @State private var showingDetail = false
+    @State private var apps: [Appx] = []
+    @State private var isLoadingApps = true
     
     // MARK: - Computed Properties
     
-    private var session: Session {
-        MockStudentAppProfileProvider.getSession(for: student.id, day: dayString, timeslot: timeslot)
+    private var session: Session? {
+        dataProvider.getSession(for: student.id, day: dayString, timeslot: timeslot)
     }
     
-    private var apps: [MockStudentAppProfileProvider.MockApp] {
-        MockStudentAppProfileProvider.getApps(byIds: session.apps)
+    private var hasProfile: Bool {
+        dataProvider.hasProfile(for: student.id)
     }
     
     private var sessionLengthMinutes: Int {
-        Int(session.sessionLength)
+        Int(session?.sessionLength ?? 0)
     }
     
     /// Calculate fill percentage (5-60 minute range)
     private var sessionFillPercentage: CGFloat {
         let minValue: CGFloat = 5
         let maxValue: CGFloat = 60
-        let value = CGFloat(session.sessionLength)
+        let value = CGFloat(session?.sessionLength ?? 0)
         return max(0, min(1, (value - minValue) / (maxValue - minValue)))
     }
     
     // MARK: - Body
     
     var body: some View {
-        Button {
-            showingDetail = true
+        NavigationLink {
+            StudentProfileEditView(
+                student: student,
+                timeslot: timeslot,
+                dayString: dayString,
+                dataProvider: dataProvider
+            )
         } label: {
             VStack(spacing: 10) {
                 // Student Photo
@@ -64,11 +71,13 @@ struct StudentProfileCard: View {
                 Divider()
                     .padding(.horizontal, 8)
                 
-                // App Icons Row
-                appIconsRow
-                
-                // Session Length Bar
-                sessionLengthBar
+                // App Icons Row or No Profile Placeholder
+                if hasProfile {
+                    appIconsRow
+                    sessionLengthBar
+                } else {
+                    noProfileView
+                }
             }
             .frame(width: 140, height: 200)
             .padding(.vertical, 8)
@@ -78,9 +87,21 @@ struct StudentProfileCard: View {
             .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 2)
         }
         .buttonStyle(.plain)
-        .navigationDestination(isPresented: $showingDetail) {
-            StudentProfileEditView(student: student, timeslot: timeslot, dayString: dayString)
+        .task(id: "\(student.id)-\(dayString)-\(timeslot)") {
+            await loadApps()
         }
+    }
+    
+    // MARK: - Load Apps
+    
+    private func loadApps() async {
+        isLoadingApps = true
+        if let session = session {
+            apps = await dataProvider.getApps(byIds: session.apps)
+        } else {
+            apps = []
+        }
+        isLoadingApps = false
     }
     
     // MARK: - Subviews
@@ -111,13 +132,28 @@ struct StudentProfileCard: View {
         }
         .overlay(
             Circle()
-                .stroke(Color.accentColor, lineWidth: 2)
+                .stroke(hasProfile ? Color.accentColor : Color.gray, lineWidth: 2)
         )
+    }
+    
+    private var noProfileView: some View {
+        VStack(spacing: 4) {
+            Image(systemName: "person.crop.circle.badge.questionmark")
+                .font(.system(size: 24))
+                .foregroundColor(.secondary)
+            Text("No profile")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .frame(height: 60)
     }
     
     private var appIconsRow: some View {
         HStack(spacing: 6) {
-            if apps.isEmpty {
+            if isLoadingApps {
+                ProgressView()
+                    .frame(width: 36, height: 36)
+            } else if apps.isEmpty {
                 // No apps configured
                 Image(systemName: "app.dashed")
                     .font(.system(size: 24))
@@ -126,27 +162,45 @@ struct StudentProfileCard: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
             } else if apps.count == 1 {
-                // Single app - show larger icon and name
-                Image(systemName: apps[0].iconSystemName)
-                    .font(.system(size: 28))
-                    .foregroundColor(.accentColor)
-                    .frame(width: 36, height: 36)
-                    .background(Color.accentColor.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                // Single app - show icon and name
+                AsyncImage(url: URL(string: apps[0].icon)) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 36, height: 36)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    default:
+                        Image(systemName: "app.fill")
+                            .font(.system(size: 28))
+                            .foregroundColor(.accentColor)
+                            .frame(width: 36, height: 36)
+                    }
+                }
                 Text(apps[0].name)
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(.primary)
                     .lineLimit(1)
             } else {
-                // Multiple apps - show first app icon with "+" indicator
-                Image(systemName: apps[0].iconSystemName)
-                    .font(.system(size: 28))
-                    .foregroundColor(.accentColor)
-                    .frame(width: 36, height: 36)
-                    .background(Color.accentColor.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                Text("+")
+                // Multiple apps - show first icon with "+" indicator
+                AsyncImage(url: URL(string: apps[0].icon)) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 36, height: 36)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    default:
+                        Image(systemName: "app.fill")
+                            .font(.system(size: 28))
+                            .foregroundColor(.accentColor)
+                            .frame(width: 36, height: 36)
+                    }
+                }
+                Text("+\(apps.count - 1)")
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundColor(.secondary)
@@ -199,19 +253,23 @@ struct StudentProfileCard: View {
     }
 }
 
-// MARK: - Student Profile Edit View (Placeholder)
+// MARK: - Student Profile Edit View
 
 struct StudentProfileEditView: View {
     let student: Student
     let timeslot: TimeOfDay
     let dayString: String
+    let dataProvider: StudentAppProfileDataProvider
     
-    private var session: Session {
-        MockStudentAppProfileProvider.getSession(for: student.id, day: dayString, timeslot: timeslot)
+    @State private var apps: [Appx] = []
+    @State private var isLoadingApps = true
+    
+    private var session: Session? {
+        dataProvider.getSession(for: student.id, day: dayString, timeslot: timeslot)
     }
     
-    private var apps: [MockStudentAppProfileProvider.MockApp] {
-        MockStudentAppProfileProvider.getApps(byIds: session.apps)
+    private var hasProfile: Bool {
+        dataProvider.hasProfile(for: student.id)
     }
     
     private var timeslotLabel: String {
@@ -236,7 +294,7 @@ struct StudentProfileEditView: View {
                             .clipShape(Circle())
                             .overlay(
                                 Circle()
-                                    .stroke(Color.accentColor, lineWidth: 4)
+                                    .stroke(hasProfile ? Color.accentColor : Color.gray, lineWidth: 4)
                             )
                     default:
                         Image(systemName: "person.circle.fill")
@@ -259,62 +317,109 @@ struct StudentProfileEditView: View {
                 
                 Divider()
                 
-                // Current Apps Section
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Assigned Apps")
-                        .font(.headline)
-                    
-                    if apps.isEmpty {
-                        Text("No apps configured for this timeslot")
+                if !hasProfile {
+                    // No Profile Section
+                    VStack(spacing: 12) {
+                        Image(systemName: "person.crop.circle.badge.questionmark")
+                            .font(.system(size: 48))
+                            .foregroundColor(.secondary)
+                        Text("No Profile Found")
+                            .font(.headline)
+                        Text("This student doesn't have an app profile configured in the system yet.")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                    } else {
-                        ForEach(apps) { app in
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(12)
+                } else {
+                    // Current Apps Section
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Assigned Apps")
+                            .font(.headline)
+                        
+                        if isLoadingApps {
                             HStack {
-                                Image(systemName: app.iconSystemName)
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                            .padding()
+                        } else if apps.isEmpty {
+                            Text("No apps configured for this timeslot")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(8)
+                        } else {
+                            ForEach(apps, id: \.id) { app in
+                                HStack {
+                                    AsyncImage(url: URL(string: app.icon)) { phase in
+                                        switch phase {
+                                        case .success(let image):
+                                            image
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 44, height: 44)
+                                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        default:
+                                            Image(systemName: "app.fill")
+                                                .font(.title2)
+                                                .foregroundColor(.accentColor)
+                                                .frame(width: 44, height: 44)
+                                                .background(Color.accentColor.opacity(0.1))
+                                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        }
+                                    }
+                                    
+                                    VStack(alignment: .leading) {
+                                        Text(app.name)
+                                            .font(.body)
+                                        if let description = app.description, !description.isEmpty {
+                                            Text(description)
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                                .lineLimit(1)
+                                        }
+                                    }
+                                    
+                                    Spacer()
+                                }
+                                .padding(.vertical, 4)
+                            }
+                        }
+                    }
+                    .padding()
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                    
+                    // Session Length Section
+                    if let session = session {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Session Length")
+                                .font(.headline)
+                            
+                            HStack {
+                                Image(systemName: "clock")
                                     .font(.title2)
-                                    .foregroundColor(.accentColor)
-                                    .frame(width: 44, height: 44)
-                                    .background(Color.accentColor.opacity(0.1))
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .foregroundColor(.orange)
                                 
-                                Text(app.name)
-                                    .font(.body)
+                                Text("\(Int(session.sessionLength)) minutes")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
                                 
                                 Spacer()
                             }
-                            .padding(.vertical, 4)
                         }
+                        .padding()
+                        .background(Color(.systemBackground))
+                        .cornerRadius(12)
                     }
                 }
-                .padding()
-                .background(Color(.systemBackground))
-                .cornerRadius(12)
-                
-                // Session Length Section
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Session Length")
-                        .font(.headline)
-                    
-                    HStack {
-                        Image(systemName: "clock")
-                            .font(.title2)
-                            .foregroundColor(.orange)
-                        
-                        Text("\(Int(session.sessionLength)) minutes")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                        
-                        Spacer()
-                    }
-                }
-                .padding()
-                .background(Color(.systemBackground))
-                .cornerRadius(12)
                 
                 // Edit Button Placeholder
                 Button {
@@ -325,9 +430,10 @@ struct StudentProfileEditView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.accentColor)
+                        .background(hasProfile ? Color.accentColor : Color.gray)
                         .cornerRadius(12)
                 }
+                .disabled(!hasProfile)
                 .padding(.top)
                 
                 Spacer()
@@ -337,6 +443,19 @@ struct StudentProfileEditView: View {
         .background(Color(.systemGray6))
         .navigationTitle("Student Profile")
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await loadApps()
+        }
+    }
+    
+    private func loadApps() async {
+        isLoadingApps = true
+        if let session = session {
+            apps = await dataProvider.getApps(byIds: session.apps)
+        } else {
+            apps = []
+        }
+        isLoadingApps = false
     }
 }
 
@@ -363,41 +482,12 @@ struct StudentProfileCard_Previews: PreviewProvider {
             StudentProfileCard(
                 student: mockStudent,
                 timeslot: .am,
-                dayString: "Mon"
+                dayString: "Mon",
+                dataProvider: StudentAppProfileDataProvider()
             )
             .padding()
             .previewLayout(.sizeThatFits)
             .previewDisplayName("AM Timeslot")
-            
-            // Multiple cards in grid
-            ScrollView {
-                LazyVGrid(columns: [
-                    GridItem(.adaptive(minimum: 140), spacing: 16)
-                ], spacing: 16) {
-                    StudentProfileCard(student: mockStudent, timeslot: .am, dayString: "Mon")
-                    StudentProfileCard(student: Student(
-                        id: 456,
-                        name: "Jane Smith",
-                        email: "jane.smith@school.edu",
-                        username: "janesmith",
-                        firstName: "Jane",
-                        lastName: "Smith",
-                        photo: placeholderPhoto
-                    ), timeslot: .am, dayString: "Mon")
-                    StudentProfileCard(student: Student(
-                        id: 789,
-                        name: "Bob Johnson",
-                        email: "bob.j@school.edu",
-                        username: "bobj",
-                        firstName: "Bob",
-                        lastName: "Johnson",
-                        photo: placeholderPhoto
-                    ), timeslot: .am, dayString: "Mon")
-                }
-                .padding()
-            }
-            .background(Color(.systemGray6))
-            .previewDisplayName("Grid View")
         }
     }
 }
@@ -408,9 +498,9 @@ struct StudentProfileEditView_Previews: PreviewProvider {
             StudentProfileEditView(
                 student: StudentProfileCard_Previews.mockStudent,
                 timeslot: .am,
-                dayString: "Mon"
+                dayString: "Mon",
+                dataProvider: StudentAppProfileDataProvider()
             )
         }
     }
 }
-
