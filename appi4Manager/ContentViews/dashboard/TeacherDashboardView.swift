@@ -15,6 +15,12 @@ struct TeacherDashboardView: View {
     @State private var teacherClasses: [TeacherClassInfo] = []
     @State private var errorMessage: String?
     @State private var selectedClass: TeacherClassInfo?
+    @State private var showClassSelector = false
+    
+    /// The currently active class (selected or default first class)
+    private var activeClass: TeacherClassInfo? {
+        selectedClass ?? teacherClasses.first
+    }
     
     var body: some View {
         NavigationStack {
@@ -28,8 +34,11 @@ struct TeacherDashboardView: View {
                     errorView(message: error)
                 } else if teacherClasses.isEmpty {
                     emptyClassesView
+                } else if teacherClasses.count > 1 && selectedClass == nil {
+                    // Multiple classes but none selected - show class selection prompt
+                    classSelectionPromptView
                 } else {
-                    // Main content - show classes with students and devices
+                    // Main content - show dashboard for active class
                     classesContentView
                 }
             }
@@ -42,6 +51,13 @@ struct TeacherDashboardView: View {
                     }
                 }
             }
+        }
+        .sheet(isPresented: $showClassSelector) {
+            ClassSelectorSheet(
+                classes: teacherClasses,
+                selectedClass: $selectedClass,
+                isPresented: $showClassSelector
+            )
         }
         .task {
             if authManager.isAuthenticated {
@@ -140,6 +156,67 @@ struct TeacherDashboardView: View {
         }
     }
     
+    // MARK: - Class Selection Prompt View
+    
+    private var classSelectionPromptView: some View {
+        VStack(spacing: 32) {
+            Spacer()
+            
+            // Icon
+            Image(systemName: "square.stack.3d.up.fill")
+                .font(.system(size: 64))
+                .foregroundColor(.accentColor)
+            
+            // Title
+            VStack(spacing: 8) {
+                Text("Select Your Class")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                
+                Text("You teach \(teacherClasses.count) classes. Please select which class you'd like to work with.")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+            }
+            
+            // Class Picker
+            VStack(spacing: 16) {
+                ForEach(teacherClasses) { classInfo in
+                    Button {
+                        selectedClass = classInfo
+                    } label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(classInfo.className)
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
+                                HStack(spacing: 12) {
+                                    Label("\(classInfo.students.count)", systemImage: "person.2.fill")
+                                    Label("\(classInfo.devices.count)", systemImage: "ipad.landscape")
+                                }
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.secondary)
+                        }
+                        .padding()
+                        .background(Color(.systemBackground))
+                        .cornerRadius(12)
+                        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 24)
+            
+            Spacer()
+        }
+        .background(Color(.systemGray6))
+    }
+    
     // MARK: - Classes Content View (now shows category tiles)
     
     private var classesContentView: some View {
@@ -166,13 +243,38 @@ struct TeacherDashboardView: View {
     
     private var welcomeHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Welcome back,")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            
-            Text(authManager.authenticatedUser?.firstName ?? "Teacher")
-                .font(.title)
-                .fontWeight(.bold)
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Welcome back,")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    
+                    Text(authManager.authenticatedUser?.firstName ?? "Teacher")
+                        .font(.title)
+                        .fontWeight(.bold)
+                }
+                
+                Spacer()
+                
+                // Class Switcher Button (only show if multiple classes)
+                if teacherClasses.count > 1 {
+                    Button {
+                        showClassSelector = true
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "square.stack.3d.up.fill")
+                            Text("Switch")
+                                .fontWeight(.medium)
+                        }
+                        .font(.subheadline)
+                        .foregroundColor(.accentColor)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Color.accentColor.opacity(0.1))
+                        .cornerRadius(8)
+                    }
+                }
+            }
             
             // Current date and session
             HStack(spacing: 12) {
@@ -195,11 +297,11 @@ struct TeacherDashboardView: View {
             HStack {
                 Image(systemName: "book.closed.fill")
                     .foregroundColor(.accentColor)
-                Text("Your Class")
+                Text("Current Class")
                     .font(.headline)
             }
             
-            if let classInfo = teacherClasses.first {
+            if let classInfo = activeClass {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(classInfo.className)
                         .font(.title2)
@@ -230,31 +332,31 @@ struct TeacherDashboardView: View {
         .cornerRadius(12)
     }
     
-    // MARK: - Category Cards
-    
     private var categoryCards: some View {
         LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 2), spacing: 20) {
-            // Students Category
-            NavigationLink(destination: TeacherStudentsView(teacherClasses: teacherClasses)) {
-                TeacherCategoryCard(
-                    name: "Students",
-                    color: .blue,
-                    iconName: "person.crop.square.fill",
-                    count: totalStudents
-                )
+            // Students Category - only pass the active class
+            if let currentClass = activeClass {
+                NavigationLink(destination: TeacherStudentsView(teacherClasses: [currentClass])) {
+                    TeacherCategoryCard(
+                        name: "Students",
+                        color: .blue,
+                        iconName: "person.crop.square.fill",
+                        count: totalStudents
+                    )
+                }
+                .buttonStyle(.plain)
+                
+                // Devices Category - only pass the active class
+                NavigationLink(destination: TeacherDevicesView(teacherClasses: [currentClass])) {
+                    TeacherCategoryCard(
+                        name: "Devices",
+                        color: .green,
+                        iconName: "ipad.landscape",
+                        count: totalDevices
+                    )
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
-            
-            // Devices Category
-            NavigationLink(destination: TeacherDevicesView(teacherClasses: teacherClasses)) {
-                TeacherCategoryCard(
-                    name: "Devices",
-                    color: .green,
-                    iconName: "ipad.landscape",
-                    count: totalDevices
-                )
-            }
-            .buttonStyle(.plain)
         }
     }
     
@@ -280,11 +382,11 @@ struct TeacherDashboardView: View {
     // MARK: - Computed Properties for Counts
     
     private var totalStudents: Int {
-        teacherClasses.reduce(0) { $0 + $1.students.count }
+        activeClass?.students.count ?? 0
     }
     
     private var totalDevices: Int {
-        teacherClasses.reduce(0) { $0 + $1.devices.count }
+        activeClass?.devices.count ?? 0
     }
     
     // MARK: - Class Section
@@ -1168,6 +1270,59 @@ struct DeviceDetailView: View {
         .padding()
         .navigationTitle("Device Details")
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+// MARK: - Class Selector Sheet
+
+struct ClassSelectorSheet: View {
+    let classes: [TeacherClassInfo]
+    @Binding var selectedClass: TeacherClassInfo?
+    @Binding var isPresented: Bool
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(classes) { classInfo in
+                    Button {
+                        selectedClass = classInfo
+                        isPresented = false
+                    } label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(classInfo.className)
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
+                                HStack(spacing: 12) {
+                                    Label("\(classInfo.students.count) students", systemImage: "person.2.fill")
+                                    Label("\(classInfo.devices.count) devices", systemImage: "ipad.landscape")
+                                }
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                            if selectedClass?.id == classInfo.id {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.accentColor)
+                                    .font(.title2)
+                            }
+                        }
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .navigationTitle("Switch Class")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        isPresented = false
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
     }
 }
 
