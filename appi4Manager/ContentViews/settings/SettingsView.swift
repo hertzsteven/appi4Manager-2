@@ -9,10 +9,21 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(AuthenticationManager.self) private var authManager
+    @Environment(RoleManager.self) private var roleManager
     @EnvironmentObject var teacherItems: TeacherItems
     
     var body: some View {
         List {
+            // MARK: - Current Role Section
+            Section {
+                currentRoleRow
+                switchRoleButton
+            } header: {
+                Text("App Mode")
+            } footer: {
+                Text("Switch between Administrator and Teacher mode.")
+            }
+            
             // MARK: - App Info Section
             Section {
                 appInfoRow
@@ -49,6 +60,41 @@ struct SettingsView: View {
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.large)
+    }
+    
+    // MARK: - Current Role Row
+    
+    private var currentRoleRow: some View {
+        HStack {
+            Label {
+                Text("Current Mode")
+            } icon: {
+                Image(systemName: roleManager.currentRole?.iconName ?? "questionmark.circle")
+                    .foregroundColor(roleManager.isAdmin ? .blue : .green)
+            }
+            
+            Spacer()
+            
+            Text(roleManager.currentRole?.displayName ?? "Not Selected")
+                .foregroundColor(.secondary)
+        }
+    }
+    
+    // MARK: - Switch Role Button
+    
+    private var switchRoleButton: some View {
+        Button {
+            roleManager.clearRole()
+        } label: {
+            HStack {
+                Label("Switch Mode", systemImage: "arrow.triangle.2.circlepath")
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .foregroundColor(.primary)
     }
     
     // MARK: - App Info Row
@@ -189,6 +235,7 @@ struct SettingsView: View {
 #Preview {
     NavigationStack {
         SettingsView()
+            .environment(RoleManager())
             .environment(AuthenticationManager())
             .environmentObject(TeacherItems())
     }

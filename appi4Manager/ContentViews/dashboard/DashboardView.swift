@@ -24,184 +24,20 @@ struct Category: Identifiable, Hashable {
 
 
 struct DashboardView: View {
-    @State private var isLoading = true // Example loading state
-
-    @EnvironmentObject var devicesViewModel: DevicesViewModel
-    @EnvironmentObject var classesViewModel: ClassesViewModel
-    @EnvironmentObject var usersViewModel:  UsersViewModel
-    @EnvironmentObject var teacherItems: TeacherItems
-
-    @State private var hasError = false
-    @State private var error: ApiError?
-
-    @State var path: NavigationPath = NavigationPath()
-    
-    let categories = [
-        Category(name: "Devices", color: .blue, image: Image(systemName: "ipad.and.iphone"), count: 5),
-        Category(name: "Categories", color: .green, image: Image(systemName: "folder.fill"), count: 12),
-        Category(name: "Apps", color: .red, image: Image(systemName: "apps.ipad"), count: 3),
-//        Category(name: "NavigateToStudentAppProfile", color: .purple, image: Image(systemName: "person.3.sequence.fill"), count: 8),
-        Category(name: "Classes", color: .orange, image: Image(systemName: "person.3.sequence.fill"), count: 2),
-        Category(name: "Students", color: .yellow, image: Image(systemName: "person.crop.square"), count: 6)
-    ]
+    @Environment(RoleManager.self) private var roleManager
     
     var body: some View {
-        ZStack {
-            NavigationStack(path:$path ) {
-                ScrollView {
-                    LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 2), spacing: 20) {
-                        ForEach(categories) { category in
-                            
-                            NavigationLink(value: category, label: {
-                                CategoryView(category: category)
-                            })
-                            .isDetailLink(false)
-                            .buttonStyle(.plain)
-                        }
-                    }
-                    .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
-                    .navigationViewStyle(StackNavigationViewStyle())
+        Group {
+            if let role = roleManager.currentRole {
+                switch role {
+                case .admin:
+                    AdminDashboardView()
+                case .teacher:
+                    TeacherDashboardView()
                 }
-                .navigationDestination(for: Category.self) { category in
-                    switch category.name {
-                    
-                    case "Devices":
-//                        TestSchoolListView()
-                            //                    TestDestFromClassView(mssg: 2323)
-                                                DeviceListVW(isPresented: .constant(true))
-                            //                    TestOutView()
-                    case "Categories":
-                        CategoryListView( newAppCategory: AppCategory.makeDefault())
-                        
-                    case "Students":
-                        if classesViewModel.isLoaded && usersViewModel.isLoaded {
-                            let firstClassGroupId =
-                            classesViewModel.filterSchoolClassesinLocation2(
-                                teacherItems.currentLocation.id,
-                                dummyPicClassToIgnore: teacherItems.getpicClass() ,
-                                schoolClassGroupID: teacherItems.schoolClassDictionaryGroupID[teacherItems.currentLocation.id]!).first?.userGroupId ?? 0
-                            
-                            UserListDup(path: $path,
-                                        newUser: User.makeDefault(),
-                                        filteredClasses: classesViewModel.filterSchoolClassesinLocation2(
-                                            teacherItems.currentLocation.id,
-                                            dummyPicClassToIgnore: teacherItems.getpicClass() ,
-                                            schoolClassGroupID: teacherItems.schoolClassDictionaryGroupID[teacherItems.currentLocation.id]! ),
-                                        filteredStudents:  usersViewModel.sortedUsersNonBClass(
-                                            lastNameFilter: "",
-                                            selectedLocationID: teacherItems.selectedLocationIdx,
-                                            teacherUserID: teacherItems.teacherUserDict[teacherItems.selectedLocationIdx]!,
-                                            scGroupid: firstClassGroupId)
-                            )
-                            .alert(isPresented: $hasError,
-                                   error: error) {
-                                Button {
-                                    Task {
-                                        await loadTheClasses()
-                                    }
-                                } label: {
-                                    Text("Retry")
-                                }
-                            }
-                        }
-                        
-                    case "Classes":
-                        SchoolListDup( newClass: SchoolClass.makeDefault())
-                            .task {
-                                await loadTheUsers()
-                                await loadTheDevices()
-                            }
-                        
-                    case "Apps":
-//                        AppxView()
-                                                MockFromStudentScreenView(path: $path)
-                        
-                    case "NavigateTo":
-                        MockFromStudentScreenView(path: $path)
-
-                        
-                    default:
-                        Text("Nothing setup yet")
-                    }
-                }
-                
-                .navigationDestination(for: String.self) { value in
-                    switch value {
-                    case "Settings":
-                        SettingsView()
-                    default:
-                        TestDestFromClassView(mssg: value)
-                    }
-                }
-                
-                
-                .background(Color(.systemGray5))
-                .edgesIgnoringSafeArea(.bottom)
-                .navigationTitle("Dashboard")
-                .navigationViewStyle(StackNavigationViewStyle())
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        NavigationLink(value: "Settings") {
-                            Image(systemName: "gearshape")
-                        }
-                    }
-                }
-            }
-                // Translucent Progress View
-            if !teacherItems.isLoaded {
-                    //                 if isLoading {
-                ProgressView()
-                    .scaleEffect(2) // Increase the size of the progress view
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white)) // Custom style
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.black.opacity(0.7)) // Translucent background
-                    .edgesIgnoringSafeArea(.all)
-            }
-        }
-        .onAppear {
-            Task {
-                await teacherItems.exSetup() // Call exSetup on the instance
-                await loadTheClasses()
-                await loadTheUsers()
-            }
-        }
-    }
-}
-
-
-private extension DashboardView {
-    
-    func loadTheClasses() async {
-        do {
-            try await classesViewModel.loadData2()
-        } catch  {
-            if let xerror = error as? ApiError {
-                self.hasError   = true
-                self.error      = xerror
-            }
-        }
-    }
-    
-    func loadTheUsers() async {
-        do {
-            try await usersViewModel.loadData2()
-        } catch  {
-            if let xerror = error as? ApiError {
-                self.hasError   = true
-                self.error      = xerror
-            }
-        }
-    }
-    
-    func loadTheDevices() async {
-        do {
-            try await devicesViewModel.loadData2()
-            dump(devicesViewModel)
-            print("pause")
-        } catch  {
-            if let xerror = error as? ApiError {
-                self.hasError   = true
-                self.error      = xerror
+            } else {
+                // No role selected - show role selection
+                RoleSelectionView()
             }
         }
     }
@@ -237,10 +73,6 @@ struct CategoryView: View {
                     Text(category.name)
                         .font(.system(size: 16, weight: .semibold, design: .default))
                         .foregroundColor(.secondary)
-//
-//                        .font(.body)
-//                        .bold()
-//                        .foregroundColor(.secondary)
                 }
                 .padding([.leading],4)
                 
@@ -252,7 +84,7 @@ struct CategoryView: View {
                         .foregroundColor(.primary)
                         .padding([.top], 4)
                         .padding([.trailing], 18)
-                        .hidden() // rmmove to show the number
+                        .hidden() // remove to show the number
                     Spacer()
                 }
             }
@@ -263,9 +95,12 @@ struct CategoryView: View {
 }
 
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        DashboardView()
-    }
+#Preview {
+    DashboardView()
+        .environment(RoleManager())
+        .environment(AuthenticationManager())
+        .environmentObject(DevicesViewModel())
+        .environmentObject(ClassesViewModel())
+        .environmentObject(UsersViewModel())
+        .environmentObject(TeacherItems())
 }
-

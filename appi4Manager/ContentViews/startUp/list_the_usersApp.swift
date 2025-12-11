@@ -38,6 +38,9 @@ struct list_the_usersApp: App {
     
     // Authentication Manager using @Observable pattern
     @State private var authManager              = AuthenticationManager()
+    
+    // Role Manager for role-based navigation
+    @State private var roleManager              = RoleManager()
 
     
     
@@ -59,6 +62,7 @@ struct list_the_usersApp: App {
 
 
             DashboardView()
+                    .environment(roleManager)
                     .environment(authManager)
                     .environmentObject(usersViewModel)
                     .environmentObject(classDetailViewModel)

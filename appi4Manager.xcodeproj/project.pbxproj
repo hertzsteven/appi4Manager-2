@@ -12,6 +12,11 @@
 		4608AC3A2EEA3179000523F0 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC372EEA3179000523F0 /* SettingsView.swift */; };
 		4608AC3B2EEA3179000523F0 /* TeacherLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC382EEA3179000523F0 /* TeacherLoginView.swift */; };
 		4608AC3D2EEA34C4000523F0 /* TeacherClassInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC3C2EEA34C4000523F0 /* TeacherClassInfoView.swift */; };
+		4608AC4B2EEA7586000523F0 /* UserRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC4A2EEA7586000523F0 /* UserRole.swift */; };
+		4608AC4C2EEA7586000523F0 /* RoleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC492EEA7586000523F0 /* RoleManager.swift */; };
+		4608AC4E2EEA759E000523F0 /* RoleSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC4D2EEA759E000523F0 /* RoleSelectionView.swift */; };
+		4608AC512EEA75BB000523F0 /* AdminDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC4F2EEA75BB000523F0 /* AdminDashboardView.swift */; };
+		4608AC522EEA75BB000523F0 /* TeacherDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC502EEA75BB000523F0 /* TeacherDashboardView.swift */; };
 		4609120229D0811B000337E8 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4609120129D0811B000337E8 /* DashboardView.swift */; };
 		460CC64F2B1D03760050437D /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460CC64E2B1D03760050437D /* AppConstants.swift */; };
 		461044AB2C5D446100760FCE /* UserEditorContDPRepl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461044AA2C5D446100760FCE /* UserEditorContDPRepl.swift */; };
@@ -110,6 +115,11 @@
 		4608AC372EEA3179000523F0 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4608AC382EEA3179000523F0 /* TeacherLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherLoginView.swift; sourceTree = "<group>"; };
 		4608AC3C2EEA34C4000523F0 /* TeacherClassInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherClassInfoView.swift; sourceTree = "<group>"; };
+		4608AC492EEA7586000523F0 /* RoleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleManager.swift; sourceTree = "<group>"; };
+		4608AC4A2EEA7586000523F0 /* UserRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRole.swift; sourceTree = "<group>"; };
+		4608AC4D2EEA759E000523F0 /* RoleSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleSelectionView.swift; sourceTree = "<group>"; };
+		4608AC4F2EEA75BB000523F0 /* AdminDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminDashboardView.swift; sourceTree = "<group>"; };
+		4608AC502EEA75BB000523F0 /* TeacherDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherDashboardView.swift; sourceTree = "<group>"; };
 		4609120129D0811B000337E8 /* DashboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		460CC64E2B1D03760050437D /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		461044AA2C5D446100760FCE /* UserEditorContDPRepl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditorContDPRepl.swift; sourceTree = "<group>"; };
@@ -401,6 +411,8 @@
 		46584FD72993EA9C0025F539 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				4608AC492EEA7586000523F0 /* RoleManager.swift */,
+				4608AC4A2EEA7586000523F0 /* UserRole.swift */,
 				466463992B46EA9A0017A639 /* Device */,
 				46BAB4832B30946100C155B9 /* StudentAppProfileGroup */,
 				46BAB49B2B30B78200C155B9 /* classesSchool */,
@@ -499,6 +511,7 @@
 		4699A1132A1CDF4400D8829C /* startUp */ = {
 			isa = PBXGroup;
 			children = (
+				4608AC4D2EEA759E000523F0 /* RoleSelectionView.swift */,
 				46584FC92993E1040025F539 /* list_the_usersApp.swift */,
 			);
 			path = startUp;
@@ -515,6 +528,8 @@
 		46A2BCE929F1DA6B00882816 /* dashboard */ = {
 			isa = PBXGroup;
 			children = (
+				4608AC4F2EEA75BB000523F0 /* AdminDashboardView.swift */,
+				4608AC502EEA75BB000523F0 /* TeacherDashboardView.swift */,
 				4609120129D0811B000337E8 /* DashboardView.swift */,
 			);
 			path = dashboard;
@@ -811,6 +826,8 @@
 				4608AC3B2EEA3179000523F0 /* TeacherLoginView.swift in Sources */,
 				46E56DB42996977A00CB2512 /* AuthenticateReturnObjct.swift in Sources */,
 				465B16522AA14D28000ED633 /* MockBareBones.swift in Sources */,
+				4608AC512EEA75BB000523F0 /* AdminDashboardView.swift in Sources */,
+				4608AC522EEA75BB000523F0 /* TeacherDashboardView.swift in Sources */,
 				461D89A42A6D4CA700678391 /* AppCategory.swift in Sources */,
 				469EFF262A6F6D400047E8BC /* AppxView.swift in Sources */,
 				4698CA2A2A2E1FE200D8A888 /* BlockingOverlayView.swift in Sources */,
@@ -828,8 +845,11 @@
 				466EC6FD2A42609D007EEEDB /* LessonDetailResponse.swift in Sources */,
 				461D21CE299D8A64008B7BD2 /* Student.swift in Sources */,
 				46B8239C2A71CEC100C85942 /* ItemListSelectViewWithPic.swift in Sources */,
+				4608AC4E2EEA759E000523F0 /* RoleSelectionView.swift in Sources */,
 				46584FEB2993F10F0025F539 /* ApiEndpoint.swift in Sources */,
 				469F90CA2B63DEDD00E85AF2 /* TestDEstFromClassView.swift in Sources */,
+				4608AC4B2EEA7586000523F0 /* UserRole.swift in Sources */,
+				4608AC4C2EEA7586000523F0 /* RoleManager.swift in Sources */,
 				469420F229C7ED67004B8CB4 /* ExtensionsAndMore.swift in Sources */,
 				46492B1C29F5CA9300699F96 /* StudentPicStubViewModel.swift in Sources */,
 				46BD34E529BE236D002A8395 /* CreateaClassResponse.swift in Sources */,
