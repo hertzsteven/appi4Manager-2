@@ -112,7 +112,7 @@ extension ApiEndpoint {
         case .clearRestrictionsStudent(teachAuth: let teachAuth, students: let students):
             return "/teacher/lessons/stop"
         case .validateTeacherToken(token: _):
-            return "/teacher/lessons"
+            return "/teacher/validate"
         }
     }
     

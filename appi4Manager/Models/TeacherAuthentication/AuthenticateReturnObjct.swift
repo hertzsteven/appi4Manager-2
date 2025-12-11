@@ -21,3 +21,16 @@ struct AuthenticateReturnObjct: Codable {
     }
     let authenticatedAs: AuthenticatedAs
 }
+
+// MARK: - Token Validation Response
+
+/// Response from the /teacher/validate endpoint
+struct TokenValidationResponse: Codable {
+    let code: Int
+    let message: String
+    
+    /// Check if the token is valid
+    var isValid: Bool {
+        return code == 200 && message == "ValidToken"
+    }
+}

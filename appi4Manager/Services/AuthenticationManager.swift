@@ -56,7 +56,7 @@ final class AuthenticationManager {
         #endif
     }
     
-    /// Validate the current token with the server
+    /// Validate the current token with the server using the dedicated /teacher/validate endpoint
     /// - Returns: True if token is valid, false otherwise
     func validateCurrentToken() async -> Bool {
         guard let token = token else {
@@ -74,14 +74,23 @@ final class AuthenticationManager {
         }
         
         do {
-            // Try to fetch lessons with the token - if it succeeds, token is valid
-            _ = try await ApiManager.shared.getDataNoDecode(from: .validateTeacherToken(token: token))
+            // Use dedicated validation endpoint and check response
+            let response: TokenValidationResponse = try await ApiManager.shared.getData(
+                from: .validateTeacherToken(token: token)
+            )
+            
+            // Check if token is valid based on response code and message
+            let isValid = response.isValid
             
             #if DEBUG
-            print("✅ Token validation successful for \(authenticatedUser?.name ?? "unknown")")
+            if isValid {
+                print("✅ Token validation successful for \(authenticatedUser?.name ?? "unknown")")
+            } else {
+                print("❌ Token validation failed: \(response.message)")
+            }
             #endif
             
-            return true
+            return isValid
             
         } catch let error as ApiError {
             switch error {

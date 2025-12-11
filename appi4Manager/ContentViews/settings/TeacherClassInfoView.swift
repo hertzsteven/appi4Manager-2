@@ -14,6 +14,8 @@ struct TeacherClassInfo: Identifiable {
     let classUUID: String
     let userGroupID: Int
     let userGroupName: String?
+    var students: [Student] = []
+    var devices: [TheDevice] = []
 }
 
 struct TeacherClassInfoView: View {
@@ -154,8 +156,129 @@ struct TeacherClassInfoView: View {
                     value: groupName
                 )
             }
+            
+            Divider()
+            
+            // MARK: - Students Section
+            DisclosureGroup {
+                if classInfo.students.isEmpty {
+                    Text("No students in this class")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.vertical, 4)
+                } else {
+                    ForEach(classInfo.students, id: \.id) { student in
+                        studentRow(student)
+                    }
+                }
+            } label: {
+                HStack {
+                    Image(systemName: "person.2.fill")
+                        .foregroundColor(.blue)
+                    Text("Students")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                    Spacer()
+                    Text("\(classInfo.students.count)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(Color.secondary.opacity(0.2))
+                        .cornerRadius(8)
+                }
+            }
+            
+            // MARK: - Devices Section
+            DisclosureGroup {
+                if classInfo.devices.isEmpty {
+                    Text("No devices assigned to this class")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.vertical, 4)
+                } else {
+                    ForEach(classInfo.devices, id: \.UDID) { device in
+                        deviceRow(device)
+                    }
+                }
+            } label: {
+                HStack {
+                    Image(systemName: "ipad.landscape")
+                        .foregroundColor(.green)
+                    Text("Devices")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                    Spacer()
+                    Text("\(classInfo.devices.count)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(Color.secondary.opacity(0.2))
+                        .cornerRadius(8)
+                }
+            }
         }
         .padding(.vertical, 8)
+    }
+    
+    // MARK: - Student Row
+    
+    private func studentRow(_ student: Student) -> some View {
+        HStack(spacing: 12) {
+            AsyncImage(url: student.photo) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView()
+                        .frame(width: 36, height: 36)
+                case .success(let image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 36, height: 36)
+                        .clipShape(Circle())
+                case .failure:
+                    Image(systemName: "person.circle.fill")
+                        .resizable()
+                        .frame(width: 36, height: 36)
+                        .foregroundColor(.gray)
+                @unknown default:
+                    Image(systemName: "person.circle.fill")
+                        .resizable()
+                        .frame(width: 36, height: 36)
+                        .foregroundColor(.gray)
+                }
+            }
+            
+            Text(student.name)
+                .font(.subheadline)
+            
+            Spacer()
+        }
+        .padding(.vertical, 4)
+    }
+    
+    // MARK: - Device Row
+    
+    private func deviceRow(_ device: TheDevice) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: "ipad")
+                .font(.system(size: 24))
+                .foregroundColor(.accentColor)
+                .frame(width: 36, height: 36)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(device.name)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                Text(device.serialNumber)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+        }
+        .padding(.vertical, 4)
     }
     
     // MARK: - Helper Views
@@ -259,19 +382,54 @@ struct TeacherClassInfoView: View {
                 from: .getGroups
             )
             
-            // 5. Build the TeacherClassInfo array
+            // 5. Build the TeacherClassInfo array with students and devices
             var classInfos: [TeacherClassInfo] = []
             
             for schoolClass in matchingClasses {
                 let groupName = groupsResponse.groups.first { $0.id == schoolClass.userGroupId }?.name
                 
-                let info = TeacherClassInfo(
+                // 5a. Fetch students for this class using the class UUID
+                var students: [Student] = []
+                do {
+                    let classDetailResponse: ClassDetailResponse = try await ApiManager.shared.getData(
+                        from: .getStudents(uuid: schoolClass.uuid)
+                    )
+                    students = classDetailResponse.class.students
+                    #if DEBUG
+                    print("📚 Fetched \(students.count) students for class \(schoolClass.name)")
+                    #endif
+                } catch {
+                    #if DEBUG
+                    print("⚠️ Failed to fetch students for class \(schoolClass.name): \(error)")
+                    #endif
+                }
+                
+                // 5b. Fetch devices for this class using the userGroupId as asset tag filter
+                var devices: [TheDevice] = []
+                do {
+                    let deviceResponse: DeviceListResponse = try await ApiManager.shared.getData(
+                        from: .getDevices(assettag: String(schoolClass.userGroupId))
+                    )
+                    devices = deviceResponse.devices
+                    #if DEBUG
+                    print("📚 Fetched \(devices.count) devices for class \(schoolClass.name) with asset tag \(schoolClass.userGroupId)")
+                    #endif
+                } catch {
+                    #if DEBUG
+                    print("⚠️ Failed to fetch devices for class \(schoolClass.name): \(error)")
+                    #endif
+                }
+                
+                var info = TeacherClassInfo(
                     id: schoolClass.uuid,
                     className: schoolClass.name,
                     classUUID: schoolClass.uuid,
                     userGroupID: schoolClass.userGroupId,
                     userGroupName: groupName
                 )
+                info.students = students
+                info.devices = devices
+                
                 classInfos.append(info)
             }
             
