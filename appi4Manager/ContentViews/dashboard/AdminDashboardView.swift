@@ -2,21 +2,47 @@
 //  AdminDashboardView.swift
 //  appi4Manager
 //
-//  Dashboard for admin users - shows all management categories
+//  Admin dashboard for full management access.
+//  Shows category tiles (Devices, Classes, Students, Apps, Categories) that navigate
+//  to their respective management views.
 //
 
 import SwiftUI
 
+// MARK: - AdminDashboardView
+
+/// Dashboard for admin users with full access to all management features.
+///
+/// **Category Tiles:**
+/// - Devices: View and manage all MDM-enrolled devices
+/// - Categories: Manage app categories
+/// - Apps: View available apps and configure profiles
+/// - Classes: Manage school classes
+/// - Students: View and manage student users
+///
+/// **Toolbar:**
+/// - Settings: Opens the settings view
 struct AdminDashboardView: View {
+    // MARK: - Environment & State
+    
     @EnvironmentObject var devicesViewModel: DevicesViewModel
     @EnvironmentObject var classesViewModel: ClassesViewModel
     @EnvironmentObject var usersViewModel: UsersViewModel
     @EnvironmentObject var teacherItems: TeacherItems
     
+    /// True if an API error occurred
     @State private var hasError = false
+    
+    /// The API error for alert presentation
     @State private var error: ApiError?
+    
+    /// Navigation path for programmatic navigation
     @State var path: NavigationPath = NavigationPath()
     
+    // MARK: - Categories
+    
+    /// The main category tiles displayed on the dashboard.
+    /// Each category navigates to its respective management view.
     let categories = [
         Category(name: "Devices", color: .blue, image: Image(systemName: "ipad.and.iphone"), count: 5),
         Category(name: "Categories", color: .green, image: Image(systemName: "folder.fill"), count: 12),
@@ -132,7 +158,9 @@ struct AdminDashboardView: View {
 
 // MARK: - Data Loading
 
+/// Extension containing async functions to load data from the API.
 private extension AdminDashboardView {
+    /// Loads all school classes from the API
     func loadTheClasses() async {
         do {
             try await classesViewModel.loadData2()
@@ -144,6 +172,7 @@ private extension AdminDashboardView {
         }
     }
     
+    /// Loads all users/students from the API
     func loadTheUsers() async {
         do {
             try await usersViewModel.loadData2()
@@ -155,6 +184,7 @@ private extension AdminDashboardView {
         }
     }
     
+    /// Loads all devices from the API
     func loadTheDevices() async {
         do {
             try await devicesViewModel.loadData2()

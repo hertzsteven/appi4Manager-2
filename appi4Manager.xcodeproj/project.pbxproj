@@ -482,6 +482,15 @@
 			path = Api;
 			sourceTree = "<group>";
 		};
+		465F45912EEC7FF800F9A625 /* dataProvidors */ = {
+			isa = PBXGroup;
+			children = (
+				465F45832EEB531100F9A625 /* StudentAppProfileDataProvider.swift */,
+				03960D07E203EAC8294C58AD /* MockStudentAppProfileProvider.swift */,
+			);
+			path = dataProvidors;
+			sourceTree = "<group>";
+		};
 		466463992B46EA9A0017A639 /* Device */ = {
 			isa = PBXGroup;
 			children = (
@@ -551,11 +560,10 @@
 			isa = PBXGroup;
 			children = (
 				465F458F2EEC639300F9A625 /* BulkProfileSetupView.swift */,
-				465F45832EEB531100F9A625 /* StudentAppProfileDataProvider.swift */,
+				465F45912EEC7FF800F9A625 /* dataProvidors */,
 				4608AC4F2EEA75BB000523F0 /* AdminDashboardView.swift */,
 				4608AC502EEA75BB000523F0 /* TeacherDashboardView.swift */,
 				4609120129D0811B000337E8 /* DashboardView.swift */,
-				03960D07E203EAC8294C58AD /* MockStudentAppProfileProvider.swift */,
 				BB4578CBF7E36551B2AC347E /* StudentProfileCard.swift */,
 			);
 			path = dashboard;

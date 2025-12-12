@@ -2,36 +2,71 @@
 //  TeacherDashboardView.swift
 //  appi4Manager
 //
-//  Dashboard for teachers - shows their classes, students, and devices
+//  Main dashboard for teachers after login.
+//  Shows students in a grid with their app profiles, organized by timeslot (AM/PM/Home).
+//  Teachers can tap on students to edit their profiles, or access devices via toolbar button.
 //
 
 import SwiftUI
 
+// MARK: - TeacherDashboardView
+
+/// The main teacher dashboard that displays students directly with their app profiles.
+///
+/// **Flow:**
+/// 1. If not authenticated → Shows login prompt
+/// 2. If loading → Shows spinner
+/// 3. If error → Shows error with retry button
+/// 4. If no classes → Shows empty state
+/// 5. If multiple classes and none selected → Shows class picker
+/// 6. Otherwise → Shows the main students grid view
+///
+/// **Toolbar Buttons:**
+/// - iPad icon: Opens devices sheet
+/// - Slider icon: Opens bulk profile setup
+/// - Gear icon: Opens settings
 struct TeacherDashboardView: View {
+    // MARK: - Environment & State
+    
     @Environment(AuthenticationManager.self) private var authManager
     @EnvironmentObject var teacherItems: TeacherItems
     
+    /// True while fetching teacher data from API
     @State private var isLoading = false
+    
+    /// Array of classes this teacher teaches, with students and devices
     @State private var teacherClasses: [TeacherClassInfo] = []
+    
+    /// Error message to display if data loading fails
     @State private var errorMessage: String?
+    
+    /// Prevents loading animation on first render before task runs
     @State private var hasAttemptedLoad = false
+    
+    /// The class the teacher has explicitly selected (for multi-class teachers)
     @State private var selectedClass: TeacherClassInfo?
+    
+    /// Controls the class selector sheet visibility
     @State private var showClassSelector = false
+    
+    /// Controls the bulk profile setup sheet visibility
     @State private var showBulkSetup = false
     
-    /// Selected timeslot for viewing app profiles
+    /// Currently selected timeslot for viewing student app profiles (AM/PM/Home)
     @State private var selectedTimeslot: TimeOfDay = StudentAppProfileDataProvider.currentTimeslot()
     
-    /// Show devices sheet
+    /// Controls the devices sheet visibility (accessible via toolbar iPad button)
     @State private var showDevicesSheet = false
     
-    /// Data provider for student app profiles (for inline students grid)
+    /// Provides student app profile data from Firebase
     @State private var dataProvider = StudentAppProfileDataProvider()
     
-    /// Data provider for bulk profile setup
+    /// Separate data provider for bulk profile setup to avoid conflicts
     @State private var bulkSetupDataProvider = StudentAppProfileDataProvider()
     
-    /// The currently active class (selected or default first class)
+    // MARK: - Computed Properties
+    
+    /// The currently active class - either explicitly selected or defaults to first class
     private var activeClass: TeacherClassInfo? {
         selectedClass ?? teacherClasses.first
     }
@@ -128,6 +163,8 @@ struct TeacherDashboardView: View {
     
     // MARK: - Login Prompt View
     
+    /// Shown when user is not authenticated.
+    /// Displays a sign-in button that navigates to TeacherLoginView.
     private var loginPromptView: some View {
         VStack(spacing: 24) {
             Image(systemName: "person.crop.circle.badge.questionmark")
@@ -157,6 +194,7 @@ struct TeacherDashboardView: View {
     
     // MARK: - Loading View
     
+    /// Spinner shown while fetching teacher data from the API.
     private var loadingView: some View {
         VStack(spacing: 16) {
             ProgressView()
@@ -168,6 +206,7 @@ struct TeacherDashboardView: View {
     
     // MARK: - Error View
     
+    /// Displays an error message with a retry button when data loading fails.
     private func errorView(message: String) -> some View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle.fill")
@@ -194,6 +233,7 @@ struct TeacherDashboardView: View {
     
     // MARK: - Empty Classes View
     
+    /// Shown when the teacher has no classes assigned to them.
     private var emptyClassesView: some View {
         ContentUnavailableView(
             "No Classes Found",
@@ -204,6 +244,8 @@ struct TeacherDashboardView: View {
     
     // MARK: - Class Selection Prompt View
     
+    /// Shown when teacher teaches multiple classes and hasn't selected one yet.
+    /// Displays a list of classes to choose from.
     private var classSelectionPromptView: some View {
         VStack(spacing: 32) {
             Spacer()
@@ -263,8 +305,13 @@ struct TeacherDashboardView: View {
         .background(Color(.systemGray6))
     }
     
-    // MARK: - Classes Content View (now shows students directly)
+    // MARK: - Classes Content View
     
+    /// Main content view showing the dashboard with:
+    /// - Welcome header with teacher's name
+    /// - Current class info bar
+    /// - Timeslot picker (AM/PM/Home)
+    /// - Students grid with profile cards
     private var classesContentView: some View {
         VStack(spacing: 0) {
             // Fixed header section
@@ -301,6 +348,8 @@ struct TeacherDashboardView: View {
     
     // MARK: - Welcome Header
     
+    /// Top card showing "Welcome back, [Teacher's Name]" with current date
+    /// and a "Switch" button if teacher has multiple classes.
     private var welcomeHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -352,6 +401,7 @@ struct TeacherDashboardView: View {
     
     // MARK: - Class Info Card
     
+    /// Compact bar showing current class name with student/device counts.
     private var classInfoCard: some View {
         Group {
             if let classInfo = activeClass {
@@ -384,6 +434,8 @@ struct TeacherDashboardView: View {
     
     // MARK: - Inline Timeslot Picker
     
+    /// Segmented control for selecting AM, PM, or Home timeslot.
+    /// Changing this updates which app profiles are shown for each student.
     private var inlineTimeslotPicker: some View {
         VStack(spacing: 4) {
             Picker("Timeslot", selection: $selectedTimeslot) {
@@ -422,6 +474,8 @@ struct TeacherDashboardView: View {
     
     // MARK: - Inline Students Grid
     
+    /// Main grid of StudentProfileCard components showing all students in the class.
+    /// Handles loading, error, empty, and populated states.
     private var inlineStudentsGrid: some View {
         Group {
             if dataProvider.isLoading {

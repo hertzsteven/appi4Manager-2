@@ -2,13 +2,32 @@
 //  BulkProfileSetupView.swift
 //  appi4Manager
 //
-//  Main view for bulk student profile configuration
-//  Allows teachers to configure app profiles for multiple students at once
+//  Sheet for bulk configuration of student app profiles.
+//  Allows teachers to set app permissions for multiple students at once,
+//  across multiple days and timeslots.
 //
 
 import SwiftUI
 
-/// Main view for bulk configuration of student app profiles
+// MARK: - BulkProfileSetupView
+
+/// Main sheet for bulk configuration of student app profiles.
+///
+/// **Workflow:**
+/// 1. Select one or more students from horizontal scroll
+/// 2. Select which days of the week to apply to
+/// 3. Select which timeslots (AM, PM, Home)
+/// 4. Set session duration (5-60 minutes)
+/// 5. Filter and select apps from the list
+/// 6. Tap "Apply" to save profiles to Firebase
+///
+/// **Sections:**
+/// - Student Selection: Horizontal avatar picker
+/// - Day Selection: Mon-Fri pills with select all
+/// - Timeslot Selection: AM/PM/Home pills
+/// - Session Duration: Slider from 5-60 minutes  
+/// - Category Filter: Filter apps by type
+/// - App List: Scrollable list of selectable apps
 struct BulkProfileSetupView: View {
     
     // MARK: - Properties
@@ -82,6 +101,8 @@ struct BulkProfileSetupView: View {
     
     // MARK: - Student Selection Section
     
+    /// Horizontal scrolling list of student avatars with checkmarks.
+    /// Tapping toggles selection, and there's a Select/Deselect All button.
     private var studentSelectionSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -124,6 +145,8 @@ struct BulkProfileSetupView: View {
     
     // MARK: - Day Selection Section
     
+    /// Row of weekday pills (Mon-Fri). Tap to toggle each day.
+    /// Select All button toggles all weekdays at once.
     private var daySelectionSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -162,6 +185,8 @@ struct BulkProfileSetupView: View {
     
     // MARK: - Timeslot Selection Section
     
+    /// Row of timeslot pills (AM, PM, Home). Multiple can be selected.
+    /// Each timeslot shows its time range below the label.
     private var timeslotSelectionSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Select Timeslots", systemImage: "clock")
@@ -185,6 +210,8 @@ struct BulkProfileSetupView: View {
     
     // MARK: - Session Duration Section
     
+    /// Slider to set session length from 5-60 minutes.
+    /// This duration applies to all selected apps.
     private var sessionDurationSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Session Duration", systemImage: "timer")
@@ -218,6 +245,8 @@ struct BulkProfileSetupView: View {
     
     // MARK: - Category Filter Section
     
+    /// Horizontal scroll of category pills to filter the app list.
+    /// Categories include: All, Education, Productivity, Creativity, Games, Utilities.
     private var categoryFilterSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Filter by Category", systemImage: "line.3.horizontal.decrease.circle")
@@ -245,6 +274,9 @@ struct BulkProfileSetupView: View {
     
     // MARK: - App List Section
     
+    /// Scrollable list of apps from the class devices.
+    /// Shows app icon, name, vendor, and selection checkmark.
+    /// Filtered by the currently selected category.
     private var appListSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -296,6 +328,8 @@ struct BulkProfileSetupView: View {
     
     // MARK: - Apply Button
     
+    /// Bottom action bar with summary text and "Apply" button.
+    /// Disabled until at least one student, day, timeslot, and app are selected.
     private var applyButton: some View {
         VStack(spacing: 8) {
             // Summary text
@@ -332,6 +366,7 @@ struct BulkProfileSetupView: View {
     
     // MARK: - Saving Overlay
     
+    /// Full-screen overlay with spinner shown while saving profiles to Firebase.
     private var savingOverlay: some View {
         ZStack {
             Color.black.opacity(0.3)
