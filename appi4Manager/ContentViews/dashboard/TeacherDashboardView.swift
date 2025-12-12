@@ -17,6 +17,10 @@ struct TeacherDashboardView: View {
     @State private var hasAttemptedLoad = false
     @State private var selectedClass: TeacherClassInfo?
     @State private var showClassSelector = false
+    @State private var showBulkSetup = false
+    
+    /// Data provider for bulk profile setup
+    @State private var bulkSetupDataProvider = StudentAppProfileDataProvider()
     
     /// The currently active class (selected or default first class)
     private var activeClass: TeacherClassInfo? {
@@ -46,7 +50,14 @@ struct TeacherDashboardView: View {
             .navigationTitle("Teacher Dashboard")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button {
+                        showBulkSetup = true
+                    } label: {
+                        Image(systemName: "slider.horizontal.3")
+                    }
+                    .disabled(activeClass == nil)
+                    
                     NavigationLink(destination: SettingsView()) {
                         Image(systemName: "gearshape")
                     }
@@ -59,6 +70,15 @@ struct TeacherDashboardView: View {
                 selectedClass: $selectedClass,
                 isPresented: $showClassSelector
             )
+        }
+        .sheet(isPresented: $showBulkSetup) {
+            if let activeClass = activeClass {
+                BulkProfileSetupView(
+                    students: activeClass.students,
+                    devices: activeClass.devices,
+                    dataProvider: bulkSetupDataProvider
+                )
+            }
         }
         .task {
             if authManager.isAuthenticated {
