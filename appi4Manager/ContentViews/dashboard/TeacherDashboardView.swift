@@ -14,6 +14,7 @@ struct TeacherDashboardView: View {
     @State private var isLoading = false
     @State private var teacherClasses: [TeacherClassInfo] = []
     @State private var errorMessage: String?
+    @State private var hasAttemptedLoad = false
     @State private var selectedClass: TeacherClassInfo?
     @State private var showClassSelector = false
     
@@ -28,7 +29,7 @@ struct TeacherDashboardView: View {
                 if !authManager.isAuthenticated {
                     // Not logged in - show login prompt
                     loginPromptView
-                } else if isLoading {
+                } else if isLoading || !hasAttemptedLoad {
                     loadingView
                 } else if let error = errorMessage {
                     errorView(message: error)
@@ -461,6 +462,7 @@ struct TeacherDashboardView: View {
             await MainActor.run {
                 errorMessage = "No authenticated teacher found."
                 isLoading = false
+                hasAttemptedLoad = true
             }
             return
         }
@@ -506,11 +508,11 @@ struct TeacherDashboardView: View {
                     #endif
                 }
                 
-                // Fetch devices for this class
+                // Fetch devices for this class (with apps included for Edit Profile functionality)
                 var devices: [TheDevice] = []
                 do {
                     let deviceResponse: DeviceListResponse = try await ApiManager.shared.getData(
-                        from: .getDevices(assettag: String(schoolClass.userGroupId))
+                        from: .getDevicesWithApps(assettag: String(schoolClass.userGroupId))
                     )
                     devices = deviceResponse.devices
                 } catch {
@@ -537,12 +539,14 @@ struct TeacherDashboardView: View {
             await MainActor.run {
                 teacherClasses = classInfos
                 isLoading = false
+                hasAttemptedLoad = true
             }
             
         } catch {
             await MainActor.run {
                 errorMessage = "Failed to load class info: \(error.localizedDescription)"
                 isLoading = false
+                hasAttemptedLoad = true
             }
         }
     }
@@ -736,6 +740,11 @@ struct TeacherStudentsView: View {
         teacherClasses.flatMap { $0.students }
     }
     
+    /// All devices flattened from all classes (for accessing installed apps)
+    private var allDevices: [TheDevice] {
+        teacherClasses.flatMap { $0.devices }
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             // Timeslot Picker
@@ -791,7 +800,8 @@ struct TeacherStudentsView: View {
                                 student: student,
                                 timeslot: selectedTimeslot,
                                 dayString: currentDayString,
-                                dataProvider: dataProvider
+                                dataProvider: dataProvider,
+                                classDevices: allDevices
                             )
                         }
                     }

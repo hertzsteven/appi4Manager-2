@@ -58,6 +58,7 @@ enum LoadinxState {
 struct StudentAppProfilxWorkingView {
   
     @EnvironmentObject var usersViewModel: UsersViewModel
+    @EnvironmentObject var appxViewModel: AppxViewModel
     @State var noShow = true
     //  MARK:  Properties
     @State private var selectedDay = DayOfWeek.sunday
@@ -74,7 +75,7 @@ struct StudentAppProfilxWorkingView {
     //  MARK:  Control the popup
     @State var presentMakeAppProfile: Bool  = false
     @State var timeOfDay                    = TimeOfDay.am
-    @State var appCode = 0
+    @State var appCode = ""
     @State private var selectedSession: Session?
     @State var appsAMinfo: Array<Appx> = []
     @State var appsPMinfo: Array<Appx> = []
@@ -502,7 +503,7 @@ extension StudentAppProfilxWorkingView {
             return $currentDayStudentAppProfile.homeSession.sessionLength
         }
     }
-    func getappsBinding() -> Binding<[Int]> {
+    func getappsBinding() -> Binding<[String]> {
         switch timeOfDay {
         case .am:
             return $currentDayStudentAppProfile.amSession.apps
@@ -526,36 +527,16 @@ extension StudentAppProfilxWorkingView {
 //  MARK: - extension for methods that do work
 extension StudentAppProfilxWorkingView {
     func proceesAppCodes() async  {
-        appsAMinfo.removeAll()
-        dump(currentDayStudentAppProfile.amSession)
-        for appCode in currentDayStudentAppProfile.amSession.apps {
-            if let appx = await getAppInfoFor(appCode) {
-                appsAMinfo.append(appx)
-            }
+        appsAMinfo = currentDayStudentAppProfile.amSession.apps.compactMap { bundleId in
+            appxViewModel.appx.first { $0.bundleId == bundleId }
         }
-        dump(currentDayStudentAppProfile.amSession)
-        appsPMinfo.removeAll()
-        for appCode in currentDayStudentAppProfile.pmSession.apps {
-            if let appx = await getAppInfoFor(appCode) {
-                appsPMinfo.append(appx)
-            }
+
+        appsPMinfo = currentDayStudentAppProfile.pmSession.apps.compactMap { bundleId in
+            appxViewModel.appx.first { $0.bundleId == bundleId }
         }
-        appsHomeinfo.removeAll()
-        for appCode in currentDayStudentAppProfile.homeSession.apps {
-            if let appx = await getAppInfoFor(appCode) {
-                appsHomeinfo.append(appx)
-            }
-        }
-    }
-    func getAppInfoFor(_ appCode: Int) async  -> Appx? {
-        do {
-            let appxOne: Appx  = try await ApiManager.shared.getData(from: .getanApp(appId: appCode))
-            dump(appxOne)
-            return appxOne
-        } catch  {
-        //  FIXME: -  put in alert that will display approriate error message
-            print(error)
-            return nil
+
+        appsHomeinfo = currentDayStudentAppProfile.homeSession.apps.compactMap { bundleId in
+            appxViewModel.appx.first { $0.bundleId == bundleId }
         }
     }
     func setCurrentDateWith(_ stringDayOfWeek: String)  {

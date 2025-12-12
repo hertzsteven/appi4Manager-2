@@ -41,6 +41,7 @@ enum ApiEndpoint {
     case getApps
     case getanApp(appId: Int)
     case getDevices(assettag: String?)
+    case getDevicesWithApps(assettag: String?)  // Includes installed apps in response
     case updateDevice(uuid: String, assetTag: String)
     case clearRestrictionsAll(teachAuth: String, scope: String, scopeId:String)
     case lockIntoApp(appBundleId: String, studentID: String, teachAuth: String)
@@ -101,7 +102,9 @@ extension ApiEndpoint {
             return "/apps"
         case .getanApp(let appId):
             return "/apps/\(appId)"
-        case .getDevices(assettag: let assettag):
+        case .getDevices(assettag: _):
+            return "/devices"
+        case .getDevicesWithApps(assettag: _):
             return "/devices"
         case .updateDevice(let uuid,let assetTag):
             return "/devices/\(uuid)/details"
@@ -206,6 +209,12 @@ extension ApiEndpoint {
             } else {
                 return nil
             }
+        case .getDevicesWithApps(let assettag):
+            var params = [URLQueryItem(name: "includeApps", value: "true")]
+            if let assettag = assettag {
+                params.append(URLQueryItem(name: "assettag", value: assettag))
+            }
+            return params
 //        case .getStudents(uuid: _):
 //            return [URLQueryItem(name: "token", value: "9c74b8d6a4934ca986dfe46592896801")]
         default:

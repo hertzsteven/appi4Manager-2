@@ -98,6 +98,8 @@ enum LoadingState {
 struct StudentAppProfileWorkingView {
     
     @State var noShow = true
+
+    @EnvironmentObject var appxViewModel: AppxViewModel
     
     //  MARK:  Properties
     @State private var selectedDay = DayOfWeek.sunday
@@ -119,7 +121,7 @@ struct StudentAppProfileWorkingView {
     @State var presentMakeAppProfile: Bool  = false
     @State var timeOfDay                    = TimeOfDay.am
     
-    @State var appCode = 0
+    @State var appCode = ""
     @State private var selectedSession: Session?
     
     @State var appsAMinfo: Array<Appx> = []
@@ -766,7 +768,7 @@ extension StudentAppProfileWorkingView {
         }
     }
     
-    func getappsBinding() -> Binding<[Int]> {
+    func getappsBinding() -> Binding<[String]> {
         switch timeOfDay {
         case .am:
             return $currentDayStudentAppProfile.amSession.apps
@@ -794,40 +796,17 @@ extension StudentAppProfileWorkingView {
 extension StudentAppProfileWorkingView {
     
     func proceesAppCodes() async  {
-        appsAMinfo.removeAll()
-        dump(currentDayStudentAppProfile.amSession)
-        for appCode in currentDayStudentAppProfile.amSession.apps {
-            if let appx = await getAppInfoFor(appCode) {
-                appsAMinfo.append(appx)
-            }
-        }
-        dump(currentDayStudentAppProfile.amSession)
-        appsPMinfo.removeAll()
-        for appCode in currentDayStudentAppProfile.pmSession.apps {
-            if let appx = await getAppInfoFor(appCode) {
-                appsPMinfo.append(appx)
-            }
-        }
-        appsHomeinfo.removeAll()
-        for appCode in currentDayStudentAppProfile.homeSession.apps {
-            if let appx = await getAppInfoFor(appCode) {
-                appsHomeinfo.append(appx)
-            }
+        appsAMinfo = currentDayStudentAppProfile.amSession.apps.compactMap { bundleId in
+            appxViewModel.appx.first { $0.bundleId == bundleId }
         }
 
-    }
-    
-    func getAppInfoFor(_ appCode: Int) async  -> Appx? {
-        do {
-            let appxOne: Appx  = try await ApiManager.shared.getData(from: .getanApp(appId: appCode))
-            dump(appxOne)
-            return appxOne
-        } catch  {
-        //  FIXME: -  put in alert that will display approriate error message
-            print(error)
-            return nil
+        appsPMinfo = currentDayStudentAppProfile.pmSession.apps.compactMap { bundleId in
+            appxViewModel.appx.first { $0.bundleId == bundleId }
         }
-        
+
+        appsHomeinfo = currentDayStudentAppProfile.homeSession.apps.compactMap { bundleId in
+            appxViewModel.appx.first { $0.bundleId == bundleId }
+        }
     }
   
     func setCurrentDateWith(_ stringDayOfWeek: String)  {

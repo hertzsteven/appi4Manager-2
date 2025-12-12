@@ -34,7 +34,7 @@ struct MockToStudentScreenView: View {
     @State var presentMakeAppProfile: Bool  = false
     @State var timeOfDay                    = TimeOfDay.am
     
-    @State var appCode = 0
+    @State var appCode = ""
     @State private var selectedSession: Session?
     
 }
@@ -152,11 +152,10 @@ extension MockToStudentScreenView {
     func amGroupBox(theTitle: String = "am session")-> some View {
         return  GroupBox {
             Text("Student Code \(studentId) and \(studentAppprofile.sessions.count)").padding()
-            let stringArray     = currentDayStudentAppProfile.amSession.apps.map { String($0) }
-            let joinedString    = stringArray.joined(separator: ",")
-                Text("App codes: \(joinedString)")
-             if let theApps = currentDayStudentAppProfile.amSession.apps.first {
-                Text("App codes: \(theApps)")
+            let joinedString = currentDayStudentAppProfile.amSession.apps.joined(separator: ", ")
+            Text("App bundle IDs: \(joinedString)")
+            if let theApps = currentDayStudentAppProfile.amSession.apps.first {
+                Text("First app bundle ID: \(theApps)")
             }
             Text("Length of seconds \(currentDayStudentAppProfile.amSession.sessionLength)").padding()
             Text("App lock is \(currentDayStudentAppProfile.amSession.oneAppLock ? "true" : "false")")
@@ -181,7 +180,7 @@ extension MockToStudentScreenView {
         }
     }
     
-    func getappsBinding() -> Binding<[Int]> {
+    func getappsBinding() -> Binding<[String]> {
         switch timeOfDay {
         case .am:
             return $currentDayStudentAppProfile.amSession.apps

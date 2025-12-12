@@ -175,6 +175,8 @@ struct SettingsView: View {
         }
     }
     
+
+    
     // MARK: - Authenticated Account View
     
     private var authenticatedAccountView: some View {

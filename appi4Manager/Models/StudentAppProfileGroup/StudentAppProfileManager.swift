@@ -100,14 +100,14 @@ extension StudentAppProfileManager {
 
     static func sampleProfile() -> [StudentAppProfilex] {
         
-        let sampleProfile1 = generateSampleProfileforId(id: 3, locationId: 0, apps: [11,34], sessionLength: 20, oneAppLock: false)
-        let sampleProfile2 = generateSampleProfileforId(id: 8, locationId: 0, apps: [27], sessionLength: 30, oneAppLock: false)
-        let sampleProfile3 = generateSampleProfileforId(id: 48, locationId: 0, apps: [34], sessionLength: 15, oneAppLock: true)
+        let sampleProfile1 = generateSampleProfileforId(id: 3, locationId: 0, apps: ["com.sample.app1", "com.sample.app2"], sessionLength: 20, oneAppLock: false)
+        let sampleProfile2 = generateSampleProfileforId(id: 8, locationId: 0, apps: ["com.sample.app3"], sessionLength: 30, oneAppLock: false)
+        let sampleProfile3 = generateSampleProfileforId(id: 48, locationId: 0, apps: ["com.sample.app2"], sessionLength: 15, oneAppLock: true)
         
         return [sampleProfile1, sampleProfile2, sampleProfile3 ]
     }
     
-    static func generateSampleProfileforId(id: Int, locationId: Int, apps:[Int], sessionLength: Double, oneAppLock: Bool ) ->  StudentAppProfilex {
+    static func generateSampleProfileforId(id: Int, locationId: Int, apps:[String], sessionLength: Double, oneAppLock: Bool ) ->  StudentAppProfilex {
         let sampleSession = Session(apps: apps, sessionLength: sessionLength, oneAppLock: oneAppLock)
         let sampleDailySessions = DailySessions(amSession: sampleSession, pmSession: sampleSession, homeSession: sampleSession)
         

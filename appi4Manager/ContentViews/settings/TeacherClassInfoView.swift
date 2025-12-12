@@ -405,14 +405,18 @@ struct TeacherClassInfoView: View {
                 }
                 
                 // 5b. Fetch devices for this class using the userGroupId as asset tag filter
+                // Using getDevicesWithApps to include installed apps for profile editing
                 var devices: [TheDevice] = []
                 do {
                     let deviceResponse: DeviceListResponse = try await ApiManager.shared.getData(
-                        from: .getDevices(assettag: String(schoolClass.userGroupId))
+                        from: .getDevicesWithApps(assettag: String(schoolClass.userGroupId))
                     )
                     devices = deviceResponse.devices
                     #if DEBUG
-                    print("📚 Fetched \(devices.count) devices for class \(schoolClass.name) with asset tag \(schoolClass.userGroupId)")
+                    print("📚 Fetched \(devices.count) devices with apps for class \(schoolClass.name)")
+                    if let firstDevice = devices.first, let apps = firstDevice.apps {
+                        print("📚 First device '\(firstDevice.name)' has \(apps.count) installed apps")
+                    }
                     #endif
                 } catch {
                     #if DEBUG

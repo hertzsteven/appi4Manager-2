@@ -9,7 +9,7 @@ import Foundation
 
 struct Session: Identifiable, Codable, Equatable {
     var id = UUID() // to make it unique per session
-    var apps: [Int]
+    var apps: [String]  // Bundle IDs of selected apps
     var sessionLength: Double
     var oneAppLock: Bool
     

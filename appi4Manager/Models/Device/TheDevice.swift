@@ -41,6 +41,7 @@ struct TheDevice: Codable, Identifiable, Hashable {
     let lastCheckin: String
     let modified: String
     var notes: String
+    var apps: [DeviceApp]?  // Populated when fetched with includeApps=true
     var title: String { name }
     var picName: String { "iPadGraphic" }
     var id: String { UDID }

@@ -60,6 +60,7 @@
 		465F45812EEB011500F9A625 /* DeviceAppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465F457F2EEB011500F9A625 /* DeviceAppLockView.swift */; };
 		465F45822EEB011500F9A625 /* MultiDeviceAppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465F45802EEB011500F9A625 /* MultiDeviceAppLockView.swift */; };
 		465F45842EEB531100F9A625 /* StudentAppProfileDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465F45832EEB531100F9A625 /* StudentAppProfileDataProvider.swift */; };
+		465F45862EEB701C00F9A625 /* DeviceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465F45852EEB701C00F9A625 /* DeviceApp.swift */; };
 		4664639B2B46EABF0017A639 /* TheDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4664639A2B46EABF0017A639 /* TheDevice.swift */; };
 		4664639D2B46EB0F0017A639 /* DeviceListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4664639C2B46EB0F0017A639 /* DeviceListResponse.swift */; };
 		4664639F2B46FE650017A639 /* DevicesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4664639E2B46FE650017A639 /* DevicesViewModel.swift */; };
@@ -167,6 +168,7 @@
 		465F457F2EEB011500F9A625 /* DeviceAppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAppLockView.swift; sourceTree = "<group>"; };
 		465F45802EEB011500F9A625 /* MultiDeviceAppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiDeviceAppLockView.swift; sourceTree = "<group>"; };
 		465F45832EEB531100F9A625 /* StudentAppProfileDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentAppProfileDataProvider.swift; sourceTree = "<group>"; };
+		465F45852EEB701C00F9A625 /* DeviceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceApp.swift; sourceTree = "<group>"; };
 		4664639A2B46EABF0017A639 /* TheDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheDevice.swift; sourceTree = "<group>"; };
 		4664639C2B46EB0F0017A639 /* DeviceListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceListResponse.swift; sourceTree = "<group>"; };
 		4664639E2B46FE650017A639 /* DevicesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesViewModel.swift; sourceTree = "<group>"; };
@@ -476,6 +478,7 @@
 		466463992B46EA9A0017A639 /* Device */ = {
 			isa = PBXGroup;
 			children = (
+				465F45852EEB701C00F9A625 /* DeviceApp.swift */,
 				4664639A2B46EABF0017A639 /* TheDevice.swift */,
 				4664639C2B46EB0F0017A639 /* DeviceListResponse.swift */,
 			);
@@ -786,6 +789,7 @@
 				46D6C83029FE9D66009861FD /* ItemListSelectView.swift in Sources */,
 				460CC64F2B1D03760050437D /* AppConstants.swift in Sources */,
 				46584FCA2993E1040025F539 /* list_the_usersApp.swift in Sources */,
+				465F45862EEB701C00F9A625 /* DeviceApp.swift in Sources */,
 				461D89B52A6DC50100678391 /* CategoryEditorContView.swift in Sources */,
 				46BAB4892B30956600C155B9 /* StudentAppProfilex.swift in Sources */,
 				465057852B23673100AC7F3C /* TeacherItems.swift in Sources */,

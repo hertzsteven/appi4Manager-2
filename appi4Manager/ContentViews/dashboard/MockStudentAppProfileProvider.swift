@@ -15,20 +15,21 @@ struct MockStudentAppProfileProvider {
     /// Represents a mock app with display info
     struct MockApp: Identifiable {
         let id: Int
+        let bundleId: String
         let name: String
         let iconSystemName: String  // SF Symbol name for mock icons
     }
     
     /// Sample apps that can be assigned to students
     static let sampleApps: [MockApp] = [
-        MockApp(id: 11, name: "Elmo Loves ABCs", iconSystemName: "textformat.abc"),
-        MockApp(id: 27, name: "BusyShapes", iconSystemName: "square.on.circle"),
-        MockApp(id: 34, name: "Reading Eggs", iconSystemName: "book.fill"),
-        MockApp(id: 45, name: "Math Kids", iconSystemName: "function"),
-        MockApp(id: 56, name: "Khan Academy Kids", iconSystemName: "graduationcap.fill"),
-        MockApp(id: 67, name: "PBS Kids Games", iconSystemName: "gamecontroller.fill"),
-        MockApp(id: 78, name: "Starfall Learn", iconSystemName: "star.fill"),
-        MockApp(id: 89, name: "Homer Reading", iconSystemName: "text.book.closed.fill")
+        MockApp(id: 11, bundleId: "com.sesame.elmoabcs", name: "Elmo Loves ABCs", iconSystemName: "textformat.abc"),
+        MockApp(id: 27, bundleId: "com.busyshapes.app", name: "BusyShapes", iconSystemName: "square.on.circle"),
+        MockApp(id: 34, bundleId: "com.readingeggs.app", name: "Reading Eggs", iconSystemName: "book.fill"),
+        MockApp(id: 45, bundleId: "com.mathkids.app", name: "Math Kids", iconSystemName: "function"),
+        MockApp(id: 56, bundleId: "org.khanacademy.kids", name: "Khan Academy Kids", iconSystemName: "graduationcap.fill"),
+        MockApp(id: 67, bundleId: "org.pbs.kidsgames", name: "PBS Kids Games", iconSystemName: "gamecontroller.fill"),
+        MockApp(id: 78, bundleId: "com.starfall.learn", name: "Starfall Learn", iconSystemName: "star.fill"),
+        MockApp(id: 89, bundleId: "com.homer.reading", name: "Homer Reading", iconSystemName: "text.book.closed.fill")
     ]
     
     // MARK: - Mock Profile Generator
@@ -68,28 +69,28 @@ struct MockStudentAppProfileProvider {
         )
     }
     
-    /// Generates an array of app IDs based on seed
-    private static func generateAppIds(seed: Int, count: Int) -> [Int] {
-        var result: [Int] = []
+    /// Generates an array of app bundle IDs based on seed
+    private static func generateAppIds(seed: Int, count: Int) -> [String] {
+        var result: [String] = []
         for i in 0..<count {
             let index = (seed + i * 13) % sampleApps.count
-            result.append(sampleApps[index].id)
+            result.append(sampleApps[index].bundleId)
         }
         return result
     }
     
-    /// Gets the mock app info for a given app ID
-    /// - Parameter appId: The app ID to look up
+    /// Gets the mock app info for a given bundle ID
+    /// - Parameter bundleId: The bundle ID to look up
     /// - Returns: The MockApp if found, nil otherwise
-    static func getApp(byId appId: Int) -> MockApp? {
-        sampleApps.first { $0.id == appId }
+    static func getApp(byBundleId bundleId: String) -> MockApp? {
+        sampleApps.first { $0.bundleId == bundleId }
     }
     
-    /// Gets mock apps for an array of app IDs
-    /// - Parameter appIds: Array of app IDs
+    /// Gets mock apps for an array of bundle IDs
+    /// - Parameter bundleIds: Array of bundle IDs
     /// - Returns: Array of MockApp objects
-    static func getApps(byIds appIds: [Int]) -> [MockApp] {
-        appIds.compactMap { getApp(byId: $0) }
+    static func getApps(byBundleIds bundleIds: [String]) -> [MockApp] {
+        bundleIds.compactMap { getApp(byBundleId: $0) }
     }
     
     // MARK: - Current Timeslot Helper

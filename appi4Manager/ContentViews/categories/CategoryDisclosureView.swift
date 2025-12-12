@@ -70,7 +70,8 @@ struct CategoryDisclosureView: View {
     // @EnvironmentObject var appWorkViewModel : AppWorkViewModel
     @EnvironmentObject var categoryViewModel: CategoryViewModel
     
-    @State var appSelected: Array<Int> = [] {
+    /// Selected apps as **bundle identifiers** (e.g. "com.apple.pages")
+    @State var appSelected: Array<String> = [] {
         didSet {
             print("^ count \(apps.count)")
             apps.removeAll()
@@ -82,14 +83,14 @@ struct CategoryDisclosureView: View {
     @State var accumulatex: Double = 0
     
     var filteredData: [Appx] {
-        appxViewModel.appx.filter { appSelected.contains($0.id) }
+        appxViewModel.appx.filter { appSelected.contains($0.bundleId) }
     }
     
     @State private var selectedSegment = 0
     @Binding var sessionLength          : Double
     @Binding var oneAppLock             : Bool
-    @Binding var appCode                : Int
-    @Binding var apps                   : [Int]
+    @Binding var appCode                : String
+    @Binding var apps                   : [String]
     
     var body: some View {
         Group   {
@@ -103,7 +104,7 @@ struct CategoryDisclosureView: View {
                         Picker("Apps", selection: $selectedSegment) {
                             ForEach(appSelected, id: \.self) { appsel in
                                     //                        Text(appxViewModel.appx.filter { appSelected.contains($0.id) }[index].name).tag(index)
-                                if let idx = appxViewModel.appx.firstIndex(where: { $0.id == appsel }) {
+                                if let idx = appxViewModel.appx.firstIndex(where: { $0.bundleId == appsel }) {
                                     HStack {
                                         Text(appxViewModel.appx[idx].name)
                                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -161,15 +162,16 @@ struct CategoryDisclosureView: View {
                                         //                        LblExtractedSubview(matchedApp: matchedApp)
                                     
                                     Button {
-                                        if let idx = appSelected.firstIndex(of: appId) {
+                                        let bundleId = matchedApp.bundleId
+                                        if let idx = appSelected.firstIndex(of: bundleId) {
                                             appSelected.remove(at: idx)
                                             accumulatex -= 1
                                         } else {
                                                 //                                if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
                                             withAnimation {
                                                 accumulatex += 1
-                                                appSelected.append(matchedApp.id)
-                                                appCode = matchedApp.id
+                                                appSelected.append(bundleId)
+                                                appCode = bundleId
                                             }
                                         }
                                         
@@ -177,7 +179,7 @@ struct CategoryDisclosureView: View {
                                         GroupBox {
                                             HStack {
                                                 if let matchedApp = appxViewModel.appx.first(where: { $0.id == appId }) {
-                                                    if appSelected.contains(matchedApp.id) {
+                                                    if appSelected.contains(matchedApp.bundleId) {
                                                         Image(systemName: "checkmark.square")
                                                             .foregroundColor(.blue)
                                                             .scaleEffect(1.3)
@@ -301,7 +303,7 @@ struct CategoryDisclosureView: View {
         Picker("Apps", selection: $selectedSegment) {
             ForEach(appSelected, id: \.self) { appsel in
                     //                        Text(appxViewModel.appx.filter { appSelected.contains($0.id) }[index].name).tag(index)
-                if let idx = appxViewModel.appx.firstIndex(where: { $0.id == appsel }) {
+                if let idx = appxViewModel.appx.firstIndex(where: { $0.bundleId == appsel }) {
                     HStack {
                         Text(appxViewModel.appx[idx].name)
                             .frame(maxWidth: .infinity, alignment: .leading)
