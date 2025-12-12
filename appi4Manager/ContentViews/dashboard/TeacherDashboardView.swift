@@ -19,6 +19,15 @@ struct TeacherDashboardView: View {
     @State private var showClassSelector = false
     @State private var showBulkSetup = false
     
+    /// Selected timeslot for viewing app profiles
+    @State private var selectedTimeslot: TimeOfDay = StudentAppProfileDataProvider.currentTimeslot()
+    
+    /// Show devices sheet
+    @State private var showDevicesSheet = false
+    
+    /// Data provider for student app profiles (for inline students grid)
+    @State private var dataProvider = StudentAppProfileDataProvider()
+    
     /// Data provider for bulk profile setup
     @State private var bulkSetupDataProvider = StudentAppProfileDataProvider()
     
@@ -47,10 +56,19 @@ struct TeacherDashboardView: View {
                     classesContentView
                 }
             }
-            .navigationTitle("Teacher Dashboard")
+            .navigationTitle("My Students")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    // Devices button
+                    Button {
+                        showDevicesSheet = true
+                    } label: {
+                        Image(systemName: "ipad.landscape")
+                    }
+                    .disabled(activeClass == nil)
+                    
+                    // Bulk profile setup
                     Button {
                         showBulkSetup = true
                     } label: {
@@ -78,6 +96,20 @@ struct TeacherDashboardView: View {
                     devices: activeClass.devices,
                     dataProvider: bulkSetupDataProvider
                 )
+            }
+        }
+        .sheet(isPresented: $showDevicesSheet) {
+            if let activeClass = activeClass {
+                NavigationStack {
+                    TeacherDevicesView(teacherClasses: [activeClass])
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Done") {
+                                    showDevicesSheet = false
+                                }
+                            }
+                        }
+                }
             }
         }
         .task {
@@ -163,18 +195,11 @@ struct TeacherDashboardView: View {
     // MARK: - Empty Classes View
     
     private var emptyClassesView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "person.3.fill")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
-            
-            Text("No Classes Found")
-                .font(.headline)
-            
-            Text("You don't have any classes assigned yet.")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-        }
+        ContentUnavailableView(
+            "No Classes Found",
+            systemImage: "person.3.fill",
+            description: Text("You don't have any classes assigned yet.")
+        )
     }
     
     // MARK: - Class Selection Prompt View
@@ -238,25 +263,39 @@ struct TeacherDashboardView: View {
         .background(Color(.systemGray6))
     }
     
-    // MARK: - Classes Content View (now shows category tiles)
+    // MARK: - Classes Content View (now shows students directly)
     
     private var classesContentView: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                // MARK: - Welcome Header
-                welcomeHeader
-                
-                // MARK: - Class Info Card
-                classInfoCard
-                
-                // MARK: - Category Cards
-                categoryCards
+        VStack(spacing: 0) {
+            // Fixed header section
+            ScrollView {
+                VStack(spacing: 16) {
+                    welcomeHeader
+                    classInfoCard
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
             }
-            .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
+            .frame(height: 220) // Fixed height for header section
+            
+            // Timeslot Picker
+            inlineTimeslotPicker
+            
+            // Students Grid (scrollable)
+            inlineStudentsGrid
         }
         .background(Color(.systemGray5))
+        .task {
+            // Load student profiles when view appears
+            if let activeClass = activeClass {
+                await dataProvider.loadProfiles(for: activeClass.students.map { $0.id })
+            }
+        }
         .refreshable {
             await loadTeacherData()
+            if let activeClass = activeClass {
+                await dataProvider.loadProfiles(for: activeClass.students.map { $0.id })
+            }
         }
     }
     
@@ -314,69 +353,131 @@ struct TeacherDashboardView: View {
     // MARK: - Class Info Card
     
     private var classInfoCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: "book.closed.fill")
-                    .foregroundColor(.accentColor)
-                Text("Current Class")
-                    .font(.headline)
-            }
-            
+        Group {
             if let classInfo = activeClass {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(classInfo.className)
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                    
-                    if let groupName = classInfo.userGroupName {
-                        Text(groupName)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                HStack {
+                    // Class name with icon
+                    HStack(spacing: 8) {
+                        Image(systemName: "book.closed.fill")
+                            .foregroundColor(.accentColor)
+                        Text(classInfo.className)
+                            .font(.headline)
+                            .fontWeight(.semibold)
                     }
                     
-                    HStack(spacing: 16) {
-                        Label("\(classInfo.students.count) Students", systemImage: "person.2.fill")
-                        Label("\(classInfo.devices.count) Devices", systemImage: "ipad.landscape")
+                    Spacer()
+                    
+                    // Student and device counts
+                    HStack(spacing: 12) {
+                        Label("\(classInfo.students.count)", systemImage: "person.2.fill")
+                        Label("\(classInfo.devices.count)", systemImage: "ipad.landscape")
                     }
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundColor(.secondary)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
-                .background(Color.accentColor.opacity(0.1))
-                .cornerRadius(10)
+                .background(Color(.systemBackground))
+                .cornerRadius(12)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
     }
     
-    private var categoryCards: some View {
-        LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 2), spacing: 20) {
-            // Students Category - only pass the active class
-            if let currentClass = activeClass {
-                NavigationLink(destination: TeacherStudentsView(teacherClasses: [currentClass])) {
-                    TeacherCategoryCard(
-                        name: "Students",
-                        color: .blue,
-                        iconName: "person.crop.square.fill",
-                        count: totalStudents
-                    )
+    // MARK: - Inline Timeslot Picker
+    
+    private var inlineTimeslotPicker: some View {
+        VStack(spacing: 4) {
+            Picker("Timeslot", selection: $selectedTimeslot) {
+                Text("AM").tag(TimeOfDay.am)
+                Text("PM").tag(TimeOfDay.pm)
+                Text("Home").tag(TimeOfDay.home)
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal, 20)
+            .padding(.top, 12)
+            
+            // Timeslot time range label
+            Text(inlineTimeslotTimeRange)
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .padding(.bottom, 8)
+        }
+        .background(Color(.systemBackground))
+    }
+    
+    private var inlineTimeslotTimeRange: String {
+        switch selectedTimeslot {
+        case .am:
+            return "9:00 AM - 11:59 AM"
+        case .pm:
+            return "12:00 PM - 4:59 PM"
+        case .home:
+            return "5:00 PM onwards"
+        }
+    }
+    
+    /// Current day string for profile lookup
+    private var currentDayString: String {
+        StudentAppProfileDataProvider.currentDayString()
+    }
+    
+    // MARK: - Inline Students Grid
+    
+    private var inlineStudentsGrid: some View {
+        Group {
+            if dataProvider.isLoading {
+                // Loading state
+                VStack(spacing: 16) {
+                    Spacer()
+                    ProgressView()
+                        .scaleEffect(1.5)
+                    Text("Loading student profiles...")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    Spacer()
                 }
-                .buttonStyle(.plain)
-                
-                // Devices Category - only pass the active class
-                NavigationLink(destination: TeacherDevicesView(teacherClasses: [currentClass])) {
-                    TeacherCategoryCard(
-                        name: "Devices",
-                        color: .green,
-                        iconName: "ipad.landscape",
-                        count: totalDevices
-                    )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let error = dataProvider.errorMessage {
+                // Error state
+                ContentUnavailableView {
+                    Label("Error Loading Profiles", systemImage: "exclamationmark.triangle.fill")
+                } description: {
+                    Text(error)
+                } actions: {
+                    Button("Retry") {
+                        Task {
+                            if let activeClass = activeClass {
+                                await dataProvider.loadProfiles(for: activeClass.students.map { $0.id })
+                            }
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
                 }
-                .buttonStyle(.plain)
+            } else if let activeClass = activeClass, !activeClass.students.isEmpty {
+                // Students Grid
+                ScrollView {
+                    LazyVGrid(columns: [
+                        GridItem(.adaptive(minimum: 150), spacing: 16)
+                    ], spacing: 16) {
+                        ForEach(activeClass.students, id: \.id) { student in
+                            StudentProfileCard(
+                                student: student,
+                                timeslot: selectedTimeslot,
+                                dayString: currentDayString,
+                                dataProvider: dataProvider,
+                                classDevices: activeClass.devices
+                            )
+                        }
+                    }
+                    .padding()
+                }
+                .background(Color(.systemGray6))
+            } else {
+                // Empty state
+                ContentUnavailableView(
+                    "No Students",
+                    systemImage: "person.3.fill",
+                    description: Text("No students found in this class.")
+                )
             }
         }
     }
