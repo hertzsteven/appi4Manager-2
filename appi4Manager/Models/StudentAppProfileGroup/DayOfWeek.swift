@@ -31,5 +31,11 @@ enum DayOfWeek: Int, CaseIterable {
     func dayOfWeek(from dayNumber: Int) -> DayOfWeek? {
         return DayOfWeek(rawValue: dayNumber)
     }
+    
+    /// Returns the current day of the week
+    static func current() -> DayOfWeek {
+        let dayNumber = Calendar.current.component(.weekday, from: Date())
+        return DayOfWeek(rawValue: dayNumber) ?? .monday
+    }
 
 }

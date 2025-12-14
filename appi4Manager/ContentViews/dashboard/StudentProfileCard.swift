@@ -14,6 +14,7 @@ struct StudentProfileCard: View {
     let dayString: String
     let dataProvider: StudentAppProfileDataProvider
     let classDevices: [TheDevice]  // Devices in the class (for accessing installed apps)
+    let dashboardMode: DashboardMode  // Determines what pickers to show in edit sheet
     
     @State private var apps: [DeviceApp] = []
     @State private var isLoadingApps = false
@@ -46,10 +47,11 @@ struct StudentProfileCard: View {
         NavigationLink {
             StudentProfileEditView(
                 student: student,
-                timeslot: timeslot,
-                dayString: dayString,
+                initialTimeslot: timeslot,
+                initialDayString: dayString,
                 dataProvider: dataProvider,
-                classDevices: classDevices
+                classDevices: classDevices,
+                dashboardMode: dashboardMode
             )
         } label: {
             VStack(spacing: 10) {
@@ -265,17 +267,60 @@ struct StudentProfileCard: View {
 
 struct StudentProfileEditView: View {
     let student: Student
-    let timeslot: TimeOfDay
-    let dayString: String
+    let initialTimeslot: TimeOfDay
+    let initialDayString: String
     let dataProvider: StudentAppProfileDataProvider
     let classDevices: [TheDevice]  // Devices in the class (for accessing installed apps)
+    let dashboardMode: DashboardMode  // Determines what pickers to show
+    
+    /// Selected timeslot - editable in both modes
+    @State private var selectedTimeslot: TimeOfDay
+    
+    /// Selected day - only editable in Planning mode
+    @State private var selectedDay: DayOfWeek
     
     @State private var apps: [DeviceApp] = []
     @State private var isLoadingApps = false
     @State private var showEditSheet = false
     
+    init(student: Student, initialTimeslot: TimeOfDay, initialDayString: String, 
+         dataProvider: StudentAppProfileDataProvider, classDevices: [TheDevice], dashboardMode: DashboardMode) {
+        self.student = student
+        self.initialTimeslot = initialTimeslot
+        self.initialDayString = initialDayString
+        self.dataProvider = dataProvider
+        self.classDevices = classDevices
+        self.dashboardMode = dashboardMode
+        
+        // Initialize state
+        _selectedTimeslot = State(initialValue: initialTimeslot)
+        
+        // Convert day string to DayOfWeek (default to current day if parsing fails)
+        let day = Self.dayOfWeek(from: initialDayString) ?? DayOfWeek.current()
+        _selectedDay = State(initialValue: day)
+    }
+    
+    /// Convert day string like "Mon", "Tues" to DayOfWeek
+    private static func dayOfWeek(from string: String) -> DayOfWeek? {
+        switch string.lowercased() {
+        case "mon": return .monday
+        case "tues", "tue": return .tuesday
+        case "wed": return .wednesday
+        case "thurs", "thu": return .thursday
+        case "fri": return .friday
+        case "sat": return .saturday
+        case "sun": return .sunday
+        default: return nil
+        }
+    }
+    
+    /// Current day string based on selected day
+    private var currentDayString: String {
+        selectedDay.asAString
+    }
+    
     private var session: Session? {
-        dataProvider.getSession(for: student.id, day: dayString, timeslot: timeslot)
+        dataProvider.getSession(for: student.id, day: currentDayString, timeslot: selectedTimeslot)
     }
     
     private var hasProfile: Bool {
@@ -283,7 +328,7 @@ struct StudentProfileEditView: View {
     }
     
     private var timeslotLabel: String {
-        switch timeslot {
+        switch selectedTimeslot {
         case .am: return "AM (9:00-11:59)"
         case .pm: return "PM (12:00-4:59)"
         case .home: return "Home (5:00+)"
@@ -319,16 +364,13 @@ struct StudentProfileEditView: View {
                     }
                 }
                 
-                // Student Info
-                VStack(spacing: 4) {
-                    Text(student.name)
-                        .font(.title2)
-                        .fontWeight(.bold)
-                    
-                    Text("\(dayString) • \(timeslotLabel)")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
+                // Student Name
+                Text(student.name)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                
+                // Mode-specific pickers
+                modeSpecificPickers
                 
                 Divider()
                 
@@ -460,17 +502,101 @@ struct StudentProfileEditView: View {
         .onAppear {
             loadApps()
         }
+        .onChange(of: selectedTimeslot) { _, _ in
+            loadApps()
+        }
+        .onChange(of: selectedDay) { _, _ in
+            loadApps()
+        }
         .sheet(isPresented: $showEditSheet) {
             // Refresh apps after edit
             loadApps()
         } content: {
             EditStudentProfileSheet(
                 student: student,
-                timeslot: timeslot,
-                dayString: dayString,
+                timeslot: selectedTimeslot,
+                dayString: currentDayString,
                 dataProvider: dataProvider,
                 deviceApps: firstDevice?.apps ?? []
             )
+        }
+    }
+    
+    // MARK: - Mode-Specific Pickers
+    
+    /// Shows timeslot picker (Now mode) or day+timeslot pickers (Planning mode)
+    @ViewBuilder
+    private var modeSpecificPickers: some View {
+        VStack(spacing: 16) {
+            if dashboardMode == .now {
+                // Now mode: Just timeslot picker, today's date is fixed
+                VStack(spacing: 8) {
+                    Text("Today's Session")
+                        .font(.headline)
+                    
+                    Picker("Timeslot", selection: $selectedTimeslot) {
+                        Text("AM").tag(TimeOfDay.am)
+                        Text("PM").tag(TimeOfDay.pm)
+                        Text("Home").tag(TimeOfDay.home)
+                    }
+                    .pickerStyle(.segmented)
+                    
+                    Text(timeslotLabel)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            } else {
+                // Planning mode: Day picker + Timeslot picker
+                VStack(spacing: 12) {
+                    Text("Select Day & Timeslot")
+                        .font(.headline)
+                    
+                    // Day picker
+                    HStack(spacing: 6) {
+                        ForEach(BulkProfileSetupViewModel.weekdays, id: \.self) { day in
+                            Button {
+                                selectedDay = day
+                            } label: {
+                                Text(dayShortName(day))
+                                    .font(.subheadline)
+                                    .fontWeight(selectedDay == day ? .semibold : .regular)
+                                    .foregroundColor(selectedDay == day ? .white : .primary)
+                                    .frame(width: 44, height: 36)
+                                    .background(selectedDay == day ? Color.accentColor : Color(.systemGray5))
+                                    .cornerRadius(8)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    
+                    // Timeslot picker
+                    Picker("Timeslot", selection: $selectedTimeslot) {
+                        Text("AM").tag(TimeOfDay.am)
+                        Text("PM").tag(TimeOfDay.pm)
+                        Text("Home").tag(TimeOfDay.home)
+                    }
+                    .pickerStyle(.segmented)
+                    
+                    Text("\(currentDayString) • \(timeslotLabel)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+        .padding()
+        .background(Color(.systemBackground))
+        .cornerRadius(12)
+    }
+    
+    private func dayShortName(_ day: DayOfWeek) -> String {
+        switch day {
+        case .monday: return "Mon"
+        case .tuesday: return "Tue"
+        case .wednesday: return "Wed"
+        case .thursday: return "Thu"
+        case .friday: return "Fri"
+        case .saturday: return "Sat"
+        case .sunday: return "Sun"
         }
     }
     
@@ -779,7 +905,8 @@ struct StudentProfileCard_Previews: PreviewProvider {
                 timeslot: .am,
                 dayString: "Mon",
                 dataProvider: StudentAppProfileDataProvider(),
-                classDevices: []
+                classDevices: [],
+                dashboardMode: .now
             )
             .padding()
             .previewLayout(.sizeThatFits)
@@ -793,10 +920,11 @@ struct StudentProfileEditView_Previews: PreviewProvider {
         NavigationStack {
             StudentProfileEditView(
                 student: StudentProfileCard_Previews.mockStudent,
-                timeslot: .am,
-                dayString: "Mon",
+                initialTimeslot: .am,
+                initialDayString: "Mon",
                 dataProvider: StudentAppProfileDataProvider(),
-                classDevices: []
+                classDevices: [],
+                dashboardMode: .now
             )
         }
     }

@@ -9,6 +9,14 @@
 
 import SwiftUI
 
+// MARK: - Dashboard Mode
+
+/// Determines whether the teacher is making quick changes (Now) or planning weekly schedules (Planning)
+enum DashboardMode: String, CaseIterable {
+    case now = "Now"
+    case planning = "Planning"
+}
+
 // MARK: - TeacherDashboardView
 
 /// The main teacher dashboard that displays students directly with their app profiles.
@@ -58,6 +66,15 @@ struct TeacherDashboardView: View {
     /// Controls the devices sheet visibility (accessible via toolbar iPad button)
     @State private var showDevicesSheet = false
     
+    /// Controls the student management sheet visibility
+    @State private var showStudentManagement = false
+    
+    /// Current dashboard mode: Now (quick daily changes) or Planning (weekly scheduling)
+    @State private var dashboardMode: DashboardMode = .now
+    
+    /// Selected day for Planning mode (defaults to today's weekday)
+    @State private var selectedDayForPlanning: DayOfWeek = DayOfWeek.current()
+    
     /// Provides student app profile data from Firebase
     @State private var dataProvider = StudentAppProfileDataProvider()
     
@@ -95,19 +112,19 @@ struct TeacherDashboardView: View {
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    // Student management button
+                    Button {
+                        showStudentManagement = true
+                    } label: {
+                        Image(systemName: "person.2.fill")
+                    }
+                    .disabled(activeClass == nil)
+                    
                     // Devices button
                     Button {
                         showDevicesSheet = true
                     } label: {
                         Image(systemName: "ipad.landscape")
-                    }
-                    .disabled(activeClass == nil)
-                    
-                    // Bulk profile setup
-                    Button {
-                        showBulkSetup = true
-                    } label: {
-                        Image(systemName: "slider.horizontal.3")
                     }
                     .disabled(activeClass == nil)
                     
@@ -147,6 +164,20 @@ struct TeacherDashboardView: View {
                 }
             }
         }
+        .sheet(isPresented: $showStudentManagement) {
+            if let activeClass = activeClass {
+                NavigationStack {
+                    TeacherStudentManagementSheet(classInfo: activeClass)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Done") {
+                                    showStudentManagement = false
+                                }
+                            }
+                        }
+                }
+            }
+        }
         .task {
             if authManager.isAuthenticated {
                 await loadTeacherData()
@@ -157,6 +188,12 @@ struct TeacherDashboardView: View {
                 Task {
                     await loadTeacherData()
                 }
+            }
+        }
+        .onChange(of: dashboardMode) { _, newMode in
+            // When switching to Now mode, reset timeslot to auto-detected current time
+            if newMode == .now {
+                selectedTimeslot = StudentAppProfileDataProvider.currentTimeslot()
             }
         }
     }
@@ -310,7 +347,8 @@ struct TeacherDashboardView: View {
     /// Main content view showing the dashboard with:
     /// - Welcome header with teacher's name
     /// - Current class info bar
-    /// - Timeslot picker (AM/PM/Home)
+    /// - Mode picker (Now/Planning)
+    /// - Mode-specific controls (timeslot only for Now, day+timeslot+bulk for Planning)
     /// - Students grid with profile cards
     private var classesContentView: some View {
         VStack(spacing: 0) {
@@ -325,8 +363,8 @@ struct TeacherDashboardView: View {
             }
             .frame(height: 220) // Fixed height for header section
             
-            // Timeslot Picker
-            inlineTimeslotPicker
+            // Mode Picker (Now / Planning) + Bulk Setup button in Planning mode
+            modePickerWithBulkButton
             
             // Students Grid (scrollable)
             inlineStudentsGrid
@@ -344,6 +382,44 @@ struct TeacherDashboardView: View {
                 await dataProvider.loadProfiles(for: activeClass.students.map { $0.id })
             }
         }
+    }
+    
+    // MARK: - Mode Picker with Bulk Button
+    
+    /// Mode picker segmented control + Bulk Setup button (visible only in Planning mode)
+    private var modePickerWithBulkButton: some View {
+        VStack(spacing: 12) {
+            // Mode picker
+            Picker("Mode", selection: $dashboardMode) {
+                ForEach(DashboardMode.allCases, id: \.self) { mode in
+                    Text(mode.rawValue).tag(mode)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal, 20)
+            .padding(.top, 12)
+            
+            // Bulk Setup button - only visible in Planning mode
+            if dashboardMode == .planning {
+                Button {
+                    showBulkSetup = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "slider.horizontal.3")
+                        Text("Bulk Setup")
+                            .fontWeight(.medium)
+                    }
+                    .font(.subheadline)
+                    .foregroundColor(.accentColor)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(Color.accentColor.opacity(0.1))
+                    .cornerRadius(8)
+                }
+            }
+        }
+        .padding(.bottom, 12)
+        .background(Color(.systemBackground))
     }
     
     // MARK: - Welcome Header
@@ -467,9 +543,13 @@ struct TeacherDashboardView: View {
         }
     }
     
-    /// Current day string for profile lookup
+    /// Day string for profile lookup - uses today in Now mode, selected day in Planning mode
     private var currentDayString: String {
-        StudentAppProfileDataProvider.currentDayString()
+        if dashboardMode == .now {
+            return StudentAppProfileDataProvider.currentDayString()
+        } else {
+            return selectedDayForPlanning.asAString
+        }
     }
     
     // MARK: - Inline Students Grid
@@ -518,7 +598,8 @@ struct TeacherDashboardView: View {
                                 timeslot: selectedTimeslot,
                                 dayString: currentDayString,
                                 dataProvider: dataProvider,
-                                classDevices: activeClass.devices
+                                classDevices: activeClass.devices,
+                                dashboardMode: dashboardMode
                             )
                         }
                     }
@@ -724,6 +805,113 @@ struct TeacherDashboardView: View {
                 hasAttemptedLoad = true
             }
         }
+    }
+}
+
+// MARK: - Day Pill Button for Dashboard
+
+/// Compact day selector button for the dashboard Planning mode
+struct DayPillButtonDashboard: View {
+    let day: DayOfWeek
+    let isSelected: Bool
+    let action: () -> Void
+    
+    private var shortName: String {
+        switch day {
+        case .monday: return "Mon"
+        case .tuesday: return "Tue"
+        case .wednesday: return "Wed"
+        case .thursday: return "Thu"
+        case .friday: return "Fri"
+        case .saturday: return "Sat"
+        case .sunday: return "Sun"
+        }
+    }
+    
+    var body: some View {
+        Button(action: action) {
+            Text(shortName)
+                .font(.subheadline)
+                .fontWeight(isSelected ? .semibold : .regular)
+                .foregroundColor(isSelected ? .white : .primary)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(isSelected ? Color.accentColor : Color(.systemGray5))
+                .cornerRadius(8)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Teacher Student Management Sheet
+
+/// Sheet for managing students in a class (viewing, editing, adding)
+struct TeacherStudentManagementSheet: View {
+    let classInfo: TeacherClassInfo
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header
+            VStack(spacing: 4) {
+                Text("Manage Students")
+                    .font(.headline)
+                
+                Text(classInfo.className)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color(.systemBackground))
+            
+            // Student list
+            if classInfo.students.isEmpty {
+                ContentUnavailableView(
+                    "No Students",
+                    systemImage: "person.3.fill",
+                    description: Text("This class has no students yet.")
+                )
+            } else {
+                List {
+                    ForEach(classInfo.students, id: \.id) { student in
+                        HStack(spacing: 12) {
+                            // Student photo
+                            AsyncImage(url: student.photo) { phase in
+                                switch phase {
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 44, height: 44)
+                                        .clipShape(Circle())
+                                default:
+                                    Image(systemName: "person.circle.fill")
+                                        .resizable()
+                                        .frame(width: 44, height: 44)
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                            
+                            // Student info
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(student.name)
+                                    .font(.body)
+                                
+                                Text(student.email)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            Spacer()
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+                .listStyle(.plain)
+            }
+        }
+        .navigationTitle("Students")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -976,7 +1164,8 @@ struct TeacherStudentsView: View {
                                 timeslot: selectedTimeslot,
                                 dayString: currentDayString,
                                 dataProvider: dataProvider,
-                                classDevices: allDevices
+                                classDevices: allDevices,
+                                dashboardMode: .now
                             )
                         }
                     }
