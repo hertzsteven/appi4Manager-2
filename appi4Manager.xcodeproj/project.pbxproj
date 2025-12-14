@@ -121,6 +121,8 @@
 		46FCB8EF2EEE91A60045FE84 /* TeacherStudentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8EA2EEE91A60045FE84 /* TeacherStudentsView.swift */; };
 		46FCB8F02EEE91A60045FE84 /* DashboardCardComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8E52EEE91A60045FE84 /* DashboardCardComponents.swift */; };
 		46FCB8F12EEE91A60045FE84 /* TeacherStudentEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8E82EEE91A60045FE84 /* TeacherStudentEditorView.swift */; };
+		46FCB8F32EEF059D0045FE84 /* DeviceActionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8F22EEF059D0045FE84 /* DeviceActionsManager.swift */; };
+		46FCB8F52EEF05BB0045FE84 /* StudentPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8F42EEF05BB0045FE84 /* StudentPickerSheet.swift */; };
 		9A1C5A66ECC8ECF06033885D /* StudentProfileCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4578CBF7E36551B2AC347E /* StudentProfileCard.swift */; };
 		9EC44BEB1670517227E85EAF /* MockStudentAppProfileProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03960D07E203EAC8294C58AD /* MockStudentAppProfileProvider.swift */; };
 /* End PBXBuildFile section */
@@ -239,6 +241,8 @@
 		46FCB8E82EEE91A60045FE84 /* TeacherStudentEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherStudentEditorView.swift; sourceTree = "<group>"; };
 		46FCB8E92EEE91A60045FE84 /* TeacherStudentManagementSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherStudentManagementSheet.swift; sourceTree = "<group>"; };
 		46FCB8EA2EEE91A60045FE84 /* TeacherStudentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherStudentsView.swift; sourceTree = "<group>"; };
+		46FCB8F22EEF059D0045FE84 /* DeviceActionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActionsManager.swift; sourceTree = "<group>"; };
+		46FCB8F42EEF05BB0045FE84 /* StudentPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentPickerSheet.swift; sourceTree = "<group>"; };
 		BB4578CBF7E36551B2AC347E /* StudentProfileCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudentProfileCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -573,6 +577,7 @@
 		46A2BCE929F1DA6B00882816 /* dashboard */ = {
 			isa = PBXGroup;
 			children = (
+				46FCB8F42EEF05BB0045FE84 /* StudentPickerSheet.swift */,
 				46FCB8E42EEE91A60045FE84 /* ClassSelectorSheet.swift */,
 				46FCB8E52EEE91A60045FE84 /* DashboardCardComponents.swift */,
 				46FCB8E62EEE91A60045FE84 /* DashboardEnums.swift */,
@@ -645,6 +650,7 @@
 		46BAB4992B30AC8F00C155B9 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				46FCB8F22EEF059D0045FE84 /* DeviceActionsManager.swift */,
 				465F458D2EEC637000F9A625 /* BulkProfileSetupViewModel.swift */,
 				46492B1B29F5CA9300699F96 /* StudentPicStubViewModel.swift */,
 				461D21CB299D89DC008B7BD2 /* ClassDetailViewModel.swift */,
@@ -879,6 +885,7 @@
 				46AEA64129C8E57900D2B994 /* LocationsResponse.swift in Sources */,
 				46BAB4852B30949A00C155B9 /* TimeOfDay.swift in Sources */,
 				469EFF212A6ED33F0047E8BC /* AppResponse.swift in Sources */,
+				46FCB8F52EEF05BB0045FE84 /* StudentPickerSheet.swift in Sources */,
 				461D89B12A6D82DE00678391 /* ItemListSelectViewStr.swift in Sources */,
 				46BAB4952B30A07900C155B9 /* Session.swift in Sources */,
 				465669962B1A257700195925 /* MDMGroup.swift in Sources */,
@@ -908,6 +915,7 @@
 				46BAB4922B30A01400C155B9 /* DailySessions.swift in Sources */,
 				461D21CC299D89DD008B7BD2 /* ClassDetailViewModel.swift in Sources */,
 				465F45812EEB011500F9A625 /* DeviceAppLockView.swift in Sources */,
+				46FCB8F32EEF059D0045FE84 /* DeviceActionsManager.swift in Sources */,
 				465F45822EEB011500F9A625 /* MultiDeviceAppLockView.swift in Sources */,
 				469F90CC2B63E00700E85AF2 /* SwiftUIView.swift in Sources */,
 				469990202C4F14E200C102A8 /* StudentAppProfileFS.swift in Sources */,

@@ -558,6 +558,23 @@ private extension ApiManager {
         print(bodyString)
         request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
         
+    case .restartDevice(udid: _):
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("1", forHTTPHeaderField: "X-Server-Protocol-Version")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+    case .setDeviceOwner(udid: _, let userId):
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("1", forHTTPHeaderField: "X-Server-Protocol-Version")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let bodyString = """
+            {
+               "user": \(userId)
+            }
+            """
+        request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
+        
     }
             // what is left look at other
             

@@ -47,6 +47,8 @@ enum ApiEndpoint {
     case lockIntoApp(appBundleId: String, studentID: String, teachAuth: String)
     case clearRestrictionsStudent(teachAuth: String, students: String)
     case validateTeacherToken(token: String)
+    case restartDevice(udid: String)
+    case setDeviceOwner(udid: String, userId: Int)
 
 }
 
@@ -116,6 +118,10 @@ extension ApiEndpoint {
             return "/teacher/lessons/stop"
         case .validateTeacherToken(token: _):
             return "/teacher/validate"
+        case .restartDevice(let udid):
+            return "/devices/\(udid)/restart"
+        case .setDeviceOwner(let udid, userId: _):
+            return "/devices/\(udid)/owner"
         }
     }
     
@@ -158,6 +164,10 @@ extension ApiEndpoint {
             return .POST
         case .clearRestrictionsStudent(teachAuth: _, students: _):
             return .POST
+        case .restartDevice(udid: _):
+            return .POST
+        case .setDeviceOwner(udid: _, userId: _):
+            return .PUT
         default:
             return .GET
         }
