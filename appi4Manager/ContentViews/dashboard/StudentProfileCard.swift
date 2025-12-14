@@ -638,6 +638,9 @@ struct EditStudentProfileSheet: View {
     @State private var isSaving = false
     @State private var saveError: String?
     
+    /// Current filter category for app list
+    @State private var selectedCategory: AppFilterCategory = .all
+    
     /// Whether this student has an existing profile
     private var hasProfile: Bool {
         dataProvider.hasProfile(for: student.id)
@@ -653,6 +656,14 @@ struct EditStudentProfileSheet: View {
     
     private var navigationTitle: String {
         hasProfile ? "Edit \(timeslotLabel)" : "Add Profile - \(timeslotLabel)"
+    }
+    
+    /// Apps filtered by the selected category
+    private var filteredApps: [DeviceApp] {
+        guard selectedCategory != .all else { return deviceApps }
+        return deviceApps.filter { app in
+            selectedCategory.matches(appName: app.displayName)
+        }
     }
     
     var body: some View {
@@ -703,6 +714,29 @@ struct EditStudentProfileSheet: View {
                 .padding()
                 .background(Color(.systemBackground))
                 
+                // Category Filter Section
+                VStack(alignment: .leading, spacing: 12) {
+                    Label("Filter by Category", systemImage: "line.3.horizontal.decrease.circle")
+                        .font(.headline)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(AppFilterCategory.allCases) { category in
+                                CategoryPillButton(
+                                    category: category,
+                                    isSelected: selectedCategory == category
+                                ) {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        selectedCategory = category
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding()
+                .background(Color(.systemBackground))
+                
                 // App List
                 if deviceApps.isEmpty {
                     Spacer()
@@ -718,10 +752,24 @@ struct EditStudentProfileSheet: View {
                             .multilineTextAlignment(.center)
                     }
                     Spacer()
+                } else if filteredApps.isEmpty {
+                    Spacer()
+                    VStack(spacing: 16) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 48))
+                            .foregroundColor(.secondary)
+                        Text("No Matching Apps")
+                            .font(.headline)
+                        Text("No apps match the \"\(selectedCategory.rawValue)\" category.\nTry selecting a different category.")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    Spacer()
                 } else {
                     ScrollView {
                         LazyVStack(spacing: 2) {
-                            ForEach(deviceApps) { app in
+                            ForEach(filteredApps) { app in
                                 appRow(for: app)
                             }
                         }

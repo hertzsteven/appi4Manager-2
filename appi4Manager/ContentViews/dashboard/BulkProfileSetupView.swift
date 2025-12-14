@@ -522,7 +522,7 @@ private struct TimeslotPillButton: View {
 
 // MARK: - Category Pill Button
 
-private struct CategoryPillButton: View {
+struct CategoryPillButton: View {
     let category: AppFilterCategory
     let isSelected: Bool
     let action: () -> Void
