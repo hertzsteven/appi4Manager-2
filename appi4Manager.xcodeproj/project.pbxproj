@@ -114,6 +114,13 @@
 		46E56DBA2996B33800CB2512 /* ClassDetailResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E56DB92996B33800CB2512 /* ClassDetailResponse.swift */; };
 		46E56DBD2996B42500CB2512 /* SchoolClassResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E56DBC2996B42500CB2512 /* SchoolClassResponse.swift */; };
 		46E76A0929BB9AEF00A85466 /* ClassesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E76A0829BB9AEF00A85466 /* ClassesViewModel.swift */; };
+		46FCB8EB2EEE91A60045FE84 /* TeacherStudentManagementSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8E92EEE91A60045FE84 /* TeacherStudentManagementSheet.swift */; };
+		46FCB8EC2EEE91A60045FE84 /* TeacherDevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8E72EEE91A60045FE84 /* TeacherDevicesView.swift */; };
+		46FCB8ED2EEE91A60045FE84 /* DashboardEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8E62EEE91A60045FE84 /* DashboardEnums.swift */; };
+		46FCB8EE2EEE91A60045FE84 /* ClassSelectorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8E42EEE91A60045FE84 /* ClassSelectorSheet.swift */; };
+		46FCB8EF2EEE91A60045FE84 /* TeacherStudentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8EA2EEE91A60045FE84 /* TeacherStudentsView.swift */; };
+		46FCB8F02EEE91A60045FE84 /* DashboardCardComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8E52EEE91A60045FE84 /* DashboardCardComponents.swift */; };
+		46FCB8F12EEE91A60045FE84 /* TeacherStudentEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8E82EEE91A60045FE84 /* TeacherStudentEditorView.swift */; };
 		9A1C5A66ECC8ECF06033885D /* StudentProfileCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4578CBF7E36551B2AC347E /* StudentProfileCard.swift */; };
 		9EC44BEB1670517227E85EAF /* MockStudentAppProfileProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03960D07E203EAC8294C58AD /* MockStudentAppProfileProvider.swift */; };
 /* End PBXBuildFile section */
@@ -225,6 +232,13 @@
 		46E56DB92996B33800CB2512 /* ClassDetailResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassDetailResponse.swift; sourceTree = "<group>"; };
 		46E56DBC2996B42500CB2512 /* SchoolClassResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchoolClassResponse.swift; sourceTree = "<group>"; };
 		46E76A0829BB9AEF00A85466 /* ClassesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassesViewModel.swift; sourceTree = "<group>"; };
+		46FCB8E42EEE91A60045FE84 /* ClassSelectorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassSelectorSheet.swift; sourceTree = "<group>"; };
+		46FCB8E52EEE91A60045FE84 /* DashboardCardComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardCardComponents.swift; sourceTree = "<group>"; };
+		46FCB8E62EEE91A60045FE84 /* DashboardEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardEnums.swift; sourceTree = "<group>"; };
+		46FCB8E72EEE91A60045FE84 /* TeacherDevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherDevicesView.swift; sourceTree = "<group>"; };
+		46FCB8E82EEE91A60045FE84 /* TeacherStudentEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherStudentEditorView.swift; sourceTree = "<group>"; };
+		46FCB8E92EEE91A60045FE84 /* TeacherStudentManagementSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherStudentManagementSheet.swift; sourceTree = "<group>"; };
+		46FCB8EA2EEE91A60045FE84 /* TeacherStudentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherStudentsView.swift; sourceTree = "<group>"; };
 		BB4578CBF7E36551B2AC347E /* StudentProfileCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudentProfileCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -559,6 +573,13 @@
 		46A2BCE929F1DA6B00882816 /* dashboard */ = {
 			isa = PBXGroup;
 			children = (
+				46FCB8E42EEE91A60045FE84 /* ClassSelectorSheet.swift */,
+				46FCB8E52EEE91A60045FE84 /* DashboardCardComponents.swift */,
+				46FCB8E62EEE91A60045FE84 /* DashboardEnums.swift */,
+				46FCB8E72EEE91A60045FE84 /* TeacherDevicesView.swift */,
+				46FCB8E82EEE91A60045FE84 /* TeacherStudentEditorView.swift */,
+				46FCB8E92EEE91A60045FE84 /* TeacherStudentManagementSheet.swift */,
+				46FCB8EA2EEE91A60045FE84 /* TeacherStudentsView.swift */,
 				465F458F2EEC639300F9A625 /* BulkProfileSetupView.swift */,
 				465F45912EEC7FF800F9A625 /* dataProvidors */,
 				4608AC4F2EEA75BB000523F0 /* AdminDashboardView.swift */,
@@ -828,6 +849,13 @@
 				4609120229D0811B000337E8 /* DashboardView.swift in Sources */,
 				469F90CE2B6419F400E85AF2 /* TestSchoolListView.swift in Sources */,
 				46E56DBD2996B42500CB2512 /* SchoolClassResponse.swift in Sources */,
+				46FCB8EB2EEE91A60045FE84 /* TeacherStudentManagementSheet.swift in Sources */,
+				46FCB8EC2EEE91A60045FE84 /* TeacherDevicesView.swift in Sources */,
+				46FCB8ED2EEE91A60045FE84 /* DashboardEnums.swift in Sources */,
+				46FCB8EE2EEE91A60045FE84 /* ClassSelectorSheet.swift in Sources */,
+				46FCB8EF2EEE91A60045FE84 /* TeacherStudentsView.swift in Sources */,
+				46FCB8F02EEE91A60045FE84 /* DashboardCardComponents.swift in Sources */,
+				46FCB8F12EEE91A60045FE84 /* TeacherStudentEditorView.swift in Sources */,
 				46584FDD2993EB650025F539 /* UserResponse.swift in Sources */,
 				46BAB4982B30A48400C155B9 /* SchoolClassError.swift in Sources */,
 				46584FE52993F03C0025F539 /* ApiManager.swift in Sources */,
