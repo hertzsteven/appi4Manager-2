@@ -794,6 +794,14 @@ struct TeacherDashboardView: View {
             
             await MainActor.run {
                 teacherClasses = classInfos
+                
+                // Keep selectedClass in sync with freshly fetched data
+                if let current = selectedClass {
+                    selectedClass = classInfos.first(where: { $0.id == current.id }) ?? classInfos.first
+                } else {
+                    selectedClass = classInfos.first
+                }
+                
                 isLoading = false
                 hasAttemptedLoad = true
             }

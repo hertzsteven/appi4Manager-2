@@ -26,6 +26,7 @@ struct TeacherStudentManagementSheet: View {
     @State private var showDeleteConfirmation = false
     @State private var isDeleting = false
     @State private var isRefreshing = false
+    @State private var photoCacheBuster = UUID()
     
     @Environment(AuthenticationManager.self) private var authManager
     
@@ -189,7 +190,7 @@ struct TeacherStudentManagementSheet: View {
         } label: {
             HStack(spacing: 12) {
                 // Student photo
-                AsyncImage(url: student.photo) { phase in
+                AsyncImage(url: cacheBustedURL(for: student.photo)) { phase in
                     switch phase {
                     case .success(let image):
                         image
@@ -267,22 +268,25 @@ struct TeacherStudentManagementSheet: View {
             print("🗑️ Deleted student: \(student.name)")
             #endif
             
+            // Always refresh from backend to ensure consistency
+            await refreshStudents()
+            
             await MainActor.run {
                 isDeleting = false
                 studentToDelete = nil
-                // Remove from local list immediately
-                localStudents.removeAll { $0.id == student.id }
-                // Also notify parent to refresh its data
                 onStudentChanged?()
             }
         } catch {
             await MainActor.run {
                 isDeleting = false
-                // TODO: Show error alert
+                studentToDelete = nil
                 #if DEBUG
                 print("❌ Failed to delete student: \(error)")
                 #endif
             }
+            
+            // Pull fresh data to reflect backend truth (in case delete failed)
+            await refreshStudents()
         }
     }
     
@@ -301,6 +305,8 @@ struct TeacherStudentManagementSheet: View {
             
             await MainActor.run {
                 localStudents = classDetailResponse.class.students
+                photoCacheBuster = UUID() // bust AsyncImage cache after updates
+                URLCache.shared.removeAllCachedResponses()
                 isRefreshing = false
             }
             
@@ -321,3 +327,15 @@ struct TeacherStudentManagementSheet: View {
 // MARK: - Student Extension for Identifiable Sheet
 
 extension Student: Identifiable { }
+
+// MARK: - Cache Busting Helper
+
+private extension TeacherStudentManagementSheet {
+    func cacheBustedURL(for url: URL) -> URL {
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        var queryItems = components?.queryItems ?? []
+        queryItems.append(URLQueryItem(name: "cb", value: photoCacheBuster.uuidString))
+        components?.queryItems = queryItems
+        return components?.url ?? url
+    }
+}
