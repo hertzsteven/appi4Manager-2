@@ -24,6 +24,9 @@ class StudentAppProfileDataProvider {
     /// Whether the app catalog has been loaded
     var isAppCatalogLoaded = false
     
+    /// Counter that increments on every profile update, triggering view refreshes
+    var updateCounter: Int = 0
+    
     // MARK: - Cached Data
     
     /// Cached student profiles keyed by student ID
@@ -299,6 +302,9 @@ class StudentAppProfileDataProvider {
         // Save to Firestore using StudentAppProfileManager
         let manager = StudentAppProfileManager()
         manager.updateStudentAppProfile(newProfile: profile)
+        
+        // Increment counter to trigger view refreshes
+        updateCounter += 1
         
         #if DEBUG
         print("✅ Updated and saved session for student \(studentId) on \(day) \(timeslot)")

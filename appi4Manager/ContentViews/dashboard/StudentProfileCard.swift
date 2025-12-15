@@ -283,6 +283,14 @@ struct StudentProfileEditView: View {
     @State private var isLoadingApps = false
     @State private var showEditSheet = false
     
+    /// Whether to show the week view (only available in Planning mode)
+    @State private var showWeekView = false
+    
+    /// For editing apps from week view - stores day/timeslot to edit
+    @State private var weeklyEditDayString: String = ""
+    @State private var weeklyEditTimeslot: TimeOfDay = .am
+    @State private var showWeeklyEditSheet = false
+    
     init(student: Student, initialTimeslot: TimeOfDay, initialDayString: String, 
          dataProvider: StudentAppProfileDataProvider, classDevices: [TheDevice], dashboardMode: DashboardMode) {
         self.student = student
@@ -369,8 +377,26 @@ struct StudentProfileEditView: View {
                     .font(.title2)
                     .fontWeight(.bold)
                 
-                // Mode-specific pickers
-                modeSpecificPickers
+                // Week View Toggle (Planning mode only)
+                if dashboardMode == .planning {
+                    weekViewToggle
+                }
+                
+                // Week View or Day View content
+                if showWeekView && dashboardMode == .planning {
+                    WeeklyProfileView(
+                        student: student,
+                        dataProvider: dataProvider,
+                        deviceApps: firstDevice?.apps ?? []
+                    ) { dayString, timeslot in
+                        // Handle "Change" button tap from week view
+                        weeklyEditDayString = dayString
+                        weeklyEditTimeslot = timeslot
+                        showWeeklyEditSheet = true
+                    }
+                } else {
+                    // Mode-specific pickers (existing day view)
+                    modeSpecificPickers
                 
                 Divider()
                 
@@ -477,6 +503,7 @@ struct StudentProfileEditView: View {
                         .cornerRadius(12)
                     }
                 }
+                } // End of else block for day view
                 
                 // Edit/Add Profile Button
                 Button {
@@ -516,6 +543,18 @@ struct StudentProfileEditView: View {
                 student: student,
                 timeslot: selectedTimeslot,
                 dayString: currentDayString,
+                dataProvider: dataProvider,
+                deviceApps: firstDevice?.apps ?? []
+            )
+        }
+        .sheet(isPresented: $showWeeklyEditSheet) {
+            // Refresh after weekly edit
+            loadApps()
+        } content: {
+            EditStudentProfileSheet(
+                student: student,
+                timeslot: weeklyEditTimeslot,
+                dayString: weeklyEditDayString,
                 dataProvider: dataProvider,
                 deviceApps: firstDevice?.apps ?? []
             )
@@ -586,6 +625,30 @@ struct StudentProfileEditView: View {
         .padding()
         .background(Color(.systemBackground))
         .cornerRadius(12)
+    }
+    
+    // MARK: - Week View Toggle
+    
+    /// Toggle button to switch between Day View and Week View (Planning mode only)
+    private var weekViewToggle: some View {
+        HStack {
+            Text("View Mode")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+            
+            Spacer()
+            
+            Picker("View Mode", selection: $showWeekView) {
+                Text("Day").tag(false)
+                Text("Week").tag(true)
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 140)
+        }
+        .padding()
+        .background(Color(.systemBackground))
+        .cornerRadius(12)
+        .sensoryFeedback(.selection, trigger: showWeekView)
     }
     
     private func dayShortName(_ day: DayOfWeek) -> String {
