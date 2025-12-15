@@ -57,8 +57,6 @@
 		46584FEB2993F10F0025F539 /* ApiEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46584FEA2993F10F0025F539 /* ApiEndpoint.swift */; };
 		465B16502AA0ED3A000ED633 /* MockSetupAppProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465B164F2AA0ED39000ED633 /* MockSetupAppProfileView.swift */; };
 		465B16522AA14D28000ED633 /* MockBareBones.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465B16512AA14D28000ED633 /* MockBareBones.swift */; };
-		465F45812EEB011500F9A625 /* DeviceAppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465F457F2EEB011500F9A625 /* DeviceAppLockView.swift */; };
-		465F45822EEB011500F9A625 /* MultiDeviceAppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465F45802EEB011500F9A625 /* MultiDeviceAppLockView.swift */; };
 		465F45842EEB531100F9A625 /* StudentAppProfileDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465F45832EEB531100F9A625 /* StudentAppProfileDataProvider.swift */; };
 		465F45862EEB701C00F9A625 /* DeviceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465F45852EEB701C00F9A625 /* DeviceApp.swift */; };
 		465F458C2EEC636200F9A625 /* AppFilterCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465F458B2EEC636200F9A625 /* AppFilterCategory.swift */; };
@@ -67,6 +65,8 @@
 		4662D68A2EEF9EA80083BFAD /* TimeslotRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D6872EEF9EA80083BFAD /* TimeslotRowView.swift */; };
 		4662D68B2EEF9EA80083BFAD /* WeeklyProfileEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D6882EEF9EA80083BFAD /* WeeklyProfileEnums.swift */; };
 		4662D68C2EEF9EA80083BFAD /* WeeklyProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D6892EEF9EA80083BFAD /* WeeklyProfileView.swift */; };
+		4662D68F2EEFBF5C0083BFAD /* MultiDeviceAppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D68E2EEFBF5C0083BFAD /* MultiDeviceAppLockView.swift */; };
+		4662D6902EEFBF5C0083BFAD /* DeviceAppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D68D2EEFBF5C0083BFAD /* DeviceAppLockView.swift */; };
 		4664639B2B46EABF0017A639 /* TheDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4664639A2B46EABF0017A639 /* TheDevice.swift */; };
 		4664639D2B46EB0F0017A639 /* DeviceListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4664639C2B46EB0F0017A639 /* DeviceListResponse.swift */; };
 		4664639F2B46FE650017A639 /* DevicesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4664639E2B46FE650017A639 /* DevicesViewModel.swift */; };
@@ -181,8 +181,6 @@
 		46584FEA2993F10F0025F539 /* ApiEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiEndpoint.swift; sourceTree = "<group>"; };
 		465B164F2AA0ED39000ED633 /* MockSetupAppProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSetupAppProfileView.swift; sourceTree = "<group>"; };
 		465B16512AA14D28000ED633 /* MockBareBones.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockBareBones.swift; sourceTree = "<group>"; };
-		465F457F2EEB011500F9A625 /* DeviceAppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAppLockView.swift; sourceTree = "<group>"; };
-		465F45802EEB011500F9A625 /* MultiDeviceAppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiDeviceAppLockView.swift; sourceTree = "<group>"; };
 		465F45832EEB531100F9A625 /* StudentAppProfileDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentAppProfileDataProvider.swift; sourceTree = "<group>"; };
 		465F45852EEB701C00F9A625 /* DeviceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceApp.swift; sourceTree = "<group>"; };
 		465F458B2EEC636200F9A625 /* AppFilterCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFilterCategory.swift; sourceTree = "<group>"; };
@@ -191,6 +189,8 @@
 		4662D6872EEF9EA80083BFAD /* TimeslotRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeslotRowView.swift; sourceTree = "<group>"; };
 		4662D6882EEF9EA80083BFAD /* WeeklyProfileEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyProfileEnums.swift; sourceTree = "<group>"; };
 		4662D6892EEF9EA80083BFAD /* WeeklyProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyProfileView.swift; sourceTree = "<group>"; };
+		4662D68D2EEFBF5C0083BFAD /* DeviceAppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAppLockView.swift; sourceTree = "<group>"; };
+		4662D68E2EEFBF5C0083BFAD /* MultiDeviceAppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiDeviceAppLockView.swift; sourceTree = "<group>"; };
 		4664639A2B46EABF0017A639 /* TheDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheDevice.swift; sourceTree = "<group>"; };
 		4664639C2B46EB0F0017A639 /* DeviceListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceListResponse.swift; sourceTree = "<group>"; };
 		4664639E2B46FE650017A639 /* DevicesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesViewModel.swift; sourceTree = "<group>"; };
@@ -366,8 +366,6 @@
 		46336708299528F900CF5EA3 /* ContentViews */ = {
 			isa = PBXGroup;
 			children = (
-				465F457F2EEB011500F9A625 /* DeviceAppLockView.swift */,
-				465F45802EEB011500F9A625 /* MultiDeviceAppLockView.swift */,
 				4608AC392EEA3179000523F0 /* settings */,
 				46BAB49A2B30B4F600C155B9 /* subContentView */,
 				4699A1132A1CDF4400D8829C /* startUp */,
@@ -586,6 +584,8 @@
 		46A2BCE929F1DA6B00882816 /* dashboard */ = {
 			isa = PBXGroup;
 			children = (
+				4662D68D2EEFBF5C0083BFAD /* DeviceAppLockView.swift */,
+				4662D68E2EEFBF5C0083BFAD /* MultiDeviceAppLockView.swift */,
 				4662D6872EEF9EA80083BFAD /* TimeslotRowView.swift */,
 				4662D6882EEF9EA80083BFAD /* WeeklyProfileEnums.swift */,
 				4662D6892EEF9EA80083BFAD /* WeeklyProfileView.swift */,
@@ -853,6 +853,8 @@
 				46E56DBA2996B33800CB2512 /* ClassDetailResponse.swift in Sources */,
 				46D07D8F2B742A7100D04B5B /* LiteralThings.swift in Sources */,
 				4681B1F52C4E8C0D001DB2F4 /* TestMVVMView.swift in Sources */,
+				4662D68F2EEFBF5C0083BFAD /* MultiDeviceAppLockView.swift in Sources */,
+				4662D6902EEFBF5C0083BFAD /* DeviceAppLockView.swift in Sources */,
 				46FCB8FD2EEF1F1E0045FE84 /* StudentRestrictionProfile.swift in Sources */,
 				46E56DB729969F5600CB2512 /* UserDetailResponse.swift in Sources */,
 				46786B7A2A24E5E7000F6716 /* UserCardVwDup.swift in Sources */,
@@ -930,9 +932,7 @@
 				46584FE72993F0960025F539 /* ApiHelper.swift in Sources */,
 				46BAB4922B30A01400C155B9 /* DailySessions.swift in Sources */,
 				461D21CC299D89DD008B7BD2 /* ClassDetailViewModel.swift in Sources */,
-				465F45812EEB011500F9A625 /* DeviceAppLockView.swift in Sources */,
 				46FCB8F32EEF059D0045FE84 /* DeviceActionsManager.swift in Sources */,
-				465F45822EEB011500F9A625 /* MultiDeviceAppLockView.swift in Sources */,
 				469F90CC2B63E00700E85AF2 /* SwiftUIView.swift in Sources */,
 				469990202C4F14E200C102A8 /* StudentAppProfileFS.swift in Sources */,
 				466EC6FD2A42609D007EEEDB /* LessonDetailResponse.swift in Sources */,

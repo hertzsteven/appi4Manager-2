@@ -577,7 +577,8 @@ private extension ApiManager {
         
     case .getTeacherProfiles(scope: _, scopeId: _, teachAuth: _):
         request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
-        request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
+        request.addValue("4", forHTTPHeaderField: "X-Server-Protocol-Version")
+        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
         
     }

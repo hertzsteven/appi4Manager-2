@@ -11,11 +11,17 @@ import SwiftUI
 // MARK: - Teacher Devices View
 
 struct TeacherDevicesView: View {
+    @Environment(AuthenticationManager.self) private var authManager
+    
     let teacherClasses: [TeacherClassInfo]
     
     @State private var selectedDevices: Set<String> = [] // Set of UDIDs
     @State private var isMultiSelectMode = false
     @State private var showMultiDeviceLockSheet = false
+    
+    // Restriction profiles: studentId -> hasActiveRestrictions
+    @State private var restrictionStatus: [Int: Bool] = [:]
+    @State private var isLoadingProfiles = false
     
     /// All devices flattened from all classes
     private var allDevices: [TheDevice] {
@@ -27,6 +33,11 @@ struct TeacherDevicesView: View {
         allDevices.filter { selectedDevices.contains($0.UDID) }
     }
     
+    /// All students from all classes (for owner assignment)
+    private var allStudents: [Student] {
+        teacherClasses.flatMap { $0.students }
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             // Header subtitle
@@ -35,6 +46,18 @@ struct TeacherDevicesView: View {
                 .foregroundColor(.primary)
                 .padding(.top, 16)
                 .padding(.bottom, 8)
+            
+            // Loading indicator for profiles
+            if isLoadingProfiles {
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                    Text("Loading device status...")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.bottom, 8)
+            }
             
             // Devices Grid
             ScrollView {
@@ -45,7 +68,12 @@ struct TeacherDevicesView: View {
                         SelectableDeviceCard(
                             device: device,
                             isSelected: selectedDevices.contains(device.UDID),
-                            isMultiSelectMode: isMultiSelectMode
+                            isMultiSelectMode: isMultiSelectMode,
+                            isLocked: isDeviceLocked(device),
+                            allStudents: allStudents,
+                            onRefreshNeeded: {
+                                await loadRestrictionProfiles()
+                            }
                         ) {
                             if isMultiSelectMode {
                                 // Toggle selection
@@ -82,7 +110,117 @@ struct TeacherDevicesView: View {
             }
         }
         .sheet(isPresented: $showMultiDeviceLockSheet) {
-            MultiDeviceAppLockView(devices: selectedDevicesArray)
+            MultiDeviceAppLockView(
+                devices: selectedDevicesArray,
+                allStudents: allStudents,
+                onActionsCompleted: {
+                    // Action completed, but server may not have updated yet
+                }
+            )
+        }
+        .onChange(of: showMultiDeviceLockSheet) { oldValue, newValue in
+            // Refresh when multi-device sheet is dismissed
+            if oldValue == true && newValue == false {
+                Task {
+                    // Small delay to allow server to process the action
+                    try? await Task.sleep(for: .milliseconds(500))
+                    await loadRestrictionProfiles()
+                }
+            }
+        }
+        .task {
+            await loadRestrictionProfiles()
+        }
+    }
+    
+    // MARK: - Helper Methods
+    
+    /// Check if a device is locked based on its owner's restriction status
+    private func isDeviceLocked(_ device: TheDevice) -> Bool {
+        guard let ownerId = device.owner?.id else { return false }
+        return restrictionStatus[ownerId] ?? false
+    }
+    
+    /// Load restriction profiles for each device's owner (student)
+    private func loadRestrictionProfiles() async {
+        guard let token = authManager.token else {
+            #if DEBUG
+            print("❌ No auth token available for loading profiles")
+            #endif
+            return
+        }
+        
+        await MainActor.run {
+            isLoadingProfiles = true
+        }
+        
+        var newStatus: [Int: Bool] = [:]
+        
+        // Get unique student IDs from device owners
+        let studentIds = Set(allDevices.compactMap { $0.owner?.id })
+        
+        #if DEBUG
+        print("🔄 Loading restriction profiles for \(studentIds.count) students")
+        #endif
+        
+        // Fetch profile for each student individually
+        for studentId in studentIds {
+            #if DEBUG
+            print("📡 Fetching profile for student \(studentId)")
+            #endif
+            
+            do {
+                let profiles: [StudentRestrictionProfile] = try await ApiManager.shared.getData(
+                    from: .getTeacherProfiles(
+                        scope: "student",
+                        scopeId: studentId,
+                        teachAuth: token
+                    )
+                )
+                
+                // The API returns an array, but for a single student there should be 0 or 1 profile
+                if let profile = profiles.first {
+                    newStatus[profile.studentId] = profile.hasActiveRestrictions
+                    #if DEBUG
+                    print("✅ Student \(profile.studentId): hasActiveRestrictions = \(profile.hasActiveRestrictions)")
+                    if profile.hasActiveRestrictions {
+                        print("     - appWhitelist: \(profile.appWhitelist ?? "nil")")
+                        print("     - restrictions: \(profile.restrictions != nil ? "present" : "nil")")
+                        print("     - startDate: \(profile.startDate ?? "nil")")
+                    }
+                    #endif
+                } else {
+                    // No profile returned means no restrictions
+                    newStatus[studentId] = false
+                    #if DEBUG
+                    print("✅ Student \(studentId): No restrictions (empty response)")
+                    #endif
+                }
+            } catch {
+                #if DEBUG
+                print("❌ Failed to load profile for student \(studentId): \(error)")
+                #endif
+                // On error, assume no restrictions to avoid false positives
+                newStatus[studentId] = false
+            }
+        }
+        
+        #if DEBUG
+        print("📊 Final restriction status: \(newStatus)")
+        print("📱 Devices and their owners:")
+        for device in allDevices {
+            if let owner = device.owner {
+                let isLocked = newStatus[owner.id] ?? false
+                print("   \(device.name) -> Owner: \(owner.name) (ID: \(owner.id)) -> Locked: \(isLocked)")
+            } else {
+                print("   \(device.name) -> No owner")
+            }
+        }
+        #endif
+        
+        await MainActor.run {
+            restrictionStatus = newStatus
+            isLoadingProfiles = false
         }
     }
     
@@ -101,7 +239,7 @@ struct TeacherDevicesView: View {
                 Button {
                     showMultiDeviceLockSheet = true
                 } label: {
-                    Text("Lock to App")
+                    Text("Manage Devices")
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
                         .padding(.horizontal, 20)
@@ -119,9 +257,14 @@ struct TeacherDevicesView: View {
 // MARK: - Selectable Device Card
 
 struct SelectableDeviceCard: View {
+    @Environment(AuthenticationManager.self) private var authManager
+    
     let device: TheDevice
     let isSelected: Bool
     let isMultiSelectMode: Bool
+    let isLocked: Bool
+    let allStudents: [Student]
+    let onRefreshNeeded: () async -> Void
     let onTap: () -> Void
     
     @State private var showingDetail = false
@@ -158,7 +301,7 @@ struct SelectableDeviceCard: View {
                 showingDetail = true
             }
         } label: {
-            VStack(spacing: 8) {
+            VStack(spacing: 6) {
                 ZStack {
                     // Selection indicator (checkmark circle)
                     if isMultiSelectMode {
@@ -178,6 +321,20 @@ struct SelectableDeviceCard: View {
                             .offset(x: 50, y: -35)
                             .zIndex(1)
                     }
+                    
+                    // Lock status indicator (top-left)
+                    ZStack {
+                        Circle()
+                            .fill(isLocked ? Color.red.opacity(0.15) : Color.green.opacity(0.15))
+                            .frame(width: 28, height: 28)
+                        
+                        Image(systemName: isLocked ? "lock.fill" : "lock.open.fill")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(isLocked ? .red : .green)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .offset(x: -8, y: -8)
+                    .zIndex(1)
                     
                     // Device Icon with colored ring
                     Circle()
@@ -205,12 +362,23 @@ struct SelectableDeviceCard: View {
                     .foregroundColor(.primary)
                     .lineLimit(1)
                 
-                // Model Info
-                Text("iPad")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
+                // Owner info
+                if let owner = device.owner {
+                    Text(owner.name)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                } else {
+                    HStack(spacing: 2) {
+                        Image(systemName: "person.fill.questionmark")
+                            .font(.caption2)
+                        Text("No owner")
+                            .font(.caption2)
+                    }
+                    .foregroundColor(.orange)
+                }
             }
-            .frame(width: 150, height: 150)
+            .frame(width: 150, height: 160)
             .padding()
             .background(Color(.systemBackground))
             .cornerRadius(12)
@@ -222,7 +390,23 @@ struct SelectableDeviceCard: View {
         }
         .buttonStyle(.plain)
         .navigationDestination(isPresented: $showingDetail) {
-            DeviceAppLockView(device: device)
+            DeviceAppLockView(
+                device: device,
+                allStudents: allStudents,
+                onActionsCompleted: {
+                    // Action completed, but server may not have updated yet
+                }
+            )
+        }
+        .onChange(of: showingDetail) { oldValue, newValue in
+            // Refresh when returning from device detail view
+            if oldValue == true && newValue == false {
+                Task {
+                    // Small delay to allow server to process the action
+                    try? await Task.sleep(for: .milliseconds(500))
+                    await onRefreshNeeded()
+                }
+            }
         }
     }
 }

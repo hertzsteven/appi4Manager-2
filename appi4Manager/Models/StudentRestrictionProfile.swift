@@ -63,3 +63,4 @@ struct SiteInfo: Codable {
 
 /// Response type alias for the profiles array
 typealias TeacherProfilesResponse = [StudentRestrictionProfile]
+

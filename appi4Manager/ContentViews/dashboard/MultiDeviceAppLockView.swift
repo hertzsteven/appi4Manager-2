@@ -2,34 +2,34 @@
 //  MultiDeviceAppLockView.swift
 //  appi4Manager
 //
-//  View for selecting an app to lock multiple devices into
+//  View for managing multiple devices with action buttons:
+//  Lock to Login, Unlock, Restart, Assign Owner
 //
 
 import SwiftUI
 
-/// View for selecting an app to lock multiple devices into, or unlocking all devices
+/// View for managing multiple device actions: Lock to Login, Unlock, Restart, Assign Owner
 struct MultiDeviceAppLockView: View {
     @Environment(AuthenticationManager.self) private var authManager
     @Environment(\.dismiss) private var dismiss
     
     let devices: [TheDevice]
+    let allStudents: [Student]
+    let onActionsCompleted: () -> Void
     
-    @State private var apps: [Appx] = []
-    @State private var isLoadingApps: Bool = true
-    @State private var isLocking: Bool = false
-    @State private var isUnlocking: Bool = false
-    @State private var errorMessage: String?
+    @State private var actionsManager = DeviceActionsManager()
     @State private var showAlert: Bool = false
     @State private var alertTitle: String = ""
     @State private var alertMessage: String = ""
-    @State private var lockingProgress: String = ""
+    @State private var showStudentPicker: Bool = false
+    @State private var showRestartConfirmation: Bool = false
     
     /// Devices that have valid owners
     private var devicesWithOwners: [TheDevice] {
         devices.filter { $0.owner != nil }
     }
     
-    /// Devices without owners (can't be locked)
+    /// Devices without owners (can't be locked/unlocked)
     private var devicesWithoutOwners: [TheDevice] {
         devices.filter { $0.owner == nil }
     }
@@ -41,7 +41,7 @@ struct MultiDeviceAppLockView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Header with device count and unlock button
+                    // Header with device count
                     devicesHeader
                     
                     // Warning for devices without owners
@@ -49,20 +49,14 @@ struct MultiDeviceAppLockView: View {
                         ownerWarningBanner
                     }
                     
-                    // App list or loading/error state
-                    if isLoadingApps {
-                        loadingView
-                    } else if let error = errorMessage {
-                        errorView(message: error)
-                    } else if apps.isEmpty {
-                        emptyAppsView
-                    } else {
-                        appListView
-                    }
+                    // Action buttons
+                    actionButtonsView
+                    
+                    Spacer()
                 }
                 
-                // Loading overlay for lock/unlock operations
-                if isLocking || isUnlocking {
+                // Loading overlay
+                if actionsManager.isProcessing {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
                     
@@ -70,21 +64,16 @@ struct MultiDeviceAppLockView: View {
                         ProgressView()
                             .scaleEffect(1.5)
                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                        Text(isUnlocking ? "Unlocking devices..." : "Locking devices...")
+                        Text(actionsManager.progressMessage)
                             .font(.headline)
                             .foregroundColor(.white)
-                        if !lockingProgress.isEmpty {
-                            Text(lockingProgress)
-                                .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.8))
-                        }
                     }
                     .padding(40)
                     .background(Color.gray.opacity(0.9))
                     .cornerRadius(16)
                 }
             }
-            .navigationTitle("Lock \(devices.count) Device\(devices.count == 1 ? "" : "s")")
+            .navigationTitle("Manage \(devices.count) Device\(devices.count == 1 ? "" : "s")")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -95,15 +84,39 @@ struct MultiDeviceAppLockView: View {
             }
             .alert(alertTitle, isPresented: $showAlert) {
                 Button("OK", role: .cancel) {
-                    if alertTitle == "Success" || alertTitle.contains("Unlocked") {
+                    if alertTitle.contains("Success") || alertTitle.contains("Unlocked") || alertTitle.contains("Sent") || alertTitle.contains("Assigned") {
                         dismiss()
                     }
                 }
             } message: {
                 Text(alertMessage)
             }
-            .task {
-                await loadApps()
+            .confirmationDialog(
+                "Restart Devices",
+                isPresented: $showRestartConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Restart All", role: .destructive) {
+                    Task {
+                        await restartAllDevices()
+                    }
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                Text("Are you sure you want to restart \(devices.count) device\(devices.count == 1 ? "" : "s")? This will interrupt any work on the devices.")
+            }
+            .sheet(isPresented: $showStudentPicker) {
+                StudentPickerSheet(
+                    students: allStudents,
+                    onSelect: { student in
+                        Task {
+                            await assignOwnerToAll(student)
+                        }
+                    }
+                )
+            }
+            .onAppear {
+                actionsManager.setAuthToken(authManager.token)
             }
         }
     }
@@ -116,53 +129,38 @@ struct MultiDeviceAppLockView: View {
             ZStack {
                 Circle()
                     .fill(Color.accentColor)
-                    .frame(width: 50, height: 50)
+                    .frame(width: 60, height: 60)
                 
-                Text("\(devicesWithOwners.count)")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
+                VStack(spacing: 0) {
+                    Text("\(devices.count)")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                    
+                    Image(systemName: "ipad.landscape")
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.8))
+                }
             }
             
             VStack(alignment: .leading, spacing: 4) {
-                Text("\(devicesWithOwners.count) iPad\(devicesWithOwners.count == 1 ? "" : "s") selected")
-                    .font(.headline)
+                Text("\(devices.count) iPad\(devices.count == 1 ? "" : "s") selected")
+                    .font(.title3)
+                    .fontWeight(.semibold)
                     .foregroundColor(.primary)
                 
                 if devicesWithOwners.count < devices.count {
-                    Text("\(devicesWithoutOwners.count) device\(devicesWithoutOwners.count == 1 ? "" : "s") skipped (no owner)")
+                    Text("\(devicesWithOwners.count) with owner, \(devicesWithoutOwners.count) without")
                         .font(.caption)
                         .foregroundColor(.orange)
                 } else {
-                    Text("All devices ready to lock")
+                    Text("All devices have owners")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
             }
             
             Spacer()
-            
-            // Unlock all button
-            Button {
-                Task {
-                    await unlockAllDevices()
-                }
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "lock.open.fill")
-                        .font(.subheadline)
-                    Text("Unlock All")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                }
-                .foregroundColor(.white)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(Color.orange)
-                .cornerRadius(8)
-            }
-            .disabled(isLocking || isUnlocking || devicesWithOwners.isEmpty)
-            .opacity((isLocking || isUnlocking || devicesWithOwners.isEmpty) ? 0.5 : 1.0)
         }
         .padding()
         .background(Color(.systemBackground))
@@ -180,10 +178,9 @@ struct MultiDeviceAppLockView: View {
                     .font(.subheadline)
                     .fontWeight(.medium)
                 
-                Text(devicesWithoutOwners.map { $0.name }.joined(separator: ", "))
+                Text("Lock/Unlock will only apply to devices with owners")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                    .lineLimit(1)
             }
             
             Spacer()
@@ -192,153 +189,104 @@ struct MultiDeviceAppLockView: View {
         .background(Color.orange.opacity(0.1))
     }
     
-    // MARK: - Loading View
+    // MARK: - Action Buttons View
     
-    private var loadingView: some View {
+    private var actionButtonsView: some View {
         VStack(spacing: 16) {
-            Spacer()
-            ProgressView()
-                .scaleEffect(1.5)
-            Text("Loading apps...")
-                .foregroundColor(.secondary)
-            Spacer()
-        }
-    }
-    
-    // MARK: - Error View
-    
-    private func errorView(message: String) -> some View {
-        VStack(spacing: 16) {
-            Spacer()
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 48))
-                .foregroundColor(.orange)
-            
-            Text("Error Loading Apps")
-                .font(.headline)
-            
-            Text(message)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-            
-            Button("Retry") {
-                Task {
-                    await loadApps()
-                }
-            }
-            .buttonStyle(.borderedProminent)
-            Spacer()
-        }
-    }
-    
-    // MARK: - Empty Apps View
-    
-    private var emptyAppsView: some View {
-        VStack(spacing: 16) {
-            Spacer()
-            Image(systemName: "app.dashed")
-                .font(.system(size: 60))
-                .foregroundColor(.secondary)
-            
-            Text("No Apps Available")
-                .font(.headline)
-            
-            Text("There are no apps configured in the MDM system.")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-            Spacer()
-        }
-        .padding()
-    }
-    
-    // MARK: - App List View
-    
-    private var appListView: some View {
-        ScrollView {
-            VStack(spacing: 12) {
-                // Instructional header
-                HStack(spacing: 8) {
-                    Image(systemName: devicesWithOwners.isEmpty ? "exclamationmark.triangle.fill" : "hand.tap.fill")
-                        .font(.subheadline)
-                        .foregroundColor(devicesWithOwners.isEmpty ? .orange : .secondary)
-                    Text(devicesWithOwners.isEmpty
-                        ? "No devices with owners to lock"
-                        : "Tap any app to lock all \(devicesWithOwners.count) device\(devicesWithOwners.count == 1 ? "" : "s") to it")
-                        .font(.subheadline)
-                        .foregroundColor(devicesWithOwners.isEmpty ? .orange : .secondary)
-                    Spacer()
-                }
-                .padding(.horizontal)
-                .padding(.top, 12)
-                .padding(.bottom, 4)
-                
-                // App list
-                ForEach(apps) { app in
-                    appRow(for: app)
-                }
+            // Section header
+            HStack {
+                Text("Available Actions")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                Spacer()
             }
             .padding(.horizontal)
-            .padding(.bottom, 16)
+            .padding(.top, 20)
+            
+            // Lock to Login button
+            actionButton(
+                title: "Lock All to Login",
+                subtitle: "Lock \(devicesWithOwners.count) device\(devicesWithOwners.count == 1 ? "" : "s") to Student Login app",
+                icon: "lock.fill",
+                color: .blue,
+                isDisabled: devicesWithOwners.isEmpty
+            ) {
+                Task {
+                    await lockAllToLogin()
+                }
+            }
+            
+            // Unlock button
+            actionButton(
+                title: "Unlock All Devices",
+                subtitle: "Remove restrictions from \(devicesWithOwners.count) device\(devicesWithOwners.count == 1 ? "" : "s")",
+                icon: "lock.open.fill",
+                color: .green,
+                isDisabled: devicesWithOwners.isEmpty
+            ) {
+                Task {
+                    await unlockAllDevices()
+                }
+            }
+            
+            // Restart button
+            actionButton(
+                title: "Restart All Devices",
+                subtitle: "Send restart command to \(devices.count) device\(devices.count == 1 ? "" : "s")",
+                icon: "arrow.clockwise",
+                color: .orange
+            ) {
+                showRestartConfirmation = true
+            }
+            
+            // Assign Owner button
+            actionButton(
+                title: "Assign Owner to All",
+                subtitle: "Set same student as owner for all \(devices.count) device\(devices.count == 1 ? "" : "s")",
+                icon: "person.badge.plus",
+                color: .purple
+            ) {
+                showStudentPicker = true
+            }
         }
+        .padding(.horizontal)
     }
     
-    // MARK: - App Row
+    // MARK: - Action Button Component
     
-    private func appRow(for app: Appx) -> some View {
-        Button {
-            Task {
-                await lockAllDevicesToApp(app)
-            }
-        } label: {
+    private func actionButton(
+        title: String,
+        subtitle: String,
+        icon: String,
+        color: Color,
+        isDisabled: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
             HStack(spacing: 16) {
-                // App icon
-                AsyncImage(url: URL(string: app.icon)) { phase in
-                    switch phase {
-                    case .empty:
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(width: 50, height: 50)
-                            .overlay(ProgressView())
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 50, height: 50)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                    case .failure:
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(width: 50, height: 50)
-                            .overlay(
-                                Image(systemName: "app.fill")
-                                    .foregroundColor(.gray)
-                            )
-                    @unknown default:
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(width: 50, height: 50)
-                    }
+                // Icon circle
+                ZStack {
+                    Circle()
+                        .fill(color.opacity(isDisabled ? 0.3 : 1.0))
+                        .frame(width: 50, height: 50)
+                    
+                    Image(systemName: icon)
+                        .font(.system(size: 22, weight: .medium))
+                        .foregroundColor(.white)
                 }
                 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(app.name)
+                // Text content
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
                         .font(.headline)
-                        .foregroundColor(.primary)
+                        .foregroundColor(isDisabled ? .secondary : .primary)
                     
-                    Text(app.bundleId)
+                    Text(subtitle)
                         .font(.caption)
                         .foregroundColor(.secondary)
-                        .lineLimit(1)
                 }
                 
                 Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
             }
             .padding()
             .background(Color(.systemBackground))
@@ -346,204 +294,126 @@ struct MultiDeviceAppLockView: View {
             .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
         .buttonStyle(.plain)
-        .disabled(isLocking || devicesWithOwners.isEmpty)
-        .opacity(devicesWithOwners.isEmpty ? 0.6 : 1.0)
+        .disabled(isDisabled || actionsManager.isProcessing)
+        .opacity(isDisabled ? 0.6 : 1.0)
     }
     
-    // MARK: - Data Loading
+    // MARK: - Actions
     
-    private func loadApps() async {
-        await MainActor.run {
-            isLoadingApps = true
-            errorMessage = nil
-        }
-        
-        do {
-            let response: AppResponse = try await ApiManager.shared.getData(from: .getApps)
-            
-            await MainActor.run {
-                apps = response.apps
-                isLoadingApps = false
-            }
-        } catch {
-            await MainActor.run {
-                errorMessage = error.localizedDescription
-                isLoadingApps = false
-            }
-        }
-    }
-    
-    // MARK: - Lock All Devices
-    
-    private func lockAllDevicesToApp(_ app: Appx) async {
-        guard let token = authManager.token else {
-            await MainActor.run {
-                alertTitle = "Error"
-                alertMessage = "No authentication token available."
-                showAlert = true
-            }
-            return
-        }
-        
-        guard !devicesWithOwners.isEmpty else {
-            await MainActor.run {
-                alertTitle = "Error"
-                alertMessage = "No devices with owners to lock."
-                showAlert = true
-            }
-            return
-        }
+    private func lockAllToLogin() async {
+        let result = await actionsManager.lockDevicesToApp(
+            devicesWithOwners,
+            appBundleId: AppConstants.studentLoginBundleId
+        )
         
         await MainActor.run {
-            isLocking = true
-            lockingProgress = ""
-        }
-        
-        var successCount = 0
-        var failCount = 0
-        
-        for (index, device) in devicesWithOwners.enumerated() {
-            guard let studentId = device.owner?.id else { continue }
-            
-            await MainActor.run {
-                lockingProgress = "Processing \(index + 1) of \(devicesWithOwners.count)..."
-            }
-            
-            do {
-                // First unlock any existing app lock
-                let _: ClearRestrictionsResponse = try await ApiManager.shared.getData(
-                    from: .clearRestrictionsStudent(teachAuth: token, students: String(studentId))
-                )
-                
-                // Then lock to the selected app
-                let _: LockIntoAppResponse = try await ApiManager.shared.getData(
-                    from: .lockIntoApp(appBundleId: app.bundleId, studentID: String(studentId), teachAuth: token)
-                )
-                
-                successCount += 1
-            } catch {
-                failCount += 1
-                #if DEBUG
-                print("Failed to lock device \(device.name): \(error)")
-                #endif
-            }
-        }
-        
-        await MainActor.run {
-            isLocking = false
-            lockingProgress = ""
-            
-            if failCount == 0 {
+            if result.isFullSuccess {
                 alertTitle = "Success"
-                alertMessage = "All \(successCount) device\(successCount == 1 ? "" : "s") will be locked to \(app.name) in a few seconds."
-            } else if successCount == 0 {
-                alertTitle = "Error"
-                alertMessage = "Failed to lock all devices. Please try again."
-            } else {
+                alertMessage = "All \(result.successCount) device\(result.successCount == 1 ? "" : "s") will be locked to the Student Login app in a few seconds."
+            } else if result.isPartialSuccess {
                 alertTitle = "Partial Success"
-                alertMessage = "\(successCount) device\(successCount == 1 ? "" : "s") locked to \(app.name). \(failCount) device\(failCount == 1 ? "" : "s") failed."
+                alertMessage = "\(result.successCount) device\(result.successCount == 1 ? "" : "s") locked. \(result.failCount) failed."
+            } else {
+                alertTitle = "Error"
+                alertMessage = "Failed to lock devices. Please try again."
             }
             showAlert = true
+            onActionsCompleted()
         }
     }
-    
-    // MARK: - Unlock All Devices
     
     private func unlockAllDevices() async {
-        guard let token = authManager.token else {
-            await MainActor.run {
-                alertTitle = "Error"
-                alertMessage = "No authentication token available."
-                showAlert = true
-            }
-            return
-        }
-        
-        guard !devicesWithOwners.isEmpty else {
-            await MainActor.run {
-                alertTitle = "Error"
-                alertMessage = "No devices with owners to unlock."
-                showAlert = true
-            }
-            return
-        }
+        let result = await actionsManager.unlockDevices(devicesWithOwners)
         
         await MainActor.run {
-            isUnlocking = true
-            lockingProgress = ""
-        }
-        
-        var successCount = 0
-        var failCount = 0
-        
-        for (index, device) in devicesWithOwners.enumerated() {
-            guard let studentId = device.owner?.id else { continue }
-            
-            await MainActor.run {
-                lockingProgress = "Processing \(index + 1) of \(devicesWithOwners.count)..."
-            }
-            
-            do {
-                let _: ClearRestrictionsResponse = try await ApiManager.shared.getData(
-                    from: .clearRestrictionsStudent(teachAuth: token, students: String(studentId))
-                )
-                
-                successCount += 1
-            } catch {
-                failCount += 1
-                #if DEBUG
-                print("Failed to unlock device \(device.name): \(error)")
-                #endif
-            }
-        }
-        
-        await MainActor.run {
-            isUnlocking = false
-            lockingProgress = ""
-            
-            if failCount == 0 {
+            if result.isFullSuccess {
                 alertTitle = "Devices Unlocked"
-                alertMessage = "All \(successCount) device\(successCount == 1 ? " has" : "s have") been unlocked."
-            } else if successCount == 0 {
-                alertTitle = "Error"
-                alertMessage = "Failed to unlock all devices. Please try again."
-            } else {
+                alertMessage = "All \(result.successCount) device\(result.successCount == 1 ? " has" : "s have") been unlocked."
+            } else if result.isPartialSuccess {
                 alertTitle = "Partial Success"
-                alertMessage = "\(successCount) device\(successCount == 1 ? "" : "s") unlocked. \(failCount) device\(failCount == 1 ? "" : "s") failed."
+                alertMessage = "\(result.successCount) device\(result.successCount == 1 ? "" : "s") unlocked. \(result.failCount) failed."
+            } else {
+                alertTitle = "Error"
+                alertMessage = "Failed to unlock devices. Please try again."
             }
             showAlert = true
+            onActionsCompleted()
+        }
+    }
+    
+    private func restartAllDevices() async {
+        let result = await actionsManager.restartDevices(devices)
+        
+        await MainActor.run {
+            if result.isFullSuccess {
+                alertTitle = "Restart Sent"
+                alertMessage = "All \(result.successCount) device\(result.successCount == 1 ? "" : "s") will restart shortly."
+            } else if result.isPartialSuccess {
+                alertTitle = "Partial Success"
+                alertMessage = "\(result.successCount) device\(result.successCount == 1 ? "" : "s") will restart. \(result.failCount) failed."
+            } else {
+                alertTitle = "Error"
+                alertMessage = "Failed to restart devices. Please try again."
+            }
+            showAlert = true
+        }
+    }
+    
+    private func assignOwnerToAll(_ student: Student) async {
+        let result = await actionsManager.assignStudentToDevices(devices, student: student)
+        
+        await MainActor.run {
+            if result.isFullSuccess {
+                alertTitle = "Owner Assigned"
+                alertMessage = "\(student.name) has been assigned as owner of all \(result.successCount) device\(result.successCount == 1 ? "" : "s")."
+            } else if result.isPartialSuccess {
+                alertTitle = "Partial Success"
+                alertMessage = "\(student.name) assigned to \(result.successCount) device\(result.successCount == 1 ? "" : "s"). \(result.failCount) failed."
+            } else {
+                alertTitle = "Error"
+                alertMessage = "Failed to assign owner. Please try again."
+            }
+            showAlert = true
+            onActionsCompleted()
         }
     }
 }
 
 #Preview {
-    MultiDeviceAppLockView(devices: [
-        TheDevice(
-            serialNumber: "ABC123",
-            locationId: 1,
-            UDID: "00008120-0000000000000001",
-            name: "Blue iPad",
-            assetTag: "1",
-            owner: Owner(id: 143, locationId: 1, name: "John Doe"),
-            batteryLevel: 0.85,
-            totalCapacity: 64,
-            lastCheckin: "2024-01-01",
-            modified: "2024-01-01",
-            notes: ""
-        ),
-        TheDevice(
-            serialNumber: "DEF456",
-            locationId: 1,
-            UDID: "00008120-0000000000000002",
-            name: "Green iPad",
-            assetTag: "2",
-            owner: Owner(id: 144, locationId: 1, name: "Jane Smith"),
-            batteryLevel: 0.65,
-            totalCapacity: 64,
-            lastCheckin: "2024-01-01",
-            modified: "2024-01-01",
-            notes: ""
-        )
-    ])
+    MultiDeviceAppLockView(
+        devices: [
+            TheDevice(
+                serialNumber: "ABC123",
+                locationId: 1,
+                UDID: "00008120-0000000000000001",
+                name: "Blue iPad",
+                assetTag: "1",
+                owner: Owner(id: 143, locationId: 1, name: "John Doe"),
+                batteryLevel: 0.85,
+                totalCapacity: 64,
+                lastCheckin: "2024-01-01",
+                modified: "2024-01-01",
+                notes: ""
+            ),
+            TheDevice(
+                serialNumber: "DEF456",
+                locationId: 1,
+                UDID: "00008120-0000000000000002",
+                name: "Green iPad",
+                assetTag: "2",
+                owner: Owner(id: 144, locationId: 1, name: "Jane Smith"),
+                batteryLevel: 0.65,
+                totalCapacity: 64,
+                lastCheckin: "2024-01-01",
+                modified: "2024-01-01",
+                notes: ""
+            )
+        ],
+        allStudents: [
+            Student(id: 143, name: "John Doe", email: "john@example.com", username: "johndoe", firstName: "John", lastName: "Doe", photo: URL(string: "https://via.placeholder.com/100")!),
+            Student(id: 144, name: "Jane Smith", email: "jane@example.com", username: "janesmith", firstName: "Jane", lastName: "Smith", photo: URL(string: "https://via.placeholder.com/100")!)
+        ],
+        onActionsCompleted: { }
+    )
     .environment(AuthenticationManager())
 }

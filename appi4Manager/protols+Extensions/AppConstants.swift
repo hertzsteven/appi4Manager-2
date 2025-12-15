@@ -32,5 +32,7 @@ enum AppConstants {
     static let pictureClassName                        = "**appi4PictureClass-NoModification**"
     static let defaultTeacherPwd                       = "123456"
     static let defaultUserPwd                          = "123456"
-
+    
+    // Student Login App Bundle ID for device locking
+    static let studentLoginBundleId                    = "com.dia.studentLoginFire"
 }

@@ -18,6 +18,28 @@ struct SetDeviceOwnerResponse: Codable {
     let message: String?
 }
 
+/// Response model for clear restrictions API call
+struct ClearRestrictionsResponse: Codable {
+    let tasks: [ClearRestrictionTask]?
+    let message: String?
+    
+    struct ClearRestrictionTask: Codable {
+        let student: String?
+        let status: String?
+    }
+}
+
+/// Response model for lock into app API call
+struct LockIntoAppResponse: Codable {
+    let message: String?
+    let tasks: [LockTask]?
+    
+    struct LockTask: Codable {
+        let student: String?
+        let status: String?
+    }
+}
+
 /// Result of a device action operation
 struct DeviceActionResult {
     let successCount: Int
@@ -258,3 +280,5 @@ final class DeviceActionsManager {
         errorMessage = nil
     }
 }
+
+
