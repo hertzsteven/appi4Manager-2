@@ -575,6 +575,11 @@ private extension ApiManager {
             """
         request.httpBody = bodyString.data(using: .utf8, allowLossyConversion: true)
         
+    case .getTeacherProfiles(scope: _, scopeId: _, teachAuth: _):
+        request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
+        request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
+        request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
+        
     }
             // what is left look at other
             

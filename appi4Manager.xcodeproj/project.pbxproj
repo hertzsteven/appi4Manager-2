@@ -123,6 +123,7 @@
 		46FCB8F12EEE91A60045FE84 /* TeacherStudentEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8E82EEE91A60045FE84 /* TeacherStudentEditorView.swift */; };
 		46FCB8F32EEF059D0045FE84 /* DeviceActionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8F22EEF059D0045FE84 /* DeviceActionsManager.swift */; };
 		46FCB8F52EEF05BB0045FE84 /* StudentPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8F42EEF05BB0045FE84 /* StudentPickerSheet.swift */; };
+		46FCB8FD2EEF1F1E0045FE84 /* StudentRestrictionProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8FC2EEF1F1E0045FE84 /* StudentRestrictionProfile.swift */; };
 		9A1C5A66ECC8ECF06033885D /* StudentProfileCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4578CBF7E36551B2AC347E /* StudentProfileCard.swift */; };
 		9EC44BEB1670517227E85EAF /* MockStudentAppProfileProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03960D07E203EAC8294C58AD /* MockStudentAppProfileProvider.swift */; };
 /* End PBXBuildFile section */
@@ -243,6 +244,7 @@
 		46FCB8EA2EEE91A60045FE84 /* TeacherStudentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherStudentsView.swift; sourceTree = "<group>"; };
 		46FCB8F22EEF059D0045FE84 /* DeviceActionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActionsManager.swift; sourceTree = "<group>"; };
 		46FCB8F42EEF05BB0045FE84 /* StudentPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentPickerSheet.swift; sourceTree = "<group>"; };
+		46FCB8FC2EEF1F1E0045FE84 /* StudentRestrictionProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentRestrictionProfile.swift; sourceTree = "<group>"; };
 		BB4578CBF7E36551B2AC347E /* StudentProfileCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudentProfileCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -449,6 +451,7 @@
 		46584FD72993EA9C0025F539 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				46FCB8FC2EEF1F1E0045FE84 /* StudentRestrictionProfile.swift */,
 				465F458B2EEC636200F9A625 /* AppFilterCategory.swift */,
 				4608AC492EEA7586000523F0 /* RoleManager.swift */,
 				4608AC4A2EEA7586000523F0 /* UserRole.swift */,
@@ -841,6 +844,7 @@
 				46E56DBA2996B33800CB2512 /* ClassDetailResponse.swift in Sources */,
 				46D07D8F2B742A7100D04B5B /* LiteralThings.swift in Sources */,
 				4681B1F52C4E8C0D001DB2F4 /* TestMVVMView.swift in Sources */,
+				46FCB8FD2EEF1F1E0045FE84 /* StudentRestrictionProfile.swift in Sources */,
 				46E56DB729969F5600CB2512 /* UserDetailResponse.swift in Sources */,
 				46786B7A2A24E5E7000F6716 /* UserCardVwDup.swift in Sources */,
 				461D89A62A6D4D2E00678391 /* Apps.swift in Sources */,

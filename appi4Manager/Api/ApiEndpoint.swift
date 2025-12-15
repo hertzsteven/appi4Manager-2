@@ -49,6 +49,7 @@ enum ApiEndpoint {
     case validateTeacherToken(token: String)
     case restartDevice(udid: String)
     case setDeviceOwner(udid: String, userId: Int)
+    case getTeacherProfiles(scope: String, scopeId: Int, teachAuth: String)
 
 }
 
@@ -122,6 +123,8 @@ extension ApiEndpoint {
             return "/devices/\(udid)/restart"
         case .setDeviceOwner(let udid, userId: _):
             return "/devices/\(udid)/owner"
+        case .getTeacherProfiles(scope: _, scopeId: _, teachAuth: _):
+            return "/teacher/profiles"
         }
     }
     
@@ -225,6 +228,12 @@ extension ApiEndpoint {
                 params.append(URLQueryItem(name: "assettag", value: assettag))
             }
             return params
+        case .getTeacherProfiles(let scope, let scopeId, let teachAuth):
+            return [
+                URLQueryItem(name: "scope", value: scope),
+                URLQueryItem(name: "scopeId", value: String(scopeId)),
+                URLQueryItem(name: "token", value: teachAuth)
+            ]
 //        case .getStudents(uuid: _):
 //            return [URLQueryItem(name: "token", value: "9c74b8d6a4934ca986dfe46592896801")]
         default:
