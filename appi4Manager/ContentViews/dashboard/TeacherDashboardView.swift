@@ -76,11 +76,23 @@ struct TeacherDashboardView: View {
     /// Separate data provider for bulk profile setup to avoid conflicts
     @State private var bulkSetupDataProvider = StudentAppProfileDataProvider()
     
+    /// Controls the dummy student creation loading state
+    @State private var isCreatingDummy = false
+    
+    /// Controls the dummy student created success alert
+    @State private var showDummyCreatedAlert = false
+    
     // MARK: - Computed Properties
     
     /// The currently active class - either explicitly selected or defaults to first class
     private var activeClass: TeacherClassInfo? {
         selectedClass ?? teacherClasses.first
+    }
+    
+    /// Students filtered to exclude dummy students (those with lastName matching the class UUID)
+    private var filteredStudents: [Student] {
+        guard let activeClass = activeClass else { return [] }
+        return activeClass.students.filter { $0.lastName != activeClass.classUUID }
     }
     
     var body: some View {
@@ -130,6 +142,16 @@ struct TeacherDashboardView: View {
                         Image(systemName: "lock.circle")
                     }
                     .disabled(activeClass == nil)
+                    
+                    // Dummy student creation button
+                    Button {
+                        Task {
+                            await createDummyStudent()
+                        }
+                    } label: {
+                        Image(systemName: "person.badge.plus")
+                    }
+                    .disabled(activeClass == nil || isCreatingDummy)
                     
                     NavigationLink(destination: SettingsView()) {
                         Image(systemName: "gearshape")
@@ -195,6 +217,13 @@ struct TeacherDashboardView: View {
                     classInfo: activeClass,
                     authToken: token
                 )
+            }
+        }
+        .alert("Dummy Student Created", isPresented: $showDummyCreatedAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            if let activeClass = activeClass {
+                Text("Created dummy student with last name '\(activeClass.classUUID)' in class \(activeClass.className).")
             }
         }
         .task {
@@ -605,13 +634,13 @@ struct TeacherDashboardView: View {
                     }
                     .buttonStyle(.borderedProminent)
                 }
-            } else if let activeClass = activeClass, !activeClass.students.isEmpty {
-                // Students Grid
+            } else if let activeClass = activeClass, !filteredStudents.isEmpty {
+                // Students Grid (filtered to exclude dummy students)
                 ScrollView {
                     LazyVGrid(columns: [
                         GridItem(.adaptive(minimum: 150), spacing: 16)
                     ], spacing: 16) {
-                        ForEach(activeClass.students, id: \.id) { student in
+                        ForEach(filteredStudents, id: \.id) { student in
                             StudentProfileCard(
                                 student: student,
                                 timeslot: selectedTimeslot,
@@ -830,6 +859,62 @@ struct TeacherDashboardView: View {
                 errorMessage = "Failed to load class info: \(error.localizedDescription)"
                 isLoading = false
                 hasAttemptedLoad = true
+            }
+        }
+    }
+    
+    // MARK: - Dummy Student Creation
+    
+    /// Creates a dummy student with first name "dummy" and last name as the class UUID.
+    /// Used for operational purposes like assigning to unowned devices before MDM commands.
+    private func createDummyStudent() async {
+        guard let activeClass = activeClass else { return }
+        
+        await MainActor.run {
+            isCreatingDummy = true
+        }
+        
+        do {
+            // Generate unique username from UUID
+            let username = String(Array(UUID().uuidString.split(separator: "-")).last!)
+            
+            // Get location and group IDs from teacher context
+            let locationId = teacherItems.currentLocation.id
+            let groupId = activeClass.userGroupID
+            
+            // Create user object with dummy name and class UUID as last name
+            var newUser = User.makeDefault()
+            newUser.username = username
+            newUser.firstName = "dummy"
+            newUser.lastName = activeClass.classUUID
+            newUser.locationId = locationId
+            newUser.groupIds = [groupId]
+            
+            // Add to MDM system
+            let _: AddAUserResponse = try await ApiManager.shared.getData(
+                from: .addUsr(user: newUser)
+            )
+            
+            #if DEBUG
+            print("✅ Created dummy student with lastName: \(activeClass.classUUID)")
+            #endif
+            
+            // Refresh teacher data to show new student
+            await loadTeacherData()
+            if let activeClass = self.activeClass {
+                await dataProvider.loadProfiles(for: activeClass.students.map { $0.id })
+            }
+            
+            await MainActor.run {
+                isCreatingDummy = false
+                showDummyCreatedAlert = true
+            }
+        } catch {
+            await MainActor.run {
+                isCreatingDummy = false
+                #if DEBUG
+                print("❌ Failed to create dummy student: \(error)")
+                #endif
             }
         }
     }

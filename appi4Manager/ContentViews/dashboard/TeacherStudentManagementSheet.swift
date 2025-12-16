@@ -35,8 +35,9 @@ struct TeacherStudentManagementSheet: View {
     init(classInfo: TeacherClassInfo, onStudentChanged: (() -> Void)? = nil) {
         self.classInfo = classInfo
         self.onStudentChanged = onStudentChanged
-        // Initialize local students with the passed-in data
-        _localStudents = State(initialValue: classInfo.students)
+        // Initialize local students with the passed-in data (excluding dummy students)
+        let filtered = classInfo.students.filter { $0.lastName != classInfo.classUUID }
+        _localStudents = State(initialValue: filtered)
     }
     
     var body: some View {
@@ -129,6 +130,7 @@ struct TeacherStudentManagementSheet: View {
                 Text("•")
                     .foregroundColor(.secondary)
                 
+                // Count excludes dummy students (already filtered in localStudents)
                 Text("\(localStudents.count) student\(localStudents.count == 1 ? "" : "s")")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
@@ -304,7 +306,8 @@ struct TeacherStudentManagementSheet: View {
             )
             
             await MainActor.run {
-                localStudents = classDetailResponse.class.students
+                // Filter out dummy students (lastName matches classUUID)
+                localStudents = classDetailResponse.class.students.filter { $0.lastName != classInfo.classUUID }
                 photoCacheBuster = UUID() // bust AsyncImage cache after updates
                 URLCache.shared.removeAllCachedResponses()
                 isRefreshing = false
