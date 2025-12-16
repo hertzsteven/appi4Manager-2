@@ -61,6 +61,9 @@ struct TeacherDashboardView: View {
     /// Controls the student management sheet visibility
     @State private var showStudentManagement = false
     
+    /// Controls the restrictions sheet visibility (shows current device locks)
+    @State private var showRestrictionsSheet = false
+    
     /// Current dashboard mode: Now (quick daily changes) or Planning (weekly scheduling)
     @State private var dashboardMode: DashboardMode = .now
     
@@ -120,6 +123,14 @@ struct TeacherDashboardView: View {
                     }
                     .disabled(activeClass == nil)
                     
+                    // Restrictions button - shows current device locks
+                    Button {
+                        showRestrictionsSheet = true
+                    } label: {
+                        Image(systemName: "lock.circle")
+                    }
+                    .disabled(activeClass == nil)
+                    
                     NavigationLink(destination: SettingsView()) {
                         Image(systemName: "gearshape")
                     }
@@ -176,6 +187,14 @@ struct TeacherDashboardView: View {
                         }
                     }
                 }
+            }
+        }
+        .sheet(isPresented: $showRestrictionsSheet) {
+            if let activeClass = activeClass, let token = authManager.token {
+                StudentRestrictionsSheet(
+                    classInfo: activeClass,
+                    authToken: token
+                )
             }
         }
         .task {

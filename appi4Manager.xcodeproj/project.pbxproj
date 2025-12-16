@@ -67,6 +67,7 @@
 		4662D68C2EEF9EA80083BFAD /* WeeklyProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D6892EEF9EA80083BFAD /* WeeklyProfileView.swift */; };
 		4662D68F2EEFBF5C0083BFAD /* MultiDeviceAppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D68E2EEFBF5C0083BFAD /* MultiDeviceAppLockView.swift */; };
 		4662D6902EEFBF5C0083BFAD /* DeviceAppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D68D2EEFBF5C0083BFAD /* DeviceAppLockView.swift */; };
+		4662D6922EF0B6F50083BFAD /* StudentRestrictionsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D6912EF0B6F50083BFAD /* StudentRestrictionsSheet.swift */; };
 		4664639B2B46EABF0017A639 /* TheDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4664639A2B46EABF0017A639 /* TheDevice.swift */; };
 		4664639D2B46EB0F0017A639 /* DeviceListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4664639C2B46EB0F0017A639 /* DeviceListResponse.swift */; };
 		4664639F2B46FE650017A639 /* DevicesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4664639E2B46FE650017A639 /* DevicesViewModel.swift */; };
@@ -191,6 +192,7 @@
 		4662D6892EEF9EA80083BFAD /* WeeklyProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyProfileView.swift; sourceTree = "<group>"; };
 		4662D68D2EEFBF5C0083BFAD /* DeviceAppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAppLockView.swift; sourceTree = "<group>"; };
 		4662D68E2EEFBF5C0083BFAD /* MultiDeviceAppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiDeviceAppLockView.swift; sourceTree = "<group>"; };
+		4662D6912EF0B6F50083BFAD /* StudentRestrictionsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentRestrictionsSheet.swift; sourceTree = "<group>"; };
 		4664639A2B46EABF0017A639 /* TheDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheDevice.swift; sourceTree = "<group>"; };
 		4664639C2B46EB0F0017A639 /* DeviceListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceListResponse.swift; sourceTree = "<group>"; };
 		4664639E2B46FE650017A639 /* DevicesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesViewModel.swift; sourceTree = "<group>"; };
@@ -584,6 +586,7 @@
 		46A2BCE929F1DA6B00882816 /* dashboard */ = {
 			isa = PBXGroup;
 			children = (
+				4662D6912EF0B6F50083BFAD /* StudentRestrictionsSheet.swift */,
 				4662D68D2EEFBF5C0083BFAD /* DeviceAppLockView.swift */,
 				4662D68E2EEFBF5C0083BFAD /* MultiDeviceAppLockView.swift */,
 				4662D6872EEF9EA80083BFAD /* TimeslotRowView.swift */,
@@ -866,6 +869,7 @@
 				46786B782A24D9A6000F6716 /* UserEditorContDup.swift in Sources */,
 				46AE58AA2AEBDB79005A3C20 /* MiscExtensions.swift in Sources */,
 				4664639B2B46EABF0017A639 /* TheDevice.swift in Sources */,
+				4662D6922EF0B6F50083BFAD /* StudentRestrictionsSheet.swift in Sources */,
 				461D89A82A6D4D6900678391 /* CategorySymbols.swift in Sources */,
 				4609120229D0811B000337E8 /* DashboardView.swift in Sources */,
 				469F90CE2B6419F400E85AF2 /* TestSchoolListView.swift in Sources */,

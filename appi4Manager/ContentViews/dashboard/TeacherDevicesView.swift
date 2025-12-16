@@ -184,7 +184,7 @@ struct TeacherDevicesView: View {
                     #if DEBUG
                     print("✅ Student \(profile.studentId): hasActiveRestrictions = \(profile.hasActiveRestrictions)")
                     if profile.hasActiveRestrictions {
-                        print("     - appWhitelist: \(profile.appWhitelist ?? "nil")")
+                        print("     - appWhitelist: \(profile.appWhitelist?.joined(separator: ", ") ?? "empty")")
                         print("     - restrictions: \(profile.restrictions != nil ? "present" : "nil")")
                         print("     - startDate: \(profile.startDate ?? "nil")")
                     }

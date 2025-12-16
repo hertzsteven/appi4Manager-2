@@ -34,16 +34,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>                                                         do {
+				<string>                                    do {
 </string>
 				<key>leading</key>
-				<string>                                                     /*
-                                                     task {
+				<string>                                   /*
+                                    task {
 </string>
 				<key>trailing</key>
-				<string>                                                             try await studentPicStubViewModel.reloadData(uuid: teacherItems.getpicClass())
-                                                         } catch {
-                                                             print("ellelelell  Big error")
+				<string>                                    try await studentPicStubViewModel.reloadData(uuid: teacherItems.getpicClass())
+                                    } catch {
+                                    print("ellelelell  Big error")
 </string>
 			</dict>
 			<key>title</key>
