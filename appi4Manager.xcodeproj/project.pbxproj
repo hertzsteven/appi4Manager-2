@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,7 +16,6 @@
 		4608AC4C2EEA7586000523F0 /* RoleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC492EEA7586000523F0 /* RoleManager.swift */; };
 		4608AC4E2EEA759E000523F0 /* RoleSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC4D2EEA759E000523F0 /* RoleSelectionView.swift */; };
 		4608AC512EEA75BB000523F0 /* AdminDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC4F2EEA75BB000523F0 /* AdminDashboardView.swift */; };
-		4608AC522EEA75BB000523F0 /* TeacherDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC502EEA75BB000523F0 /* TeacherDashboardView.swift */; };
 		4609120229D0811B000337E8 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4609120129D0811B000337E8 /* DashboardView.swift */; };
 		460CC64F2B1D03760050437D /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460CC64E2B1D03760050437D /* AppConstants.swift */; };
 		461044AB2C5D446100760FCE /* UserEditorContDPRepl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461044AA2C5D446100760FCE /* UserEditorContDPRepl.swift */; };
@@ -125,13 +124,9 @@
 		46E56DBA2996B33800CB2512 /* ClassDetailResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E56DB92996B33800CB2512 /* ClassDetailResponse.swift */; };
 		46E56DBD2996B42500CB2512 /* SchoolClassResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E56DBC2996B42500CB2512 /* SchoolClassResponse.swift */; };
 		46E76A0929BB9AEF00A85466 /* ClassesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E76A0829BB9AEF00A85466 /* ClassesViewModel.swift */; };
-		46FCB8EB2EEE91A60045FE84 /* TeacherStudentManagementSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8E92EEE91A60045FE84 /* TeacherStudentManagementSheet.swift */; };
-		46FCB8EC2EEE91A60045FE84 /* TeacherDevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8E72EEE91A60045FE84 /* TeacherDevicesView.swift */; };
 		46FCB8ED2EEE91A60045FE84 /* DashboardEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8E62EEE91A60045FE84 /* DashboardEnums.swift */; };
 		46FCB8EE2EEE91A60045FE84 /* ClassSelectorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8E42EEE91A60045FE84 /* ClassSelectorSheet.swift */; };
-		46FCB8EF2EEE91A60045FE84 /* TeacherStudentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8EA2EEE91A60045FE84 /* TeacherStudentsView.swift */; };
 		46FCB8F02EEE91A60045FE84 /* DashboardCardComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8E52EEE91A60045FE84 /* DashboardCardComponents.swift */; };
-		46FCB8F12EEE91A60045FE84 /* TeacherStudentEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8E82EEE91A60045FE84 /* TeacherStudentEditorView.swift */; };
 		46FCB8F32EEF059D0045FE84 /* DeviceActionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8F22EEF059D0045FE84 /* DeviceActionsManager.swift */; };
 		46FCB8F52EEF05BB0045FE84 /* StudentPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8F42EEF05BB0045FE84 /* StudentPickerSheet.swift */; };
 		46FCB8FD2EEF1F1E0045FE84 /* StudentRestrictionProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FCB8FC2EEF1F1E0045FE84 /* StudentRestrictionProfile.swift */; };
@@ -150,7 +145,6 @@
 		4608AC4A2EEA7586000523F0 /* UserRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRole.swift; sourceTree = "<group>"; };
 		4608AC4D2EEA759E000523F0 /* RoleSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleSelectionView.swift; sourceTree = "<group>"; };
 		4608AC4F2EEA75BB000523F0 /* AdminDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminDashboardView.swift; sourceTree = "<group>"; };
-		4608AC502EEA75BB000523F0 /* TeacherDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherDashboardView.swift; sourceTree = "<group>"; };
 		4609120129D0811B000337E8 /* DashboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		460CC64E2B1D03760050437D /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		461044AA2C5D446100760FCE /* UserEditorContDPRepl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditorContDPRepl.swift; sourceTree = "<group>"; };
@@ -260,15 +254,21 @@
 		46FCB8E42EEE91A60045FE84 /* ClassSelectorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassSelectorSheet.swift; sourceTree = "<group>"; };
 		46FCB8E52EEE91A60045FE84 /* DashboardCardComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardCardComponents.swift; sourceTree = "<group>"; };
 		46FCB8E62EEE91A60045FE84 /* DashboardEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardEnums.swift; sourceTree = "<group>"; };
-		46FCB8E72EEE91A60045FE84 /* TeacherDevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherDevicesView.swift; sourceTree = "<group>"; };
-		46FCB8E82EEE91A60045FE84 /* TeacherStudentEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherStudentEditorView.swift; sourceTree = "<group>"; };
-		46FCB8E92EEE91A60045FE84 /* TeacherStudentManagementSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherStudentManagementSheet.swift; sourceTree = "<group>"; };
-		46FCB8EA2EEE91A60045FE84 /* TeacherStudentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherStudentsView.swift; sourceTree = "<group>"; };
 		46FCB8F22EEF059D0045FE84 /* DeviceActionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActionsManager.swift; sourceTree = "<group>"; };
 		46FCB8F42EEF05BB0045FE84 /* StudentPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentPickerSheet.swift; sourceTree = "<group>"; };
 		46FCB8FC2EEF1F1E0045FE84 /* StudentRestrictionProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentRestrictionProfile.swift; sourceTree = "<group>"; };
 		BB4578CBF7E36551B2AC347E /* StudentProfileCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudentProfileCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		4662D6BA2EF2E11B0083BFAD /* Admin */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Admin; sourceTree = "<group>"; };
+		4662D6BB2EF2E12D0083BFAD /* Teacher */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Teacher; sourceTree = "<group>"; };
+		4662D6BC2EF2E1380083BFAD /* Students */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Students; sourceTree = "<group>"; };
+		4662D6BD2EF2E1450083BFAD /* Devices */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Devices; sourceTree = "<group>"; };
+		4662D6BE2EF2E14F0083BFAD /* Classes */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Classes; sourceTree = "<group>"; };
+		4662D6C02EF2E16E0083BFAD /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
+		4662D6C22EF2E1960083BFAD /* Teachers */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Teachers; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		46584FC32993E1040025F539 /* Frameworks */ = {
@@ -600,6 +600,13 @@
 		46A2BCE929F1DA6B00882816 /* dashboard */ = {
 			isa = PBXGroup;
 			children = (
+				4662D6C22EF2E1960083BFAD /* Teachers */,
+				4662D6BA2EF2E11B0083BFAD /* Admin */,
+				4662D6C02EF2E16E0083BFAD /* Shared */,
+				4662D6BE2EF2E14F0083BFAD /* Classes */,
+				4662D6BD2EF2E1450083BFAD /* Devices */,
+				4662D6BC2EF2E1380083BFAD /* Students */,
+				4662D6BB2EF2E12D0083BFAD /* Teacher */,
 				4662D6B62EF281BD0083BFAD /* DeviceDetailSheet.swift */,
 				4662D6B72EF281BD0083BFAD /* DeviceManagementListView.swift */,
 				4662D6B42EF27A190083BFAD /* TeacherPickerSheet.swift */,
@@ -617,14 +624,9 @@
 				46FCB8E42EEE91A60045FE84 /* ClassSelectorSheet.swift */,
 				46FCB8E52EEE91A60045FE84 /* DashboardCardComponents.swift */,
 				46FCB8E62EEE91A60045FE84 /* DashboardEnums.swift */,
-				46FCB8E72EEE91A60045FE84 /* TeacherDevicesView.swift */,
-				46FCB8E82EEE91A60045FE84 /* TeacherStudentEditorView.swift */,
-				46FCB8E92EEE91A60045FE84 /* TeacherStudentManagementSheet.swift */,
-				46FCB8EA2EEE91A60045FE84 /* TeacherStudentsView.swift */,
 				465F458F2EEC639300F9A625 /* BulkProfileSetupView.swift */,
 				465F45912EEC7FF800F9A625 /* dataProvidors */,
 				4608AC4F2EEA75BB000523F0 /* AdminDashboardView.swift */,
-				4608AC502EEA75BB000523F0 /* TeacherDashboardView.swift */,
 				4609120129D0811B000337E8 /* DashboardView.swift */,
 				BB4578CBF7E36551B2AC347E /* StudentProfileCard.swift */,
 			);
@@ -794,6 +796,15 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				4662D6BA2EF2E11B0083BFAD /* Admin */,
+				4662D6BB2EF2E12D0083BFAD /* Teacher */,
+				4662D6BC2EF2E1380083BFAD /* Students */,
+				4662D6BD2EF2E1450083BFAD /* Devices */,
+				4662D6BE2EF2E14F0083BFAD /* Classes */,
+				4662D6C02EF2E16E0083BFAD /* Shared */,
+				4662D6C22EF2E1960083BFAD /* Teachers */,
+			);
 			name = appi4Manager;
 			packageProductDependencies = (
 				4634418F2AEB3F3A0074741D /* FirebaseDatabase */,
@@ -897,13 +908,9 @@
 				4609120229D0811B000337E8 /* DashboardView.swift in Sources */,
 				469F90CE2B6419F400E85AF2 /* TestSchoolListView.swift in Sources */,
 				46E56DBD2996B42500CB2512 /* SchoolClassResponse.swift in Sources */,
-				46FCB8EB2EEE91A60045FE84 /* TeacherStudentManagementSheet.swift in Sources */,
-				46FCB8EC2EEE91A60045FE84 /* TeacherDevicesView.swift in Sources */,
 				46FCB8ED2EEE91A60045FE84 /* DashboardEnums.swift in Sources */,
 				46FCB8EE2EEE91A60045FE84 /* ClassSelectorSheet.swift in Sources */,
-				46FCB8EF2EEE91A60045FE84 /* TeacherStudentsView.swift in Sources */,
 				46FCB8F02EEE91A60045FE84 /* DashboardCardComponents.swift in Sources */,
-				46FCB8F12EEE91A60045FE84 /* TeacherStudentEditorView.swift in Sources */,
 				46584FDD2993EB650025F539 /* UserResponse.swift in Sources */,
 				46BAB4982B30A48400C155B9 /* SchoolClassError.swift in Sources */,
 				46584FE52993F03C0025F539 /* ApiManager.swift in Sources */,
@@ -945,7 +952,6 @@
 				46E56DB42996977A00CB2512 /* AuthenticateReturnObjct.swift in Sources */,
 				465B16522AA14D28000ED633 /* MockBareBones.swift in Sources */,
 				4608AC512EEA75BB000523F0 /* AdminDashboardView.swift in Sources */,
-				4608AC522EEA75BB000523F0 /* TeacherDashboardView.swift in Sources */,
 				461D89A42A6D4CA700678391 /* AppCategory.swift in Sources */,
 				469EFF262A6F6D400047E8BC /* AppxView.swift in Sources */,
 				4698CA2A2A2E1FE200D8A888 /* BlockingOverlayView.swift in Sources */,
