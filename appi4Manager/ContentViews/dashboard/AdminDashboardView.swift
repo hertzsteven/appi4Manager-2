@@ -48,6 +48,7 @@ struct AdminDashboardView: View {
         Category(name: "Categories", color: .green, image: Image(systemName: "folder.fill"), count: 12),
         Category(name: "Apps", color: .red, image: Image(systemName: "apps.ipad"), count: 3),
         Category(name: "Classes", color: .orange, image: Image(systemName: "person.3.sequence.fill"), count: 2),
+        Category(name: "Class Management", color: .purple, image: Image(systemName: "rectangle.stack.person.crop.fill"), count: 0),
         Category(name: "Students", color: .yellow, image: Image(systemName: "person.crop.square"), count: 6)
     ]
     
@@ -111,6 +112,8 @@ struct AdminDashboardView: View {
                             }
                     case "Apps":
                         MockFromStudentScreenView(path: $path)
+                    case "Class Management":
+                        ClassManagementListView()
                     default:
                         Text("Nothing setup yet")
                     }

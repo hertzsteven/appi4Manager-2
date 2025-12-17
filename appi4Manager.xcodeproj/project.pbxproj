@@ -68,6 +68,10 @@
 		4662D68F2EEFBF5C0083BFAD /* MultiDeviceAppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D68E2EEFBF5C0083BFAD /* MultiDeviceAppLockView.swift */; };
 		4662D6902EEFBF5C0083BFAD /* DeviceAppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D68D2EEFBF5C0083BFAD /* DeviceAppLockView.swift */; };
 		4662D6922EF0B6F50083BFAD /* StudentRestrictionsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D6912EF0B6F50083BFAD /* StudentRestrictionsSheet.swift */; };
+		4662D6B02EF262C00083BFAD /* ClassEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D6AC2EF262C00083BFAD /* ClassEditorView.swift */; };
+		4662D6B12EF262C00083BFAD /* ClassManagementListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D6AD2EF262C00083BFAD /* ClassManagementListView.swift */; };
+		4662D6B22EF262C00083BFAD /* DevicePickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D6AE2EF262C00083BFAD /* DevicePickerSheet.swift */; };
+		4662D6B32EF262C00083BFAD /* TeacherCreationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4662D6AF2EF262C00083BFAD /* TeacherCreationSheet.swift */; };
 		4664639B2B46EABF0017A639 /* TheDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4664639A2B46EABF0017A639 /* TheDevice.swift */; };
 		4664639D2B46EB0F0017A639 /* DeviceListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4664639C2B46EB0F0017A639 /* DeviceListResponse.swift */; };
 		4664639F2B46FE650017A639 /* DevicesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4664639E2B46FE650017A639 /* DevicesViewModel.swift */; };
@@ -193,6 +197,10 @@
 		4662D68D2EEFBF5C0083BFAD /* DeviceAppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAppLockView.swift; sourceTree = "<group>"; };
 		4662D68E2EEFBF5C0083BFAD /* MultiDeviceAppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiDeviceAppLockView.swift; sourceTree = "<group>"; };
 		4662D6912EF0B6F50083BFAD /* StudentRestrictionsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentRestrictionsSheet.swift; sourceTree = "<group>"; };
+		4662D6AC2EF262C00083BFAD /* ClassEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassEditorView.swift; sourceTree = "<group>"; };
+		4662D6AD2EF262C00083BFAD /* ClassManagementListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassManagementListView.swift; sourceTree = "<group>"; };
+		4662D6AE2EF262C00083BFAD /* DevicePickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePickerSheet.swift; sourceTree = "<group>"; };
+		4662D6AF2EF262C00083BFAD /* TeacherCreationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherCreationSheet.swift; sourceTree = "<group>"; };
 		4664639A2B46EABF0017A639 /* TheDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheDevice.swift; sourceTree = "<group>"; };
 		4664639C2B46EB0F0017A639 /* DeviceListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceListResponse.swift; sourceTree = "<group>"; };
 		4664639E2B46FE650017A639 /* DevicesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesViewModel.swift; sourceTree = "<group>"; };
@@ -586,6 +594,10 @@
 		46A2BCE929F1DA6B00882816 /* dashboard */ = {
 			isa = PBXGroup;
 			children = (
+				4662D6AC2EF262C00083BFAD /* ClassEditorView.swift */,
+				4662D6AD2EF262C00083BFAD /* ClassManagementListView.swift */,
+				4662D6AE2EF262C00083BFAD /* DevicePickerSheet.swift */,
+				4662D6AF2EF262C00083BFAD /* TeacherCreationSheet.swift */,
 				4662D6912EF0B6F50083BFAD /* StudentRestrictionsSheet.swift */,
 				4662D68D2EEFBF5C0083BFAD /* DeviceAppLockView.swift */,
 				4662D68E2EEFBF5C0083BFAD /* MultiDeviceAppLockView.swift */,
@@ -949,6 +961,10 @@
 				4608AC4C2EEA7586000523F0 /* RoleManager.swift in Sources */,
 				469420F229C7ED67004B8CB4 /* ExtensionsAndMore.swift in Sources */,
 				465F458C2EEC636200F9A625 /* AppFilterCategory.swift in Sources */,
+				4662D6B02EF262C00083BFAD /* ClassEditorView.swift in Sources */,
+				4662D6B12EF262C00083BFAD /* ClassManagementListView.swift in Sources */,
+				4662D6B22EF262C00083BFAD /* DevicePickerSheet.swift in Sources */,
+				4662D6B32EF262C00083BFAD /* TeacherCreationSheet.swift in Sources */,
 				46492B1C29F5CA9300699F96 /* StudentPicStubViewModel.swift in Sources */,
 				46BD34E529BE236D002A8395 /* CreateaClassResponse.swift in Sources */,
 				46BAB48B2B30959B00C155B9 /* StudentAppProfileManager.swift in Sources */,

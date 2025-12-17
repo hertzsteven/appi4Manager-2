@@ -36,6 +36,9 @@ struct BulkProfileSetupView: View {
     let devices: [TheDevice]
     let dataProvider: StudentAppProfileDataProvider
     
+    /// Callback fired when profiles are successfully updated, so parent can refresh its data
+    var onProfilesUpdated: (() -> Void)? = nil
+    
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel = BulkProfileSetupViewModel()
     
@@ -94,6 +97,7 @@ struct BulkProfileSetupView: View {
         }
         .onChange(of: viewModel.didSaveSuccessfully) { _, success in
             if success {
+                onProfilesUpdated?()
                 dismiss()
             }
         }

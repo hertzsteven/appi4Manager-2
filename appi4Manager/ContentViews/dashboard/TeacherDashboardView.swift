@@ -169,9 +169,15 @@ struct TeacherDashboardView: View {
         .sheet(isPresented: $showBulkSetup) {
             if let activeClass = activeClass {
                 BulkProfileSetupView(
-                    students: activeClass.students,
+                    students: filteredStudents,
                     devices: activeClass.devices,
-                    dataProvider: bulkSetupDataProvider
+                    dataProvider: bulkSetupDataProvider,
+                    onProfilesUpdated: {
+                        // Refresh the main dataProvider so weekly/planning views show updated data
+                        Task {
+                            await dataProvider.loadProfiles(for: filteredStudents.map { $0.id })
+                        }
+                    }
                 )
             }
         }
