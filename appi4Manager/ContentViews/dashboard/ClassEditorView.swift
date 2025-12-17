@@ -113,7 +113,7 @@ struct ClassEditorView: View {
                     locationId: teacherItems.currentLocation.id,
                     classGroupId: schoolClass.userGroupId,
                     onTeacherCreated: { newTeacher in
-                        // Convert User to Student for display
+                        // Convert User to Student for display and assign to class
                         let teacherAsStudent = Student(
                             id: newTeacher.id,
                             name: "\(newTeacher.firstName) \(newTeacher.lastName)",
@@ -124,6 +124,39 @@ struct ClassEditorView: View {
                             photo: URL(string: "https://via.placeholder.com/100")!
                         )
                         assignedTeachers.append(teacherAsStudent)
+                        
+                        // Assign new teacher to the class
+                        Task {
+                            await assignTeachersToClass([newTeacher.id])
+                        }
+                    }
+                )
+            }
+        }
+        .sheet(isPresented: $showTeacherPicker) {
+            NavigationStack {
+                TeacherPickerSheet(
+                    classUUID: schoolClass.uuid,
+                    currentlyAssignedTeacherIds: Set(assignedTeachers.map { $0.id }),
+                    onTeachersSelected: { selectedTeachers in
+                        // Convert User to Student and add to list
+                        for teacher in selectedTeachers {
+                            let teacherAsStudent = Student(
+                                id: teacher.id,
+                                name: "\(teacher.firstName) \(teacher.lastName)",
+                                email: teacher.email,
+                                username: teacher.username,
+                                firstName: teacher.firstName,
+                                lastName: teacher.lastName,
+                                photo: URL(string: "https://via.placeholder.com/100")!
+                            )
+                            assignedTeachers.append(teacherAsStudent)
+                        }
+                        
+                        // Assign selected teachers to the class
+                        Task {
+                            await assignTeachersToClass(selectedTeachers.map { $0.id })
+                        }
                     }
                 )
             }
@@ -220,10 +253,41 @@ struct ClassEditorView: View {
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
+                        
+                        Spacer()
+                        
+                        // Visible remove button
+                        Button(role: .destructive) {
+                            Task {
+                                await removeTeacher(teacher)
+                            }
+                        } label: {
+                            Image(systemName: "minus.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.red)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            Task {
+                                await removeTeacher(teacher)
+                            }
+                        } label: {
+                            Label("Remove", systemImage: "minus.circle")
+                        }
                     }
                 }
             }
             
+            // Button to select existing teachers from teacher group
+            Button {
+                showTeacherPicker = true
+            } label: {
+                Label("Add Existing Teacher", systemImage: "person.fill.badge.plus")
+            }
+            
+            // Button to create a new teacher
             Button {
                 showCreateTeacher = true
             } label: {
@@ -478,6 +542,63 @@ struct ClassEditorView: View {
             }
             #if DEBUG
             print("❌ Failed to delete class: \(error)")
+            #endif
+        }
+    }
+    
+    // MARK: - Teacher Actions
+    
+    private func assignTeachersToClass(_ teacherIds: [Int]) async {
+        guard !teacherIds.isEmpty else { return }
+        
+        do {
+            // Get current students to preserve them
+            let currentStudentIds = assignedTeachers.map { $0.id }
+            let allTeacherIds = Set(currentStudentIds + teacherIds).map { $0 }
+            
+            _ = try await ApiManager.shared.getDataNoDecode(
+                from: .assignToClass(uuid: schoolClass.uuid, students: [], teachers: allTeacherIds)
+            )
+            
+            #if DEBUG
+            print("✅ Assigned \(teacherIds.count) teacher(s) to class")
+            #endif
+        } catch {
+            await MainActor.run {
+                hasError = true
+                errorMessage = "Failed to assign teacher(s): \(error.localizedDescription)"
+            }
+            #if DEBUG
+            print("❌ Failed to assign teachers: \(error)")
+            #endif
+        }
+    }
+    
+    private func removeTeacher(_ teacher: Student) async {
+        do {
+            // Get remaining teacher IDs (excluding the one being removed)
+            let remainingTeacherIds = assignedTeachers
+                .filter { $0.id != teacher.id }
+                .map { $0.id }
+            
+            _ = try await ApiManager.shared.getDataNoDecode(
+                from: .assignToClass(uuid: schoolClass.uuid, students: [], teachers: remainingTeacherIds)
+            )
+            
+            await MainActor.run {
+                assignedTeachers.removeAll { $0.id == teacher.id }
+            }
+            
+            #if DEBUG
+            print("✅ Removed teacher \(teacher.firstName) \(teacher.lastName) from class")
+            #endif
+        } catch {
+            await MainActor.run {
+                hasError = true
+                errorMessage = "Failed to remove teacher: \(error.localizedDescription)"
+            }
+            #if DEBUG
+            print("❌ Failed to remove teacher: \(error)")
             #endif
         }
     }

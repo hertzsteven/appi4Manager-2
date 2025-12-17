@@ -3,7 +3,7 @@
 //  appi4Manager
 //
 //  Sheet for creating a new teacher user.
-//  Allows admin to create a new user designated as a teacher.
+//  Creates the user and adds them to the teacher group (acl.teacher = "allow").
 //
 
 import SwiftUI
@@ -12,11 +12,13 @@ import SwiftUI
 
 /// Sheet for creating a new teacher user.
 /// Teacher is created with a username, name, email, and default password.
+/// The user is automatically added to the teacher group for the current location.
 struct TeacherCreationSheet: View {
     
     // MARK: - Environment & State
     
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var teacherItems: TeacherItems
     
     let locationId: Int
     let classGroupId: Int
@@ -76,18 +78,20 @@ struct TeacherCreationSheet: View {
             // Info Section
             Section {
                 InfoRow(
-                    icon: "info.circle",
+                    icon: "person.3.fill",
                     title: "Teacher Group",
-                    value: "Will be configured separately"
+                    value: "Auto-assigned"
                 )
                 
                 InfoRow(
                     icon: "building.2",
                     title: "Location",
-                    value: "Location ID: \(locationId)"
+                    value: teacherItems.currentLocation.name
                 )
             } header: {
-                Text("Additional Info")
+                Text("Assignment")
+            } footer: {
+                Text("The new teacher will be added to the teacher group, enabling Jamf School Teacher permissions.")
             }
         }
         .navigationTitle("Create Teacher")
@@ -148,14 +152,23 @@ struct TeacherCreationSheet: View {
         defer { Task { await MainActor.run { isCreating = false } } }
         
         do {
-            // Create the user
+            // Get the teacher group ID for this location
+            guard let teacherGroupId = teacherItems.teacherGroupDict[locationId] else {
+                await MainActor.run {
+                    hasError = true
+                    errorMessage = "No teacher group found for this location. Please contact an administrator."
+                }
+                return
+            }
+            
+            // Create the user with both class group and teacher group
             var newUser = User.makeDefault()
             newUser.username = username
             newUser.firstName = firstName
             newUser.lastName = lastName
             newUser.email = email
             newUser.locationId = locationId
-            newUser.groupIds = [classGroupId]  // Add to class group
+            newUser.groupIds = [classGroupId, teacherGroupId]  // Add to both class group and teacher group
             
             let response: AddAUserResponse = try await ApiManager.shared.getData(
                 from: .addUsr(user: newUser)
@@ -166,6 +179,7 @@ struct TeacherCreationSheet: View {
             
             #if DEBUG
             print("✅ Created teacher: \(firstName) \(lastName) with ID: \(response.id)")
+            print("   Added to class group: \(classGroupId) and teacher group: \(teacherGroupId)")
             #endif
             
             // Callback
@@ -232,5 +246,6 @@ private struct InfoRow: View {
             locationId: 1,
             classGroupId: 100
         )
+        .environmentObject(TeacherItems())
     }
 }
