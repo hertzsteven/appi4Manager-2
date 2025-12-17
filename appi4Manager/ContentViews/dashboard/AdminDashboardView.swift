@@ -45,6 +45,7 @@ struct AdminDashboardView: View {
     /// Each category navigates to its respective management view.
     let categories = [
         Category(name: "Devices", color: .blue, image: Image(systemName: "ipad.and.iphone"), count: 5),
+        Category(name: "Device Management", color: .teal, image: Image(systemName: "ipad.landscape"), count: 0),
         Category(name: "Categories", color: .green, image: Image(systemName: "folder.fill"), count: 12),
         Category(name: "Apps", color: .red, image: Image(systemName: "apps.ipad"), count: 3),
         Category(name: "Classes", color: .orange, image: Image(systemName: "person.3.sequence.fill"), count: 2),
@@ -114,6 +115,8 @@ struct AdminDashboardView: View {
                         MockFromStudentScreenView(path: $path)
                     case "Class Management":
                         ClassManagementListView()
+                    case "Device Management":
+                        DeviceManagementListView()
                     default:
                         Text("Nothing setup yet")
                     }
