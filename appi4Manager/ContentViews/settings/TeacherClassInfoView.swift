@@ -179,7 +179,9 @@ struct TeacherClassInfoView: View {
                         .font(.subheadline)
                         .fontWeight(.medium)
                     Spacer()
-                    Text("\(classInfo.students.count)")
+                    // Filter out dummy students (lastName == classUUID)
+                    let realStudentCount = classInfo.students.filter { $0.lastName != classInfo.classUUID }.count
+                    Text("\(realStudentCount)")
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .padding(.horizontal, 8)

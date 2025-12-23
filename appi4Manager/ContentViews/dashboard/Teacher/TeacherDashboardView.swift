@@ -76,12 +76,6 @@ struct TeacherDashboardView: View {
     /// Separate data provider for bulk profile setup to avoid conflicts
     @State private var bulkSetupDataProvider = StudentAppProfileDataProvider()
     
-    /// Controls the dummy student creation loading state
-    @State private var isCreatingDummy = false
-    
-    /// Controls the dummy student created success alert
-    @State private var showDummyCreatedAlert = false
-    
     // MARK: - Computed Properties
     
     /// The currently active class - either explicitly selected or defaults to first class
@@ -93,6 +87,11 @@ struct TeacherDashboardView: View {
     private var filteredStudents: [Student] {
         guard let activeClass = activeClass else { return [] }
         return activeClass.students.filter { $0.lastName != activeClass.classUUID }
+    }
+    
+    /// Returns filtered student count for a class (excludes dummy students)
+    private func filteredStudentCount(for classInfo: TeacherClassInfo) -> Int {
+        classInfo.students.filter { $0.lastName != classInfo.classUUID }.count
     }
     
     var body: some View {
@@ -118,41 +117,35 @@ struct TeacherDashboardView: View {
             .navigationTitle("My Students")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    // Student management button
+                // Primary actions - always visible
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         showStudentManagement = true
                     } label: {
                         Image(systemName: "person.2.fill")
                     }
                     .disabled(activeClass == nil)
-                    
-                    // Devices button
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         showDevicesSheet = true
                     } label: {
                         Image(systemName: "ipad.landscape")
                     }
                     .disabled(activeClass == nil)
-                    
-                    // Restrictions button - shows current device locks
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         showRestrictionsSheet = true
                     } label: {
                         Image(systemName: "lock.circle")
                     }
                     .disabled(activeClass == nil)
-                    
-                    // Dummy student creation button
-                    Button {
-                        Task {
-                            await createDummyStudent()
-                        }
-                    } label: {
-                        Image(systemName: "person.badge.plus")
-                    }
-                    .disabled(activeClass == nil || isCreatingDummy)
-                    
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink(destination: SettingsView()) {
                         Image(systemName: "gearshape")
                     }
@@ -223,13 +216,6 @@ struct TeacherDashboardView: View {
                     classInfo: activeClass,
                     authToken: token
                 )
-            }
-        }
-        .alert("Dummy Student Created", isPresented: $showDummyCreatedAlert) {
-            Button("OK", role: .cancel) { }
-        } message: {
-            if let activeClass = activeClass {
-                Text("Created dummy student with last name '\(activeClass.classUUID)' in class \(activeClass.className).")
             }
         }
         .task {
@@ -371,7 +357,7 @@ struct TeacherDashboardView: View {
                                     .font(.headline)
                                     .foregroundColor(.primary)
                                 HStack(spacing: 12) {
-                                    Label("\(classInfo.students.count)", systemImage: "person.2.fill")
+                                    Label("\(filteredStudentCount(for: classInfo))", systemImage: "person.2.fill")
                                     Label("\(classInfo.devices.count)", systemImage: "ipad.landscape")
                                 }
                                 .font(.caption)
@@ -549,7 +535,7 @@ struct TeacherDashboardView: View {
                     
                     // Student and device counts
                     HStack(spacing: 12) {
-                        Label("\(classInfo.students.count)", systemImage: "person.2.fill")
+                        Label("\(filteredStudentCount(for: classInfo))", systemImage: "person.2.fill")
                         Label("\(classInfo.devices.count)", systemImage: "ipad.landscape")
                     }
                     .font(.subheadline)
@@ -693,7 +679,8 @@ struct TeacherDashboardView: View {
     // MARK: - Computed Properties for Counts
     
     private var totalStudents: Int {
-        activeClass?.students.count ?? 0
+        guard let activeClass = activeClass else { return 0 }
+        return filteredStudentCount(for: activeClass)
     }
     
     private var totalDevices: Int {
@@ -873,26 +860,21 @@ struct TeacherDashboardView: View {
     
     /// Creates a dummy student with first name "dummy" and last name as the class UUID.
     /// Used for operational purposes like assigning to unowned devices before MDM commands.
-    private func createDummyStudent() async {
-        guard let activeClass = activeClass else { return }
-        
-        await MainActor.run {
-            isCreatingDummy = true
-        }
-        
+    /// This function can be called programmatically when a class is created.
+    func createDummyStudent(for classInfo: TeacherClassInfo) async {
         do {
             // Generate unique username from UUID
             let username = String(Array(UUID().uuidString.split(separator: "-")).last!)
             
-            // Get location and group IDs from teacher context
+            // Get location ID from teacher context
             let locationId = teacherItems.currentLocation.id
-            let groupId = activeClass.userGroupID
+            let groupId = classInfo.userGroupID
             
             // Create user object with dummy name and class UUID as last name
             var newUser = User.makeDefault()
             newUser.username = username
             newUser.firstName = "dummy"
-            newUser.lastName = activeClass.classUUID
+            newUser.lastName = classInfo.classUUID
             newUser.locationId = locationId
             newUser.groupIds = [groupId]
             
@@ -902,26 +884,13 @@ struct TeacherDashboardView: View {
             )
             
             #if DEBUG
-            print("✅ Created dummy student with lastName: \(activeClass.classUUID)")
+            print("✅ Created dummy student with lastName: \(classInfo.classUUID)")
             #endif
             
-            // Refresh teacher data to show new student
-            await loadTeacherData()
-            if let activeClass = self.activeClass {
-                await dataProvider.loadProfiles(for: activeClass.students.map { $0.id })
-            }
-            
-            await MainActor.run {
-                isCreatingDummy = false
-                showDummyCreatedAlert = true
-            }
         } catch {
-            await MainActor.run {
-                isCreatingDummy = false
-                #if DEBUG
-                print("❌ Failed to create dummy student: \(error)")
-                #endif
-            }
+            #if DEBUG
+            print("❌ Failed to create dummy student: \(error)")
+            #endif
         }
     }
 }

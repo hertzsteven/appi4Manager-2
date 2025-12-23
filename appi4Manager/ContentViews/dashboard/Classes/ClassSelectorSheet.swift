@@ -28,7 +28,9 @@ struct ClassSelectorSheet: View {
                                     .font(.headline)
                                     .foregroundColor(.primary)
                                 HStack(spacing: 12) {
-                                    Label("\(classInfo.students.count) students", systemImage: "person.2.fill")
+                                    // Filter out dummy students (lastName == classUUID)
+                                    let realStudentCount = classInfo.students.filter { $0.lastName != classInfo.classUUID }.count
+                                    Label("\(realStudentCount) students", systemImage: "person.2.fill")
                                     Label("\(classInfo.devices.count) devices", systemImage: "ipad.landscape")
                                 }
                                 .font(.caption)
