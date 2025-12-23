@@ -219,7 +219,8 @@ extension FirestoreManager {
     // write
     func writeStudentProfileNew(studentProfile: StudentAppProfilex) {
         let db = Firestore.firestore()
-        let docRef = db.collection("studentProfiles").document("\(studentProfile.id)")
+        let docId = StudentProfileDocumentId.make(companyId: studentProfile.companyId, studentId: studentProfile.id)
+        let docRef = db.collection("studentProfiles").document(docId)
         
         do {
             try docRef.setData(from: studentProfile)
@@ -630,7 +631,8 @@ extension FirestoreManager {
     
     func writeStudentProfileNew2(studentProfile: StudentAppProfilex) async throws {
         let db = Firestore.firestore()
-        let docRef = db.collection("studentProfiles").document("\(studentProfile.id)")
+        let docId = StudentProfileDocumentId.make(companyId: studentProfile.companyId, studentId: studentProfile.id)
+        let docRef = db.collection("studentProfiles").document(docId)
 
         // Use withCheckedThrowingContinuation to properly wait for server confirmation
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
@@ -668,10 +670,12 @@ extension FirestoreManager {
 
     
     //  MARK: -  Read a Student
-    func readStudentProfileWith(_ studentID: String,
+    func readStudentProfileWith(_ studentID: String, companyId: Int? = nil,
                                 completion:  @escaping (StudentAppProfilex) -> () ) {
         let db = Firestore.firestore()
-        let docRef = db.collection("studentProfiles").document(studentID)
+        let actualCompanyId = companyId ?? APISchoolInfo.shared.companyId
+        let docId = StudentProfileDocumentId.make(companyId: actualCompanyId, studentId: Int(studentID) ?? 0)
+        let docRef = db.collection("studentProfiles").document(docId)
         
         docRef.getDocument(as: StudentAppProfilex.self) { result in
             
@@ -751,11 +755,13 @@ extension FirestoreManager {
         }
     }
   
-  func getaStudentFB(collectionName: String = "studentProfiles", studentID: Int) async throws -> DocumentSnapshot {
+  func getaStudentFB(collectionName: String = "studentProfiles", studentID: Int, companyId: Int? = nil) async throws -> DocumentSnapshot {
+    let actualCompanyId = companyId ?? APISchoolInfo.shared.companyId
+    let docId = StudentProfileDocumentId.make(companyId: actualCompanyId, studentId: studentID)
     
     var docRef: DocumentReference {
       let db = Firestore.firestore()
-      let docRef = db.collection("studentProfiles").document("\(studentID)")
+      let docRef = db.collection("studentProfiles").document(docId)
       return docRef
     }
     
@@ -771,11 +777,11 @@ extension FirestoreManager {
   
 
 
-  func getaStudent(collectionName: String = "studentProfiles", studentID: Int) async -> StudentAppProfilex {
+  func getaStudent(collectionName: String = "studentProfiles", studentID: Int, companyId: Int? = nil) async -> StudentAppProfilex {
     var prf: StudentAppProfilex?
     
     do {
-      let docSnapshot = try await self.getaStudentFB(collectionName: collectionName,  studentID: studentID)
+      let docSnapshot = try await self.getaStudentFB(collectionName: collectionName, studentID: studentID, companyId: companyId)
       prf = try docSnapshot.data(as: StudentAppProfilex.self)
     }
     catch {
@@ -785,6 +791,65 @@ extension FirestoreManager {
     guard let prf = prf else { fatalError("prf error")}
     return prf
   }
+    
+    // MARK: - Migration
+    
+    /// Migrates all student profiles to composite document ID format.
+    /// For each document: reads the old format, creates a new document with composite ID, then deletes the old one.
+    /// - Parameter companyId: The company ID to use for all migrated documents
+    /// - Returns: The number of documents successfully migrated
+    func migrateStudentProfilesToCompositeIds(companyId: Int) async throws -> Int {
+        let db = Firestore.firestore()
+        let collectionRef = db.collection("studentProfiles")
+        
+        // Get all existing documents
+        let snapshot = try await collectionRef.getDocuments(source: .server)
+        
+        var migratedCount = 0
+        
+        for document in snapshot.documents {
+            let oldDocId = document.documentID
+            
+            // Skip if already in composite format (contains underscore)
+            if oldDocId.contains("_") {
+                print("⏭️ Skipping document '\(oldDocId)' - already in composite format")
+                continue
+            }
+            
+            // Try to parse as student ID
+            guard let studentId = Int(oldDocId) else {
+                print("⚠️ Skipping document '\(oldDocId)' - not a valid student ID")
+                continue
+            }
+            
+            do {
+                // Read the existing profile
+                var profile = try document.data(as: StudentAppProfilex.self)
+                
+                // Update companyId in the profile
+                profile.companyId = companyId
+                
+                // Create new document with composite ID
+                let newDocId = StudentProfileDocumentId.make(companyId: companyId, studentId: studentId)
+                let newDocRef = collectionRef.document(newDocId)
+                
+                try newDocRef.setData(from: profile)
+                
+                // Delete old document
+                try await document.reference.delete()
+                
+                migratedCount += 1
+                print("✅ Migrated student \(studentId): '\(oldDocId)' -> '\(newDocId)'")
+                
+            } catch {
+                print("❌ Failed to migrate document '\(oldDocId)': \(error.localizedDescription)")
+                // Continue with other documents even if one fails
+            }
+        }
+        
+        print("📊 Migration complete: \(migratedCount) documents migrated")
+        return migratedCount
+    }
   
 
 }

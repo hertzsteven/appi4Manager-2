@@ -12,6 +12,11 @@ struct SettingsView: View {
     @Environment(RoleManager.self) private var roleManager
     @EnvironmentObject var teacherItems: TeacherItems
     
+    // Migration state
+    @State private var isMigrating = false
+    @State private var migrationResult: String?
+    @State private var showMigrationAlert = false
+    
     var body: some View {
         List {
             // MARK: - Current Role Section
@@ -57,9 +62,24 @@ struct SettingsView: View {
                     Text("View class UUID and group ID information for API integration.")
                 }
             }
+            // MARK: - Data Maintenance Section (only visible when authenticated)
+            if authManager.isAuthenticated {
+                Section {
+                    migrateProfilesButton
+                } header: {
+                    Text("Data Maintenance")
+                } footer: {
+                    Text("One-time migration to update student profile document IDs to include school ID.")
+                }
+            }
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.large)
+        .alert("Migration Result", isPresented: $showMigrationAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(migrationResult ?? "")
+        }
     }
     
     // MARK: - Current Role Row
@@ -173,6 +193,44 @@ struct SettingsView: View {
                     .foregroundColor(.secondary)
             }
         }
+    }
+    
+    // MARK: - Migrate Profiles Button
+    
+    private var migrateProfilesButton: some View {
+        Button {
+            Task {
+                await runMigration()
+            }
+        } label: {
+            HStack {
+                if isMigrating {
+                    ProgressView()
+                        .padding(.trailing, 8)
+                    Text("Migrating...")
+                } else {
+                    Label("Migrate Profile IDs", systemImage: "arrow.triangle.2.circlepath.doc.on.clipboard")
+                }
+                Spacer()
+            }
+        }
+        .disabled(isMigrating)
+        .foregroundColor(isMigrating ? .secondary : .primary)
+    }
+    
+    private func runMigration() async {
+        isMigrating = true
+        
+        do {
+            let companyId = APISchoolInfo.shared.companyId
+            let count = try await FirestoreManager().migrateStudentProfilesToCompositeIds(companyId: companyId)
+            migrationResult = "Successfully migrated \(count) student profile(s) to new format."
+        } catch {
+            migrationResult = "Migration failed: \(error.localizedDescription)"
+        }
+        
+        isMigrating = false
+        showMigrationAlert = true
     }
     
 

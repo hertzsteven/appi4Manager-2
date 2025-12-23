@@ -9,23 +9,28 @@ import Foundation
 
 class StudentAppProfilex: Identifiable, Codable, ObservableObject {
                 var id              : Int
+                var companyId       : Int
                 var locationId      : Int
     @Published  var sessions        : [String: DailySessions]
     
     enum CodingKeys: String, CodingKey {
         case id
+        case companyId
         case locationId
         case sessions
     }
 
     init() {
         self.id = 0
+        self.companyId = APISchoolInfo.shared.companyId
         self.locationId = 0
         self.sessions = [:]
     }
     required init(from decoder: Decoder) throws {
         let container  = try decoder.container(keyedBy: CodingKeys.self)
         id             = try container.decode(Int.self, forKey: .id)
+        // Use current company as fallback for migrated/old documents
+        companyId      = try container.decodeIfPresent(Int.self, forKey: .companyId) ?? APISchoolInfo.shared.companyId
         locationId     = try container.decode(Int.self, forKey: .locationId)
         sessions       = try container.decode([String: DailySessions].self, forKey: .sessions)
     }
@@ -34,12 +39,14 @@ class StudentAppProfilex: Identifiable, Codable, ObservableObject {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
+        try container.encode(companyId, forKey: .companyId)
         try container.encode(locationId, forKey: .locationId)
         try container.encode(sessions, forKey: .sessions)
     }
 
-    init(id: Int, locationId: Int, sessions: [String: DailySessions]) {
+    init(id: Int, companyId: Int? = nil, locationId: Int, sessions: [String: DailySessions]) {
         self.id          = id
+        self.companyId   = companyId ?? APISchoolInfo.shared.companyId
         self.locationId  = locationId
         self.sessions    = sessions
     }
@@ -52,6 +59,7 @@ class StudentAppProfilex: Identifiable, Codable, ObservableObject {
         print("finished loading student profile for ID: \(studentID)")
     DispatchQueue.main.async {
         self.id          = prf.id
+        self.companyId   = prf.companyId
         self.locationId  = prf.locationId
         self.sessions    = prf.sessions
     }

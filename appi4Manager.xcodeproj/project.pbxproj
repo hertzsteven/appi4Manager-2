@@ -15,6 +15,7 @@
 		4608AC4B2EEA7586000523F0 /* UserRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC4A2EEA7586000523F0 /* UserRole.swift */; };
 		4608AC4C2EEA7586000523F0 /* RoleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC492EEA7586000523F0 /* RoleManager.swift */; };
 		4608AC4E2EEA759E000523F0 /* RoleSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC4D2EEA759E000523F0 /* RoleSelectionView.swift */; };
+		460C55772EFA390B005B721B /* StudentProfileDocumentId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460C55762EFA390B005B721B /* StudentProfileDocumentId.swift */; };
 		460CC64F2B1D03760050437D /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460CC64E2B1D03760050437D /* AppConstants.swift */; };
 		461044AB2C5D446100760FCE /* UserEditorContDPRepl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461044AA2C5D446100760FCE /* UserEditorContDPRepl.swift */; };
 		461D21CA299C4A37008B7BD2 /* AddAUserResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461D21C9299C4A37008B7BD2 /* AddAUserResponse.swift */; };
@@ -123,6 +124,7 @@
 		4608AC492EEA7586000523F0 /* RoleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleManager.swift; sourceTree = "<group>"; };
 		4608AC4A2EEA7586000523F0 /* UserRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRole.swift; sourceTree = "<group>"; };
 		4608AC4D2EEA759E000523F0 /* RoleSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleSelectionView.swift; sourceTree = "<group>"; };
+		460C55762EFA390B005B721B /* StudentProfileDocumentId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StudentProfileDocumentId.swift; path = Helpers/StudentProfileDocumentId.swift; sourceTree = "<group>"; };
 		460CC64E2B1D03760050437D /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		461044AA2C5D446100760FCE /* UserEditorContDPRepl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditorContDPRepl.swift; sourceTree = "<group>"; };
 		461D21C9299C4A37008B7BD2 /* AddAUserResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAUserResponse.swift; sourceTree = "<group>"; };
@@ -401,6 +403,7 @@
 		46584FC82993E1040025F539 /* appi4Manager */ = {
 			isa = PBXGroup;
 			children = (
+				460C55762EFA390B005B721B /* StudentProfileDocumentId.swift */,
 				46336708299528F900CF5EA3 /* ContentViews */,
 				46BAB4992B30AC8F00C155B9 /* ViewModels */,
 				46584FD72993EA9C0025F539 /* Models */,
@@ -846,6 +849,7 @@
 				46A80E192A1153A2008B936D /* SchoolClassEditorContDup.swift in Sources */,
 				46BAB48E2B309F5000C155B9 /* ProfileErrors.swift in Sources */,
 				466463A12B4711B50017A639 /* DeviceListView.swift in Sources */,
+				460C55772EFA390B005B721B /* StudentProfileDocumentId.swift in Sources */,
 				461D89AA2A6D4D9700678391 /* CategoryColors.swift in Sources */,
 				46E76A0929BB9AEF00A85466 /* ClassesViewModel.swift in Sources */,
 				4664639D2B46EB0F0017A639 /* DeviceListResponse.swift in Sources */,
@@ -1045,7 +1049,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.developItSolutions.appi4Manager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1075,7 +1079,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.developItSolutions.appi4Manager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
