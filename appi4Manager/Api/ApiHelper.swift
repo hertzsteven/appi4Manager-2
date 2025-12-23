@@ -11,11 +11,15 @@ import Foundation
 class APISchoolInfo {
     // Non-optional properties
     let companyUrl:    String
-    let apiKey:         String
-    let asset:          String
-    let udid:           String
-    let companyId:      Int
-    let helpurl:        String
+    let apiKey:        String
+    let asset:         String
+    let udid:          String
+    let companyId:     Int
+    let helpurl:       String
+    
+    // Version and config source tracking
+    let appVersion:    String = "1.0.1"
+    let configSource:  SourceOfNetworkProperties
 
     // Singleton instance
     static let shared: APISchoolInfo = {
@@ -32,7 +36,8 @@ class APISchoolInfo {
                                  asset:         "asset",
                                  udid:          "udid",
                                  companyId:     2001128,
-                                 helpurl:       "www.help.com")
+                                 helpurl:       "www.help.com",
+                                 configSource:  .fallback)
         }
 
         #if DEBUG
@@ -51,7 +56,8 @@ class APISchoolInfo {
                              asset:         networkVariables.asset,
                              udid:          networkVariables.udid,
                              companyId:     networkVariables.CompanyId,
-                             helpurl:       networkVariables.helpurl)
+                             helpurl:       networkVariables.helpurl,
+                             configSource:  .mdm)
     }()
 
     // Private initializer
@@ -60,13 +66,15 @@ class APISchoolInfo {
                  asset:         String,
                  udid:          String,
                  companyId:     Int,
-                 helpurl:       String) {
-        self.companyUrl  = urlEndPoint
+                 helpurl:       String,
+                 configSource:  SourceOfNetworkProperties) {
+        self.companyUrl   = urlEndPoint
         self.apiKey       = apiKey
         self.asset        = asset
         self.udid         = udid
         self.companyId    = companyId
         self.helpurl      = helpurl
+        self.configSource = configSource
     }
 
     static private func getValuesFromManagedConfigFile() -> NetworkConnectionVariables? {
@@ -183,5 +191,14 @@ enum AppConfigKeys {
 
 
 enum SourceOfNetworkProperties {
-    case mdm, userDefaults, fireStore
+    case mdm, userDefaults, fireStore, fallback
+    
+    var displayName: String {
+        switch self {
+        case .mdm:          return "MDM ✅"
+        case .fallback:     return "Fallback (Hardcoded) ⚠️"
+        case .userDefaults: return "UserDefaults"
+        case .fireStore:    return "Firestore"
+        }
+    }
 }

@@ -41,10 +41,9 @@ struct list_the_usersApp: App {
     
     // Role Manager for role-based navigation
     @State private var roleManager              = RoleManager()
-
     
-    
-
+    // TEMP: Config debug alert - remove when done testing
+    @State private var showConfigAlert          = true
 
     var body: some Scene {
         WindowGroup {
@@ -74,6 +73,18 @@ struct list_the_usersApp: App {
                     .environmentObject(teacherItems)
                     .environmentObject(studentAppProfileManager)
                     .environmentObject(devicesViewModel)
+                    // TEMP: Config debug alert - remove when done testing
+                    .alert("App Configuration", isPresented: $showConfigAlert) {
+                        Button("OK") { }
+                    } message: {
+                        Text("""
+                        Version: \(APISchoolInfo.shared.appVersion)
+                        Config Source: \(APISchoolInfo.shared.configSource.displayName)
+                        
+                        Company URL: \(APISchoolInfo.shared.companyUrl)
+                        Company ID: \(APISchoolInfo.shared.companyId)
+                        """)
+                    }
 
 
             
