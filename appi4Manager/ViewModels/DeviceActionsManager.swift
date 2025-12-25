@@ -84,41 +84,82 @@ final class DeviceActionsManager {
     }
     
     /// Unlock multiple devices by clearing their restrictions
+    /// Re-fetches device data to get current owner before unlocking
     func unlockDevices(_ devices: [TheDevice]) async -> DeviceActionResult {
         guard let token = authToken else {
+            print("🔓 [Unlock] No auth token available")
             return DeviceActionResult(successCount: 0, failCount: devices.count, failedDeviceNames: devices.map { $0.name })
         }
         
-        let devicesWithOwners = devices.filter { $0.owner != nil }
-        
-        guard !devicesWithOwners.isEmpty else {
+        guard !devices.isEmpty else {
+            print("🔓 [Unlock] No devices provided")
             return DeviceActionResult(successCount: 0, failCount: 0, failedDeviceNames: [])
         }
         
-        await setProcessingState(true, message: "Unlocking devices...")
+        await setProcessingState(true, message: "Fetching current device info...")
+        
+        print("🔓 [Unlock] Starting unlock for \(devices.count) device(s)")
         
         var successCount = 0
         var failedNames: [String] = []
         
-        for (index, device) in devicesWithOwners.enumerated() {
-            guard let ownerId = device.owner?.id else { continue }
+        for (index, device) in devices.enumerated() {
+            await updateProgress("Unlocking \(index + 1) of \(devices.count)...")
             
-            await updateProgress("Unlocking \(index + 1) of \(devicesWithOwners.count)...")
+            print("🔓 [Unlock] Processing device: \(device.name) (UDID: \(device.UDID))")
             
+            // Fetch fresh device data to get current owner
             do {
-                let _: ClearRestrictionsResponse = try await ApiManager.shared.getData(
-                    from: .clearRestrictionsStudent(teachAuth: token, students: String(ownerId))
+                let deviceResponse: DeviceListResponse = try await ApiManager.shared.getData(
+                    from: .getDevices(assettag: nil)
                 )
+                
+                // Find this specific device in the response
+                guard let freshDevice = deviceResponse.devices.first(where: { $0.UDID == device.UDID }) else {
+                    print("🔓 [Unlock] ❌ Device \(device.name) not found in fresh device list")
+                    failedNames.append(device.name)
+                    continue
+                }
+                
+                // Check if device has an owner
+                guard let owner = freshDevice.owner else {
+                    print("🔓 [Unlock] ⚠️ Device \(device.name) has no owner assigned - skipping")
+                    failedNames.append(device.name)
+                    continue
+                }
+                
+                print("🔓 [Unlock] ✓ Fresh owner data retrieved:")
+                print("   - Owner ID: \(owner.id)")
+                print("   - Owner Name: \(owner.name)")
+                print("   - First Name: \(owner.firstName ?? "N/A")")
+                print("   - Last Name: \(owner.lastName ?? "N/A")")
+                print("   - Username: \(owner.username ?? "N/A")")
+                
+                // Send the unlock (clearRestrictions) command
+                print("🔓 [Unlock] Sending clearRestrictionsStudent API call:")
+                print("   - Endpoint: /teacher/lessons/stop")
+                print("   - Student ID: \(owner.id)")
+                print("   - Token: \(String(token.prefix(8)))...")
+                
+                let _: ClearRestrictionsResponse = try await ApiManager.shared.getData(
+                    from: .clearRestrictionsStudent(teachAuth: token, students: String(owner.id))
+                )
+                
+                print("🔓 [Unlock] ✅ Successfully unlocked device \(device.name) for owner \(owner.name)")
                 successCount += 1
+                
             } catch {
                 failedNames.append(device.name)
-                #if DEBUG
-                print("❌ Failed to unlock device \(device.name): \(error)")
-                #endif
+                print("🔓 [Unlock] ❌ Failed to unlock device \(device.name): \(error)")
             }
         }
         
         await setProcessingState(false, message: "")
+        
+        print("🔓 [Unlock] Completed: \(successCount) succeeded, \(failedNames.count) failed")
+        if !failedNames.isEmpty {
+            print("🔓 [Unlock] Failed devices: \(failedNames.joined(separator: ", "))")
+        }
         
         return DeviceActionResult(successCount: successCount, failCount: failedNames.count, failedDeviceNames: failedNames)
     }
@@ -170,47 +211,89 @@ final class DeviceActionsManager {
     }
     
     /// Lock multiple devices to a specific app
+    /// Re-fetches device data to get current owner before locking
     func lockDevicesToApp(_ devices: [TheDevice], appBundleId: String) async -> DeviceActionResult {
         guard let token = authToken else {
+            print("🔒 [Lock to App] No auth token available")
             return DeviceActionResult(successCount: 0, failCount: devices.count, failedDeviceNames: devices.map { $0.name })
         }
         
-        let devicesWithOwners = devices.filter { $0.owner != nil }
-        
-        guard !devicesWithOwners.isEmpty else {
+        guard !devices.isEmpty else {
+            print("🔒 [Lock to App] No devices provided")
             return DeviceActionResult(successCount: 0, failCount: 0, failedDeviceNames: [])
         }
         
-        await setProcessingState(true, message: "Locking devices to app...")
+        await setProcessingState(true, message: "Fetching current device info...")
+        
+        print("🔒 [Lock to App] Starting lock to app '\(appBundleId)' for \(devices.count) device(s)")
         
         var successCount = 0
         var failedNames: [String] = []
         
-        for (index, device) in devicesWithOwners.enumerated() {
-            guard let ownerId = device.owner?.id else { continue }
+        for (index, device) in devices.enumerated() {
+            await updateProgress("Locking \(index + 1) of \(devices.count)...")
             
-            await updateProgress("Locking \(index + 1) of \(devicesWithOwners.count)...")
+            print("🔒 [Lock to App] Processing device: \(device.name) (UDID: \(device.UDID))")
             
+            // Fetch fresh device data to get current owner
             do {
+                let deviceResponse: DeviceListResponse = try await ApiManager.shared.getData(
+                    from: .getDevices(assettag: nil)
+                )
+                
+                // Find this specific device in the response
+                guard let freshDevice = deviceResponse.devices.first(where: { $0.UDID == device.UDID }) else {
+                    print("🔒 [Lock to App] ❌ Device \(device.name) not found in fresh device list")
+                    failedNames.append(device.name)
+                    continue
+                }
+                
+                // Check if device has an owner
+                guard let owner = freshDevice.owner else {
+                    print("🔒 [Lock to App] ⚠️ Device \(device.name) has no owner assigned - skipping")
+                    failedNames.append(device.name)
+                    continue
+                }
+                
+                print("🔒 [Lock to App] ✓ Fresh owner data retrieved:")
+                print("   - Owner ID: \(owner.id)")
+                print("   - Owner Name: \(owner.name)")
+                print("   - First Name: \(owner.firstName ?? "N/A")")
+                print("   - Last Name: \(owner.lastName ?? "N/A")")
+                print("   - Username: \(owner.username ?? "N/A")")
+                
                 // First clear any existing restrictions
+                print("🔒 [Lock to App] Clearing existing restrictions for student \(owner.id)...")
                 let _: ClearRestrictionsResponse = try await ApiManager.shared.getData(
-                    from: .clearRestrictionsStudent(teachAuth: token, students: String(ownerId))
+                    from: .clearRestrictionsStudent(teachAuth: token, students: String(owner.id))
                 )
                 
                 // Then lock to the specified app
+                print("🔒 [Lock to App] Sending lockIntoApp API call:")
+                print("   - Endpoint: /teacher/apply/applock")
+                print("   - App Bundle ID: \(appBundleId)")
+                print("   - Student ID: \(owner.id)")
+                print("   - Token: \(String(token.prefix(8)))...")
+                
                 let _: LockIntoAppResponse = try await ApiManager.shared.getData(
-                    from: .lockIntoApp(appBundleId: appBundleId, studentID: String(ownerId), teachAuth: token)
+                    from: .lockIntoApp(appBundleId: appBundleId, studentID: String(owner.id), teachAuth: token)
                 )
+                
+                print("🔒 [Lock to App] ✅ Successfully locked device \(device.name) to app for owner \(owner.name)")
                 successCount += 1
+                
             } catch {
                 failedNames.append(device.name)
-                #if DEBUG
-                print("❌ Failed to lock device \(device.name) to app: \(error)")
-                #endif
+                print("🔒 [Lock to App] ❌ Failed to lock device \(device.name) to app: \(error)")
             }
         }
         
         await setProcessingState(false, message: "")
+        
+        print("🔒 [Lock to App] Completed: \(successCount) succeeded, \(failedNames.count) failed")
+        if !failedNames.isEmpty {
+            print("🔒 [Lock to App] Failed devices: \(failedNames.joined(separator: ", "))")
+        }
         
         return DeviceActionResult(successCount: successCount, failCount: failedNames.count, failedDeviceNames: failedNames)
     }
