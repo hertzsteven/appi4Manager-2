@@ -499,7 +499,7 @@ extension StudentAppProfilxWorkingView {
             return $currentDayStudentAppProfile.amSession.sessionLength
         case .pm:
             return $currentDayStudentAppProfile.pmSession.sessionLength
-        case .home:
+        case .home, .blocked:
             return $currentDayStudentAppProfile.homeSession.sessionLength
         }
     }
@@ -509,7 +509,7 @@ extension StudentAppProfilxWorkingView {
             return $currentDayStudentAppProfile.amSession.apps
         case .pm:
             return $currentDayStudentAppProfile.pmSession.apps
-        case .home:
+        case .home, .blocked:
             return $currentDayStudentAppProfile.homeSession.apps
         }
     }
@@ -519,7 +519,7 @@ extension StudentAppProfilxWorkingView {
             return $currentDayStudentAppProfile.amSession.oneAppLock
         case .pm:
             return $currentDayStudentAppProfile.pmSession.oneAppLock
-        case .home:
+        case .home, .blocked:
             return $currentDayStudentAppProfile.homeSession.oneAppLock
         }
     }
@@ -556,7 +556,7 @@ extension StudentAppProfilxWorkingView {
             studentAppprofile.sessions[selectedDay.asAString]?.pmSession.sessionLength = currentDayStudentAppProfile.pmSession.sessionLength
             studentAppprofile.sessions[selectedDay.asAString]?.pmSession.apps = currentDayStudentAppProfile.pmSession.apps
             studentAppprofile.sessions[selectedDay.asAString]?.pmSession.oneAppLock = currentDayStudentAppProfile.pmSession.oneAppLock
-        case .home:
+        case .home, .blocked:
             studentAppprofile.sessions[selectedDay.asAString]?.homeSession.sessionLength = currentDayStudentAppProfile.homeSession.sessionLength
             studentAppprofile.sessions[selectedDay.asAString]?.homeSession.apps = currentDayStudentAppProfile.homeSession.apps
             studentAppprofile.sessions[selectedDay.asAString]?.homeSession.oneAppLock = currentDayStudentAppProfile.homeSession.oneAppLock

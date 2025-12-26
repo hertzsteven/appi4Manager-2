@@ -131,16 +131,16 @@
 					<key>text-context</key>
 					<dict>
 						<key>focused</key>
-						<string>            HStack(spacing: 0) {
+						<string>        ScrollView(.horizontal, showsIndicators: true) {
 </string>
 						<key>leading</key>
-						<string>    var multipleAppsViewAM : some View {
-        ScrollView(.horizontal, showsIndicators: true) {
+						<string>    //  MARK: -  the sub view for the am group
+    var multipleAppsViewAM : some View {
 </string>
 						<key>trailing</key>
-						<string>                ForEach(appsAMinfo) { appInfo in
+						<string>            HStack(spacing: 0) {
+                ForEach(appsAMinfo) { appInfo in
                         //                    AppInfxView(loadingState: loadingState, appsAMinfo: appsAMinfo, appInfo: appInfo)
-                    AppInfxView(loadingState: loadingState, appsInfo: appsAMinfo, appInfo: appInfo)
 </string>
 					</dict>
 					<key>type</key>
@@ -176,16 +176,16 @@
 					<key>text-context</key>
 					<dict>
 						<key>focused</key>
-						<string>            HStack(spacing: 0) {
+						<string>        ScrollView(.horizontal, showsIndicators: true) {
 </string>
 						<key>leading</key>
-						<string>    var multipleAppsViewPM : some View {
-        ScrollView(.horizontal, showsIndicators: true) {
+						<string>    }
+    var multipleAppsViewPM : some View {
 </string>
 						<key>trailing</key>
-						<string>                ForEach(appsPMinfo) { appInfo in
+						<string>            HStack(spacing: 0) {
+                ForEach(appsPMinfo) { appInfo in
                         //                    AppInfxView(loadingState: loadingState, appsAMinfo: appsAMinfo, appInfo: appInfo)
-                    AppInfxView(loadingState: loadingState, appsInfo: appsPMinfo, appInfo: appInfo)
 </string>
 					</dict>
 					<key>type</key>
@@ -221,16 +221,16 @@
 					<key>text-context</key>
 					<dict>
 						<key>focused</key>
-						<string>                ForEach(appsHomeinfo) { appInfo in
+						<string>            HStack(spacing: 0) {
 </string>
 						<key>leading</key>
-						<string>        ScrollView(.horizontal, showsIndicators: true) {
-            HStack(spacing: 0) {
+						<string>    var multipleAppsViewHome : some View {
+        ScrollView(.horizontal, showsIndicators: true) {
 </string>
 						<key>trailing</key>
-						<string>                    AppInfxView(loadingState: loadingState, appsInfo: appsHomeinfo, appInfo: appInfo)
+						<string>                ForEach(appsHomeinfo) { appInfo in
+                    AppInfxView(loadingState: loadingState, appsInfo: appsHomeinfo, appInfo: appInfo)
                 }
-                .padding(8)
 </string>
 					</dict>
 					<key>type</key>

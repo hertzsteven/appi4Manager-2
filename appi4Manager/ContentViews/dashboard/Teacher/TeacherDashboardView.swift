@@ -53,7 +53,11 @@ struct TeacherDashboardView: View {
     @State private var showBulkSetup = false
     
     /// Currently selected timeslot for viewing student app profiles (AM/PM/Home)
-    @State private var selectedTimeslot: TimeOfDay = StudentAppProfileDataProvider.currentTimeslot()
+    /// Defaults to .am during blocked hours since there's no overnight view
+    @State private var selectedTimeslot: TimeOfDay = {
+        let current = StudentAppProfileDataProvider.currentTimeslot()
+        return current == .blocked ? .am : current
+    }()
     
     /// Controls the devices sheet visibility (accessible via toolbar iPad button)
     @State private var showDevicesSheet = false
@@ -232,8 +236,10 @@ struct TeacherDashboardView: View {
         }
         .onChange(of: dashboardMode) { _, newMode in
             // When switching to Now mode, reset timeslot to auto-detected current time
+            // Default to .am during blocked hours since there's no overnight view
             if newMode == .now {
-                selectedTimeslot = StudentAppProfileDataProvider.currentTimeslot()
+                let current = StudentAppProfileDataProvider.currentTimeslot()
+                selectedTimeslot = current == .blocked ? .am : current
             }
         }
     }
@@ -573,14 +579,7 @@ struct TeacherDashboardView: View {
     }
     
     private var inlineTimeslotTimeRange: String {
-        switch selectedTimeslot {
-        case .am:
-            return "9:00 AM - 11:59 AM"
-        case .pm:
-            return "12:00 PM - 4:59 PM"
-        case .home:
-            return "5:00 PM onwards"
-        }
+        TimeslotSettings.timeRangeString(for: selectedTimeslot)
     }
     
     /// Day string for profile lookup - uses today in Now mode, selected day in Planning mode
@@ -639,7 +638,8 @@ struct TeacherDashboardView: View {
                                 dayString: currentDayString,
                                 dataProvider: dataProvider,
                                 classDevices: activeClass.devices,
-                                dashboardMode: dashboardMode
+                                dashboardMode: dashboardMode,
+                                locationId: activeClass.locationId
                             )
                         }
                     }
@@ -667,12 +667,15 @@ struct TeacherDashboardView: View {
     
     private var currentSessionString: String {
         let hour = Calendar.current.component(.hour, from: Date())
-        if hour < 12 {
+        switch hour {
+        case TimeslotSettings.amStart..<TimeslotSettings.amEnd:
             return "Morning Session"
-        } else if hour < 17 {
+        case TimeslotSettings.pmStart..<TimeslotSettings.pmEnd:
             return "Afternoon Session"
-        } else {
+        case TimeslotSettings.homeStart..<TimeslotSettings.homeEnd:
             return "After School"
+        default:
+            return "Overnight"
         }
     }
     
@@ -823,7 +826,8 @@ struct TeacherDashboardView: View {
                     className: schoolClass.name,
                     classUUID: schoolClass.uuid,
                     userGroupID: schoolClass.userGroupId,
-                    userGroupName: groupName
+                    userGroupName: groupName,
+                    locationId: schoolClass.locationId
                 )
                 info.students = students
                 info.devices = devices
@@ -914,6 +918,7 @@ struct TeacherDashboardView: View {
                 classUUID: "uuid-1",
                 userGroupID: 100,
                 userGroupName: "Group 1",
+                locationId: 1,
                 students: [
                     Student(id: 101, name: "John Smith", email: "john@school.edu",
                            username: "john", firstName: "John", lastName: "Smith",

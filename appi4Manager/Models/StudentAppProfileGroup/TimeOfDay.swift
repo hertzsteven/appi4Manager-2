@@ -11,6 +11,7 @@ enum TimeOfDay {
     case am
     case pm
     case home
+    case blocked
     
     /// Human-readable display name for the timeslot
     var displayName: String {
@@ -18,6 +19,7 @@ enum TimeOfDay {
         case .am: return "AM"
         case .pm: return "PM"
         case .home: return "Home"
+        case .blocked: return "Overnight"
         }
     }
 }

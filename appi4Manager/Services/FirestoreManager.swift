@@ -854,6 +854,92 @@ extension FirestoreManager {
 
 }
 
+// MARK: - Active Sessions (allowRelogin)
+extension FirestoreManager {
+    
+    /// Fetches an active session for a student at a specific date and timeslot
+    /// - Parameters:
+    ///   - studentId: The student's ID
+    ///   - date: Date in YYYYMMDD format
+    ///   - timeslot: The timeslot (morning/afternoon/evening)
+    ///   - companyId: Optional company ID (defaults to APISchoolInfo.shared.companyId)
+    ///   - locationId: The location ID (required)
+    /// - Returns: ActiveSession if exists, nil otherwise
+    func getActiveSession(
+        studentId: Int,
+        date: String,
+        timeslot: String,
+        companyId: Int? = nil,
+        locationId: Int
+    ) async -> ActiveSession? {
+        let actualCompanyId = companyId ?? APISchoolInfo.shared.companyId
+        
+        let docId = ActiveSession.makeDocumentId(
+            companyId: actualCompanyId,
+            locationId: locationId,
+            studentId: studentId,
+            date: date,
+            timeslot: timeslot
+        )
+        
+        let db = Firestore.firestore()
+        let docRef = db.collection("ActiveSessions").document(docId)
+        
+        do {
+            let document = try await docRef.getDocument(source: FirestoreSource.server)
+            
+            guard document.exists else {
+                print("No active session found for student \(studentId) on \(date) \(timeslot)")
+                return nil
+            }
+            
+            let session = try document.data(as: ActiveSession.self)
+            print("Found active session for student \(studentId): allowRelogin = \(session.allowRelogin)")
+            return session
+            
+        } catch {
+            handleError(error: error, funcName: #function)
+            return nil
+        }
+    }
+    
+    /// Updates the allowRelogin field for an active session
+    /// - Parameters:
+    ///   - documentId: The document ID of the active session
+    ///   - allowRelogin: The new value for allowRelogin
+    /// - Returns: True if update was successful, false otherwise
+    func updateAllowRelogin(documentId: String, allowRelogin: Bool) async -> Bool {
+        let db = Firestore.firestore()
+        let docRef = db.collection("ActiveSessions").document(documentId)
+        
+        do {
+            try await docRef.updateData(["allowRelogin": allowRelogin])
+            print("Successfully updated allowRelogin to \(allowRelogin) for document \(documentId)")
+            return true
+        } catch {
+            handleError(error: error, funcName: #function)
+            return false
+        }
+    }
+    
+    /// Convenience method to get active session using TimeOfDay enum
+    func getActiveSession(
+        studentId: Int,
+        timeOfDay: TimeOfDay,
+        companyId: Int? = nil,
+        locationId: Int
+    ) async -> ActiveSession? {
+        let date = ActiveSession.todayDateString()
+        let timeslot = ActiveSession.timeslotString(from: timeOfDay)
+        return await getActiveSession(
+            studentId: studentId,
+            date: date,
+            timeslot: timeslot,
+            companyId: companyId,
+            locationId: locationId
+        )
+    }
+}
 
 //
 //    /// Define your custom errors

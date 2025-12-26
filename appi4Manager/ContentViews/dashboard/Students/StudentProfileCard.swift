@@ -15,6 +15,7 @@ struct StudentProfileCard: View {
     let dataProvider: StudentAppProfileDataProvider
     let classDevices: [TheDevice]  // Devices in the class (for accessing installed apps)
     let dashboardMode: DashboardMode  // Determines what pickers to show in edit sheet
+    let locationId: Int  // Location ID for active sessions
     
     @State private var apps: [DeviceApp] = []
     @State private var isLoadingApps = false
@@ -51,7 +52,8 @@ struct StudentProfileCard: View {
                 initialDayString: dayString,
                 dataProvider: dataProvider,
                 classDevices: classDevices,
-                dashboardMode: dashboardMode
+                dashboardMode: dashboardMode,
+                locationId: locationId
             )
         } label: {
             VStack(spacing: 10) {
@@ -272,6 +274,7 @@ struct StudentProfileEditView: View {
     let dataProvider: StudentAppProfileDataProvider
     let classDevices: [TheDevice]  // Devices in the class (for accessing installed apps)
     let dashboardMode: DashboardMode  // Determines what pickers to show
+    let locationId: Int  // Location ID for active sessions
     
     /// Selected timeslot - editable in both modes
     @State private var selectedTimeslot: TimeOfDay
@@ -291,14 +294,25 @@ struct StudentProfileEditView: View {
     @State private var weeklyEditTimeslot: TimeOfDay = .am
     @State private var showWeeklyEditSheet = false
     
+    /// Active session state (for allowRelogin feature)
+    @State private var activeSession: ActiveSession?
+    @State private var isLoadingActiveSession = false
+    @State private var allowRelogin: Bool = false
+    @State private var isUpdatingAllowRelogin = false
+    
+    /// FirestoreManager for active session operations
+    private let firestoreManager = FirestoreManager()
+    
     init(student: Student, initialTimeslot: TimeOfDay, initialDayString: String, 
-         dataProvider: StudentAppProfileDataProvider, classDevices: [TheDevice], dashboardMode: DashboardMode) {
+         dataProvider: StudentAppProfileDataProvider, classDevices: [TheDevice], dashboardMode: DashboardMode,
+         locationId: Int) {
         self.student = student
         self.initialTimeslot = initialTimeslot
         self.initialDayString = initialDayString
         self.dataProvider = dataProvider
         self.classDevices = classDevices
         self.dashboardMode = dashboardMode
+        self.locationId = locationId
         
         // Initialize state
         _selectedTimeslot = State(initialValue: initialTimeslot)
@@ -336,11 +350,7 @@ struct StudentProfileEditView: View {
     }
     
     private var timeslotLabel: String {
-        switch selectedTimeslot {
-        case .am: return "AM (9:00-11:59)"
-        case .pm: return "PM (12:00-4:59)"
-        case .home: return "Home (5:00+)"
-        }
+        TimeslotSettings.timeRangeString(for: selectedTimeslot)
     }
     
     /// First device in class (all devices have same apps installed)
@@ -502,6 +512,11 @@ struct StudentProfileEditView: View {
                         .background(Color(.systemBackground))
                         .cornerRadius(12)
                     }
+                    
+                    // Active Session / Allow Re-login Section (Now mode only)
+                    if dashboardMode == .now {
+                        activeSessionSection
+                    }
                 }
                 } // End of else block for day view
                 
@@ -528,9 +543,19 @@ struct StudentProfileEditView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             loadApps()
+            if dashboardMode == .now {
+                Task {
+                    await loadActiveSession()
+                }
+            }
         }
         .onChange(of: selectedTimeslot) { _, _ in
             loadApps()
+            if dashboardMode == .now {
+                Task {
+                    await loadActiveSession()
+                }
+            }
         }
         .onChange(of: selectedDay) { _, _ in
             loadApps()
@@ -678,6 +703,135 @@ struct StudentProfileEditView: View {
             allDeviceApps.first { $0.identifier == bundleId }
         }
     }
+    
+    // MARK: - Active Session Section
+    
+    /// UI section for viewing and toggling allowRelogin status
+    @ViewBuilder
+    private var activeSessionSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Active Session")
+                    .font(.headline)
+                
+                Spacer()
+                
+                if isLoadingActiveSession {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                }
+            }
+            
+            if let session = activeSession {
+                // Student has an active session
+                VStack(alignment: .leading, spacing: 12) {
+                    // Status indicator
+                    HStack {
+                        Circle()
+                            .fill(Color.green)
+                            .frame(width: 8, height: 8)
+                        Text("Logged in")
+                            .font(.subheadline)
+                            .foregroundColor(.green)
+                    }
+                    
+                    Divider()
+                    
+                    // Allow Re-login Toggle
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Allow Re-login")
+                                .font(.body)
+                            Text("Let student log in again during this time slot")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        if isUpdatingAllowRelogin {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                        } else {
+                            Toggle("", isOn: $allowRelogin)
+                                .labelsHidden()
+                                .onChange(of: allowRelogin) { oldValue, newValue in
+                                    guard oldValue != newValue else { return }
+                                    Task {
+                                        await updateAllowRelogin(newValue: newValue)
+                                    }
+                                }
+                        }
+                    }
+                }
+            } else {
+                // No active session
+                VStack(spacing: 8) {
+                    HStack {
+                        Circle()
+                            .fill(Color.gray)
+                            .frame(width: 8, height: 8)
+                        Text("No active session")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Text("Student has not logged in during this time slot")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+        }
+        .padding()
+        .background(Color(.systemBackground))
+        .cornerRadius(12)
+    }
+    
+    // MARK: - Active Session Methods
+    
+    /// Loads the active session for the current student and timeslot
+    private func loadActiveSession() async {
+        guard dashboardMode == .now else { return }
+        
+        await MainActor.run {
+            isLoadingActiveSession = true
+        }
+        
+        let session = await firestoreManager.getActiveSession(
+            studentId: student.id,
+            timeOfDay: selectedTimeslot,
+            locationId: locationId
+        )
+        
+        await MainActor.run {
+            activeSession = session
+            allowRelogin = session?.allowRelogin ?? false
+            isLoadingActiveSession = false
+        }
+    }
+    
+    /// Updates the allowRelogin field in Firestore
+    private func updateAllowRelogin(newValue: Bool) async {
+        guard let session = activeSession, let docId = session.id else { return }
+        
+        await MainActor.run {
+            isUpdatingAllowRelogin = true
+        }
+        
+        let success = await firestoreManager.updateAllowRelogin(documentId: docId, allowRelogin: newValue)
+        
+        await MainActor.run {
+            if success {
+                // Update local state to reflect the change
+                activeSession?.allowRelogin = newValue
+            } else {
+                // Revert the toggle if update failed
+                allowRelogin = !newValue
+            }
+            isUpdatingAllowRelogin = false
+        }
+    }
 }
 
 // MARK: - Edit Student Profile Sheet
@@ -713,7 +867,7 @@ struct EditStudentProfileSheet: View {
         switch timeslot {
         case .am: return "AM Session"
         case .pm: return "PM Session"
-        case .home: return "Home Session"
+        case .home, .blocked: return "Home Session"
         }
     }
     
@@ -1017,7 +1171,8 @@ struct StudentProfileCard_Previews: PreviewProvider {
                 dayString: "Mon",
                 dataProvider: StudentAppProfileDataProvider(),
                 classDevices: [],
-                dashboardMode: .now
+                dashboardMode: .now,
+                locationId: 1
             )
             .padding()
             .previewLayout(.sizeThatFits)
@@ -1035,7 +1190,8 @@ struct StudentProfileEditView_Previews: PreviewProvider {
                 initialDayString: "Mon",
                 dataProvider: StudentAppProfileDataProvider(),
                 classDevices: [],
-                dashboardMode: .now
+                dashboardMode: .now,
+                locationId: 1
             )
         }
     }

@@ -14,6 +14,7 @@ struct TeacherClassInfo: Identifiable {
     let classUUID: String
     let userGroupID: Int
     let userGroupName: String?
+    let locationId: Int  // Location ID for active sessions
     var students: [Student] = []
     var devices: [TheDevice] = []
 }
@@ -431,7 +432,8 @@ struct TeacherClassInfoView: View {
                     className: schoolClass.name,
                     classUUID: schoolClass.uuid,
                     userGroupID: schoolClass.userGroupId,
-                    userGroupName: groupName
+                    userGroupName: groupName,
+                    locationId: schoolClass.locationId
                 )
                 info.students = students
                 info.devices = devices

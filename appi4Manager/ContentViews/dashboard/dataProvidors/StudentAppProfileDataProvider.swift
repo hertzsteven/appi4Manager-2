@@ -101,7 +101,7 @@ class StudentAppProfileDataProvider {
             return dailySessions.amSession
         case .pm:
             return dailySessions.pmSession
-        case .home:
+        case .home, .blocked:
             return dailySessions.homeSession
         }
     }
@@ -183,18 +183,19 @@ class StudentAppProfileDataProvider {
         return bundleIdToAppId[bundleId]
     }
     
-    // MARK: - Helper Methods
-    
-    /// Determines the current timeslot based on the current time
+    /// Determines the current timeslot based on the current time and configured settings
     /// - Returns: The appropriate TimeOfDay based on current hour
     static func currentTimeslot() -> TimeOfDay {
         let hour = Calendar.current.component(.hour, from: Date())
-        if hour >= 9 && hour < 12 {
+        switch hour {
+        case TimeslotSettings.amStart..<TimeslotSettings.amEnd:
             return .am
-        } else if hour >= 12 && hour < 17 {
+        case TimeslotSettings.pmStart..<TimeslotSettings.pmEnd:
             return .pm
-        } else {
+        case TimeslotSettings.homeStart..<TimeslotSettings.homeEnd:
             return .home
+        default:
+            return .blocked
         }
     }
     
@@ -285,7 +286,7 @@ class StudentAppProfileDataProvider {
                 pmSession: updatedSession,
                 homeSession: dailySessions.homeSession
             )
-        case .home:
+        case .home, .blocked:
             dailySessions = DailySessions(
                 amSession: dailySessions.amSession,
                 pmSession: dailySessions.pmSession,

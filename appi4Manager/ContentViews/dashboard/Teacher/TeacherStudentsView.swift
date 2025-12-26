@@ -17,7 +17,11 @@ struct TeacherStudentsView: View {
     @State private var dataProvider = StudentAppProfileDataProvider()
     
     /// Selected timeslot for viewing app profiles
-    @State private var selectedTimeslot: TimeOfDay = StudentAppProfileDataProvider.currentTimeslot()
+    /// Defaults to .am during blocked hours since there's no overnight view
+    @State private var selectedTimeslot: TimeOfDay = {
+        let current = StudentAppProfileDataProvider.currentTimeslot()
+        return current == .blocked ? .am : current
+    }()
     
     /// Current day string for profile lookup
     private var currentDayString: String {
@@ -84,15 +88,18 @@ struct TeacherStudentsView: View {
                     LazyVGrid(columns: [
                         GridItem(.adaptive(minimum: 150), spacing: 16)
                     ], spacing: 16) {
-                        ForEach(allStudents, id: \.id) { student in
-                            StudentProfileCard(
-                                student: student,
-                                timeslot: selectedTimeslot,
-                                dayString: currentDayString,
-                                dataProvider: dataProvider,
-                                classDevices: allDevices,
-                                dashboardMode: .now
-                            )
+                        ForEach(teacherClasses) { classInfo in
+                            ForEach(classInfo.students, id: \.id) { student in
+                                StudentProfileCard(
+                                    student: student,
+                                    timeslot: selectedTimeslot,
+                                    dayString: currentDayString,
+                                    dataProvider: dataProvider,
+                                    classDevices: allDevices,
+                                    dashboardMode: .now,
+                                    locationId: classInfo.locationId
+                                )
+                            }
                         }
                     }
                     .padding()
@@ -130,14 +137,7 @@ struct TeacherStudentsView: View {
     }
     
     private var timeslotTimeRange: String {
-        switch selectedTimeslot {
-        case .am:
-            return "9:00 AM - 11:59 AM"
-        case .pm:
-            return "12:00 PM - 4:59 PM"
-        case .home:
-            return "5:00 PM onwards"
-        }
+        TimeslotSettings.timeRangeString(for: selectedTimeslot)
     }
 }
 

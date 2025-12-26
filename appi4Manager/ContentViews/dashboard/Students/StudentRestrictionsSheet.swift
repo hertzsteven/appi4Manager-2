@@ -328,7 +328,8 @@ struct StudentRestrictionsSheet: View {
             className: "Test Class",
             classUUID: "test-uuid",
             userGroupID: 118,
-            userGroupName: "Test Group"
+            userGroupName: "Test Group",
+            locationId: 1
         ),
         authToken: "test-token"
     )

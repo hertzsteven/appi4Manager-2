@@ -491,15 +491,12 @@ private struct TimeslotPillButton: View {
         case .am: return "AM"
         case .pm: return "PM"
         case .home: return "Home"
+        case .blocked: return "Overnight"
         }
     }
     
     private var timeRange: String {
-        switch timeslot {
-        case .am: return "9:00-11:59"
-        case .pm: return "12:00-4:59"
-        case .home: return "5:00+"
-        }
+        TimeslotSettings.timeRangeString(for: timeslot)
     }
     
     var body: some View {

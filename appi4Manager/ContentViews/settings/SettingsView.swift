@@ -72,6 +72,51 @@ struct SettingsView: View {
                     Text("One-time migration to update student profile document IDs to include school ID.")
                 }
             }
+            
+            // MARK: - Timeslot Hours Section
+            Section {
+                TimeslotRangeRow(
+                    title: "Morning (AM)",
+                    startHour: Binding(
+                        get: { TimeslotSettings.amStart },
+                        set: { TimeslotSettings.setAMRange(start: $0, end: TimeslotSettings.amEnd) }
+                    ),
+                    endHour: Binding(
+                        get: { TimeslotSettings.amEnd },
+                        set: { TimeslotSettings.setAMRange(start: TimeslotSettings.amStart, end: $0) }
+                    )
+                )
+                TimeslotRangeRow(
+                    title: "Afternoon (PM)",
+                    startHour: Binding(
+                        get: { TimeslotSettings.pmStart },
+                        set: { TimeslotSettings.setPMRange(start: $0, end: TimeslotSettings.pmEnd) }
+                    ),
+                    endHour: Binding(
+                        get: { TimeslotSettings.pmEnd },
+                        set: { TimeslotSettings.setPMRange(start: TimeslotSettings.pmStart, end: $0) }
+                    )
+                )
+                TimeslotRangeRow(
+                    title: "Home/Evening",
+                    startHour: Binding(
+                        get: { TimeslotSettings.homeStart },
+                        set: { TimeslotSettings.setHomeRange(start: $0, end: TimeslotSettings.homeEnd) }
+                    ),
+                    endHour: Binding(
+                        get: { TimeslotSettings.homeEnd },
+                        set: { TimeslotSettings.setHomeRange(start: TimeslotSettings.homeStart, end: $0) }
+                    )
+                )
+                Button("Reset to Defaults") {
+                    TimeslotSettings.resetToDefaults()
+                }
+                .foregroundColor(.red)
+            } header: {
+                Text("Timeslot Hours")
+            } footer: {
+                Text("Configure when each session starts and ends. Hours outside these ranges will block student login.")
+            }
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.large)
@@ -282,13 +327,82 @@ struct SettingsView: View {
     private var buildNumber: String {
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
     }
-    
     // MARK: - Actions
     
     private func openPrivacyPolicy() {
         // Replace with your actual privacy policy URL
         guard let url = URL(string: "https://example.com/privacy") else { return }
         UIApplication.shared.open(url)
+    }
+}
+
+// MARK: - Timeslot Range Row Component
+
+/// A row component for configuring a timeslot's start and end hours
+struct TimeslotRangeRow: View {
+    let title: String
+    @Binding var startHour: Int
+    @Binding var endHour: Int
+    
+    private let hours = Array(0...24)
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.headline)
+            
+            HStack {
+                // Start Hour Picker
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Start")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Picker("Start", selection: $startHour) {
+                        ForEach(hours, id: \.self) { hour in
+                            Text(formatHour(hour)).tag(hour)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .labelsHidden()
+                }
+                
+                Spacer()
+                
+                Image(systemName: "arrow.right")
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+                
+                // End Hour Picker
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text("End")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Picker("End", selection: $endHour) {
+                        ForEach(hours, id: \.self) { hour in
+                            Text(formatHour(hour)).tag(hour)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .labelsHidden()
+                }
+            }
+        }
+        .padding(.vertical, 4)
+    }
+    
+    private func formatHour(_ hour: Int) -> String {
+        if hour == 0 {
+            return "12:00 AM"
+        } else if hour == 12 {
+            return "12:00 PM"
+        } else if hour == 24 {
+            return "Midnight"
+        } else if hour < 12 {
+            return "\(hour):00 AM"
+        } else {
+            return "\(hour - 12):00 PM"
+        }
     }
 }
 
