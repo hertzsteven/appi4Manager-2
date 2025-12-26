@@ -148,16 +148,6 @@ struct MultiDeviceAppLockView: View {
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
-                
-                if devicesWithOwners.count < devices.count {
-                    Text("\(devicesWithOwners.count) with owner, \(devicesWithoutOwners.count) without")
-                        .font(.caption)
-                        .foregroundColor(.orange)
-                } else {
-                    Text("All devices have owners")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
             }
             
             Spacer()
@@ -237,16 +227,6 @@ struct MultiDeviceAppLockView: View {
                 color: .orange
             ) {
                 showRestartConfirmation = true
-            }
-            
-            // Assign Owner button
-            actionButton(
-                title: "Assign Owner to All",
-                subtitle: "Set same student as owner for all \(devices.count) device\(devices.count == 1 ? "" : "s")",
-                icon: "person.badge.plus",
-                color: .purple
-            ) {
-                showStudentPicker = true
             }
         }
         .padding(.horizontal)

@@ -105,7 +105,7 @@ struct TeacherDevicesView: View {
                         selectedDevices.removeAll()
                     }
                 } label: {
-                    Text(isMultiSelectMode ? "Done" : "Select")
+                    Text(isMultiSelectMode ? "Cancel" : "Select")
                 }
             }
         }
@@ -322,20 +322,6 @@ struct SelectableDeviceCard: View {
                             .zIndex(1)
                     }
                     
-                    // Lock status indicator (top-left)
-                    ZStack {
-                        Circle()
-                            .fill(isLocked ? Color.red.opacity(0.15) : Color.green.opacity(0.15))
-                            .frame(width: 28, height: 28)
-                        
-                        Image(systemName: isLocked ? "lock.fill" : "lock.open.fill")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(isLocked ? .red : .green)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                    .offset(x: -8, y: -8)
-                    .zIndex(1)
-                    
                     // Device Icon with colored ring
                     Circle()
                         .stroke(ringColor, lineWidth: 4)
@@ -361,22 +347,6 @@ struct SelectableDeviceCard: View {
                     .fontWeight(.medium)
                     .foregroundColor(.primary)
                     .lineLimit(1)
-                
-                // Owner info
-                if let owner = device.owner {
-                    Text(owner.name)
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-                } else {
-                    HStack(spacing: 2) {
-                        Image(systemName: "person.fill.questionmark")
-                            .font(.caption2)
-                        Text("No owner")
-                            .font(.caption2)
-                    }
-                    .foregroundColor(.orange)
-                }
             }
             .frame(width: 150, height: 160)
             .padding()

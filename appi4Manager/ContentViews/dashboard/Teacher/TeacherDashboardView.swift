@@ -71,11 +71,8 @@ struct TeacherDashboardView: View {
     /// Controls the restrictions sheet visibility (shows current device locks)
     @State private var showRestrictionsSheet = false
     
-    /// Current dashboard mode: Now (quick daily changes) or Planning (weekly scheduling)
-    @State private var dashboardMode: DashboardMode = .now
-    
-    /// Selected day for Planning mode (defaults to today's weekday)
-    @State private var selectedDayForPlanning: DayOfWeek = DayOfWeek.current()
+    /// Controls the Planning sheet visibility (weekly scheduling)
+    @State private var showPlanningSheet = false
     
     /// Provides student app profile data from Firebase
     @State private var dataProvider = StudentAppProfileDataProvider()
@@ -124,8 +121,8 @@ struct TeacherDashboardView: View {
             .navigationTitle("My Students")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
-                // Primary actions - always visible
-                ToolbarItem(placement: .navigationBarTrailing) {
+                // Left side - action buttons
+                ToolbarItem(placement: .navigationBarLeading) {
                     Button {
                         showStudentManagement = true
                     } label: {
@@ -134,7 +131,7 @@ struct TeacherDashboardView: View {
                     .disabled(activeClass == nil)
                 }
                 
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .navigationBarLeading) {
                     Button {
                         showDevicesSheet = true
                     } label: {
@@ -143,15 +140,16 @@ struct TeacherDashboardView: View {
                     .disabled(activeClass == nil)
                 }
                 
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .navigationBarLeading) {
                     Button {
-                        showRestrictionsSheet = true
+                        showPlanningSheet = true
                     } label: {
-                        Image(systemName: "lock.circle")
+                        Image(systemName: "calendar")
                     }
                     .disabled(activeClass == nil)
                 }
                 
+                // Right side - settings only
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink(destination: SettingsView()) {
                         Image(systemName: "gearshape")
@@ -225,6 +223,20 @@ struct TeacherDashboardView: View {
                 )
             }
         }
+        .sheet(isPresented: $showPlanningSheet) {
+            if let activeClass = activeClass {
+                PlanningSheet(
+                    students: filteredStudents,
+                    devices: activeClass.devices,
+                    locationId: activeClass.locationId,
+                    dataProvider: dataProvider,
+                    bulkSetupDataProvider: bulkSetupDataProvider,
+                    onDismiss: {
+                        showPlanningSheet = false
+                    }
+                )
+            }
+        }
         .task {
             if authManager.isAuthenticated {
                 await loadTeacherData()
@@ -237,14 +249,7 @@ struct TeacherDashboardView: View {
                 }
             }
         }
-        .onChange(of: dashboardMode) { _, newMode in
-            // When switching to Now mode, reset timeslot to auto-detected current time
-            // Default to .am during blocked hours since there's no overnight view
-            if newMode == .now {
-                let current = StudentAppProfileDataProvider.currentTimeslot()
-                selectedTimeslot = current == .blocked ? .am : current
-            }
-        }
+
     }
     
     // MARK: - Login Prompt View
@@ -398,7 +403,6 @@ struct TeacherDashboardView: View {
     /// - Current class info bar
     /// - Date navigation with arrows
     /// - Time period picker (AM/PM/After School)
-    /// - Mode picker (Now/Planning)
     /// - Students grid with profile cards
     private var classesContentView: some View {
         VStack(spacing: 0) {
@@ -421,8 +425,6 @@ struct TeacherDashboardView: View {
             .padding(.vertical, 12)
             .background(Color(.systemBackground))
             
-            // Mode Picker (Now / Planning) + Bulk Setup button in Planning mode
-            modePickerWithBulkButton
             
             // Students Grid (scrollable)
             inlineStudentsGrid
@@ -442,44 +444,7 @@ struct TeacherDashboardView: View {
         }
     }
     
-    // MARK: - Mode Picker with Bulk Button
-    
-    /// Mode picker segmented control + Bulk Setup button (visible only in Planning mode)
-    private var modePickerWithBulkButton: some View {
-        VStack(spacing: 12) {
-            // Mode picker
-            Picker("Mode", selection: $dashboardMode) {
-                ForEach(DashboardMode.allCases, id: \.self) { mode in
-                    Text(mode.rawValue).tag(mode)
-                }
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal, 20)
-            .padding(.top, 12)
-            
-            // Bulk Setup button - only visible in Planning mode
-            if dashboardMode == .planning {
-                Button {
-                    showBulkSetup = true
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "slider.horizontal.3")
-                        Text("Bulk Setup")
-                            .fontWeight(.medium)
-                    }
-                    .font(.subheadline)
-                    .foregroundColor(.accentColor)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(Color.accentColor.opacity(0.1))
-                    .cornerRadius(8)
-                }
-            }
-        }
-        .padding(.bottom, 12)
-        .background(Color(.systemBackground))
-    }
-    
+
     // MARK: - Date Navigation Bar
     
     /// Horizontal bar showing the selected date with left/right arrows for navigation
@@ -631,13 +596,9 @@ struct TeacherDashboardView: View {
         TimeslotSettings.timeRangeString(for: selectedTimeslot)
     }
     
-    /// Day string for profile lookup - uses selectedDate in Now mode, selected day in Planning mode
+    /// Day string for profile lookup - uses selectedDate
     private var currentDayString: String {
-        if dashboardMode == .now {
-            return dayString(from: selectedDate)
-        } else {
-            return selectedDayForPlanning.asAString
-        }
+        return dayString(from: selectedDate)
     }
     
     // MARK: - Inline Students Grid
@@ -687,7 +648,7 @@ struct TeacherDashboardView: View {
                                 dayString: currentDayString,
                                 dataProvider: dataProvider,
                                 classDevices: activeClass.devices,
-                                dashboardMode: dashboardMode,
+                                dashboardMode: .now,
                                 locationId: activeClass.locationId
                             )
                         }

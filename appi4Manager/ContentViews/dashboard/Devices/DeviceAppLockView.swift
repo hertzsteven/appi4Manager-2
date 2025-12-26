@@ -142,25 +142,6 @@ struct DeviceAppLockView: View {
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
-                
-                // Owner info
-                if let owner = device.owner {
-                    HStack(spacing: 4) {
-                        Image(systemName: "person.fill")
-                            .font(.caption)
-                        Text(owner.name)
-                            .font(.subheadline)
-                    }
-                    .foregroundColor(.secondary)
-                } else {
-                    HStack(spacing: 4) {
-                        Image(systemName: "person.fill.questionmark")
-                            .font(.caption)
-                        Text("No owner assigned")
-                            .font(.subheadline)
-                    }
-                    .foregroundColor(.orange)
-                }
             }
             
             Spacer()
@@ -217,16 +198,6 @@ struct DeviceAppLockView: View {
                 color: .orange
             ) {
                 showRestartConfirmation = true
-            }
-            
-            // Assign Owner button
-            actionButton(
-                title: "Assign Owner",
-                subtitle: hasOwner ? "Change device owner" : "Set a student as owner",
-                icon: "person.badge.plus",
-                color: .purple
-            ) {
-                showStudentPicker = true
             }
             
             // Warning for devices without owner
