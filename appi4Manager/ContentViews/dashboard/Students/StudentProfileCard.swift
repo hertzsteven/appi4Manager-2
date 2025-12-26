@@ -91,7 +91,7 @@ struct StudentProfileCard: View {
                     sessionStatusOverlay
                 }
             }
-            .frame(width: 140, height: activeSession != nil ? 230 : 200)
+            .frame(width: 140, height: activeSession != nil ? 250 : 200)
             .padding(.vertical, 8)
             .padding(.horizontal, 4)
             .background(Color(.systemBackground))
@@ -273,67 +273,74 @@ struct StudentProfileCard: View {
     // MARK: - Session Status Overlay
     
     /// Displays real-time session status (active/completed) from Firestore
+    /// Two-line layout: App name on top, status + time below
     @ViewBuilder
     private var sessionStatusOverlay: some View {
         if let session = activeSession {
-            VStack(spacing: 2) {
+            VStack(spacing: 4) {
                 Divider()
                     .padding(.horizontal, 8)
                 
-                HStack(spacing: 4) {
-                    // Status indicator
-                    Circle()
-                        .fill(session.isActive ? Color.green : Color.blue)
-                        .frame(width: 6, height: 6)
-                    
-                    // App name (shortened bundle ID) or status
-                    if let bundleId = session.appBundleId {
-                        Text(shortAppName(from: bundleId))
-                            .font(.system(size: 9))
+                VStack(alignment: .leading, spacing: 2) {
+                    // Line 1: App name
+                    if let bundleId = session.appBundleId, !bundleId.isEmpty {
+                        Text(appDisplayName(from: bundleId))
+                            .font(.caption)
                             .fontWeight(.medium)
                             .foregroundColor(.primary)
                             .lineLimit(1)
-                    } else {
-                        Text(session.isActive ? "Active" : "Done")
-                            .font(.system(size: 9))
-                            .fontWeight(.medium)
-                            .foregroundColor(session.isActive ? .green : .blue)
                     }
                     
-                    Spacer()
-                    
-                    // Time info
-                    if session.isCompleted {
-                        // Completed: show completion time
-                        if let endTime = session.endTimeString {
+                    // Line 2: Status indicator + time
+                    HStack(spacing: 4) {
+                        Circle()
+                            .fill(session.isActive ? Color.green : Color.blue)
+                            .frame(width: 6, height: 6)
+                        
+                        if session.isCompleted {
+                            // Completed: show checkmark and completion time
                             Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 8))
+                                .font(.caption2)
                                 .foregroundColor(.blue)
-                            Text(endTime)
-                                .font(.system(size: 8))
-                                .foregroundColor(.secondary)
-                        }
-                    } else if session.isActive {
-                        // Active: show estimated end time
-                        if let endTime = session.endTimeString {
-                            Image(systemName: "clock")
-                                .font(.system(size: 8))
-                                .foregroundColor(.orange)
-                            Text("~\(endTime)")
-                                .font(.system(size: 8))
-                                .foregroundColor(.secondary)
+                            if let endTime = session.endTimeString {
+                                Text(endTime)
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                        } else if session.isActive {
+                            // Active: show clock and estimated end time
+                            Text("Active")
+                                .font(.caption2)
+                                .fontWeight(.medium)
+                                .foregroundColor(.green)
+                            if let endTime = session.endTimeString {
+                                Image(systemName: "clock")
+                                    .font(.caption2)
+                                    .foregroundColor(.orange)
+                                Text("~\(endTime)")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
                         }
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
             }
         }
     }
     
-    /// Extracts a short app name from bundle ID (e.g., "com.apple.safari" -> "Safari")
-    private func shortAppName(from bundleId: String) -> String {
-        // Try to get the last component and capitalize it
+    /// Looks up the display name for an app from the class devices
+    /// Falls back to extracting the last component of the bundle ID if not found
+    private func appDisplayName(from bundleId: String) -> String {
+        // Search through all class devices for the app
+        for device in classDevices {
+            if let deviceApp = device.apps?.first(where: { $0.identifier == bundleId }) {
+                return deviceApp.displayName
+            }
+        }
+        // Fallback: extract last component of bundle ID
         let components = bundleId.split(separator: ".")
         if let last = components.last {
             return String(last).capitalized
