@@ -97,7 +97,8 @@ struct TeacherStudentsView: View {
                                     dataProvider: dataProvider,
                                     classDevices: allDevices,
                                     dashboardMode: .now,
-                                    locationId: classInfo.locationId
+                                    locationId: classInfo.locationId,
+                                    activeSession: nil  // This view doesn't use real-time sessions
                                 )
                             }
                         }

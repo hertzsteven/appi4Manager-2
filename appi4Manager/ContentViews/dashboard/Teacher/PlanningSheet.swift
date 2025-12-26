@@ -147,7 +147,8 @@ struct PlanningSheet: View {
                                 dataProvider: dataProvider,
                                 classDevices: devices,
                                 dashboardMode: .planning,
-                                locationId: locationId
+                                locationId: locationId,
+                                activeSession: nil  // Planning mode doesn't use real-time sessions
                             )
                         }
                     }

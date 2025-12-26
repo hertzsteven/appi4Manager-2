@@ -80,6 +80,9 @@ struct TeacherDashboardView: View {
     /// Separate data provider for bulk profile setup to avoid conflicts
     @State private var bulkSetupDataProvider = StudentAppProfileDataProvider()
     
+    /// Listens for real-time active session updates from Firestore
+    @State private var sessionListener = ActiveSessionListener()
+    
     // MARK: - Computed Properties
     
     /// The currently active class - either explicitly selected or defaults to first class
@@ -435,6 +438,20 @@ struct TeacherDashboardView: View {
             if let activeClass = activeClass {
                 await dataProvider.loadProfiles(for: activeClass.students.map { $0.id })
             }
+            // Start listening for active sessions
+            startSessionListener()
+        }
+        .onChange(of: selectedTimeslot) { _, _ in
+            startSessionListener()
+        }
+        .onChange(of: selectedDate) { _, _ in
+            startSessionListener()
+        }
+        .onChange(of: selectedClass) { _, _ in
+            startSessionListener()
+        }
+        .onDisappear {
+            sessionListener.stopListening()
         }
         .refreshable {
             await loadTeacherData()
@@ -649,7 +666,8 @@ struct TeacherDashboardView: View {
                                 dataProvider: dataProvider,
                                 classDevices: activeClass.devices,
                                 dashboardMode: .now,
-                                locationId: activeClass.locationId
+                                locationId: activeClass.locationId,
+                                activeSession: sessionListener.session(for: student.id)
                             )
                         }
                     }
@@ -864,6 +882,23 @@ struct TeacherDashboardView: View {
                 hasAttemptedLoad = true
             }
         }
+    }
+    
+    // MARK: - Session Listener
+    
+    /// Starts/restarts the ActiveSession listener with current parameters
+    private func startSessionListener() {
+        guard let activeClass = activeClass else {
+            sessionListener.stopListening()
+            return
+        }
+        
+        sessionListener.startListening(
+            companyId: APISchoolInfo.shared.companyId,
+            locationId: activeClass.locationId,
+            date: selectedDate,
+            timeOfDay: selectedTimeslot
+        )
     }
     
     // MARK: - Dummy Student Creation

@@ -16,6 +16,7 @@ struct StudentProfileCard: View {
     let classDevices: [TheDevice]  // Devices in the class (for accessing installed apps)
     let dashboardMode: DashboardMode  // Determines what pickers to show in edit sheet
     let locationId: Int  // Location ID for active sessions
+    let activeSession: ActiveSession?  // Real-time session status from Firestore
     
     @State private var apps: [DeviceApp] = []
     @State private var isLoadingApps = false
@@ -84,8 +85,13 @@ struct StudentProfileCard: View {
                 } else {
                     noProfileView
                 }
+                
+                // Session Status Overlay (if there's an active/completed session)
+                if activeSession != nil {
+                    sessionStatusOverlay
+                }
             }
-            .frame(width: 140, height: 200)
+            .frame(width: 140, height: activeSession != nil ? 230 : 200)
             .padding(.vertical, 8)
             .padding(.horizontal, 4)
             .background(Color(.systemBackground))
@@ -262,6 +268,77 @@ struct StudentProfileCard: View {
         } else {
             return .blue
         }
+    }
+    
+    // MARK: - Session Status Overlay
+    
+    /// Displays real-time session status (active/completed) from Firestore
+    @ViewBuilder
+    private var sessionStatusOverlay: some View {
+        if let session = activeSession {
+            VStack(spacing: 2) {
+                Divider()
+                    .padding(.horizontal, 8)
+                
+                HStack(spacing: 4) {
+                    // Status indicator
+                    Circle()
+                        .fill(session.isActive ? Color.green : Color.blue)
+                        .frame(width: 6, height: 6)
+                    
+                    // App name (shortened bundle ID) or status
+                    if let bundleId = session.appBundleId {
+                        Text(shortAppName(from: bundleId))
+                            .font(.system(size: 9))
+                            .fontWeight(.medium)
+                            .foregroundColor(.primary)
+                            .lineLimit(1)
+                    } else {
+                        Text(session.isActive ? "Active" : "Done")
+                            .font(.system(size: 9))
+                            .fontWeight(.medium)
+                            .foregroundColor(session.isActive ? .green : .blue)
+                    }
+                    
+                    Spacer()
+                    
+                    // Time info
+                    if session.isCompleted {
+                        // Completed: show completion time
+                        if let endTime = session.endTimeString {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 8))
+                                .foregroundColor(.blue)
+                            Text(endTime)
+                                .font(.system(size: 8))
+                                .foregroundColor(.secondary)
+                        }
+                    } else if session.isActive {
+                        // Active: show estimated end time
+                        if let endTime = session.endTimeString {
+                            Image(systemName: "clock")
+                                .font(.system(size: 8))
+                                .foregroundColor(.orange)
+                            Text("~\(endTime)")
+                                .font(.system(size: 8))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+            }
+        }
+    }
+    
+    /// Extracts a short app name from bundle ID (e.g., "com.apple.safari" -> "Safari")
+    private func shortAppName(from bundleId: String) -> String {
+        // Try to get the last component and capitalize it
+        let components = bundleId.split(separator: ".")
+        if let last = components.last {
+            return String(last).capitalized
+        }
+        return bundleId
     }
 }
 
@@ -1162,9 +1239,27 @@ struct StudentProfileCard_Previews: PreviewProvider {
         )
     }
     
+    static var mockActiveSession: ActiveSession {
+        ActiveSession(
+            deviceUUID: "test-uuid",
+            studentId: 123,
+            companyId: 2001128,
+            locationId: 1,
+            date: "20241226",
+            timeslot: "morning",
+            allowRelogin: false,
+            status: "active",
+            creationDT: Date().addingTimeInterval(-600), // Started 10 mins ago
+            completedAt: nil,
+            sessionLengthMin: 30,
+            appBundleId: "com.apple.safari",
+            loginCount: 1
+        )
+    }
+    
     static var previews: some View {
         Group {
-            // Single card preview
+            // Card without active session
             StudentProfileCard(
                 student: mockStudent,
                 timeslot: .am,
@@ -1172,11 +1267,27 @@ struct StudentProfileCard_Previews: PreviewProvider {
                 dataProvider: StudentAppProfileDataProvider(),
                 classDevices: [],
                 dashboardMode: .now,
-                locationId: 1
+                locationId: 1,
+                activeSession: nil
             )
             .padding()
             .previewLayout(.sizeThatFits)
-            .previewDisplayName("AM Timeslot")
+            .previewDisplayName("No Session")
+            
+            // Card with active session
+            StudentProfileCard(
+                student: mockStudent,
+                timeslot: .am,
+                dayString: "Mon",
+                dataProvider: StudentAppProfileDataProvider(),
+                classDevices: [],
+                dashboardMode: .now,
+                locationId: 1,
+                activeSession: mockActiveSession
+            )
+            .padding()
+            .previewLayout(.sizeThatFits)
+            .previewDisplayName("Active Session")
         }
     }
 }

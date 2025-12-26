@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// Represents a class that the teacher teaches with its associated group info
-struct TeacherClassInfo: Identifiable {
+struct TeacherClassInfo: Identifiable, Equatable {
     let id: String  // Using class UUID as id
     let className: String
     let classUUID: String
@@ -17,6 +17,15 @@ struct TeacherClassInfo: Identifiable {
     let locationId: Int  // Location ID for active sessions
     var students: [Student] = []
     var devices: [TheDevice] = []
+    
+    // Custom Equatable conformance - compare only the stable identifying properties
+    static func == (lhs: TeacherClassInfo, rhs: TeacherClassInfo) -> Bool {
+        lhs.id == rhs.id &&
+        lhs.className == rhs.className &&
+        lhs.classUUID == rhs.classUUID &&
+        lhs.userGroupID == rhs.userGroupID &&
+        lhs.locationId == rhs.locationId
+    }
 }
 
 struct TeacherClassInfoView: View {
