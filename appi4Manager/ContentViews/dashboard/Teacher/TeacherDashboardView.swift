@@ -59,6 +59,9 @@ struct TeacherDashboardView: View {
         return current == .blocked ? .am : current
     }()
     
+    /// Selected date for viewing students (defaults to today)
+    @State private var selectedDate: Date = Date()
+    
     /// Controls the devices sheet visibility (accessible via toolbar iPad button)
     @State private var showDevicesSheet = false
     
@@ -393,8 +396,9 @@ struct TeacherDashboardView: View {
     /// Main content view showing the dashboard with:
     /// - Welcome header with teacher's name
     /// - Current class info bar
+    /// - Date navigation with arrows
+    /// - Time period picker (AM/PM/After School)
     /// - Mode picker (Now/Planning)
-    /// - Mode-specific controls (timeslot only for Now, day+timeslot+bulk for Planning)
     /// - Students grid with profile cards
     private var classesContentView: some View {
         VStack(spacing: 0) {
@@ -407,7 +411,15 @@ struct TeacherDashboardView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 20)
             }
-            .frame(height: 220) // Fixed height for header section
+            .frame(height: 140) // Compact since welcome header is now horizontal
+            
+            // Date Navigation + Time Period Picker section
+            VStack(spacing: 12) {
+                dateNavigationBar
+                timePeriodPicker
+            }
+            .padding(.vertical, 12)
+            .background(Color(.systemBackground))
             
             // Mode Picker (Now / Planning) + Bulk Setup button in Planning mode
             modePickerWithBulkButton
@@ -468,57 +480,94 @@ struct TeacherDashboardView: View {
         .background(Color(.systemBackground))
     }
     
-    // MARK: - Welcome Header
+    // MARK: - Date Navigation Bar
     
-    /// Top card showing "Welcome back, [Teacher's Name]" with current date
-    /// and a "Switch" button if teacher has multiple classes.
-    private var welcomeHeader: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Welcome back,")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                    
-                    Text(authManager.authenticatedUser?.firstName ?? "Teacher")
-                        .font(.title)
-                        .fontWeight(.bold)
-                }
-                
-                Spacer()
-                
-                // Class Switcher Button (only show if multiple classes)
-                if teacherClasses.count > 1 {
-                    Button {
-                        showClassSelector = true
-                    } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: "square.stack.3d.up.fill")
-                            Text("Switch")
-                                .fontWeight(.medium)
-                        }
-                        .font(.subheadline)
-                        .foregroundColor(.accentColor)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(Color.accentColor.opacity(0.1))
-                        .cornerRadius(8)
-                    }
-                }
+    /// Horizontal bar showing the selected date with left/right arrows for navigation
+    private var dateNavigationBar: some View {
+        HStack {
+            Button {
+                selectedDate = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate) ?? selectedDate
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.title3)
+                    .foregroundColor(.accentColor)
             }
             
-            // Current date and session
-            HStack(spacing: 12) {
-                Label(currentDateString, systemImage: "calendar")
-                Label(currentSessionString, systemImage: "clock")
+            Spacer()
+            
+            Text(formattedSelectedDate)
+                .font(.headline)
+                .fontWeight(.semibold)
+            
+            Spacer()
+            
+            Button {
+                selectedDate = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) ?? selectedDate
+            } label: {
+                Image(systemName: "chevron.right")
+                    .font(.title3)
+                    .foregroundColor(.accentColor)
             }
-            .font(.caption)
-            .foregroundColor(.secondary)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
+        .padding(.horizontal, 20)
+    }
+    
+    // MARK: - Time Period Picker
+    
+    /// Segmented control for selecting AM, PM, or After School time period.
+    /// The current time period is auto-selected on view load.
+    private var timePeriodPicker: some View {
+        Picker("Time Period", selection: $selectedTimeslot) {
+            Text("A.M.").tag(TimeOfDay.am)
+            Text("P.M.").tag(TimeOfDay.pm)
+            Text("After School").tag(TimeOfDay.home)
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal, 20)
+    }
+    
+    // MARK: - Welcome Header
+    /// Compact horizontal bar showing "Welcome back, [Teacher's Name]"
+    /// and a "Switch" button if teacher has multiple classes.
+    private var welcomeHeader: some View {
+        HStack {
+            // Welcome message - horizontal and compact
+            HStack(spacing: 4) {
+                Text("Welcome back,")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                
+                Text(authManager.authenticatedUser?.firstName ?? "Teacher")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+            }
+            
+            Spacer()
+            
+            // Class Switcher Button (only show if multiple classes)
+            if teacherClasses.count > 1 {
+                Button {
+                    showClassSelector = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "square.stack.3d.up.fill")
+                            .font(.caption)
+                        Text("Switch")
+                            .fontWeight(.medium)
+                    }
+                    .font(.caption)
+                    .foregroundColor(.accentColor)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.accentColor.opacity(0.1))
+                    .cornerRadius(6)
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
         .background(Color(.systemBackground))
-        .cornerRadius(12)
+        .cornerRadius(10)
     }
     
     // MARK: - Class Info Card
@@ -582,10 +631,10 @@ struct TeacherDashboardView: View {
         TimeslotSettings.timeRangeString(for: selectedTimeslot)
     }
     
-    /// Day string for profile lookup - uses today in Now mode, selected day in Planning mode
+    /// Day string for profile lookup - uses selectedDate in Now mode, selected day in Planning mode
     private var currentDayString: String {
         if dashboardMode == .now {
-            return StudentAppProfileDataProvider.currentDayString()
+            return dayString(from: selectedDate)
         } else {
             return selectedDayForPlanning.asAString
         }
@@ -659,24 +708,20 @@ struct TeacherDashboardView: View {
     
     // MARK: - Helper Computed Properties
     
-    private var currentDateString: String {
+    /// Formatted date string for the date navigation bar
+    private var formattedSelectedDate: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "EEEE, MMM d"
-        return formatter.string(from: Date())
+        return formatter.string(from: selectedDate)
     }
     
-    private var currentSessionString: String {
-        let hour = Calendar.current.component(.hour, from: Date())
-        switch hour {
-        case TimeslotSettings.amStart..<TimeslotSettings.amEnd:
-            return "Morning Session"
-        case TimeslotSettings.pmStart..<TimeslotSettings.pmEnd:
-            return "Afternoon Session"
-        case TimeslotSettings.homeStart..<TimeslotSettings.homeEnd:
-            return "After School"
-        default:
-            return "Overnight"
+    /// Helper to get day string from a Date
+    private func dayString(from date: Date) -> String {
+        let dayNumber = Calendar.current.component(.weekday, from: date)
+        guard let day = DayOfWeek(rawValue: dayNumber) else {
+            return "Mon"
         }
+        return day.asAString
     }
     
     // MARK: - Computed Properties for Counts
