@@ -91,7 +91,7 @@ struct StudentProfileCard: View {
                     sessionStatusOverlay
                 }
             }
-            .frame(width: 140, height: activeSession != nil ? 250 : 200)
+            .frame(width: 140, height: activeSession != nil ? 260 : 200)
             .padding(.vertical, 8)
             .padding(.horizontal, 4)
             .background(Color(.systemBackground))
@@ -273,25 +273,45 @@ struct StudentProfileCard: View {
     // MARK: - Session Status Overlay
     
     /// Displays real-time session status (active/completed) from Firestore
-    /// Two-line layout: App name on top, status + time below
+    /// Shows app icon + name on same line, status below (matches appIconsRow layout)
     @ViewBuilder
     private var sessionStatusOverlay: some View {
         if let session = activeSession {
-            VStack(spacing: 4) {
+            VStack(spacing: 6) {
                 Divider()
                     .padding(.horizontal, 8)
                 
-                VStack(alignment: .leading, spacing: 2) {
-                    // Line 1: App name
+                VStack(spacing: 4) {
+                    // App icon and name on same line (matching appIconsRow style)
                     if let bundleId = session.appBundleId, !bundleId.isEmpty {
-                        Text(appDisplayName(from: bundleId))
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(.primary)
-                            .lineLimit(1)
+                        let deviceApp = findDeviceApp(bundleId: bundleId)
+                        
+                        HStack(spacing: 6) {
+                            AsyncImage(url: deviceApp?.iconURL) { phase in
+                                switch phase {
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 28, height: 28)
+                                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                                default:
+                                    Image(systemName: "app.fill")
+                                        .font(.system(size: 20))
+                                        .foregroundColor(.accentColor)
+                                        .frame(width: 28, height: 28)
+                                }
+                            }
+                            
+                            Text(deviceApp?.displayName ?? appDisplayName(from: bundleId))
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.primary)
+                                .lineLimit(1)
+                        }
                     }
                     
-                    // Line 2: Status indicator + time
+                    // Status indicator + time
                     HStack(spacing: 4) {
                         Circle()
                             .fill(session.isActive ? Color.green : Color.blue)
@@ -324,11 +344,19 @@ struct StudentProfileCard: View {
                         }
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
+                .padding(.vertical, 2)
             }
         }
+    }
+    
+    /// Finds the DeviceApp matching a bundle ID from class devices
+    private func findDeviceApp(bundleId: String) -> DeviceApp? {
+        for device in classDevices {
+            if let app = device.apps?.first(where: { $0.identifier == bundleId }) {
+                return app
+            }
+        }
+        return nil
     }
     
     /// Looks up the display name for an app from the class devices
