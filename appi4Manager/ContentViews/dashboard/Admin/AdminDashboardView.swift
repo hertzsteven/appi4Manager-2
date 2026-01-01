@@ -57,7 +57,7 @@ struct AdminDashboardView: View {
         ZStack {
             NavigationStack(path: $path) {
                 ScrollView {
-                    LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 2), spacing: 20) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 250), spacing: 20)], spacing: 20) {
                         ForEach(categories) { category in
                             NavigationLink(value: category, label: {
                                 CategoryView(category: category)

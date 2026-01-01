@@ -51,7 +51,8 @@ struct CategoryView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color(.systemGray6))
-                .frame(width: 150, height: 80)
+                .frame(maxWidth: .infinity)
+                .frame(height: 80)
                 .shadow(radius: 5)
                 .overlay(
 

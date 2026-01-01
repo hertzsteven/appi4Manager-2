@@ -91,7 +91,8 @@ struct StudentProfileCard: View {
                     sessionStatusOverlay
                 }
             }
-            .frame(width: 140, height: activeSession != nil ? 260 : 200)
+            .frame(maxWidth: .infinity)
+            .frame(minHeight: activeSession != nil ? 260 : 200)
             .padding(.vertical, 8)
             .padding(.horizontal, 4)
             .background(Color(.systemBackground))

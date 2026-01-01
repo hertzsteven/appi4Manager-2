@@ -149,7 +149,8 @@ struct DeviceCard: View {
                 .font(.caption2)
                 .foregroundColor(.secondary)
         }
-        .frame(width: 140, height: 120)
+        .frame(maxWidth: .infinity)
+        .frame(minHeight: 120)
         .padding()
         .background(Color(.systemBackground))
         .cornerRadius(12)
@@ -169,7 +170,8 @@ struct TeacherCategoryCard: View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color(.systemGray6))
-                .frame(width: 150, height: 80)
+                .frame(maxWidth: .infinity)
+                .frame(height: 80)
                 .shadow(radius: 5)
                 .overlay(
                     HStack {

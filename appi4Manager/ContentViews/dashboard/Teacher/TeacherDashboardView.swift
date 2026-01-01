@@ -656,7 +656,7 @@ struct TeacherDashboardView: View {
                 // Students Grid (filtered to exclude dummy students)
                 ScrollView {
                     LazyVGrid(columns: [
-                        GridItem(.adaptive(minimum: 150), spacing: 16)
+                        GridItem(.adaptive(minimum: 140, maximum: 200), spacing: 16)
                     ], spacing: 16) {
                         ForEach(filteredStudents, id: \.id) { student in
                             StudentProfileCard(

@@ -197,7 +197,7 @@ struct SelectableStudentCard: View {
                     .foregroundColor(.secondary)
                     .lineLimit(1)
             }
-            .frame(width: 120, height: 130)
+            .frame(minWidth: 100)
             .padding()
             .background(Color(.systemBackground))
             .cornerRadius(12)
