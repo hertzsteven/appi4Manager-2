@@ -86,13 +86,11 @@ struct StudentProfileCard: View {
                     noProfileView
                 }
                 
-                // Session Status Overlay (if there's an active/completed session)
-                if activeSession != nil {
-                    sessionStatusOverlay
-                }
+                // Session Activity Section - always show for consistent card height
+                sessionStatusOverlay
             }
             .frame(maxWidth: .infinity)
-            .frame(minHeight: activeSession != nil ? 260 : 200)
+            .frame(minHeight: 260)
             .padding(.vertical, 8)
             .padding(.horizontal, 4)
             .background(Color(.systemBackground))
@@ -273,15 +271,26 @@ struct StudentProfileCard: View {
     
     // MARK: - Session Status Overlay
     
-    /// Displays real-time session status (active/completed) from Firestore
-    /// Shows app icon + name on same line, status below (matches appIconsRow layout)
+    /// Always displays session activity section for consistent card height
+    /// Shows real-time session status when active, or placeholder when not
     @ViewBuilder
     private var sessionStatusOverlay: some View {
-        if let session = activeSession {
-            VStack(spacing: 6) {
-                Divider()
-                    .padding(.horizontal, 8)
-                
+        VStack(spacing: 6) {
+            Divider()
+                .padding(.horizontal, 8)
+            
+            // Section title - always visible
+            HStack {
+                Text("Session Activity")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.secondary)
+                Spacer()
+            }
+            .padding(.horizontal, 8)
+            
+            if let session = activeSession {
+                // Active/completed session content
                 VStack(spacing: 4) {
                     // App icon and name on same line (matching appIconsRow style)
                     if let bundleId = session.appBundleId, !bundleId.isEmpty {
@@ -345,6 +354,19 @@ struct StudentProfileCard: View {
                         }
                     }
                 }
+                .padding(.vertical, 2)
+            } else {
+                // Placeholder when no session - same height as active content
+                VStack(spacing: 4) {
+                    Image(systemName: "clock.badge.questionmark")
+                        .font(.system(size: 24))
+                        .foregroundColor(.secondary.opacity(0.5))
+                    
+                    Text("No session yet")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+                .frame(height: 50)  // Match approximate height of active session content
                 .padding(.vertical, 2)
             }
         }
