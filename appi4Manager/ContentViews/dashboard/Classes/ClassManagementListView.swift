@@ -64,7 +64,7 @@ struct ClassManagementListView: View {
                 }
             }
             .filter { schoolClass in
-                searchText.isEmpty || 
+                searchText.isEmpty ||
                 schoolClass.name.localizedStandardContains(searchText)
             }
             .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
@@ -100,26 +100,37 @@ struct ClassManagementListView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Filter picker
-                VStack(spacing: 8) {
-                    Picker("Filter", selection: $selectedFilter) {
-                        ForEach(ClassFilterType.allCases, id: \.self) { filter in
-                            Text(filter.rawValue).tag(filter)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal)
+                // Header Search & Filter Area
+                VStack(spacing: 16) {
+                    // Search Bar handled by .searchable, but we can add custom header elements if needed
                     
-                    // Caption explaining the current filter
-                    if selectedFilter != .all {
-                        Text(selectedFilter == .active 
-                            ? "Has teacher and device assigned"
-                            : "Missing teacher or device")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                    // Modern Chip Filter
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(ClassFilterType.allCases, id: \.self) { filter in
+                                Button {
+                                    withAnimation(.snappy) {
+                                        selectedFilter = filter
+                                    }
+                                } label: {
+                                    Text(filter.rawValue)
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .padding(.horizontal, 20)
+                                        .padding(.vertical, 10)
+                                        .background(selectedFilter == filter ? Color.primary : Color(.systemBackground))
+                                        .foregroundColor(selectedFilter == filter ? Color(.systemBackground) : Color.primary)
+                                        .clipShape(Capsule())
+                                        .shadow(color: .black.opacity(selectedFilter == filter ? 0.2 : 0.05), radius: 4, x: 0, y: 2)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 16)
                     }
+                    .padding(.bottom, 8)
                 }
-                .padding(.vertical, 12)
+                .padding(.top, 8)
+                .background(Color(.systemGroupedBackground))
                 
                 Group {
                     if isLoading {
@@ -136,7 +147,7 @@ struct ClassManagementListView: View {
         }
         .navigationTitle("Class Management")
         .navigationBarTitleDisplayMode(.large)
-        .searchable(text: $searchText, prompt: "Search classes")
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search classes")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
@@ -236,7 +247,7 @@ struct ClassManagementListView: View {
     
     private var classListView: some View {
         ScrollView {
-            LazyVStack(spacing: 12) {
+            LazyVStack(spacing: 16) {
                 ForEach(filteredClasses) { schoolClass in
                     NavigationLink {
                         ClassEditorView(
@@ -263,7 +274,7 @@ struct ClassManagementListView: View {
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.vertical, 16)
         }
         .refreshable {
             await loadClasses()
@@ -322,79 +333,6 @@ struct ClassManagementListView: View {
             print("❌ Failed to delete class: \(error)")
             #endif
         }
-    }
-}
-
-// MARK: - ClassCard
-
-/// A modern card design for displaying class information.
-private struct ClassCard: View {
-    let schoolClass: SchoolClass
-    let isActive: Bool
-    
-    var body: some View {
-        HStack(spacing: 16) {
-            // Class Icon
-            ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(
-                        LinearGradient(
-                            colors: [.purple.opacity(0.8), .purple],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .frame(width: 56, height: 56)
-                
-                Image(systemName: "person.3.fill")
-                    .font(.title2)
-                    .foregroundStyle(.white)
-            }
-            
-            // Class Info
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 6) {
-                    Text(schoolClass.name)
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.primary)
-                    
-                    // Status badge
-                    Circle()
-                        .fill(isActive ? Color.green : Color(.systemGray4))
-                        .frame(width: 10, height: 10)
-                }
-                
-                if !schoolClass.description.isEmpty {
-                    Text(schoolClass.description)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                }
-                
-                // Group ID badge
-                HStack(spacing: 6) {
-                    Image(systemName: "number.circle.fill")
-                        .font(.caption)
-                    Text("Group \(schoolClass.userGroupId)")
-                        .font(.caption)
-                        .fontWeight(.medium)
-                }
-                .foregroundStyle(.purple)
-            }
-            
-            Spacer()
-            
-            // Chevron
-            Image(systemName: "chevron.right")
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundStyle(.secondary)
-        }
-        .padding()
-        .background(Color(.systemBackground))
-        .clipShape(.rect(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
     }
 }
 

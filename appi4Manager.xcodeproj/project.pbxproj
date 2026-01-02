@@ -99,6 +99,8 @@
 		46BAB4982B30A48400C155B9 /* SchoolClassError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BAB4972B30A48400C155B9 /* SchoolClassError.swift */; };
 		46BD34E529BE236D002A8395 /* CreateaClassResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BD34E429BE236D002A8395 /* CreateaClassResponse.swift */; };
 		46BD73142A0EC7A000AE23B1 /* SchoolListDup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BD73132A0EC7A000AE23B1 /* SchoolListDup.swift */; };
+		46C6D7F02F082C630016C83E /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46C6D7EE2F082C630016C83E /* Color+Extensions.swift */; };
+		46C6D7F12F082C630016C83E /* StudentProfileDocumentId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46C6D7EF2F082C630016C83E /* StudentProfileDocumentId.swift */; };
 		46CD69EF2C54180100F7E77E /* StudentAppProfilxWorkingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46CD69EE2C54180100F7E77E /* StudentAppProfilxWorkingView.swift */; };
 		46CEE1B42AADF11500EDDC96 /* StudentAppProfileWorkingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46CEE1B32AADF11500EDDC96 /* StudentAppProfileWorkingView.swift */; };
 		46D07D8F2B742A7100D04B5B /* LiteralThings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D07D8E2B742A7100D04B5B /* LiteralThings.swift */; };
@@ -209,6 +211,8 @@
 		46BAB4972B30A48400C155B9 /* SchoolClassError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolClassError.swift; sourceTree = "<group>"; };
 		46BD34E429BE236D002A8395 /* CreateaClassResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateaClassResponse.swift; sourceTree = "<group>"; };
 		46BD73132A0EC7A000AE23B1 /* SchoolListDup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolListDup.swift; sourceTree = "<group>"; };
+		46C6D7EE2F082C630016C83E /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Color+Extensions.swift"; path = "appi4Manager/Helpers/Color+Extensions.swift"; sourceTree = SOURCE_ROOT; };
+		46C6D7EF2F082C630016C83E /* StudentProfileDocumentId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StudentProfileDocumentId.swift; path = appi4Manager/Helpers/StudentProfileDocumentId.swift; sourceTree = SOURCE_ROOT; };
 		46CD69EE2C54180100F7E77E /* StudentAppProfilxWorkingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentAppProfilxWorkingView.swift; sourceTree = "<group>"; };
 		46CEE1B32AADF11500EDDC96 /* StudentAppProfileWorkingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentAppProfileWorkingView.swift; sourceTree = "<group>"; };
 		46D07D8E2B742A7100D04B5B /* LiteralThings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiteralThings.swift; sourceTree = "<group>"; };
@@ -410,6 +414,7 @@
 		46584FC82993E1040025F539 /* appi4Manager */ = {
 			isa = PBXGroup;
 			children = (
+				46C6D7ED2F082C150016C83E /* New Group */,
 				460C55762EFA390B005B721B /* StudentProfileDocumentId.swift */,
 				46336708299528F900CF5EA3 /* ContentViews */,
 				46BAB4992B30AC8F00C155B9 /* ViewModels */,
@@ -667,6 +672,15 @@
 			path = classesSchool;
 			sourceTree = "<group>";
 		};
+		46C6D7ED2F082C150016C83E /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+				46C6D7EE2F082C630016C83E /* Color+Extensions.swift */,
+				46C6D7EF2F082C630016C83E /* StudentProfileDocumentId.swift */,
+			);
+			path = "New Group";
+			sourceTree = "<group>";
+		};
 		46D2A9A229DB4CC1007B134E /* ImagePicker */ = {
 			isa = PBXGroup;
 			children = (
@@ -889,6 +903,8 @@
 				4608AC3B2EEA3179000523F0 /* TeacherLoginView.swift in Sources */,
 				46E56DB42996977A00CB2512 /* AuthenticateReturnObjct.swift in Sources */,
 				465B16522AA14D28000ED633 /* MockBareBones.swift in Sources */,
+				46C6D7F02F082C630016C83E /* Color+Extensions.swift in Sources */,
+				46C6D7F12F082C630016C83E /* StudentProfileDocumentId.swift in Sources */,
 				461D89A42A6D4CA700678391 /* AppCategory.swift in Sources */,
 				469EFF262A6F6D400047E8BC /* AppxView.swift in Sources */,
 				4698CA2A2A2E1FE200D8A888 /* BlockingOverlayView.swift in Sources */,
