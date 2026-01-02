@@ -8,6 +8,15 @@
 
 import SwiftUI
 
+// MARK: - ClassFilterType
+
+/// Filter options for class management list
+enum ClassFilterType: String, CaseIterable {
+    case all = "All"
+    case active = "Active"
+    case inactive = "Inactive"
+}
+
 // MARK: - ClassManagementListView
 
 /// Admin view for managing classes with full CRUD operations.
@@ -30,6 +39,7 @@ struct ClassManagementListView: View {
     @State private var classToDelete: SchoolClass?
     @State private var showDeleteConfirmation = false
     @State private var searchText = ""
+    @State private var selectedFilter: ClassFilterType = .all
     
     // MARK: - Computed Properties
     
@@ -45,11 +55,40 @@ struct ClassManagementListView: View {
                 schoolClass.userGroupId != groupId &&
                 schoolClass.uuid != picClass
             }
+            // Apply active/inactive filter
+            .filter { schoolClass in
+                switch selectedFilter {
+                case .all: return true
+                case .active: return isClassActive(schoolClass)
+                case .inactive: return !isClassActive(schoolClass)
+                }
+            }
             .filter { schoolClass in
                 searchText.isEmpty || 
-                schoolClass.name.lowercased().contains(searchText.lowercased())
+                schoolClass.name.localizedStandardContains(searchText)
             }
             .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+    
+    /// Checks if a class has devices assigned via assetTag
+    private func hasDevices(_ schoolClass: SchoolClass) -> Bool {
+        let matchingDevices = devicesViewModel.devices.filter { $0.assetTag == String(schoolClass.userGroupId) }
+        #if DEBUG
+        if !matchingDevices.isEmpty {
+            print("📱 Class \(schoolClass.name) has \(matchingDevices.count) devices with assetTag=\(schoolClass.userGroupId)")
+        }
+        #endif
+        return !matchingDevices.isEmpty
+    }
+    
+    /// A class is active if it has both a teacher and a device assigned
+    private func isClassActive(_ schoolClass: SchoolClass) -> Bool {
+        let hasTeacher = schoolClass.teacherCount > 0
+        let hasDevice = hasDevices(schoolClass)
+        #if DEBUG
+        print("🔍 Class \(schoolClass.name): teacherCount=\(schoolClass.teacherCount), hasDevice=\(hasDevice), isActive=\(hasTeacher && hasDevice)")
+        #endif
+        return hasTeacher && hasDevice
     }
     
     // MARK: - Body
@@ -60,15 +99,38 @@ struct ClassManagementListView: View {
             Color(.systemGroupedBackground)
                 .ignoresSafeArea()
             
-            Group {
-                if isLoading {
-                    loadingView
-                } else if filteredClasses.isEmpty && searchText.isEmpty {
-                    emptyStateView
-                } else if filteredClasses.isEmpty {
-                    ContentUnavailableView.search(text: searchText)
-                } else {
-                    classListView
+            VStack(spacing: 0) {
+                // Filter picker
+                VStack(spacing: 8) {
+                    Picker("Filter", selection: $selectedFilter) {
+                        ForEach(ClassFilterType.allCases, id: \.self) { filter in
+                            Text(filter.rawValue).tag(filter)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal)
+                    
+                    // Caption explaining the current filter
+                    if selectedFilter != .all {
+                        Text(selectedFilter == .active 
+                            ? "Has teacher and device assigned"
+                            : "Missing teacher or device")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 12)
+                
+                Group {
+                    if isLoading {
+                        loadingView
+                    } else if filteredClasses.isEmpty && searchText.isEmpty && selectedFilter == .all {
+                        emptyStateView
+                    } else if filteredClasses.isEmpty {
+                        ContentUnavailableView.search(text: searchText.isEmpty ? selectedFilter.rawValue : searchText)
+                    } else {
+                        classListView
+                    }
                 }
             }
         }
@@ -128,6 +190,19 @@ struct ClassManagementListView: View {
         }
         .task {
             await loadClasses()
+            // Ensure devices are loaded for active/inactive filtering
+            if devicesViewModel.devices.isEmpty {
+                do {
+                    try await devicesViewModel.loadData2()
+                    #if DEBUG
+                    print("📱 Loaded \(devicesViewModel.devices.count) devices for filtering")
+                    #endif
+                } catch {
+                    #if DEBUG
+                    print("⚠️ Failed to load devices: \(error)")
+                    #endif
+                }
+            }
         }
     }
     
@@ -174,7 +249,7 @@ struct ClassManagementListView: View {
                             }
                         )
                     } label: {
-                        ClassCard(schoolClass: schoolClass)
+                        ClassCard(schoolClass: schoolClass, isActive: isClassActive(schoolClass))
                     }
                     .buttonStyle(.plain)
                     .contextMenu {
@@ -255,6 +330,7 @@ struct ClassManagementListView: View {
 /// A modern card design for displaying class information.
 private struct ClassCard: View {
     let schoolClass: SchoolClass
+    let isActive: Bool
     
     var body: some View {
         HStack(spacing: 16) {
@@ -272,20 +348,27 @@ private struct ClassCard: View {
                 
                 Image(systemName: "person.3.fill")
                     .font(.title2)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
             }
             
             // Class Info
             VStack(alignment: .leading, spacing: 4) {
-                Text(schoolClass.name)
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
+                HStack(spacing: 6) {
+                    Text(schoolClass.name)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+                    
+                    // Status badge
+                    Circle()
+                        .fill(isActive ? Color.green : Color(.systemGray4))
+                        .frame(width: 10, height: 10)
+                }
                 
                 if !schoolClass.description.isEmpty {
                     Text(schoolClass.description)
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
                 
@@ -297,7 +380,7 @@ private struct ClassCard: View {
                         .font(.caption)
                         .fontWeight(.medium)
                 }
-                .foregroundColor(.purple)
+                .foregroundStyle(.purple)
             }
             
             Spacer()
@@ -306,11 +389,11 @@ private struct ClassCard: View {
             Image(systemName: "chevron.right")
                 .font(.caption)
                 .fontWeight(.semibold)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         }
-        .padding(16)
+        .padding()
         .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(.rect(cornerRadius: 16))
         .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
     }
 }

@@ -683,6 +683,11 @@ struct ClassEditorView: View {
                 
                 await MainActor.run {
                     assignedDevices.append(device)
+                    
+                    // Sync devicesViewModel to keep it in sync
+                    if let index = devicesViewModel.devices.firstIndex(where: { $0.UDID == device.UDID }) {
+                        devicesViewModel.devices[index].assetTag = String(schoolClass.userGroupId)
+                    }
                 }
                 
                 #if DEBUG
@@ -705,6 +710,11 @@ struct ClassEditorView: View {
             await MainActor.run {
                 assignedDevices.removeAll { $0.UDID == device.UDID }
                 deviceToUnassign = nil
+                
+                // Sync devicesViewModel to keep it in sync
+                if let index = devicesViewModel.devices.firstIndex(where: { $0.UDID == device.UDID }) {
+                    devicesViewModel.devices[index].assetTag = "None"
+                }
             }
             
             #if DEBUG
@@ -816,7 +826,8 @@ private struct DeviceRowWithUnassign: View {
                 name: "Grade 3A",
                 description: "Mrs. Smith's class",
                 locationId: 1,
-                userGroupId: 100
+                userGroupId: 100,
+                teacherCount: 1
             ),
             isNew: false
         )

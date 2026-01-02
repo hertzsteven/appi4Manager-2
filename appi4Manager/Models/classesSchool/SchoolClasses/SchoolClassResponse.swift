@@ -20,6 +20,7 @@ struct SchoolClass: Codable, Identifiable , Hashable {
     var description:  String
     var locationId:   Int
     var userGroupId:  Int
+    var teacherCount: Int
     var id: String {
         uuid
     }
@@ -53,7 +54,7 @@ extension SchoolClass {
 //        print("Total seconds from the start of today: \(totalSeconds)")
 
   
-        SchoolClass(uuid: UUID().uuidString, name: "", description: "", locationId: 0, userGroupId: 0)
+        SchoolClass(uuid: UUID().uuidString, name: "", description: "", locationId: 0, userGroupId: 0, teacherCount: 0)
 //        return User(id: totalSeconds, locationId: ApiHelper.globalLocationId, deviceCount: 0, email: "", groupIds: [], groups: [""], firstName: "", lastName: "", username: "", notes: "", modified: "")
     }
 }

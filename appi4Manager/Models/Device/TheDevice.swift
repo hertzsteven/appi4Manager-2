@@ -34,7 +34,7 @@ struct TheDevice: Codable, Identifiable, Hashable {
     let locationId: Int
     let UDID: String
     let name: String
-    let assetTag: String
+    var assetTag: String
     let owner: Owner?
     let batteryLevel: Double
     let totalCapacity: Double
