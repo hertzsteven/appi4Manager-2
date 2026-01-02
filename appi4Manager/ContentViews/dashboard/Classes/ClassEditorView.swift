@@ -32,6 +32,10 @@ struct ClassEditorView: View {
     @State private var className: String = ""
     @State private var classDescription: String = ""
     
+    // Original values for dirty state tracking
+    @State private var originalClassName: String = ""
+    @State private var originalDescription: String = ""
+    
     // Loading/Error state
     @State private var isSaving = false
     @State private var isLoadingData = false
@@ -51,6 +55,29 @@ struct ClassEditorView: View {
     
     // Delete confirmation
     @State private var showDeleteConfirmation = false
+    
+    // MARK: - Computed Properties
+    
+    /// Whether name or description have unsaved changes
+    private var hasUnsavedChanges: Bool {
+        className != originalClassName || classDescription != originalDescription
+    }
+    
+    /// The text for the confirmation button based on current state
+    private var confirmButtonText: String {
+        if isNew {
+            return "Create"
+        } else if hasUnsavedChanges {
+            return "Save"
+        } else {
+            return "Done"
+        }
+    }
+    
+    /// Whether this class is "active" (has at least one teacher AND one device assigned)
+    private var isClassActive: Bool {
+        !assignedTeachers.isEmpty && !assignedDevices.isEmpty
+    }
     
     // MARK: - Body
     
@@ -81,13 +108,18 @@ struct ClassEditorView: View {
             }
             
             ToolbarItem(placement: .confirmationAction) {
-                Button(isNew ? "Create" : "Save") {
-                    Task {
-                        await saveClass()
+                Button(confirmButtonText) {
+                    if isNew || hasUnsavedChanges {
+                        Task {
+                            await saveClass()
+                        }
+                    } else {
+                        // No changes, just dismiss
+                        dismiss()
                     }
                 }
                 .fontWeight(.semibold)
-                .disabled(className.isEmpty || isSaving)
+                .disabled((isNew && className.isEmpty) || isSaving)
             }
         }
         .overlay {
@@ -230,28 +262,33 @@ struct ClassEditorView: View {
     
     private var teachersSection: some View {
         Section {
-            if isLoadingData {
+            if isNew {
+                // Class must be created before teachers can be assigned
+                Text("Create the class first to assign teachers.")
+                    .foregroundStyle(.secondary)
+                    .italic()
+            } else if isLoadingData {
                 HStack {
                     ProgressView()
                     Text("Loading teachers...")
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             } else if assignedTeachers.isEmpty {
                 Text("No teachers assigned")
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .italic()
             } else {
                 ForEach(assignedTeachers, id: \.id) { teacher in
                     HStack(spacing: 12) {
                         Image(systemName: "person.fill")
-                            .foregroundColor(.accentColor)
+                            .foregroundStyle(.tint)
                             .frame(width: 24)
                         VStack(alignment: .leading) {
                             Text("\(teacher.firstName) \(teacher.lastName)")
                                 .font(.body)
                             Text(teacher.username)
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
                         }
                         
                         Spacer()
@@ -264,7 +301,7 @@ struct ClassEditorView: View {
                         } label: {
                             Image(systemName: "minus.circle.fill")
                                 .font(.title2)
-                                .foregroundColor(.red)
+                                .foregroundStyle(.red)
                         }
                         .buttonStyle(.plain)
                     }
@@ -280,37 +317,53 @@ struct ClassEditorView: View {
                 }
             }
             
-            // Button to select existing teachers from teacher group
-            Button {
-                showTeacherPicker = true
-            } label: {
-                Label("Add Existing Teacher", systemImage: "person.fill.badge.plus")
-            }
-            
-            // Button to create a new teacher
-            Button {
-                showCreateTeacher = true
-            } label: {
-                Label("Create New Teacher", systemImage: "person.badge.plus")
+            // Only show add buttons when class exists on server
+            if !isNew {
+                // Button to select existing teachers from teacher group
+                Button {
+                    showTeacherPicker = true
+                } label: {
+                    Label("Add Existing Teacher", systemImage: "person.fill.badge.plus")
+                }
+                
+                // Button to create a new teacher
+                Button {
+                    showCreateTeacher = true
+                } label: {
+                    Label("Create New Teacher", systemImage: "person.badge.plus")
+                }
             }
         } header: {
             Text("Assigned Teachers (\(assignedTeachers.count))")
         } footer: {
-            Text("Teachers assigned to this class can manage students and devices.")
+            if isNew {
+                Text("Tap 'Create' to save the class, then you can assign teachers.")
+            } else if assignedTeachers.isEmpty {
+                Text("Teachers assigned to this class can manage students and devices.")
+                + Text(" · Required to activate class")
+                    .foregroundColor(.orange)
+            } else {
+                Text("Teachers assigned to this class can manage students and devices.")
+            }
         }
     }
     
     private var devicesSection: some View {
         Section {
-            if isLoadingData {
+            if isNew {
+                // Class must be created before devices can be assigned
+                Text("Create the class first to assign devices.")
+                    .foregroundStyle(.secondary)
+                    .italic()
+            } else if isLoadingData {
                 HStack {
                     ProgressView()
                     Text("Loading devices...")
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             } else if assignedDevices.isEmpty {
                 Text("No devices assigned")
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .italic()
             } else {
                 ForEach(assignedDevices, id: \.UDID) { device in
@@ -324,15 +377,24 @@ struct ClassEditorView: View {
                 }
             }
             
-            Button {
-                showDevicePicker = true
-            } label: {
-                Label("Add Device", systemImage: "plus.circle")
+            // Only show add button when class exists on server
+            if !isNew {
+                Button {
+                    showDevicePicker = true
+                } label: {
+                    Label("Add Device", systemImage: "plus.circle")
+                }
             }
         } header: {
             Text("Assigned Devices (\(assignedDevices.count))")
         } footer: {
-            if !isNew {
+            if isNew {
+                Text("Tap 'Create' to save the class, then you can assign devices.")
+            } else if assignedDevices.isEmpty {
+                Text("Tap the remove button or swipe left to unassign a device from this class.")
+                + Text(" · Required to activate class")
+                    .foregroundColor(.orange)
+            } else {
                 Text("Tap the remove button or swipe left to unassign a device from this class.")
             }
         }
@@ -374,6 +436,10 @@ struct ClassEditorView: View {
     private func setupInitialValues() {
         className = schoolClass.name
         classDescription = schoolClass.description
+        
+        // Store original values for dirty state tracking
+        originalClassName = schoolClass.name
+        originalDescription = schoolClass.description
         
         if isNew {
             // Set location for new classes
@@ -464,6 +530,9 @@ struct ClassEditorView: View {
                 // Switch to edit mode to allow adding teachers & devices
                 await MainActor.run {
                     isNew = false
+                    // Update original values so button shows "Done" not "Save"
+                    originalClassName = className
+                    originalDescription = classDescription
                 }
                 
                 // Load devices to show the section
