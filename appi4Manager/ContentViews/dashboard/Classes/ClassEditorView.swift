@@ -466,7 +466,10 @@ struct ClassEditorView: View {
                 from: .getStudents(uuid: schoolClass.uuid)
             )
             await MainActor.run {
-                assignedTeachers = response.class.teachers
+                // Filter out internal/hidden teachers (names starting with **)
+                assignedTeachers = response.class.teachers.filter { teacher in
+                    !teacher.firstName.hasPrefix("**")
+                }
             }
             
             #if DEBUG
@@ -629,6 +632,13 @@ struct ClassEditorView: View {
                 from: .assignToClass(uuid: schoolClass.uuid, students: [], teachers: allTeacherIds)
             )
             
+            // Sync classesViewModel to update teacherCount for list view
+            await MainActor.run {
+                if let index = classesViewModel.schoolClasses.firstIndex(where: { $0.uuid == schoolClass.uuid }) {
+                    classesViewModel.schoolClasses[index].teacherCount = allTeacherIds.count
+                }
+            }
+            
             #if DEBUG
             print("✅ Assigned \(teacherIds.count) teacher(s) to class")
             #endif
@@ -656,6 +666,11 @@ struct ClassEditorView: View {
             
             await MainActor.run {
                 assignedTeachers.removeAll { $0.id == teacher.id }
+                
+                // Sync classesViewModel to update teacherCount for list view
+                if let index = classesViewModel.schoolClasses.firstIndex(where: { $0.uuid == schoolClass.uuid }) {
+                    classesViewModel.schoolClasses[index].teacherCount = remainingTeacherIds.count
+                }
             }
             
             #if DEBUG
