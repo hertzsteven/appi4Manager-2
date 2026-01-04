@@ -14,10 +14,19 @@ struct ClassSelectorSheet: View {
     @Binding var selectedClass: TeacherClassInfo?
     @Binding var isPresented: Bool
     
+    // MARK: - Helper Methods
+    
+    /// Checks if a class has devices assigned
+    private func hasDevices(_ classInfo: TeacherClassInfo) -> Bool {
+        !classInfo.devices.isEmpty
+    }
+    
     var body: some View {
         NavigationStack {
             List {
                 ForEach(classes) { classInfo in
+                    let isDisabled = !hasDevices(classInfo)
+                    
                     Button {
                         selectedClass = classInfo
                         isPresented = false
@@ -26,7 +35,7 @@ struct ClassSelectorSheet: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(classInfo.className)
                                     .font(.headline)
-                                    .foregroundColor(.primary)
+                                    .foregroundStyle(isDisabled ? .secondary : .primary)
                                 HStack(spacing: 12) {
                                     // Filter out dummy students (lastName == classUUID)
                                     let realStudentCount = classInfo.students.filter { $0.lastName != classInfo.classUUID }.count
@@ -34,18 +43,27 @@ struct ClassSelectorSheet: View {
                                     Label("\(classInfo.devices.count) devices", systemImage: "ipad.landscape")
                                 }
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
+                                
+                                // Show reason why class is disabled
+                                if isDisabled {
+                                    Label("No device assigned", systemImage: "exclamationmark.triangle.fill")
+                                        .font(.caption2)
+                                        .foregroundStyle(.orange)
+                                }
                             }
                             Spacer()
                             if selectedClass?.id == classInfo.id {
                                 Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.accentColor)
+                                    .foregroundStyle(Color.accentColor)
                                     .font(.title2)
                             }
                         }
                         .contentShape(Rectangle())
+                        .opacity(isDisabled ? 0.6 : 1.0)
                     }
                     .buttonStyle(.plain)
+                    .disabled(isDisabled)
                 }
             }
             .navigationTitle("Switch Class")

@@ -21,6 +21,8 @@ struct TeacherStudentManagementSheet: View {
     /// Local copy of students for immediate UI updates
     @State private var localStudents: [Student]
     @State private var showAddStudent = false
+    @State private var showAssignExisting = false
+    @State private var showUnassignStudents = false
     @State private var studentToEdit: Student?
     @State private var studentToDelete: Student?
     @State private var showDeleteConfirmation = false
@@ -56,10 +58,29 @@ struct TeacherStudentManagementSheet: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button {
-                    showAddStudent = true
+                Menu {
+                    Button {
+                        showAddStudent = true
+                    } label: {
+                        Label("Add New Student", systemImage: "person.badge.plus")
+                    }
+                    
+                    Button {
+                        showAssignExisting = true
+                    } label: {
+                        Label("Assign Existing Student", systemImage: "person.2.badge.gearshape")
+                    }
+                    
+                    Divider()
+                    
+                    Button(role: .destructive) {
+                        showUnassignStudents = true
+                    } label: {
+                        Label("Unassign Students", systemImage: "person.badge.minus")
+                    }
+                    .disabled(localStudents.isEmpty)
                 } label: {
-                    Image(systemName: "plus")
+                    Image(systemName: "ellipsis.circle")
                 }
             }
         }
@@ -80,6 +101,32 @@ struct TeacherStudentManagementSheet: View {
         .sheet(item: $studentToEdit) { student in
             TeacherStudentEditorView(
                 student: student,
+                classInfo: classInfo,
+                onComplete: {
+                    // Refresh local students list
+                    Task {
+                        await refreshStudents()
+                    }
+                    // Also notify parent to refresh its data
+                    onStudentChanged?()
+                }
+            )
+        }
+        .sheet(isPresented: $showAssignExisting) {
+            StudentAssignmentPickerSheet(
+                classInfo: classInfo,
+                onComplete: {
+                    // Refresh local students list
+                    Task {
+                        await refreshStudents()
+                    }
+                    // Also notify parent to refresh its data
+                    onStudentChanged?()
+                }
+            )
+        }
+        .sheet(isPresented: $showUnassignStudents) {
+            StudentUnassignSheet(
                 classInfo: classInfo,
                 onComplete: {
                     // Refresh local students list

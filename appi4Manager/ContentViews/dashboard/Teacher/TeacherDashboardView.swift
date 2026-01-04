@@ -101,6 +101,11 @@ struct TeacherDashboardView: View {
         classInfo.students.filter { $0.lastName != classInfo.classUUID }.count
     }
     
+    /// Checks if a class has devices assigned
+    private func hasDevices(_ classInfo: TeacherClassInfo) -> Bool {
+        !classInfo.devices.isEmpty
+    }
+    
     var body: some View {
         NavigationStack {
             Group {
@@ -340,6 +345,7 @@ struct TeacherDashboardView: View {
     
     /// Shown when teacher teaches multiple classes and hasn't selected one yet.
     /// Displays a list of classes to choose from.
+    /// Classes without devices are shown as disabled with a warning indicator.
     private var classSelectionPromptView: some View {
         VStack(spacing: 32) {
             Spacer()
@@ -347,17 +353,17 @@ struct TeacherDashboardView: View {
             // Icon
             Image(systemName: "square.stack.3d.up.fill")
                 .font(.system(size: 64))
-                .foregroundColor(.accentColor)
+                .foregroundStyle(Color.accentColor)
             
             // Title
             VStack(spacing: 8) {
                 Text("Select Your Class")
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .bold()
                 
                 Text("You teach \(teacherClasses.count) classes. Please select which class you'd like to work with.")
                     .font(.body)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
             }
@@ -365,6 +371,8 @@ struct TeacherDashboardView: View {
             // Class Picker
             VStack(spacing: 16) {
                 ForEach(teacherClasses) { classInfo in
+                    let isDisabled = !hasDevices(classInfo)
+                    
                     Button {
                         selectedClass = classInfo
                     } label: {
@@ -372,24 +380,33 @@ struct TeacherDashboardView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(classInfo.className)
                                     .font(.headline)
-                                    .foregroundColor(.primary)
+                                    .foregroundStyle(isDisabled ? .secondary : .primary)
                                 HStack(spacing: 12) {
                                     Label("\(filteredStudentCount(for: classInfo))", systemImage: "person.2.fill")
                                     Label("\(classInfo.devices.count)", systemImage: "ipad.landscape")
                                 }
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
+                                
+                                // Show reason why class is disabled
+                                if isDisabled {
+                                    Label("No device assigned", systemImage: "exclamationmark.triangle.fill")
+                                        .font(.caption2)
+                                        .foregroundStyle(.orange)
+                                }
                             }
                             Spacer()
                             Image(systemName: "chevron.right")
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
                         }
                         .padding()
                         .background(Color(.systemBackground))
-                        .cornerRadius(12)
+                        .clipShape(.rect(cornerRadius: 12))
                         .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                        .opacity(isDisabled ? 0.6 : 1.0)
                     }
                     .buttonStyle(.plain)
+                    .disabled(isDisabled)
                 }
             }
             .padding(.horizontal, 24)

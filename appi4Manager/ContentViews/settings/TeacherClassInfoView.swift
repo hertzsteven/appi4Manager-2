@@ -18,13 +18,15 @@ struct TeacherClassInfo: Identifiable, Equatable {
     var students: [Student] = []
     var devices: [TheDevice] = []
     
-    // Custom Equatable conformance - compare only the stable identifying properties
+    // Custom Equatable conformance - compare identifying properties AND counts for refresh detection
     static func == (lhs: TeacherClassInfo, rhs: TeacherClassInfo) -> Bool {
         lhs.id == rhs.id &&
         lhs.className == rhs.className &&
         lhs.classUUID == rhs.classUUID &&
         lhs.userGroupID == rhs.userGroupID &&
-        lhs.locationId == rhs.locationId
+        lhs.locationId == rhs.locationId &&
+        lhs.students.count == rhs.students.count &&
+        lhs.devices.count == rhs.devices.count
     }
 }
 
