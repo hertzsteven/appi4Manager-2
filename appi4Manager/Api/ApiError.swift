@@ -40,9 +40,6 @@ extension ApiError {
             return "Unexpected Error code: \(hTTPuRLResponse)"
         case .decodingError(decodingStatus: let decodingStatus):
             return "Decoding Error code: \(decodingStatus)"
-            
-        default:
-            return "Other error not defined"
         }
     }
     

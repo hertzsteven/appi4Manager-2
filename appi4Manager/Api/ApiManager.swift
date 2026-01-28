@@ -40,7 +40,7 @@ final class ApiManager {
     throws -> Data {
         var body = Data()
         
-        let fileName = UUID().uuidString.components(separatedBy: "-").first! + ".jpg"
+        let fileName = String(UUID().uuidString.prefix(8)) + ".jpg"
         print("this is the file name just generated: \(fileName)")
         
         body.append("--\(boundary)\r\n")
@@ -122,7 +122,6 @@ final class ApiManager {
         } catch let error {
             throw ApiError.decodingError(decodingStatus: error)
         }
-        return try decoder.decode(D.self, from: respnseOfNetworkCall.data)
         
 //        dump(response.data)
 //        do {
@@ -137,7 +136,31 @@ final class ApiManager {
         let request = try createRequest(from: endpoint)
         let data = try encoder.encode(body)
         let response: NetworkResponse = try await session.upload(for: request, from: data)
-        return try decoder.decode(D.self, from: response.data)
+        
+        if let httpResponse = response.response as? HTTPURLResponse {
+            switch httpResponse.statusCode {
+            case 200...299:
+                print("Successful response - Code: \(httpResponse.statusCode)")
+            case 400:
+                throw ApiError.clientBadRequest(hTTPuRLResponse: httpResponse)
+            case 401:
+                throw ApiError.clientUnauthorized(hTTPuRLResponse: httpResponse)
+            case 403:
+                throw ApiError.clientForbidden(hTTPuRLResponse: httpResponse)
+            case 404:
+                throw ApiError.clientNotFound(hTTPuRLResponse: httpResponse)
+            case 500...599:
+                throw ApiError.serverError(hTTPuRLResponse: httpResponse)
+            default:
+                throw ApiError.unexpected(hTTPuRLResponse: httpResponse)
+            }
+        }
+        
+        do {
+            return try decoder.decode(D.self, from: response.data)
+        } catch {
+            throw ApiError.decodingError(decodingStatus: error)
+        }
     }
     
     //  MARK: -  Helper Function
@@ -205,25 +228,20 @@ private extension ApiManager {
             
         case .getUsersInGroup(groupID: _):
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
-            request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
             
         case .getUsers:
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
-            request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
             
         case .getDevices(assettag: _):
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("1", forHTTPHeaderField: "X-Server-Protocol-Version")
-            request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
 
         case .getDevicesWithApps(assettag: _):
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("1", forHTTPHeaderField: "X-Server-Protocol-Version")
-            request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
             
         case .getGroups:
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
-            request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
             
         case .getStudents(uuid: let uuid):
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
@@ -233,14 +251,13 @@ private extension ApiManager {
         case .authenticateTeacher(company: let company, username: let username, password: let password):
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
-            request.addValue("hash=d687b1f23f348e501ab1947f47f66310", forHTTPHeaderField: "Cookie")
             
             let bodyObject: [String : Any] = [
                 "company": company,
                 "username": username,
                 "password": password
             ]
-            request.httpBody = try! JSONSerialization.data(withJSONObject: bodyObject, options: [])
+            request.httpBody = try JSONSerialization.data(withJSONObject: bodyObject, options: [])
             
         case .getaUser(let id):
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
@@ -249,7 +266,6 @@ private extension ApiManager {
         case .getSchoolClasses:
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
             request.addValue("3", forHTTPHeaderField: "X-Server-Protocol-Version")
-            request.addValue("hash=5fd0a563b23bd04f5dbf78a49962614e", forHTTPHeaderField: "Cookie")
             
         case .addUser(let username, let password, let email, let firstName, let lastName, let notes, let locationId, let groupIds, let teacherGroups):
             request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
@@ -508,7 +524,6 @@ private extension ApiManager {
     case .getLocations :
         request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
         request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
-        request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
         
     case .getApps:
         request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
@@ -517,7 +532,6 @@ private extension ApiManager {
     case .updatePhoto(_, _, let fileData) :
         request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
         request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
-        request.addValue("hash=c64e55136eb38f1b90eb21e1887bcb74", forHTTPHeaderField: "Cookie")
         
         let boundary = generateBoundaryString()
         request.httpBody = try createBody(with: nil, filePathKey: "photo", data: fileData, boundary: boundary)
@@ -527,17 +541,14 @@ private extension ApiManager {
     case .getLessons( _ ):
         request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
         request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
-        request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
         
     case .validateTeacherToken(token: _):
         request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
         request.addValue("2", forHTTPHeaderField: "X-Server-Protocol-Version")
-        request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
         
     case .getLessonDetail(teachAuth: _, id: _):
         request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
         request.addValue("3", forHTTPHeaderField: "X-Server-Protocol-Version")
-        request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
         
         
     case .getanApp(let appId):
@@ -579,7 +590,6 @@ private extension ApiManager {
         request.addValue(APISchoolInfo.shared.apiKey, forHTTPHeaderField: "Authorization")
         request.addValue("4", forHTTPHeaderField: "X-Server-Protocol-Version")
         request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.addValue("hash=e9bed0e4643c2be63f77439ba63d0691", forHTTPHeaderField: "Cookie")
         
     }
             // what is left look at other

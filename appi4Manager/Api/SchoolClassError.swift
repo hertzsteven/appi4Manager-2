@@ -23,7 +23,7 @@ enum SchoolClassError: Error {
         case .dictCreationError:
             return "Failed to create a dictionary of classes."
         case .retreiveLocationsError:
-            return "Failed to retreive locations"
+            return "Failed to retrieve locations"
         case .other(let error):
             return error.localizedDescription
         }
