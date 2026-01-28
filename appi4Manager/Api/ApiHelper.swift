@@ -21,43 +21,63 @@ class APISchoolInfo {
     let appVersion:    String = "1.0.1"
     let configSource:  SourceOfNetworkProperties
 
+    // MARK: - Environment Variable Keys (for local development)
+    private enum EnvKey {
+        static let apiURL     = "API_URL"
+        static let apiKey     = "API_KEY"
+        static let companyId  = "COMPANY_ID"
+        static let asset      = "ASSET"
+        static let udid       = "UDID"
+        static let helpURL    = "HELP_URL"
+    }
+    
     // Singleton instance
     static let shared: APISchoolInfo = {
-        guard let networkVariables = getValuesFromManagedConfigFile() else {
+        // First try MDM (production)
+        if let networkVariables = getValuesFromManagedConfigFile() {
             #if DEBUG
             print("⚙️ ========================================")
-            print("⚙️ MDM CONFIG: Using FALLBACK (hardcoded) values")
-            print("⚙️ URL: https://developitsnfrEDU.jamfcloud.com/api")
-            print("⚙️ CompanyId: 2001128")
+            print("⚙️ MDM CONFIG: Successfully loaded from MDM! ✅")
+            print("⚙️ Source: \(networkVariables.sourceOfNetworkProperties)")
+            print("⚙️ URL: \(networkVariables.companyUrl)")
+            print("⚙️ CompanyId: \(networkVariables.CompanyId)")
+            print("⚙️ Asset: \(networkVariables.asset)")
+            print("⚙️ UDID: \(networkVariables.udid)")
+            print("⚙️ Help URL: \(networkVariables.helpurl)")
             print("⚙️ ========================================")
             #endif
-            return APISchoolInfo(urlEndPoint:   "https://developitsnfrEDU.jamfcloud.com/api",
-                                 apiKey:        "Basic NjUzMTkwNzY6UFFMNjFaVUU2RlFOWDVKSlMzTE5CWlBDS1BETVhMSFA=",
-                                 asset:         "asset",
-                                 udid:          "udid",
-                                 companyId:     2001128,
-                                 helpurl:       "www.help.com",
+            return APISchoolInfo(urlEndPoint:   networkVariables.companyUrl,
+                                 apiKey:        networkVariables.apiKey,
+                                 asset:         networkVariables.asset,
+                                 udid:          networkVariables.udid,
+                                 companyId:     networkVariables.CompanyId,
+                                 helpurl:       networkVariables.helpurl,
+                                 configSource:  .mdm)
+        }
+        
+        // Debug builds: use environment variables from Xcode scheme
+        #if DEBUG
+        let env = ProcessInfo.processInfo.environment
+        if let apiUrl = env[EnvKey.apiURL],
+           let apiKey = env[EnvKey.apiKey],
+           let companyIdStr = env[EnvKey.companyId],
+           let companyId = Int(companyIdStr) {
+            print("⚙️ ========================================")
+            print("⚙️ MDM CONFIG: Using ENVIRONMENT VARIABLES (dev)")
+            print("⚙️ URL: \(apiUrl)")
+            print("⚙️ CompanyId: \(companyId)")
+            print("⚙️ ========================================")
+            return APISchoolInfo(urlEndPoint:   apiUrl,
+                                 apiKey:        apiKey,
+                                 asset:         env[EnvKey.asset] ?? "asset",
+                                 udid:          env[EnvKey.udid] ?? "udid",
+                                 companyId:     companyId,
+                                 helpurl:       env[EnvKey.helpURL] ?? "www.help.com",
                                  configSource:  .fallback)
         }
-
-        #if DEBUG
-        print("⚙️ ========================================")
-        print("⚙️ MDM CONFIG: Successfully loaded from MDM! ✅")
-        print("⚙️ Source: \(networkVariables.sourceOfNetworkProperties)")
-        print("⚙️ URL: \(networkVariables.companyUrl)")
-        print("⚙️ CompanyId: \(networkVariables.CompanyId)")
-        print("⚙️ Asset: \(networkVariables.asset)")
-        print("⚙️ UDID: \(networkVariables.udid)")
-        print("⚙️ Help URL: \(networkVariables.helpurl)")
-        print("⚙️ ========================================")
         #endif
-        return APISchoolInfo(urlEndPoint:   networkVariables.companyUrl,
-                             apiKey:        networkVariables.apiKey,
-                             asset:         networkVariables.asset,
-                             udid:          networkVariables.udid,
-                             companyId:     networkVariables.CompanyId,
-                             helpurl:       networkVariables.helpurl,
-                             configSource:  .mdm)
+        
+        fatalError("No configuration available. Set environment variables in Xcode scheme (API_URL, API_KEY, COMPANY_ID) or deploy via MDM.")
     }()
 
     // Private initializer
