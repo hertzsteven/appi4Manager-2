@@ -440,11 +440,15 @@ struct TeacherDashboardView: View {
             // Date Navigation + Time Period Picker section
             VStack(spacing: 12) {
                 dateNavigationBar
+                    .padding()
                 timePeriodPicker
+                    .padding(.bottom)
             }
-            .padding(.vertical, 12)
             .background(Color(.systemBackground))
-            
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+
             
             // Students Grid (scrollable)
             inlineStudentsGrid
