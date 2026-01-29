@@ -318,6 +318,27 @@ struct ClassManagementListView: View {
     
     private func deleteClass(_ schoolClass: SchoolClass) async {
         do {
+            // Fetch devices assigned to this class
+            let deviceResponse: DeviceListResponse = try await ApiManager.shared.getData(
+                from: .getDevices(assettag: String(schoolClass.userGroupId))
+            )
+            
+            // Unassign each device
+            for device in deviceResponse.devices {
+                try await ApiManager.shared.getDataNoDecode(
+                    from: .updateDevice(uuid: device.UDID, assetTag: "None")
+                )
+                // Sync devicesViewModel if loaded
+                await MainActor.run {
+                    if let index = devicesViewModel.devices.firstIndex(where: { $0.UDID == device.UDID }) {
+                        devicesViewModel.devices[index].assetTag = "None"
+                    }
+                }
+                #if DEBUG
+                print("✅ Unassigned device \(device.name) before class deletion")
+                #endif
+            }
+            
             try await ApiManager.shared.getDataNoDecode(from: .deleteaClass(uuid: schoolClass.uuid))
             classesViewModel.delete(schoolClass)
             

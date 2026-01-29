@@ -217,11 +217,28 @@ struct ClassEditorView: View {
             
             TextField("Description", text: $classDescription, axis: .vertical)
                 .lineLimit(3...6)
+            
+            // Active/Inactive status indicator (only for existing classes)
+            if !isNew {
+                HStack {
+                    Text("Status")
+                    Spacer()
+                    Label(
+                        isClassActive ? "Active" : "Inactive",
+                        systemImage: isClassActive ? "checkmark.circle.fill" : "circle"
+                    )
+                    .foregroundStyle(isClassActive ? .green : .secondary)
+                    .fontWeight(.medium)
+                }
+            }
         } header: {
             Text("Class Details")
         } footer: {
             if isNew {
                 Text("A dummy student will be automatically created for device management purposes.")
+            } else if !isClassActive {
+                Text("Assign at least one teacher and one device to activate this class.")
+                    .foregroundColor(.orange)
             }
         }
     }
@@ -305,11 +322,11 @@ struct ClassEditorView: View {
             if isNew {
                 Text("Tap 'Create' to save the class, then you can assign teachers.")
             } else if assignedTeachers.isEmpty {
-                Text("Teachers assigned to this class can manage students and devices.")
+                Text("Teachers assigned to this class can manage students.")
                 + Text(" · Required to activate class")
                     .foregroundColor(.orange)
             } else {
-                Text("Teachers assigned to this class can manage students and devices.")
+                Text("Teachers assigned to this class can manage students.")
             }
         }
     }
@@ -357,8 +374,7 @@ struct ClassEditorView: View {
             if isNew {
                 Text("Tap 'Create' to save the class, then you can assign devices.")
             } else if assignedDevices.isEmpty {
-                Text("Tap the remove button or swipe left to unassign a device from this class.")
-                + Text(" · Required to activate class")
+                Text("Required to activate class")
                     .foregroundColor(.orange)
             } else {
                 Text("Tap the remove button or swipe left to unassign a device from this class.")
@@ -598,6 +614,22 @@ struct ClassEditorView: View {
         defer { Task { await MainActor.run { isSaving = false } } }
         
         do {
+            // Unassign all devices first
+            for device in assignedDevices {
+                try await ApiManager.shared.getDataNoDecode(
+                    from: .updateDevice(uuid: device.UDID, assetTag: "None")
+                )
+                // Sync devicesViewModel
+                await MainActor.run {
+                    if let index = devicesViewModel.devices.firstIndex(where: { $0.UDID == device.UDID }) {
+                        devicesViewModel.devices[index].assetTag = "None"
+                    }
+                }
+                #if DEBUG
+                print("✅ Unassigned device \(device.name) before class deletion")
+                #endif
+            }
+            
             try await ApiManager.shared.getDataNoDecode(from: .deleteaClass(uuid: schoolClass.uuid))
             classesViewModel.delete(schoolClass)
             
