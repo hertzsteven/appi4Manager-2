@@ -67,16 +67,10 @@ struct AdminDashboardView: View {
         )
     ]
     
-    // MARK: - Preserved Categories (Hidden)
-    // The following categories are preserved for future use but hidden from the dashboard.
-    // To restore, add them back to the categories array above.
-    /*
-    Category(name: "Devices", color: .blue, image: Image(systemName: "ipad.and.iphone"), count: 5),
-    Category(name: "Categories", color: .green, image: Image(systemName: "folder.fill"), count: 12),
-    Category(name: "Apps", color: .red, image: Image(systemName: "apps.ipad"), count: 3),
-    Category(name: "Classes", color: .orange, image: Image(systemName: "person.3.sequence.fill"), count: 2),
-    Category(name: "Students", color: .yellow, image: Image(systemName: "person.crop.square"), count: 6)
-    */
+    // MARK: - Hidden Category (Available for Restoration)
+    // The Categories feature is still available in the codebase but hidden from the dashboard.
+    // To restore, add for example:
+    // Category(name: "Categories", color: .green, image: Image(systemName: "folder.fill"), count: 12, subtitle: "Manage app categories")
     
     var body: some View {
         ZStack {
@@ -94,48 +88,8 @@ struct AdminDashboardView: View {
                 }
                 .navigationDestination(for: Category.self) { category in
                     switch category.name {
-                    case "Devices":
-                        DeviceListVW(isPresented: .constant(true))
                     case "Categories":
                         CategoryListView(newAppCategory: AppCategory.makeDefault())
-                    case "Students":
-                        if classesViewModel.isLoaded && usersViewModel.isLoaded {
-                            let firstClassGroupId =
-                            classesViewModel.filterSchoolClassesinLocation2(
-                                teacherItems.currentLocation.id,
-                                dummyPicClassToIgnore: teacherItems.getpicClass(),
-                                schoolClassGroupID: teacherItems.schoolClassDictionaryGroupID[teacherItems.currentLocation.id]!).first?.userGroupId ?? 0
-                            
-                            UserListDup(path: $path,
-                                        newUser: User.makeDefault(),
-                                        filteredClasses: classesViewModel.filterSchoolClassesinLocation2(
-                                            teacherItems.currentLocation.id,
-                                            dummyPicClassToIgnore: teacherItems.getpicClass(),
-                                            schoolClassGroupID: teacherItems.schoolClassDictionaryGroupID[teacherItems.currentLocation.id]!),
-                                        filteredStudents: usersViewModel.sortedUsersNonBClass(
-                                            lastNameFilter: "",
-                                            selectedLocationID: teacherItems.selectedLocationIdx,
-                                            teacherUserID: teacherItems.teacherUserDict[teacherItems.selectedLocationIdx]!,
-                                            scGroupid: firstClassGroupId)
-                            )
-                            .alert(isPresented: $hasError, error: error) {
-                                Button {
-                                    Task {
-                                        await loadTheClasses()
-                                    }
-                                } label: {
-                                    Text("Retry")
-                                }
-                            }
-                        }
-                    case "Classes":
-                        SchoolListDup(newClass: SchoolClass.makeDefault())
-                            .task {
-                                await loadTheUsers()
-                                await loadTheDevices()
-                            }
-                    case "Apps":
-                        MockFromStudentScreenView(path: $path)
                     case "Class Management":
                         ClassManagementListView()
                     case "Device Management":

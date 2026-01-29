@@ -255,6 +255,34 @@ struct CollapsibleListCTG: View {
     }
 }
 
+struct AnimateTextField: View {
+    @Binding var textField: String
+    @Binding var mode : EditMode
+    var itIsInEdit: Bool {
+        mode == .active
+    }
+//    let nbrLines: Int = 1
+    let label: String
+
+    var body: some View {
+        
+        HStack {
+            if !textField.isEmpty {
+                Text("\(label): ")
+            }
+            
+            ZStack(alignment: .leading) {
+                TextField(label, text: $textField)
+                    .opacity(itIsInEdit ? 1 : 0)
+                    .lineLimit(5)
+                Text(textField)
+                    .opacity(itIsInEdit ? 0 : 1)
+                    .foregroundColor(Color(.darkGray))
+                    .lineLimit(5)
+            }
+        }
+    }
+}
 
 //struct AnimateTextField: View {
 //    @Binding var textField: String
@@ -276,7 +304,7 @@ struct CollapsibleListCTG: View {
 //                    .opacity(itIsInEdit ? 1 : 0)
 //                Text(textField)
 //                    .opacity(itIsInEdit ? 0 : 1)
-//                    .foregroundColor(Color(.darkGray))
+//                    .foregroundStyle(Color(.darkGray))
 //            }
 //        }
 //    }

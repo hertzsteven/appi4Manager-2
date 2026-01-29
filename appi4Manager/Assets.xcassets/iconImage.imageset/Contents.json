@@ -1,11 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "iconImage copy.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "icons8-management2.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

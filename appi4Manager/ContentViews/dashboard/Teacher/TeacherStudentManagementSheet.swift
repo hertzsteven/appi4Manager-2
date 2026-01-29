@@ -57,30 +57,31 @@ struct TeacherStudentManagementSheet: View {
         .navigationTitle("Students")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Menu {
-                    Button {
-                        showAddStudent = true
+            if !localStudents.isEmpty {
+                ToolbarItem(placement: .primaryAction) {
+                    Menu {
+                        Button {
+                            showAddStudent = true
+                        } label: {
+                            Label("Add New Student", systemImage: "person.badge.plus")
+                        }
+                        
+                        Button {
+                            showAssignExisting = true
+                        } label: {
+                            Label("Assign Existing Student", systemImage: "person.2.badge.gearshape")
+                        }
+                        
+                        Divider()
+                        
+                        Button(role: .destructive) {
+                            showUnassignStudents = true
+                        } label: {
+                            Label("Unassign Students", systemImage: "person.badge.minus")
+                        }
                     } label: {
-                        Label("Add New Student", systemImage: "person.badge.plus")
+                        Image(systemName: "ellipsis.circle")
                     }
-                    
-                    Button {
-                        showAssignExisting = true
-                    } label: {
-                        Label("Assign Existing Student", systemImage: "person.2.badge.gearshape")
-                    }
-                    
-                    Divider()
-                    
-                    Button(role: .destructive) {
-                        showUnassignStudents = true
-                    } label: {
-                        Label("Unassign Students", systemImage: "person.badge.minus")
-                    }
-                    .disabled(localStudents.isEmpty)
-                } label: {
-                    Image(systemName: "ellipsis.circle")
                 }
             }
         }
@@ -196,12 +197,21 @@ struct TeacherStudentManagementSheet: View {
         } description: {
             Text("This class has no students yet.")
         } actions: {
-            Button {
-                showAddStudent = true
-            } label: {
-                Text("Add Student")
+            VStack(spacing: 12) {
+                Button {
+                    showAddStudent = true
+                } label: {
+                    Label("Add New Student", systemImage: "person.badge.plus")
+                }
+                .buttonStyle(.borderedProminent)
+                
+                Button {
+                    showAssignExisting = true
+                } label: {
+                    Label("Assign Existing Student", systemImage: "person.2.badge.gearshape")
+                }
+                .buttonStyle(.borderedProminent)
             }
-            .buttonStyle(.borderedProminent)
         }
     }
     

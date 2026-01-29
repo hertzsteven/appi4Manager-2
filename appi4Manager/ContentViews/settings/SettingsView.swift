@@ -17,6 +17,9 @@ struct SettingsView: View {
     @State private var migrationResult: String?
     @State private var showMigrationAlert = false
     
+    // Role switching sheet
+    @State private var showRoleSwitcher = false
+    
     var body: some View {
         List {
             // MARK: - Current Role Section
@@ -63,15 +66,17 @@ struct SettingsView: View {
                 }
             }
             // MARK: - Data Maintenance Section (only visible when authenticated)
-            if authManager.isAuthenticated {
-                Section {
-                    migrateProfilesButton
-                } header: {
-                    Text("Data Maintenance")
-                } footer: {
-                    Text("One-time migration to update student profile document IDs to include school ID.")
-                }
-            }
+            // NOTE: This section has been disabled per request to remove the migration UI.
+            // To restore, uncomment the block below.
+            // if authManager.isAuthenticated {
+            //     Section {
+            //         migrateProfilesButton
+            //     } header: {
+            //         Text("Data Maintenance")
+            //     } footer: {
+            //         Text("One-time migration to update student profile document IDs to include school ID.")
+            //     }
+            // }
             
             // MARK: - Timeslot Hours Section
             Section {
@@ -125,6 +130,17 @@ struct SettingsView: View {
         } message: {
             Text(migrationResult ?? "")
         }
+        .sheet(isPresented: $showRoleSwitcher) {
+            RoleSelectionView(
+                isFromSettings: true,
+                onCancel: {
+                    showRoleSwitcher = false
+                },
+                onRoleSelected: { _ in
+                    showRoleSwitcher = false
+                }
+            )
+        }
     }
     
     // MARK: - Current Role Row
@@ -149,17 +165,17 @@ struct SettingsView: View {
     
     private var switchRoleButton: some View {
         Button {
-            roleManager.clearRole()
+            showRoleSwitcher = true
         } label: {
             HStack {
                 Label("Switch Mode", systemImage: "arrow.triangle.2.circlepath")
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
         }
-        .foregroundColor(.primary)
+        .foregroundStyle(.primary)
     }
     
     // MARK: - App Info Row
@@ -233,52 +249,32 @@ struct SettingsView: View {
             HStack {
                 Label("Class & Group Info", systemImage: "info.circle.fill")
                 Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
             }
         }
     }
     
-    // MARK: - Migrate Profiles Button
-    
-    private var migrateProfilesButton: some View {
-        Button {
-            Task {
-                await runMigration()
-            }
-        } label: {
-            HStack {
-                if isMigrating {
-                    ProgressView()
-                        .padding(.trailing, 8)
-                    Text("Migrating...")
-                } else {
-                    Label("Migrate Profile IDs", systemImage: "arrow.triangle.2.circlepath.doc.on.clipboard")
-                }
-                Spacer()
-            }
-        }
-        .disabled(isMigrating)
-        .foregroundColor(isMigrating ? .secondary : .primary)
-    }
-    
-    private func runMigration() async {
-        isMigrating = true
-        
-        do {
-            let companyId = APISchoolInfo.shared.companyId
-            let count = try await FirestoreManager().migrateStudentProfilesToCompositeIds(companyId: companyId)
-            migrationResult = "Successfully migrated \(count) student profile(s) to new format."
-        } catch {
-            migrationResult = "Migration failed: \(error.localizedDescription)"
-        }
-        
-        isMigrating = false
-        showMigrationAlert = true
-    }
-    
-
+    // MARK: - Migrate Profiles Button (disabled)
+    // The migration button has been disabled/hidden. To restore, uncomment this block.
+    // private var migrateProfilesButton: some View {
+    //     Button {
+    //         Task {
+    //             await runMigration()
+    //         }
+    //     } label: {
+    //         HStack {
+    //             if isMigrating {
+    //                 ProgressView()
+    //                     .padding(.trailing, 8)
+    //                 Text("Migrating...")
+    //             } else {
+    //                 Label("Migrate Profile IDs", systemImage: "arrow.triangle.2.circlepath.doc.on.clipboard")
+    //             }
+    //             Spacer()
+    //         }
+    //     }
+    //     .disabled(isMigrating)
+    //     .foregroundColor(isMigrating ? .secondary : .primary)
+    // }
     
     // MARK: - Authenticated Account View
     
@@ -334,6 +330,23 @@ struct SettingsView: View {
         guard let url = URL(string: "https://example.com/privacy") else { return }
         UIApplication.shared.open(url)
     }
+    
+    // MARK: - Migration Logic (disabled)
+    // The migration logic has been disabled. To restore, uncomment this function and its callers.
+    // private func runMigration() async {
+    //     isMigrating = true
+    //
+    //     do {
+    //         let companyId = APISchoolInfo.shared.companyId
+    //         let count = try await FirestoreManager().migrateStudentProfilesToCompositeIds(companyId: companyId)
+    //         migrationResult = "Successfully migrated \(count) student profile(s) to new format."
+    //     } catch {
+    //         migrationResult = "Migration failed: \(error.localizedDescription)"
+    //     }
+    //
+    //     isMigrating = false
+    //     showMigrationAlert = true
+    // }
 }
 
 // MARK: - Timeslot Range Row Component
@@ -414,3 +427,4 @@ struct TimeslotRangeRow: View {
             .environmentObject(TeacherItems())
     }
 }
+

@@ -193,40 +193,6 @@ struct ClassEditorView: View {
                 )
             }
         }
-        .confirmationDialog(
-            "Unassign Device",
-            isPresented: $showUnassignConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("Unassign", role: .destructive) {
-                if let device = deviceToUnassign {
-                    Task {
-                        await unassignDevice(device)
-                    }
-                }
-            }
-            Button("Cancel", role: .cancel) {
-                deviceToUnassign = nil
-            }
-        } message: {
-            if let device = deviceToUnassign {
-                Text("Unassign \"\(device.name)\" from this class? The device will become available for other classes.")
-            }
-        }
-        .confirmationDialog(
-            "Delete Class",
-            isPresented: $showDeleteConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("Delete Class", role: .destructive) {
-                Task {
-                    await deleteClass()
-                }
-            }
-            Button("Cancel", role: .cancel) { }
-        } message: {
-            Text("Are you sure you want to delete \"\(schoolClass.name)\"? This action cannot be undone.")
-        }
         .alert("Error", isPresented: $hasError) {
             Button("OK", role: .cancel) { }
         } message: {
@@ -398,6 +364,26 @@ struct ClassEditorView: View {
                 Text("Tap the remove button or swipe left to unassign a device from this class.")
             }
         }
+        .confirmationDialog(
+            "Unassign Device",
+            isPresented: $showUnassignConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Unassign", role: .destructive) {
+                if let device = deviceToUnassign {
+                    Task {
+                        await unassignDevice(device)
+                    }
+                }
+            }
+            Button("Cancel", role: .cancel) {
+                deviceToUnassign = nil
+            }
+        } message: {
+            if let device = deviceToUnassign {
+                Text("Unassign \"\(device.name)\" from this class? The device will become available for other classes.")
+            }
+        }
     }
     
     private var deleteSection: some View {
@@ -410,6 +396,20 @@ struct ClassEditorView: View {
                     Label("Delete Class", systemImage: "trash")
                     Spacer()
                 }
+            }
+            .confirmationDialog(
+                "Delete Class",
+                isPresented: $showDeleteConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Delete Class", role: .destructive) {
+                    Task {
+                        await deleteClass()
+                    }
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                Text("Are you sure you want to delete \"\(schoolClass.name)\"? This action cannot be undone.")
             }
         }
     }

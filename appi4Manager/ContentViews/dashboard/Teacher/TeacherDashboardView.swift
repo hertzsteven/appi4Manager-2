@@ -106,6 +106,11 @@ struct TeacherDashboardView: View {
         !classInfo.devices.isEmpty
     }
     
+    /// Classes that have at least one device assigned (active classes)
+    private var classesWithDevices: [TeacherClassInfo] {
+        teacherClasses.filter { !$0.devices.isEmpty }
+    }
+    
     var body: some View {
         NavigationStack {
             Group {
@@ -531,46 +536,54 @@ struct TeacherDashboardView: View {
     
     // MARK: - Welcome Header
     /// Compact horizontal bar showing "Welcome back, [Teacher's Name]"
-    /// and a "Switch" button if teacher has multiple classes.
+    /// with class count indicator and a "Switch" button if teacher has multiple classes.
     private var welcomeHeader: some View {
         HStack {
             // Welcome message - horizontal and compact
             HStack(spacing: 4) {
                 Text("Welcome back,")
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                 
                 Text(authManager.authenticatedUser?.firstName ?? "Teacher")
                     .font(.subheadline)
-                    .fontWeight(.semibold)
+                    .bold()
             }
             
             Spacer()
             
-            // Class Switcher Button (only show if multiple classes)
-            if teacherClasses.count > 1 {
-                Button {
-                    showClassSelector = true
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "square.stack.3d.up.fill")
-                            .font(.caption)
-                        Text("Switch")
-                            .fontWeight(.medium)
-                    }
+            // Class count and switcher
+            HStack(spacing: 8) {
+                // Class count badge (only count active classes with devices)
+                Label("\(classesWithDevices.count)", systemImage: "graduationcap.fill")
                     .font(.caption)
-                    .foregroundColor(.accentColor)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(Color.accentColor.opacity(0.1))
-                    .cornerRadius(6)
+                    .foregroundStyle(.secondary)
+                
+                // Class Switcher Button (only show if multiple active classes)
+                if classesWithDevices.count > 1 {
+                    Button {
+                        showClassSelector = true
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "square.stack.3d.up.fill")
+                                .font(.caption)
+                            Text("Switch")
+                                .bold()
+                        }
+                        .font(.caption)
+                        .foregroundStyle(Color.accentColor)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color.accentColor.opacity(0.1))
+                        .clipShape(.rect(cornerRadius: 6))
+                    }
                 }
             }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .background(Color(.systemBackground))
-        .cornerRadius(10)
+        .clipShape(.rect(cornerRadius: 10))
     }
     
     // MARK: - Class Info Card
