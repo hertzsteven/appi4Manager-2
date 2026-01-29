@@ -44,30 +44,53 @@ struct AdminDashboardView: View {
     /// The main category tiles displayed on the dashboard.
     /// Each category navigates to its respective management view.
     let categories = [
-        Category(name: "Devices", color: .blue, image: Image(systemName: "ipad.and.iphone"), count: 5),
-        Category(name: "Device Management", color: .teal, image: Image(systemName: "ipad.landscape"), count: 0),
-        Category(name: "Categories", color: .green, image: Image(systemName: "folder.fill"), count: 12),
-        Category(name: "Apps", color: .red, image: Image(systemName: "apps.ipad"), count: 3),
-        Category(name: "Classes", color: .orange, image: Image(systemName: "person.3.sequence.fill"), count: 2),
-        Category(name: "Class Management", color: .purple, image: Image(systemName: "rectangle.stack.person.crop.fill"), count: 0),
-        Category(name: "Students", color: .yellow, image: Image(systemName: "person.crop.square"), count: 6)
+        Category(
+            name: "Device Management",
+            color: .teal,
+            image: Image(systemName: "ipad.landscape"),
+            count: 0,
+            subtitle: "Manage iPads and device assignments"
+        ),
+        Category(
+            name: "Class Management",
+            color: .purple,
+            image: Image(systemName: "rectangle.stack.person.crop.fill"),
+            count: 0,
+            subtitle: "Configure classes, teachers, and devices"
+        ),
+        Category(
+            name: "Student Management",
+            color: .orange,
+            image: Image(systemName: "person.2.fill"),
+            count: 0,
+            subtitle: "Manage student accounts and enrollments"
+        )
     ]
+    
+    // MARK: - Preserved Categories (Hidden)
+    // The following categories are preserved for future use but hidden from the dashboard.
+    // To restore, add them back to the categories array above.
+    /*
+    Category(name: "Devices", color: .blue, image: Image(systemName: "ipad.and.iphone"), count: 5),
+    Category(name: "Categories", color: .green, image: Image(systemName: "folder.fill"), count: 12),
+    Category(name: "Apps", color: .red, image: Image(systemName: "apps.ipad"), count: 3),
+    Category(name: "Classes", color: .orange, image: Image(systemName: "person.3.sequence.fill"), count: 2),
+    Category(name: "Students", color: .yellow, image: Image(systemName: "person.crop.square"), count: 6)
+    */
     
     var body: some View {
         ZStack {
             NavigationStack(path: $path) {
                 ScrollView {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 250), spacing: 20)], spacing: 20) {
+                    VStack(spacing: 16) {
                         ForEach(categories) { category in
                             NavigationLink(value: category, label: {
                                 CategoryView(category: category)
                             })
-                            .isDetailLink(false)
                             .buttonStyle(.plain)
                         }
                     }
-                    .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
-                    .navigationViewStyle(StackNavigationViewStyle())
+                    .padding()
                 }
                 .navigationDestination(for: Category.self) { category in
                     switch category.name {
@@ -117,6 +140,22 @@ struct AdminDashboardView: View {
                         ClassManagementListView()
                     case "Device Management":
                         DeviceManagementListView()
+                    case "Student Management":
+                        // Placeholder for future Student Management view
+                        VStack(spacing: 20) {
+                            Image(systemName: "person.2.fill")
+                                .font(.system(size: 60))
+                                .foregroundStyle(.orange)
+                            Text("Coming Soon")
+                                .font(.title)
+                                .bold()
+                            Text("Student Management features are under development.")
+                                .font(.body)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding()
+                        .navigationTitle("Student Management")
                     default:
                         Text("Nothing setup yet")
                     }
@@ -131,7 +170,7 @@ struct AdminDashboardView: View {
                 }
                 .background(Color(.systemGray5))
                 .edgesIgnoringSafeArea(.bottom)
-                .navigationTitle("Admin Dashboard")
+                .navigationTitle("Administrative Management Dashboard")
                 .navigationViewStyle(StackNavigationViewStyle())
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {

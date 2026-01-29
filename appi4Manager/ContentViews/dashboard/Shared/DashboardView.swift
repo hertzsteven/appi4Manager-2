@@ -20,6 +20,15 @@ struct Category: Identifiable, Hashable {
     let color: Color
     let image: Image
     let count: Int
+    let subtitle: String?
+    
+    init(name: String, color: Color, image: Image, count: Int, subtitle: String? = nil) {
+        self.name = name
+        self.color = color
+        self.image = image
+        self.count = count
+        self.subtitle = subtitle
+    }
 }
 
 
@@ -49,47 +58,53 @@ struct CategoryView: View {
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color(.systemGray6))
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
                 .frame(maxWidth: .infinity)
-                .frame(height: 80)
-                .shadow(radius: 5)
+                .frame(height: 100)
+                .shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: 4)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color(.systemGray4), lineWidth: 0.5)
+                )
                 .overlay(
 
-            HStack {
-                VStack(alignment: .leading, spacing: 5) {
-                    ZStack {
-                        Circle()
-                            .fill(category.color)
-                            .frame(width: 30, height: 30)
-                        
-                        category.image
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 15, height: 15)
-                            .foregroundColor(.white)
-                    }
-                    .padding([.bottom],8)
-
-                    Text(category.name)
-                        .font(.system(size: 16, weight: .semibold, design: .default))
-                        .foregroundColor(.secondary)
+            HStack(spacing: 16) {
+                // Icon circle
+                ZStack {
+                    Circle()
+                        .fill(category.color.gradient)
+                        .frame(width: 50, height: 50)
+                    
+                    category.image
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(.white)
                 }
-                .padding([.leading],4)
+
+                // Text content
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(category.name)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                    
+                    if let subtitle = category.subtitle {
+                        Text(subtitle)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                    }
+                }
                 
                 Spacer()
                 
-                VStack {
-                    Text("\(category.count)")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.primary)
-                        .padding([.top], 4)
-                        .padding([.trailing], 18)
-                        .hidden() // remove to show the number
-                    Spacer()
-                }
+                // Chevron indicator
+                Image(systemName: "chevron.right")
+                    .font(.body)
+                    .foregroundStyle(.tertiary)
             }
-            .padding(.leading, 10)
+            .padding(.horizontal, 20)
             )
         }
     }
