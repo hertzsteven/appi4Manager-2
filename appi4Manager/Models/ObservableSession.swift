@@ -74,6 +74,32 @@ struct ObservableSession: Codable, Identifiable {
         case processed
     }
     
+    // MARK: - Cached Date Formatters (Performance Optimization)
+    
+    /// Formatter for YYYYMMDD date strings (thread-safe, reused)
+    private static let yyyyMMddFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd"
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter
+    }()
+    
+    /// Formatter for time display (e.g., "9:15 AM")
+    private static let timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter
+    }()
+    
+    /// Formatter for date display (e.g., "Jan 29, 2026")
+    private static let displayDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter
+    }()
+    
     // MARK: - Computed Properties
     
     /// Whether this session was completed successfully
@@ -94,32 +120,22 @@ struct ObservableSession: Codable, Identifiable {
     /// Parses the date string (YYYYMMDD) to a Date object
     var parsedDate: Date? {
         guard let dateString = date else { return nil }
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd"
-        return formatter.string(from: Date()) == dateString ? Date() : formatter.date(from: dateString)
+        return Self.yyyyMMddFormatter.date(from: dateString)
     }
     
     /// Formatted date string for display (e.g., "Jan 29, 2026")
     var formattedDate: String {
         guard let dateString = date else { return "Unknown Date" }
-        let inputFormatter = DateFormatter()
-        inputFormatter.dateFormat = "yyyyMMdd"
-        
-        guard let parsedDate = inputFormatter.date(from: dateString) else {
+        guard let parsedDate = Self.yyyyMMddFormatter.date(from: dateString) else {
             return dateString
         }
-        
-        let outputFormatter = DateFormatter()
-        outputFormatter.dateStyle = .medium
-        return outputFormatter.string(from: parsedDate)
+        return Self.displayDateFormatter.string(from: parsedDate)
     }
     
     /// Formatted time string from creationDT (e.g., "9:15 AM")
     var formattedTime: String? {
         guard let creation = creationDT else { return nil }
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h:mm a"
-        return formatter.string(from: creation)
+        return Self.timeFormatter.string(from: creation)
     }
     
     /// Session duration as a formatted string (e.g., "20 min")
@@ -130,15 +146,11 @@ struct ObservableSession: Codable, Identifiable {
     
     /// Returns today's date in YYYYMMDD format
     static func todayDateString() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd"
-        return formatter.string(from: Date())
+        yyyyMMddFormatter.string(from: Date())
     }
     
     /// Returns date string in YYYYMMDD format from a Date object
     static func dateString(from date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd"
-        return formatter.string(from: date)
+        yyyyMMddFormatter.string(from: date)
     }
 }

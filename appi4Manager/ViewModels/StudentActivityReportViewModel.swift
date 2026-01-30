@@ -131,8 +131,18 @@ class StudentActivityReportViewModel {
         )
         
         allSessions = sessions
+        
+        // Report if fetch returned empty when we expected data (possible error)
+        if sessions.isEmpty && effectiveStartDate == nil {
+            // Only show message for "All Time" queries that return nothing
+            errorMessage = "No activity records found for this student."
+        }
+        
         isLoading = false
     }
+    
+    /// Maximum number of recent apps to show in summaries
+    private static let maxRecentAppsToShow = 3
     
     /// Loads activity data for multiple students and creates summaries
     /// - Parameters:
@@ -158,8 +168,8 @@ class StudentActivityReportViewModel {
             let sessions = activityByStudent[student.id] ?? []
             allFetchedSessions.append(contentsOf: sessions)
             
-            // Get unique recent app bundle IDs (up to 3)
-            let recentApps = Array(Set(sessions.compactMap { $0.appBundleId })).prefix(3)
+            // Get unique recent app bundle IDs (limited to maxRecentAppsToShow)
+            let recentApps = Array(Set(sessions.compactMap { $0.appBundleId })).prefix(Self.maxRecentAppsToShow)
             
             let summary = StudentActivitySummary(
                 student: student,
@@ -181,6 +191,12 @@ class StudentActivityReportViewModel {
         
         studentSummaries = summaries
         allSessions = allFetchedSessions
+        
+        // Report if fetch returned no data for any students
+        if allFetchedSessions.isEmpty && !students.isEmpty {
+            errorMessage = "No activity records found for the selected time period."
+        }
+        
         isLoading = false
     }
     
@@ -200,6 +216,12 @@ class StudentActivityReportViewModel {
         )
         
         allSessions = sessions
+        
+        // Report if fetch returned no data
+        if sessions.isEmpty {
+            errorMessage = "No activity records found for the selected time period."
+        }
+        
         isLoading = false
     }
     
