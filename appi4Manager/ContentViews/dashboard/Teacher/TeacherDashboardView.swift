@@ -162,6 +162,21 @@ struct TeacherDashboardView: View {
                     .disabled(activeClass == nil)
                 }
                 
+                // Reports button
+                ToolbarItem(placement: .navigationBarLeading) {
+                    NavigationLink {
+                        if let activeClass = activeClass {
+                            StudentActivityReportView(
+                                students: filteredStudents,
+                                deviceApps: activeClass.devices.flatMap { $0.apps ?? [] }
+                            )
+                        }
+                    } label: {
+                        Image(systemName: "chart.bar.doc.horizontal")
+                    }
+                    .disabled(activeClass == nil)
+                }
+                
                 // Right side - settings only
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink(destination: SettingsView()) {

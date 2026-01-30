@@ -497,30 +497,12 @@ struct StudentProfileEditView: View {
         ScrollView {
             VStack(spacing: 24) {
                 // Student Photo
-                AsyncImage(url: student.photo) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
-                            .overlay(
-                                Circle()
-                                    .stroke(hasProfile ? Color.accentColor : Color.gray, lineWidth: 4)
-                            )
-                    default:
-                        Image(systemName: "person.circle.fill")
-                            .resizable()
-                            .frame(width: 100, height: 100)
-                            .foregroundColor(.gray)
-                    }
-                }
+                studentPhotoSection
                 
                 // Student Name
                 Text(student.name)
                     .font(.title2)
-                    .fontWeight(.bold)
+                    .bold()
                 
                 // Week View Toggle (Planning mode only)
                 if dashboardMode == .planning {
@@ -541,119 +523,8 @@ struct StudentProfileEditView: View {
                     }
                 } else {
                     // Mode-specific pickers (existing day view)
-                    modeSpecificPickers
-                
-                Divider()
-                
-                if !hasProfile {
-                    // No Profile Section
-                    VStack(spacing: 12) {
-                        Image(systemName: "person.crop.circle.badge.plus")
-                            .font(.system(size: 48))
-                            .foregroundColor(.accentColor)
-                        Text("No Profile Found")
-                            .font(.headline)
-                        Text("This student doesn't have an app profile yet. Tap \"Add Profile\" below to create one.")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
-                    }
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(12)
-                } else {
-                    // Current Apps Section
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Assigned Apps")
-                            .font(.headline)
-                        
-                        if isLoadingApps {
-                            HStack {
-                                Spacer()
-                                ProgressView()
-                                Spacer()
-                            }
-                            .padding()
-                        } else if apps.isEmpty {
-                            Text("No apps configured for this timeslot")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(Color(.systemGray6))
-                                .cornerRadius(8)
-                        } else {
-                            ForEach(apps) { app in
-                                HStack {
-                                    AsyncImage(url: app.iconURL) { phase in
-                                        switch phase {
-                                        case .success(let image):
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: 44, height: 44)
-                                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                        default:
-                                            Image(systemName: "app.fill")
-                                                .font(.title2)
-                                                .foregroundColor(.accentColor)
-                                                .frame(width: 44, height: 44)
-                                                .background(Color.accentColor.opacity(0.1))
-                                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                        }
-                                    }
-                                    
-                                    VStack(alignment: .leading) {
-                                        Text(app.displayName)
-                                            .font(.body)
-                                        if let vendor = app.vendor, !vendor.isEmpty {
-                                            Text(vendor)
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                                .lineLimit(1)
-                                        }
-                                    }
-                                    
-                                    Spacer()
-                                }
-                                .padding(.vertical, 4)
-                            }
-                        }
-                    }
-                    .padding()
-                    .background(Color(.systemBackground))
-                    .cornerRadius(12)
-                    
-                    // Session Length Section
-                    if let session = session {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Session Length")
-                                .font(.headline)
-                            
-                            HStack {
-                                Image(systemName: "clock")
-                                    .font(.title2)
-                                    .foregroundColor(.orange)
-                                
-                                Text("\(Int(session.sessionLength)) minutes")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                
-                                Spacer()
-                            }
-                        }
-                        .padding()
-                        .background(Color(.systemBackground))
-                        .cornerRadius(12)
-                    }
-                    
-                    // Active Session / Allow Re-login Section (Now mode only)
-                    if dashboardMode == .now {
-                        activeSessionSection
-                    }
+                    dayViewContent
                 }
-                } // End of else block for day view
                 
                 // Edit/Add Profile Button
                 Button {
@@ -661,13 +532,30 @@ struct StudentProfileEditView: View {
                 } label: {
                     Text(hasProfile ? "Edit Profile" : "Add Profile")
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.accentColor)
-                        .cornerRadius(12)
+                        .clipShape(.rect(cornerRadius: 12))
                 }
                 .padding(.top)
+                
+                // View Activity History Button
+                NavigationLink {
+                    StudentActivityDetailView(
+                        student: student,
+                        deviceApps: apps
+                    )
+                } label: {
+                    Label("View Activity History", systemImage: "chart.bar.doc.horizontal")
+                        .fontWeight(.medium)
+                        .foregroundStyle(.tint)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.accentColor.opacity(0.1))
+                        .clipShape(.rect(cornerRadius: 12))
+                }
+                .padding(.top, 8)
                 
                 Spacer()
             }
@@ -820,6 +708,167 @@ struct StudentProfileEditView: View {
         case .friday: return "Fri"
         case .saturday: return "Sat"
         case .sunday: return "Sun"
+        }
+    }
+    
+    // MARK: - Extracted Body Sections
+    
+    /// Student photo section extracted to help compiler type-check
+    @ViewBuilder
+    private var studentPhotoSection: some View {
+        AsyncImage(url: student.photo) { phase in
+            switch phase {
+            case .success(let image):
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 100, height: 100)
+                    .clipShape(Circle())
+                    .overlay(
+                        Circle()
+                            .stroke(hasProfile ? Color.accentColor : Color.gray, lineWidth: 4)
+                    )
+            default:
+                Image(systemName: "person.circle.fill")
+                    .resizable()
+                    .frame(width: 100, height: 100)
+                    .foregroundStyle(.gray)
+            }
+        }
+    }
+    
+    /// No profile placeholder section
+    private var noProfileSection: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "person.crop.circle.badge.plus")
+                .font(.system(size: 48))
+                .foregroundStyle(.tint)
+            Text("No Profile Found")
+                .font(.headline)
+            Text("This student doesn't have an app profile yet. Tap \"Add Profile\" below to create one.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .clipShape(.rect(cornerRadius: 12))
+    }
+    
+    /// Assigned apps section with app icons
+    @ViewBuilder
+    private var assignedAppsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Assigned Apps")
+                .font(.headline)
+            
+            if isLoadingApps {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
+                }
+                .padding()
+            } else if apps.isEmpty {
+                Text("No apps configured for this timeslot")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color(.systemGray6))
+                    .clipShape(.rect(cornerRadius: 8))
+            } else {
+                ForEach(apps) { app in
+                    appRow(for: app)
+                }
+            }
+        }
+        .padding()
+        .background(Color(.systemBackground))
+        .clipShape(.rect(cornerRadius: 12))
+    }
+    
+    /// Single app row to further simplify type-checking
+    private func appRow(for app: DeviceApp) -> some View {
+        HStack {
+            AsyncImage(url: app.iconURL) { phase in
+                switch phase {
+                case .success(let image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 44, height: 44)
+                        .clipShape(.rect(cornerRadius: 10))
+                default:
+                    Image(systemName: "app.fill")
+                        .font(.title2)
+                        .foregroundStyle(.tint)
+                        .frame(width: 44, height: 44)
+                        .background(Color.accentColor.opacity(0.1))
+                        .clipShape(.rect(cornerRadius: 10))
+                }
+            }
+            
+            VStack(alignment: .leading) {
+                Text(app.displayName)
+                    .font(.body)
+                if let vendor = app.vendor, !vendor.isEmpty {
+                    Text(vendor)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+            }
+            
+            Spacer()
+        }
+        .padding(.vertical, 4)
+    }
+    
+    /// Session length section
+    @ViewBuilder
+    private var sessionLengthSection: some View {
+        if let session = session {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Session Length")
+                    .font(.headline)
+                
+                HStack {
+                    Image(systemName: "clock")
+                        .font(.title2)
+                        .foregroundStyle(.orange)
+                    
+                    Text("\(Int(session.sessionLength)) minutes")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    
+                    Spacer()
+                }
+            }
+            .padding()
+            .background(Color(.systemBackground))
+            .clipShape(.rect(cornerRadius: 12))
+        }
+    }
+    
+    /// Day view content - extracted to simplify body type-checking
+    @ViewBuilder
+    private var dayViewContent: some View {
+        modeSpecificPickers
+        
+        Divider()
+        
+        if !hasProfile {
+            noProfileSection
+        } else {
+            assignedAppsSection
+            sessionLengthSection
+            
+            // Active Session / Allow Re-login Section (Now mode only)
+            if dashboardMode == .now {
+                activeSessionSection
+            }
         }
     }
     

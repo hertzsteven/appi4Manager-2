@@ -941,6 +941,161 @@ extension FirestoreManager {
     }
 }
 
+// MARK: - Student Activity Reports (Observables)
+extension FirestoreManager {
+    
+    /// Fetches activity records for a specific student from the Observables collection
+    /// - Parameters:
+    ///   - studentId: The student's ID
+    ///   - companyId: Optional company ID (defaults to APISchoolInfo.shared.companyId)
+    ///   - startDate: Optional start date for filtering
+    ///   - endDate: Optional end date for filtering
+    /// - Returns: Array of ObservableSession records sorted by creation date (newest first)
+    func fetchStudentActivity(
+        studentId: Int,
+        companyId: Int? = nil,
+        startDate: Date? = nil,
+        endDate: Date? = nil
+    ) async -> [ObservableSession] {
+        let actualCompanyId = companyId ?? APISchoolInfo.shared.companyId
+        
+        let db = Firestore.firestore()
+        var query: Query = db.collection("Observables")
+            .whereField("studentID", isEqualTo: studentId)
+            .whereField("companyId", isEqualTo: actualCompanyId)
+        
+        // Add date filtering at Firestore level (requires composite index)
+        if let startDate = startDate {
+            let startDateString = ObservableSession.dateString(from: startDate)
+            query = query.whereField("date", isGreaterThanOrEqualTo: startDateString)
+        }
+        
+        if let endDate = endDate {
+            let endDateString = ObservableSession.dateString(from: endDate)
+            query = query.whereField("date", isLessThanOrEqualTo: endDateString)
+        }
+        
+        do {
+            let snapshot = try await query.getDocuments(source: .server)
+            
+            let sessions = snapshot.documents.compactMap { document -> ObservableSession? in
+                try? document.data(as: ObservableSession.self)
+            }
+            
+            // Sort by creationDT descending (newest first)
+            let sortedSessions = sessions.sorted { first, second in
+                guard let date1 = first.creationDT, let date2 = second.creationDT else {
+                    return first.creationDT != nil
+                }
+                return date1 > date2
+            }
+            
+            return sortedSessions
+            
+        } catch {
+            print("❌ Firestore Error: \(error)")
+            print("❌ Full error details: \(error.localizedDescription)")
+            handleError(error: error, funcName: #function)
+            return []
+        }
+    }
+    
+    /// Fetches activity records for all students at a location from the Observables collection
+    /// - Parameters:
+    ///   - companyId: Optional company ID (defaults to APISchoolInfo.shared.companyId)
+    ///   - locationId: The location ID to filter by
+    ///   - startDate: Optional start date for filtering
+    ///   - endDate: Optional end date for filtering
+    /// - Returns: Array of ObservableSession records sorted by creation date (newest first)
+    func fetchAllStudentActivity(
+        companyId: Int? = nil,
+        locationId: Int,
+        startDate: Date? = nil,
+        endDate: Date? = nil
+    ) async -> [ObservableSession] {
+        let actualCompanyId = companyId ?? APISchoolInfo.shared.companyId
+        
+        let db = Firestore.firestore()
+        var query: Query = db.collection("Observables")
+            .whereField("companyId", isEqualTo: actualCompanyId)
+            .whereField("locationID", isEqualTo: locationId)
+        
+        // Add date filtering at Firestore level (requires composite index)
+        if let startDate = startDate {
+            let startDateString = ObservableSession.dateString(from: startDate)
+            query = query.whereField("date", isGreaterThanOrEqualTo: startDateString)
+        }
+        
+        if let endDate = endDate {
+            let endDateString = ObservableSession.dateString(from: endDate)
+            query = query.whereField("date", isLessThanOrEqualTo: endDateString)
+        }
+        
+        do {
+            let snapshot = try await query.getDocuments(source: .server)
+            
+            let sessions = snapshot.documents.compactMap { document -> ObservableSession? in
+                try? document.data(as: ObservableSession.self)
+            }
+            
+            // Sort by creationDT descending (newest first)
+            let sortedSessions = sessions.sorted { first, second in
+                guard let date1 = first.creationDT, let date2 = second.creationDT else {
+                    return first.creationDT != nil
+                }
+                return date1 > date2
+            }
+            
+            return sortedSessions
+            
+        } catch {
+            print("❌ Firestore Error: \(error)")
+            print("❌ Full error details: \(error.localizedDescription)")
+            handleError(error: error, funcName: #function)
+            return []
+        }
+    }
+    
+    /// Fetches activity records for a list of student IDs
+    /// - Parameters:
+    ///   - studentIds: Array of student IDs to fetch activity for
+    ///   - companyId: Optional company ID (defaults to APISchoolInfo.shared.companyId)
+    ///   - startDate: Optional start date for filtering
+    ///   - endDate: Optional end date for filtering
+    /// - Returns: Dictionary mapping studentId to their activity records
+    func fetchActivityForStudents(
+        studentIds: [Int],
+        companyId: Int? = nil,
+        startDate: Date? = nil,
+        endDate: Date? = nil
+    ) async -> [Int: [ObservableSession]] {
+        guard !studentIds.isEmpty else { return [:] }
+        
+        // Fetch all activity in parallel for each student
+        var result: [Int: [ObservableSession]] = [:]
+        
+        await withTaskGroup(of: (Int, [ObservableSession]).self) { group in
+            for studentId in studentIds {
+                group.addTask {
+                    let sessions = await self.fetchStudentActivity(
+                        studentId: studentId,
+                        companyId: companyId,
+                        startDate: startDate,
+                        endDate: endDate
+                    )
+                    return (studentId, sessions)
+                }
+            }
+            
+            for await (studentId, sessions) in group {
+                result[studentId] = sessions
+            }
+        }
+        
+        return result
+    }
+}
+
 //
 //    /// Define your custom errors
 //enum ApiError: LocalizedError {
