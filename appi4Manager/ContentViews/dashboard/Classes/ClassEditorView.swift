@@ -250,10 +250,12 @@ struct ClassEditorView: View {
                 .lineLimit(3...6)
             
             // Active/Inactive status indicator (only for existing classes)
-            // Styled as a read-only badge to indicate it's not editable
+            // Styled with background tint to visually distinguish from editable fields
             if !isNew {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
+                        Image(systemName: isClassActive ? "checkmark.circle.fill" : "info.circle.fill")
+                            .foregroundStyle(isClassActive ? .green : .orange)
                         Text("Status")
                             .foregroundStyle(.secondary)
                         Spacer()
@@ -274,6 +276,12 @@ struct ClassEditorView: View {
                             .foregroundStyle(.orange)
                     }
                 }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(isClassActive ? Color.green.opacity(0.04) : Color.orange.opacity(0.04))
+                )
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
             }
         } header: {
             Text("Class Details")
@@ -343,7 +351,7 @@ struct ClassEditorView: View {
                 Button {
                     showTeacherPicker = true
                 } label: {
-                    Label("Add Existing Teacher", systemImage: "person.fill.badge.plus")
+                    Label("Assign Existing Teacher", systemImage: "person.fill.badge.plus")
                 }
                 
                 // Button to create a new teacher
@@ -402,7 +410,7 @@ struct ClassEditorView: View {
                 Button {
                     showDevicePicker = true
                 } label: {
-                    Label("Add Device", systemImage: "plus.circle")
+                    Label("Assign Device", systemImage: "ipad.badge.plus")
                 }
             }
         } header: {
