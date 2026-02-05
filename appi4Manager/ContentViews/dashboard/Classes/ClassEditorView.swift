@@ -338,15 +338,18 @@ struct ClassEditorView: View {
         } header: {
             Text("Assigned Teachers (\(assignedTeachers.count))")
         } footer: {
-            if isNew {
-                Text("Tap 'Create' to save the class, then you can assign teachers.")
-            } else if assignedTeachers.isEmpty {
-                Text("Teachers assigned to this class can manage students.")
-                + Text(" · Required to activate class")
-                    .foregroundColor(.orange)
-            } else {
-                Text("Swipe left on a teacher to remove them from this class.")
+            VStack(alignment: .leading, spacing: 4) {
+                if isNew {
+                    Text("Tap 'Create' to save the class, then you can assign teachers.")
+                } else if assignedTeachers.isEmpty {
+                    Text("Teachers assigned to this class can manage students.")
+                    + Text(" · Required to activate class")
+                        .foregroundColor(.orange)
+                } else {
+                    Text("Swipe left on a teacher to remove them from this class.")
+                }
             }
+            .padding(.bottom, 12)
         }
     }
     
@@ -716,13 +719,36 @@ struct ClassEditorView: View {
     
     private func removeTeacher(_ teacher: Student) async {
         do {
-            // Get remaining teacher IDs (excluding the one being removed)
-            let remainingTeacherIds = assignedTeachers
-                .filter { $0.id != teacher.id }
-                .map { $0.id }
+            // 1. Fetch the teacher's current data
+            let userResponse: UserDetailResponse = try await ApiManager.shared.getData(
+                from: .getaUser(id: teacher.id)
+            )
             
+            // 2. Remove the class's userGroupId from their teacherGroups
+            var updatedTeacherGroups = userResponse.user.teacherGroups.removingDuplicates()
+            
+            guard let idx = updatedTeacherGroups.firstIndex(of: schoolClass.userGroupId) else {
+                #if DEBUG
+                print("⚠️ Teacher \(teacher.id) not in group \(schoolClass.userGroupId), skipping")
+                #endif
+                return
+            }
+            updatedTeacherGroups.remove(at: idx)
+            
+            // 3. Update the user with the modified teacherGroups
             _ = try await ApiManager.shared.getDataNoDecode(
-                from: .assignToClass(uuid: schoolClass.uuid, students: [], teachers: remainingTeacherIds)
+                from: .updateaUser(
+                    id: userResponse.user.id,
+                    username: userResponse.user.username,
+                    password: AppConstants.defaultUserPwd,
+                    email: userResponse.user.email,
+                    firstName: userResponse.user.firstName,
+                    lastName: userResponse.user.lastName,
+                    notes: userResponse.user.notes,
+                    locationId: userResponse.user.locationId,
+                    groupIds: userResponse.user.groupIds,
+                    teacherGroups: updatedTeacherGroups
+                )
             )
             
             await MainActor.run {
@@ -730,7 +756,7 @@ struct ClassEditorView: View {
                 
                 // Sync classesViewModel to update teacherCount for list view
                 if let index = classesViewModel.schoolClasses.firstIndex(where: { $0.uuid == schoolClass.uuid }) {
-                    classesViewModel.schoolClasses[index].teacherCount = remainingTeacherIds.count
+                    classesViewModel.schoolClasses[index].teacherCount = assignedTeachers.count
                 }
             }
             
