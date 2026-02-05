@@ -103,9 +103,10 @@ extension User {
 
 
 /*
+ Sample JSON for user creation:
  {
    "username": "sun4",
-   "password": "123456",
+   "password": "<AppConstants.defaultUserPwd>",
    "email": "nekhhh1wapi2@jamfschool.com",
    "firstName": "sun1",
    "lastName": "sun1",

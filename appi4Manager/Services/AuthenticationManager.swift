@@ -41,6 +41,16 @@ final class AuthenticationManager {
             from: .authenticateTeacher(company: company, username: username, password: password)
         )
         
+        // Validate that teacher has at least one active class (with devices)
+        let hasActiveClasses = try await validateTeacherHasActiveClasses(teacherId: response.authenticatedAs.id)
+        
+        guard hasActiveClasses else {
+            #if DEBUG
+            print("❌ Teacher \(response.authenticatedAs.name) has no active classes")
+            #endif
+            throw ApiError.noActiveClasses
+        }
+        
         // Update state on main thread
         await MainActor.run {
             self.token = response.token
@@ -54,6 +64,72 @@ final class AuthenticationManager {
         #if DEBUG
         print("✅ Teacher authenticated: \(response.authenticatedAs.name)")
         #endif
+    }
+    
+    /// Validates that a teacher has at least one active class (assigned and has devices)
+    /// - Parameter teacherId: The teacher's user ID
+    /// - Returns: True if teacher has at least one active class, false otherwise
+    private func validateTeacherHasActiveClasses(teacherId: Int) async throws -> Bool {
+        // 1. Fetch the teacher's user details to get their teacherGroups
+        let userDetailResponse: UserDetailResponse = try await ApiManager.shared.getData(
+            from: .getaUser(id: teacherId)
+        )
+        let teacherGroupIds = userDetailResponse.user.teacherGroups
+        
+        #if DEBUG
+        print("📚 Teacher's teacherGroups: \(teacherGroupIds)")
+        #endif
+        
+        // If teacher has no assigned groups, they have no classes
+        guard !teacherGroupIds.isEmpty else {
+            return false
+        }
+        
+        // 2. Fetch all school classes
+        let classesResponse: SchoolClassResponse = try await ApiManager.shared.getData(
+            from: .getSchoolClasses
+        )
+        
+        // 3. Filter classes where userGroupId is in the teacher's teacherGroups
+        let matchingClasses = classesResponse.classes.filter { schoolClass in
+            teacherGroupIds.contains(schoolClass.userGroupId)
+        }
+        
+        #if DEBUG
+        print("📚 Found \(matchingClasses.count) classes assigned to teacher")
+        #endif
+        
+        // If no classes match, teacher has no classes
+        guard !matchingClasses.isEmpty else {
+            return false
+        }
+        
+        // 4. Check if at least one class has devices (stop early on first match)
+        for schoolClass in matchingClasses {
+            do {
+                let deviceResponse: DeviceListResponse = try await ApiManager.shared.getData(
+                    from: .getDevices(assettag: String(schoolClass.userGroupId))
+                )
+                
+                if !deviceResponse.devices.isEmpty {
+                    #if DEBUG
+                    print("✅ Found active class '\(schoolClass.name)' with \(deviceResponse.devices.count) device(s)")
+                    #endif
+                    return true
+                }
+            } catch {
+                #if DEBUG
+                print("⚠️ Failed to fetch devices for class \(schoolClass.name): \(error)")
+                #endif
+                // Continue checking other classes
+            }
+        }
+        
+        #if DEBUG
+        print("❌ No classes have devices assigned")
+        #endif
+        
+        return false
     }
     
     /// Validate the current token with the server using the dedicated /teacher/validate endpoint

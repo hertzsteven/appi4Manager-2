@@ -544,7 +544,7 @@ struct StudentProfileEditView: View {
                 NavigationLink {
                     StudentActivityDetailView(
                         student: student,
-                        deviceApps: apps
+                        deviceApps: allDeviceApps
                     )
                 } label: {
                     Label("View Activity History", systemImage: "chart.bar.doc.horizontal")

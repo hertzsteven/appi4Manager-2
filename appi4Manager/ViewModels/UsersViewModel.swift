@@ -117,7 +117,7 @@ class UsersViewModel: ObservableObject {
             
         } catch let error as ApiError {
                 //  FIXME: -  put in alert that will display approriate error message
-            print(error.description)
+            print(error.localizedDescription)
         } catch {
             print(error.localizedDescription)
         }
@@ -140,7 +140,7 @@ class UsersViewModel: ObservableObject {
             
         } catch let error as ApiError {
                 //  FIXME: -  put in alert that will display approriate error message
-            print(error.description)
+            print(error.localizedDescription)
         } catch {
             print(error.localizedDescription)
         }

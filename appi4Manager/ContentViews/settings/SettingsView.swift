@@ -22,7 +22,23 @@ struct SettingsView: View {
     
     var body: some View {
         List {
-            // MARK: - Current Role Section
+            // MARK: - Account Section (Actions first)
+            Section {
+                if authManager.isAuthenticated {
+                    authenticatedAccountView
+                    teacherClassInfoLink
+                } else {
+                    signInLink
+                }
+            } header: {
+                Text("Account")
+            } footer: {
+                if authManager.isAuthenticated {
+                    Text("View your assigned classes, students, and devices.")
+                }
+            }
+            
+            // MARK: - App Mode Section
             Section {
                 currentRoleRow
                 switchRoleButton
@@ -32,53 +48,7 @@ struct SettingsView: View {
                 Text("Switch between Administrator and Teacher mode.")
             }
             
-            // MARK: - App Info Section
-            Section {
-                appInfoRow
-            } header: {
-                Text("About")
-            }
-            
-            // MARK: - Links Section
-            Section {
-                privacyPolicyLink
-            }
-            
-            // MARK: - Account Section
-            Section {
-                if authManager.isAuthenticated {
-                    authenticatedAccountView
-                } else {
-                    signInLink
-                }
-            } header: {
-                Text("Account")
-            }
-            
-            // MARK: - Teacher Class Info Section (only visible when authenticated)
-            if authManager.isAuthenticated {
-                Section {
-                    teacherClassInfoLink
-                } header: {
-                    Text("Teacher Data")
-                } footer: {
-                    Text("View class UUID and group ID information for API integration.")
-                }
-            }
-            // MARK: - Data Maintenance Section (only visible when authenticated)
-            // NOTE: This section has been disabled per request to remove the migration UI.
-            // To restore, uncomment the block below.
-            // if authManager.isAuthenticated {
-            //     Section {
-            //         migrateProfilesButton
-            //     } header: {
-            //         Text("Data Maintenance")
-            //     } footer: {
-            //         Text("One-time migration to update student profile document IDs to include school ID.")
-            //     }
-            // }
-            
-            // MARK: - Timeslot Hours Section
+            // MARK: - Preferences Section (Timeslot Hours)
             Section {
                 TimeslotRangeRow(
                     title: "Morning (AM)",
@@ -116,12 +86,33 @@ struct SettingsView: View {
                 Button("Reset to Defaults") {
                     TimeslotSettings.resetToDefaults()
                 }
-                .foregroundColor(.red)
+                .foregroundStyle(.red)
             } header: {
-                Text("Timeslot Hours")
+                Text("Preferences")
             } footer: {
                 Text("Configure when each session starts and ends. Hours outside these ranges will block student login.")
             }
+            
+            // MARK: - About Section (Informational - at the bottom)
+            Section {
+                appInfoRow
+                privacyPolicyLink
+            } header: {
+                Text("About")
+            }
+            
+            // MARK: - Data Maintenance Section (disabled)
+            // NOTE: This section has been disabled per request to remove the migration UI.
+            // To restore, uncomment the block below.
+            // if authManager.isAuthenticated {
+            //     Section {
+            //         migrateProfilesButton
+            //     } header: {
+            //         Text("Data Maintenance")
+            //     } footer: {
+            //         Text("One-time migration to update student profile document IDs to include school ID.")
+            //     }
+            // }
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.large)

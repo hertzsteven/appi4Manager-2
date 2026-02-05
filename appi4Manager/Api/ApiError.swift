@@ -18,11 +18,12 @@ enum ApiError: LocalizedError {
     case serverError(hTTPuRLResponse: HTTPURLResponse)
     case unexpected (hTTPuRLResponse: HTTPURLResponse)
     case decodingError(decodingStatus: Error)
+    case noActiveClasses
 }
 
 extension ApiError {
     
-    var description: String {
+    var errorDescription: String? {
         switch self {
         case .invalidPath:
             return "Invalid Path"
@@ -40,6 +41,8 @@ extension ApiError {
             return "Unexpected Error code: \(hTTPuRLResponse)"
         case .decodingError(decodingStatus: let decodingStatus):
             return "Decoding Error code: \(decodingStatus)"
+        case .noActiveClasses:
+            return "This teacher has no active classes assigned. Please contact your administrator."
         }
     }
     

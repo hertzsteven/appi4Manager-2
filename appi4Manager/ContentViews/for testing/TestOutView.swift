@@ -131,7 +131,7 @@ struct TestOutView: View {
                             
                         } catch let error as ApiError {
                                 //  FIXME: -  put in alert that will display approriate error message
-                            print(error.description)
+                            print(error.localizedDescription)
                         }
                         
                         print("in task afetr do")
@@ -234,9 +234,9 @@ struct TestOutView: View {
                 Button("Authenticate Teacher") {
                     Task {
                             //                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: ApiHelper.username, password: ApiHelper.password))
-                            //                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "teacherlila", password: "123456"))
-                            //                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "FC1E83770E22", password: "123456"))
-//                        let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "coorddavid", password: "123456"))
+                            //                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "teacherlila", password: AppConstants.defaultTeacherPwd))
+                            //                         let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "FC1E83770E22", password: AppConstants.defaultTeacherPwd))
+//                        let resposnse: AuthenticateReturnObjct = try await ApiManager.shared.getData(from: .authenticateTeacher(company: ApiHelper.company, username: "coorddavid", password: AppConstants.defaultTeacherPwd))
 //                        print(resposnse.token)
 //                        dump(resposnse)
                     }
@@ -267,7 +267,7 @@ struct TestOutView: View {
                             
                         } catch let error as ApiError {
                                 //  FIXME: -  put in alert that will display approriate error message
-                            print(error.description)
+                            print(error.localizedDescription)
                         }
                         
                         print("in task after do")
@@ -330,7 +330,7 @@ struct TestOutView: View {
                             
                         } catch let error as ApiError {
                                 //  FIXME: -  put in alert that will display approriate error message
-                            print(error.description)
+                            print(error.localizedDescription)
                         }
                         
                         print("in task after do")

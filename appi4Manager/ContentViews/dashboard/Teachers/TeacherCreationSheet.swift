@@ -37,7 +37,7 @@ struct TeacherCreationSheet: View {
     
     // Validation
     private var isFormValid: Bool {
-        !username.isEmpty && !firstName.isEmpty && !lastName.isEmpty && !email.isEmpty
+        !username.isEmpty && !firstName.isEmpty && !lastName.isEmpty
     }
     
     // MARK: - Body
@@ -168,7 +168,7 @@ struct TeacherCreationSheet: View {
             newUser.lastName = lastName
             newUser.email = email
             newUser.locationId = locationId
-            newUser.groupIds = [classGroupId, teacherGroupId]  // Add to both class group and teacher group
+            newUser.groupIds = [teacherGroupId]  // Add to both class group and teacher group
             
             let response: AddAUserResponse = try await ApiManager.shared.getData(
                 from: .addUsr(user: newUser)
