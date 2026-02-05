@@ -103,10 +103,11 @@ struct ClassEditorView: View {
             if !isNew {
                 devicesSection
             }
-            
-            // Section 4: Delete (only for existing classes)
+        }
+        // Delete button pinned to bottom of sheet (only for existing classes)
+        .safeAreaInset(edge: .bottom) {
             if !isNew {
-                deleteSection
+                deleteButtonView
             }
         }
         .navigationTitle(isNew ? "New Class" : "Edit Class")
@@ -410,7 +411,7 @@ struct ClassEditorView: View {
                 Button {
                     showDevicePicker = true
                 } label: {
-                    Label("Assign Device", systemImage: "ipad.badge.plus")
+                    Label("Assign Device", systemImage: "rectangle.badge.plus")
                 }
             }
         } header: {
@@ -448,31 +449,34 @@ struct ClassEditorView: View {
         }
     }
     
-    private var deleteSection: some View {
-        Section {
-            Button(role: .destructive) {
-                showDeleteConfirmation = true
-            } label: {
-                HStack {
-                    Spacer()
-                    Label("Delete Class", systemImage: "trash")
-                    Spacer()
+    /// Delete button that floats at the bottom of the sheet
+    private var deleteButtonView: some View {
+        Button(role: .destructive) {
+            showDeleteConfirmation = true
+        } label: {
+            HStack {
+                Spacer()
+                Label("Delete Class", systemImage: "trash")
+                Spacer()
+            }
+            .padding()
+            .background(.background, in: RoundedRectangle(cornerRadius: 10))
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 8)
+        .confirmationDialog(
+            "Delete Class",
+            isPresented: $showDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Delete Class", role: .destructive) {
+                Task {
+                    await deleteClass()
                 }
             }
-            .confirmationDialog(
-                "Delete Class",
-                isPresented: $showDeleteConfirmation,
-                titleVisibility: .visible
-            ) {
-                Button("Delete Class", role: .destructive) {
-                    Task {
-                        await deleteClass()
-                    }
-                }
-                Button("Cancel", role: .cancel) { }
-            } message: {
-                Text("Are you sure you want to delete \"\(schoolClass.name)\"? This action cannot be undone.")
-            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Are you sure you want to delete \"\(schoolClass.name)\"? This action cannot be undone.")
         }
     }
     
