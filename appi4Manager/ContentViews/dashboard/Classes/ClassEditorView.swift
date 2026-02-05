@@ -94,11 +94,15 @@ struct ClassEditorView: View {
             // Section 1: Class Details
             classDetailsSection
             
-            // Section 2: Teachers
-            teachersSection
+            // Section 2: Teachers (only after class is created)
+            if !isNew {
+                teachersSection
+            }
             
-            // Section 3: Devices
-            devicesSection
+            // Section 3: Devices (only after class is created)
+            if !isNew {
+                devicesSection
+            }
             
             // Section 4: Delete (only for existing classes)
             if !isNew {
@@ -273,10 +277,6 @@ struct ClassEditorView: View {
             }
         } header: {
             Text("Class Details")
-        } footer: {
-            if isNew {
-                Text("A dummy student will be automatically created for device management purposes.")
-            }
         }
     }
     
@@ -411,7 +411,8 @@ struct ClassEditorView: View {
             if isNew {
                 Text("Tap 'Create' to save the class, then you can assign devices.")
             } else if assignedDevices.isEmpty {
-                Text("Required to activate class")
+                Text("Devices assigned to this class can be used by its students.")
+                + Text(" Required to activate class")
                     .foregroundColor(.orange)
             } else {
                 Text("Tap the remove button or swipe left to unassign a device from this class.")
@@ -923,3 +924,4 @@ private struct DeviceRowWithUnassign: View {
         .environmentObject(TeacherItems())
     }
 }
+

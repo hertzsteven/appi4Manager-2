@@ -175,7 +175,7 @@ struct ClassManagementListView: View {
                     }
                 )
             }
-            .presentationDetents([.large])
+            .presentationSizing(.page)
         }
         .confirmationDialog(
             "Delete Class",
