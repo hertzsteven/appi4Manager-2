@@ -55,18 +55,18 @@ struct ClassCard: View {
                     // Active/Inactive Badge
                     StatusBadge(isActive: isActive)
                     
-                    // Group Badge
-                    HStack(spacing: 4) {
-                        Text("Grp \(schoolClass.userGroupId)")
-                            .font(.caption2)
-                            .fontWeight(.semibold)
-                            .lineLimit(1)
-                    }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.purple.opacity(0.1))
-                    .foregroundStyle(.purple)
-                    .clipShape(Capsule())
+//                    // Group Badge
+//                    HStack(spacing: 4) {
+//                        Text("Grp \(schoolClass.userGroupId)")
+//                            .font(.caption2)
+//                            .fontWeight(.semibold)
+//                            .lineLimit(1)
+//                    }
+//                    .padding(.horizontal, 8)
+//                    .padding(.vertical, 4)
+//                    .background(Color.purple.opacity(0.1))
+//                    .foregroundStyle(.purple)
+//                    .clipShape(Capsule())
                     
 
                 }
