@@ -66,17 +66,6 @@ struct ClassEditorView: View {
         className != originalClassName || classDescription != originalDescription
     }
     
-    /// The text for the confirmation button based on current state
-    private var confirmButtonText: String {
-        if isNew {
-            return "Create"
-        } else if hasUnsavedChanges {
-            return "Save"
-        } else {
-            return "Done"
-        }
-    }
-    
     /// Whether this class is "active" (has at least one teacher AND one device assigned)
     private var isClassActive: Bool {
         !assignedTeachers.isEmpty && !assignedDevices.isEmpty
@@ -123,19 +112,17 @@ struct ClassEditorView: View {
                 }
             }
             
-            ToolbarItem(placement: .confirmationAction) {
-                Button(confirmButtonText) {
-                    if isNew || hasUnsavedChanges {
+            // Only show Save button when there are changes to save (or when creating)
+            if isNew || hasUnsavedChanges {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(isNew ? "Create" : "Save") {
                         Task {
                             await saveClass()
                         }
-                    } else {
-                        // No changes, just dismiss
-                        dismiss()
                     }
+                    .fontWeight(.semibold)
+                    .disabled((isNew && className.isEmpty) || isSaving)
                 }
-                .fontWeight(.semibold)
-                .disabled((isNew && className.isEmpty) || isSaving)
             }
         }
         .overlay {
@@ -319,20 +306,6 @@ struct ClassEditorView: View {
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
-                        
-                        Spacer()
-                        
-                        // Visible remove button
-                        Button(role: .destructive) {
-                            Task {
-                                await removeTeacher(teacher)
-                            }
-                        } label: {
-                            Image(systemName: "minus.circle.fill")
-                                .font(.title2)
-                                .foregroundStyle(.red)
-                        }
-                        .buttonStyle(.plain)
                     }
                     .swipeActions(edge: .trailing) {
                         Button(role: .destructive) {
@@ -372,7 +345,7 @@ struct ClassEditorView: View {
                 + Text(" · Required to activate class")
                     .foregroundColor(.orange)
             } else {
-                Text("Teachers assigned to this class can manage students.")
+                Text("Swipe left on a teacher to remove them from this class.")
             }
         }
     }
@@ -617,8 +590,12 @@ struct ClassEditorView: View {
                 print("✅ Updated class: \(schoolClass.name)")
                 #endif
                 
+                // Stay in sheet, update original values so Save button disappears
+                await MainActor.run {
+                    originalClassName = className
+                    originalDescription = classDescription
+                }
                 onSave?()
-                await MainActor.run { dismiss() }
             }
             
         } catch {

@@ -74,25 +74,6 @@ struct TeacherCreationSheet: View {
             } header: {
                 Text("Personal Information")
             }
-            
-            // Info Section
-            Section {
-                InfoRow(
-                    icon: "person.3.fill",
-                    title: "Teacher Group",
-                    value: "Auto-assigned"
-                )
-                
-                InfoRow(
-                    icon: "building.2",
-                    title: "Location",
-                    value: teacherItems.currentLocation.name
-                )
-            } header: {
-                Text("Assignment")
-            } footer: {
-                Text("The new teacher will be added to the teacher group, enabling Jamf School Teacher permissions.")
-            }
         }
         .navigationTitle("Create Teacher")
         .navigationBarTitleDisplayMode(.inline)
@@ -187,6 +168,16 @@ struct TeacherCreationSheet: View {
             
             await MainActor.run { dismiss() }
             
+        } catch let error as ApiError {
+            await MainActor.run {
+                hasError = true
+                // Provide user-friendly message for duplicate username
+                if case .clientBadRequest = error {
+                    errorMessage = "A user with this username already exists. Please choose a different username."
+                } else {
+                    errorMessage = error.localizedDescription
+                }
+            }
         } catch {
             await MainActor.run {
                 hasError = true
