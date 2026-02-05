@@ -252,27 +252,27 @@ struct ClassEditorView: View {
             // Active/Inactive status indicator (only for existing classes)
             // Styled as a read-only badge to indicate it's not editable
             if !isNew {
-                HStack {
-                    Text("Status")
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Text(isClassActive ? "Active" : "Inactive")
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(isClassActive ? Color.green.opacity(0.15) : Color.secondary.opacity(0.15))
-                        .foregroundStyle(isClassActive ? .green : .secondary)
-                        .clipShape(.capsule)
-                }
-                .listRowBackground(Color(.systemGroupedBackground))
-                
-                // Activation guidance directly below status (when inactive)
-                if !isClassActive {
-                    Text("Assign at least one teacher and one device to activate this class.")
-                        .font(.caption)
-                        .foregroundStyle(.orange)
-                        .listRowBackground(Color(.systemGroupedBackground))
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Status")
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Text(isClassActive ? "Active" : "Inactive")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(isClassActive ? Color.green.opacity(0.15) : Color.secondary.opacity(0.15))
+                            .foregroundStyle(isClassActive ? .green : .secondary)
+                            .clipShape(.capsule)
+                    }
+                    
+                    // Activation guidance directly below status (when inactive)
+                    if !isClassActive {
+                        Text("Assign at least one teacher and one device to activate this class.")
+                            .font(.caption)
+                            .foregroundStyle(.orange)
+                    }
                 }
             }
         } header: {
