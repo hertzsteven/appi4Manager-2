@@ -56,6 +56,9 @@ struct ClassEditorView: View {
     // Delete confirmation
     @State private var showDeleteConfirmation = false
     
+    // Success message after class creation
+    @State private var showSuccessMessage = false
+    
     // MARK: - Computed Properties
     
     /// Whether name or description have unsaved changes
@@ -83,6 +86,11 @@ struct ClassEditorView: View {
     
     var body: some View {
         Form {
+            // Success message section (shown after class creation)
+            if showSuccessMessage {
+                successMessageSection
+            }
+            
             // Section 1: Class Details
             classDetailsSection
             
@@ -101,10 +109,13 @@ struct ClassEditorView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
-                    dismiss()
+                // Only show Cancel button when creating a new class
+                if isNew {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                    .disabled(isSaving)
                 }
-                .disabled(isSaving)
             }
             
             ToolbarItem(placement: .confirmationAction) {
@@ -210,6 +221,22 @@ struct ClassEditorView: View {
     
     // MARK: - Sections
     
+    /// Success message shown after class creation to guide user to next steps
+    private var successMessageSection: some View {
+        Section {
+            VStack(alignment: .leading, spacing: 8) {
+                Label("Class Created Successfully!", systemImage: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+                    .font(.headline)
+                
+                Text("Now assign a teacher and device to activate this class.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.vertical, 4)
+        }
+    }
+    
     private var classDetailsSection: some View {
         Section {
             TextField("Class Name", text: $className)
@@ -219,16 +246,29 @@ struct ClassEditorView: View {
                 .lineLimit(3...6)
             
             // Active/Inactive status indicator (only for existing classes)
+            // Styled as a read-only badge to indicate it's not editable
             if !isNew {
                 HStack {
                     Text("Status")
+                        .foregroundStyle(.secondary)
                     Spacer()
-                    Label(
-                        isClassActive ? "Active" : "Inactive",
-                        systemImage: isClassActive ? "checkmark.circle.fill" : "circle"
-                    )
-                    .foregroundStyle(isClassActive ? .green : .secondary)
-                    .fontWeight(.medium)
+                    Text(isClassActive ? "Active" : "Inactive")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(isClassActive ? Color.green.opacity(0.15) : Color.secondary.opacity(0.15))
+                        .foregroundStyle(isClassActive ? .green : .secondary)
+                        .clipShape(.capsule)
+                }
+                .listRowBackground(Color(.systemGroupedBackground))
+                
+                // Activation guidance directly below status (when inactive)
+                if !isClassActive {
+                    Text("Assign at least one teacher and one device to activate this class.")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                        .listRowBackground(Color(.systemGroupedBackground))
                 }
             }
         } header: {
@@ -236,9 +276,6 @@ struct ClassEditorView: View {
         } footer: {
             if isNew {
                 Text("A dummy student will be automatically created for device management purposes.")
-            } else if !isClassActive {
-                Text("Assign at least one teacher and one device to activate this class.")
-                    .foregroundColor(.orange)
             }
         }
     }
@@ -552,6 +589,8 @@ struct ClassEditorView: View {
                     // Update original values so button shows "Done" not "Save"
                     originalClassName = className
                     originalDescription = classDescription
+                    // Show success message to confirm creation and guide user
+                    showSuccessMessage = true
                 }
                 
                 // Load devices to show the section

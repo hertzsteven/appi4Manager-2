@@ -175,6 +175,7 @@ struct ClassManagementListView: View {
                     }
                 )
             }
+            .presentationDetents([.large])
         }
         .confirmationDialog(
             "Delete Class",
