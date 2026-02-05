@@ -177,25 +177,21 @@ struct ClassManagementListView: View {
             }
             .presentationSizing(.page)
         }
-        .confirmationDialog(
+        .alert(
             "Delete Class",
             isPresented: $showDeleteConfirmation,
-            titleVisibility: .visible
-        ) {
+            presenting: classToDelete
+        ) { classToDelete in
+            Button("Cancel", role: .cancel) {
+                self.classToDelete = nil
+            }
             Button("Delete", role: .destructive) {
-                if let classToDelete = classToDelete {
-                    Task {
-                        await deleteClass(classToDelete)
-                    }
+                Task {
+                    await deleteClass(classToDelete)
                 }
             }
-            Button("Cancel", role: .cancel) {
-                classToDelete = nil
-            }
-        } message: {
-            if let classToDelete = classToDelete {
-                Text("Are you sure you want to delete \"\(classToDelete.name)\"? This action cannot be undone.")
-            }
+        } message: { classToDelete in
+            Text("Are you sure you want to delete \"\(classToDelete.name)\"? This action cannot be undone.")
         }
         .alert(isPresented: $hasError, error: error) {
             Button("OK", role: .cancel) { }
@@ -247,36 +243,36 @@ struct ClassManagementListView: View {
     }
     
     private var classListView: some View {
-        ScrollView {
-            LazyVStack(spacing: 16) {
-                ForEach(filteredClasses) { schoolClass in
-                    NavigationLink {
-                        ClassEditorView(
-                            schoolClass: schoolClass,
-                            isNew: false,
-                            onSave: {
-                                Task {
-                                    await loadClasses()
-                                }
+        List {
+            ForEach(filteredClasses) { schoolClass in
+                NavigationLink {
+                    ClassEditorView(
+                        schoolClass: schoolClass,
+                        isNew: false,
+                        onSave: {
+                            Task {
+                                await loadClasses()
                             }
-                        )
-                    } label: {
-                        ClassCard(schoolClass: schoolClass, isActive: isClassActive(schoolClass))
-                    }
-                    .buttonStyle(.plain)
-                    .contextMenu {
-                        Button(role: .destructive) {
-                            classToDelete = schoolClass
-                            showDeleteConfirmation = true
-                        } label: {
-                            Label("Delete Class", systemImage: "trash")
                         }
+                    )
+                } label: {
+                    ClassCard(schoolClass: schoolClass, isActive: isClassActive(schoolClass))
+                }
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color(.systemGroupedBackground))
+                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                    Button(role: .destructive) {
+                        classToDelete = schoolClass
+                        showDeleteConfirmation = true
+                    } label: {
+                        Label("Delete", systemImage: "trash")
                     }
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 16)
         }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
         .refreshable {
             await loadClasses()
         }
@@ -319,33 +315,7 @@ struct ClassManagementListView: View {
     
     private func deleteClass(_ schoolClass: SchoolClass) async {
         do {
-            // Fetch devices assigned to this class
-            let deviceResponse: DeviceListResponse = try await ApiManager.shared.getData(
-                from: .getDevices(assettag: String(schoolClass.userGroupId))
-            )
-            
-            // Unassign each device
-            for device in deviceResponse.devices {
-                try await ApiManager.shared.getDataNoDecode(
-                    from: .updateDevice(uuid: device.UDID, assetTag: "None")
-                )
-                // Sync devicesViewModel if loaded
-                await MainActor.run {
-                    if let index = devicesViewModel.devices.firstIndex(where: { $0.UDID == device.UDID }) {
-                        devicesViewModel.devices[index].assetTag = "None"
-                    }
-                }
-                #if DEBUG
-                print("✅ Unassigned device \(device.name) before class deletion")
-                #endif
-            }
-            
-            try await ApiManager.shared.getDataNoDecode(from: .deleteaClass(uuid: schoolClass.uuid))
-            classesViewModel.delete(schoolClass)
-            
-            #if DEBUG
-            print("✅ Deleted class: \(schoolClass.name)")
-            #endif
+            try await classesViewModel.deleteClass(schoolClass, devicesViewModel: devicesViewModel)
         } catch {
             if let apiError = error as? ApiError {
                 self.hasError = true

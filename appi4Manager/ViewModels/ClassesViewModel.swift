@@ -146,6 +146,41 @@ class ClassesViewModel: ObservableObject {
         schoolClasses.removeAll { $0.uuid == schoolClass.uuid }
     }
     
+    /// Deletes a class including unassigning all its devices first.
+    /// - Parameters:
+    ///   - schoolClass: The class to delete
+    ///   - devicesViewModel: DevicesViewModel to sync device state after unassigning
+    func deleteClass(_ schoolClass: SchoolClass, devicesViewModel: DevicesViewModel) async throws {
+        // 1. Fetch devices assigned to this class
+        let deviceResponse: DeviceListResponse = try await ApiManager.shared.getData(
+            from: .getDevices(assettag: String(schoolClass.userGroupId))
+        )
+        
+        // 2. Unassign each device
+        for device in deviceResponse.devices {
+            try await ApiManager.shared.getDataNoDecode(
+                from: .updateDevice(uuid: device.UDID, assetTag: "None")
+            )
+            // Sync devicesViewModel
+            if let index = devicesViewModel.devices.firstIndex(where: { $0.UDID == device.UDID }) {
+                devicesViewModel.devices[index].assetTag = "None"
+            }
+            #if DEBUG
+            print("✅ Unassigned device \(device.name) before class deletion")
+            #endif
+        }
+        
+        // 3. Delete the class via API
+        try await ApiManager.shared.getDataNoDecode(from: .deleteaClass(uuid: schoolClass.uuid))
+        
+        // 4. Remove from local array
+        self.delete(schoolClass)
+        
+        #if DEBUG
+        print("✅ Deleted class: \(schoolClass.name)")
+        #endif
+    }
+    
     
     func add(_ schoolClass: SchoolClass) {
         schoolClasses.append(schoolClass)

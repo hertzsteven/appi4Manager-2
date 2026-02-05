@@ -73,12 +73,6 @@ struct ClassCard: View {
             }
             
             Spacer()
-            
-            // Chevron
-            Image(systemName: "chevron.right")
-                .font(.caption)
-                .fontWeight(.bold)
-                .foregroundStyle(.gray.opacity(0.5))
         }
         .padding(16)
         .background(Color.white)
