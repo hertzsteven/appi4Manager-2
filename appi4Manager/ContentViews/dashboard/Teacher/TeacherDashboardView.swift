@@ -176,28 +176,67 @@ struct TeacherDashboardView: View {
                     .disabled(activeClass == nil)
                 }
                 
-                // Right side - greeting + settings
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: 12) {
-                        // Compact greeting with class count
-                        HStack(spacing: 4) {
-                            Text("Hi \(authManager.authenticatedUser?.firstName ?? "Teacher")")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                            
-                            // Class count badge
-                            HStack(spacing: 2) {
-                                Image(systemName: "graduationcap.fill")
-                                Text("\(classesWithDevices.count)")
+                // Center - Class Switcher
+                ToolbarItem(placement: .principal) {
+                    if let classInfo = activeClass {
+                        Menu {
+                            ForEach(classesWithDevices) { cls in
+                                Button {
+                                    selectedClass = cls
+                                } label: {
+                                    HStack {
+                                        Text(cls.className)
+                                        if cls.id == classInfo.id {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
                             }
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text(classInfo.className)
+                                    .font(.headline)
+                                    .foregroundStyle(.primary)
+                                
+                                if classesWithDevices.count > 1 {
+                                    Image(systemName: "chevron.down")
+                                        .font(.caption2)
+                                        .bold()
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
                         }
+                        .disabled(classesWithDevices.count <= 1)
+                    }
+                }
+                
+                // Right side - Stats + Greeting + Settings (using ToolbarItemGroup for proper iPad rendering)
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    // Stats: Student count + Device count
+                    if let classInfo = activeClass {
+                        HStack(spacing: 4) {
+                            Image(systemName: "person.2.fill")
+                            Text("\(filteredStudentCount(for: classInfo))")
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                         
-                        // Settings gear
-                        NavigationLink(destination: SettingsView()) {
-                            Image(systemName: "gearshape")
+                        HStack(spacing: 4) {
+                            Image(systemName: "ipad.landscape")
+                            Text("\(classInfo.devices.count)")
                         }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    }
+                    
+                    // Greeting
+                    Text("Hi \(authManager.authenticatedUser?.firstName ?? "Teacher")")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                    
+                    // Settings Gear
+                    NavigationLink(destination: SettingsView()) {
+                        Image(systemName: "gearshape")
                     }
                 }
             }
@@ -463,13 +502,8 @@ struct TeacherDashboardView: View {
     /// - Students grid with profile cards
     private var classesContentView: some View {
         VStack(spacing: 0) {
-            // Fixed header section - class info card only
-            VStack(spacing: 16) {
-                classInfoCard
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 12)
-            .padding(.bottom, 8)
+            // (Header section removed - moved to toolbar)
+            // Divider()
             
             // Date Navigation + Time Period Picker section
             VStack(spacing: 12) {
