@@ -74,6 +74,12 @@ struct TeacherDashboardView: View {
     /// Controls the Planning sheet visibility (weekly scheduling)
     @State private var showPlanningSheet = false
     
+    /// Whether selection mode is active (Photos-style multi-select)
+    @State private var isSelectionMode = false
+    
+    /// Set of currently selected student IDs
+    @State private var selectedStudentIds: Set<Int> = []
+    
     /// Provides student app profile data from Firebase
     @State private var dataProvider = StudentAppProfileDataProvider()
     
@@ -133,45 +139,15 @@ struct TeacherDashboardView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                // Left side - action buttons
+                // Left side - Select button for selection mode
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
-                        showStudentManagement = true
-                    } label: {
-                        Image(systemName: "person.2.fill")
-                    }
-                    .disabled(activeClass == nil)
-                }
-                
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        showDevicesSheet = true
-                    } label: {
-                        Image(systemName: "ipad.landscape")
-                    }
-                    .disabled(activeClass == nil)
-                }
-                
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        showPlanningSheet = true
-                    } label: {
-                        Image(systemName: "calendar")
-                    }
-                    .disabled(activeClass == nil)
-                }
-                
-                // Reports button
-                ToolbarItem(placement: .navigationBarLeading) {
-                    NavigationLink {
-                        if let activeClass = activeClass {
-                            StudentActivityReportView(
-                                students: filteredStudents,
-                                deviceApps: activeClass.devices.flatMap { $0.apps ?? [] }
-                            )
+                        isSelectionMode.toggle()
+                        if !isSelectionMode {
+                            selectedStudentIds.removeAll()
                         }
                     } label: {
-                        Image(systemName: "chart.bar.doc.horizontal")
+                        Text(isSelectionMode ? "Cancel" : "Select")
                     }
                     .disabled(activeClass == nil)
                 }
@@ -748,67 +724,122 @@ struct TeacherDashboardView: View {
     
     /// Main grid of StudentProfileCard components showing all students in the class.
     /// Handles loading, error, empty, and populated states.
+    /// In selection mode, uses SelectableStudentCard and shows action bar.
     private var inlineStudentsGrid: some View {
-        Group {
-            if dataProvider.isLoading {
-                // Loading state
-                VStack(spacing: 16) {
-                    Spacer()
-                    ProgressView()
-                        .scaleEffect(1.5)
-                    Text("Loading student profiles...")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                    Spacer()
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let error = dataProvider.errorMessage {
-                // Error state
-                ContentUnavailableView {
-                    Label("Error Loading Profiles", systemImage: "exclamationmark.triangle.fill")
-                } description: {
-                    Text(error)
-                } actions: {
-                    Button("Retry") {
-                        Task {
-                            if let activeClass = activeClass {
-                                await dataProvider.loadProfiles(for: activeClass.students.map { $0.id })
+        VStack(spacing: 0) {
+            Group {
+                if dataProvider.isLoading {
+                    // Loading state
+                    VStack(spacing: 16) {
+                        Spacer()
+                        ProgressView()
+                            .scaleEffect(1.5)
+                        Text("Loading student profiles...")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let error = dataProvider.errorMessage {
+                    // Error state
+                    ContentUnavailableView {
+                        Label("Error Loading Profiles", systemImage: "exclamationmark.triangle.fill")
+                    } description: {
+                        Text(error)
+                    } actions: {
+                        Button("Retry") {
+                            Task {
+                                if let activeClass = activeClass {
+                                    await dataProvider.loadProfiles(for: activeClass.students.map { $0.id })
+                                }
                             }
                         }
+                        .buttonStyle(.borderedProminent)
                     }
-                    .buttonStyle(.borderedProminent)
-                }
-            } else if let activeClass = activeClass, !filteredStudents.isEmpty {
-                // Students Grid (filtered to exclude dummy students)
-                ScrollView {
-                    LazyVGrid(columns: [
-                        GridItem(.adaptive(minimum: 140, maximum: 200), spacing: 16)
-                    ], spacing: 16) {
-                        ForEach(filteredStudents, id: \.id) { student in
-                            StudentProfileCard(
-                                student: student,
-                                timeslot: selectedTimeslot,
-                                dayString: currentDayString,
-                                dataProvider: dataProvider,
-                                classDevices: activeClass.devices,
-                                dashboardMode: .now,
-                                locationId: activeClass.locationId,
-                                activeSession: sessionListener.session(for: student.id)
-                            )
+                } else if let activeClass = activeClass, !filteredStudents.isEmpty {
+                    // Students Grid (filtered to exclude dummy students)
+                    ScrollView {
+                        LazyVGrid(columns: [
+                            GridItem(.adaptive(minimum: 140, maximum: 200), spacing: 16)
+                        ], spacing: 16) {
+                            ForEach(filteredStudents, id: \.id) { student in
+                                DashboardSelectableStudentCard(
+                                    student: student,
+                                    timeslot: selectedTimeslot,
+                                    dayString: currentDayString,
+                                    dataProvider: dataProvider,
+                                    classDevices: activeClass.devices,
+                                    dashboardMode: .now,
+                                    locationId: activeClass.locationId,
+                                    activeSession: sessionListener.session(for: student.id),
+                                    isSelectionMode: isSelectionMode,
+                                    isSelected: selectedStudentIds.contains(student.id),
+                                    onSelect: {
+                                        toggleStudentSelection(student.id)
+                                    }
+                                )
+                            }
                         }
+                        .padding()
                     }
-                    .padding()
+                    .background(Color(.systemGray6))
+                } else {
+                    // Empty state
+                    ContentUnavailableView(
+                        "No Students",
+                        systemImage: "person.3.fill",
+                        description: Text("No students found in this class.")
+                    )
                 }
-                .background(Color(.systemGray6))
-            } else {
-                // Empty state
-                ContentUnavailableView(
-                    "No Students",
-                    systemImage: "person.3.fill",
-                    description: Text("No students found in this class.")
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            
+            // Selection action bar (only in selection mode)
+            if isSelectionMode {
+                StudentSelectionActionBar(
+                    selectedCount: selectedStudentIds.count,
+                    onSetApp: handleSetApp,
+                    onLock: handleLock,
+                    onUnlock: handleUnlock,
+                    onActivity: handleActivity
                 )
             }
         }
+    }
+    
+    // MARK: - Selection Mode Actions
+    
+    /// Toggle selection for a student ID
+    private func toggleStudentSelection(_ studentId: Int) {
+        if selectedStudentIds.contains(studentId) {
+            selectedStudentIds.remove(studentId)
+        } else {
+            selectedStudentIds.insert(studentId)
+        }
+    }
+    
+    /// Handle Set App action for selected students
+    private func handleSetApp() {
+        // TODO: Implement bulk app assignment sheet
+        print("Set App for \(selectedStudentIds.count) students")
+    }
+    
+    /// Handle Lock action for selected students
+    private func handleLock() {
+        // TODO: Implement device locking for selected students
+        print("Lock \(selectedStudentIds.count) students")
+    }
+    
+    /// Handle Unlock action for selected students
+    private func handleUnlock() {
+        // TODO: Implement device unlocking for selected students
+        print("Unlock \(selectedStudentIds.count) students")
+    }
+    
+    /// Handle Activity action for selected students
+    private func handleActivity() {
+        // TODO: Implement activity view for selected students
+        print("View activity for \(selectedStudentIds.count) students")
     }
     
     // MARK: - Helper Computed Properties

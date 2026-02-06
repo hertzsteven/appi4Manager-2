@@ -108,6 +108,16 @@ struct TeacherSidebarContainerView: View {
                 }
             }
             
+        case .devices:
+            NavigationStack {
+                TeacherDevicesSidebarView(teacherClasses: teacherClasses)
+            }
+            
+        case .calendar:
+            NavigationStack {
+                TeacherCalendarView()
+            }
+            
         case .setup:
             NavigationStack {
                 TeacherSetupView()

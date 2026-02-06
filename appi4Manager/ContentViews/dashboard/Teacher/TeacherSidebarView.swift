@@ -43,6 +43,20 @@ struct TeacherSidebarView: View {
                 selectedSection = .students
             }
             
+            SidebarButton(
+                section: .devices,
+                isSelected: selectedSection == .devices
+            ) {
+                selectedSection = .devices
+            }
+            
+            SidebarButton(
+                section: .calendar,
+                isSelected: selectedSection == .calendar
+            ) {
+                selectedSection = .calendar
+            }
+            
             Spacer()
             
             // Setup pinned to bottom
