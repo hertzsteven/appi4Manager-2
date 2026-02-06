@@ -176,59 +176,64 @@ struct TeacherDashboardView: View {
                     .disabled(activeClass == nil)
                 }
                 
-                // Center - Class Switcher
+                // Center - Class Switcher with Stats grouped together
                 ToolbarItem(placement: .principal) {
                     if let classInfo = activeClass {
-                        Menu {
-                            ForEach(classesWithDevices) { cls in
-                                Button {
-                                    selectedClass = cls
-                                } label: {
-                                    HStack {
-                                        Text(cls.className)
-                                        if cls.id == classInfo.id {
-                                            Image(systemName: "checkmark")
+                        HStack(spacing: 12) {
+                            // Class name with dropdown
+                            Menu {
+                                ForEach(classesWithDevices) { cls in
+                                    Button {
+                                        selectedClass = cls
+                                    } label: {
+                                        HStack {
+                                            Text(cls.className)
+                                            if cls.id == classInfo.id {
+                                                Image(systemName: "checkmark")
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        } label: {
-                            HStack(spacing: 4) {
-                                Text(classInfo.className)
-                                    .font(.headline)
-                                    .foregroundStyle(.primary)
-                                
-                                if classesWithDevices.count > 1 {
-                                    Image(systemName: "chevron.down")
-                                        .font(.caption2)
-                                        .bold()
-                                        .foregroundStyle(.secondary)
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Text(classInfo.className)
+                                        .font(.headline)
+                                        .foregroundStyle(.primary)
+                                    
+                                    if classesWithDevices.count > 1 {
+                                        Image(systemName: "chevron.down")
+                                            .font(.caption2)
+                                            .bold()
+                                            .foregroundStyle(.secondary)
+                                    }
                                 }
                             }
+                            .disabled(classesWithDevices.count <= 1)
+                            
+                            // Stats grouped with class (student + device counts)
+                            HStack(spacing: 8) {
+                                HStack(spacing: 3) {
+                                    Image(systemName: "person.2.fill")
+                                    Text("\(filteredStudentCount(for: classInfo))")
+                                }
+                                
+                                HStack(spacing: 3) {
+                                    Image(systemName: "ipad.landscape")
+                                    Text("\(classInfo.devices.count)")
+                                }
+                            }
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                         }
-                        .disabled(classesWithDevices.count <= 1)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color(.systemGray6))
+                        .clipShape(.capsule)
                     }
                 }
                 
-                // Right side - Stats + Greeting + Settings (using ToolbarItemGroup for proper iPad rendering)
+                // Right side - Greeting + Settings (separate from class info)
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    // Stats: Student count + Device count
-                    if let classInfo = activeClass {
-                        HStack(spacing: 4) {
-                            Image(systemName: "person.2.fill")
-                            Text("\(filteredStudentCount(for: classInfo))")
-                        }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        
-                        HStack(spacing: 4) {
-                            Image(systemName: "ipad.landscape")
-                            Text("\(classInfo.devices.count)")
-                        }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    }
-                    
                     // Greeting
                     Text("Hi \(authManager.authenticatedUser?.firstName ?? "Teacher")")
                         .font(.subheadline)

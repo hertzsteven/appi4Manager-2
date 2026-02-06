@@ -15,16 +15,43 @@ struct TeacherSidebarView: View {
     
     var body: some View {
         VStack(spacing: 8) {
-            ForEach(SidebarSection.allCases) { section in
-                SidebarButton(
-                    section: section,
-                    isSelected: selectedSection == section
-                ) {
-                    selectedSection = section
-                }
+            // Primary action at top
+            SidebarButton(
+                section: .liveClass,
+                isSelected: selectedSection == .liveClass
+            ) {
+                selectedSection = .liveClass
+            }
+            
+            // Divider separating Live Class from utility items
+            Divider()
+                .padding(.horizontal, 12)
+                .padding(.vertical, 4)
+            
+            // Utility items
+            SidebarButton(
+                section: .reports,
+                isSelected: selectedSection == .reports
+            ) {
+                selectedSection = .reports
+            }
+            
+            SidebarButton(
+                section: .students,
+                isSelected: selectedSection == .students
+            ) {
+                selectedSection = .students
             }
             
             Spacer()
+            
+            // Setup pinned to bottom
+            SidebarButton(
+                section: .setup,
+                isSelected: selectedSection == .setup
+            ) {
+                selectedSection = .setup
+            }
         }
         .padding(.vertical)
         .frame(width: 80)
