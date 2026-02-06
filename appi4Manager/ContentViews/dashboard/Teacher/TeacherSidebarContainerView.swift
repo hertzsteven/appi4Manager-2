@@ -22,11 +22,11 @@ struct TeacherSidebarContainerView: View {
     @State private var isLoading = false
     @State private var hasAttemptedLoad = false
     @State private var errorMessage: String?
-    @State private var selectedClass: TeacherClassInfo?
+    // NOTE: selectedClass is shared via teacherItems.selectedClass for sync with dashboard
     
-    /// The currently active class
+    /// The currently active class - uses shared state from teacherItems
     private var activeClass: TeacherClassInfo? {
-        selectedClass ?? teacherClasses.first
+        teacherItems.selectedClass ?? teacherClasses.first
     }
     
     /// Filtered students (excludes dummy students)
@@ -101,8 +101,17 @@ struct TeacherSidebarContainerView: View {
                     loadingView
                 } else if let error = errorMessage {
                     errorView(message: error)
-                } else if activeClass != nil {
-                    TeacherStudentsView(teacherClasses: teacherClasses)
+                } else if let activeClass = activeClass {
+                    // Student management for the active class (add/edit/delete)
+                    TeacherStudentManagementSheet(
+                        classInfo: activeClass,
+                        onStudentChanged: {
+                            // Refresh teacher data when a student is added/edited/deleted
+                            Task {
+                                await loadTeacherData()
+                            }
+                        }
+                    )
                 } else {
                     noClassView
                 }
@@ -110,12 +119,41 @@ struct TeacherSidebarContainerView: View {
             
         case .devices:
             NavigationStack {
-                TeacherDevicesSidebarView(teacherClasses: teacherClasses)
+                if !authManager.isAuthenticated {
+                    loginPromptView
+                } else if isLoading || !hasAttemptedLoad {
+                    loadingView
+                } else if let error = errorMessage {
+                    errorView(message: error)
+                } else if let activeClass = activeClass {
+                    // Show devices for the active class only (same as old toolbar button)
+                    TeacherDevicesView(teacherClasses: [activeClass])
+                } else {
+                    noClassView
+                }
             }
             
         case .calendar:
             NavigationStack {
-                TeacherCalendarView()
+                if !authManager.isAuthenticated {
+                    loginPromptView
+                } else if isLoading || !hasAttemptedLoad {
+                    loadingView
+                } else if let error = errorMessage {
+                    errorView(message: error)
+                } else if let activeClass = activeClass {
+                    // Planning view for the active class (same as old toolbar button)
+                    PlanningSheet(
+                        students: filteredStudents,
+                        devices: activeClass.devices,
+                        locationId: activeClass.locationId,
+                        dataProvider: StudentAppProfileDataProvider(),
+                        bulkSetupDataProvider: StudentAppProfileDataProvider(),
+                        onDismiss: { }  // No dismiss action needed for embedded view
+                    )
+                } else {
+                    noClassView
+                }
             }
             
         case .setup:
@@ -259,10 +297,10 @@ struct TeacherSidebarContainerView: View {
                 teacherClasses = classInfos
                 
                 // Keep selectedClass in sync with freshly fetched data
-                if let current = selectedClass {
-                    selectedClass = classInfos.first(where: { $0.id == current.id }) ?? classInfos.first
+                if let current = teacherItems.selectedClass {
+                    teacherItems.selectedClass = classInfos.first(where: { $0.id == current.id }) ?? classInfos.first
                 } else {
-                    selectedClass = classInfos.first
+                    teacherItems.selectedClass = classInfos.first
                 }
                 
                 isLoading = false

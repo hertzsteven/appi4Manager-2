@@ -32,6 +32,10 @@ class TeacherItems: ObservableObject {
     @Published var teacherUserDict:                [Int : Int]     = [:]
     @Published var teacherAuthToken = ""
     
+    /// Shared selected class across sidebar and dashboard
+    /// When user switches class in the dropdown, this updates and all views sync
+    @Published var selectedClass: TeacherClassInfo?
+    
 //    private init() {
 //            // Private initializer to prevent external instantiation
 //    }

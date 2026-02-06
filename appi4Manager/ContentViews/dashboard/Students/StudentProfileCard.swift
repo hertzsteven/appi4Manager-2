@@ -588,7 +588,7 @@ struct StudentProfileEditView: View {
             loadApps()
         } content: {
             EditStudentProfileSheet(
-                student: student,
+                students: [student],
                 timeslot: selectedTimeslot,
                 dayString: currentDayString,
                 dataProvider: dataProvider,
@@ -600,7 +600,7 @@ struct StudentProfileEditView: View {
             loadApps()
         } content: {
             EditStudentProfileSheet(
-                student: student,
+                students: [student],
                 timeslot: weeklyEditTimeslot,
                 dayString: weeklyEditDayString,
                 dataProvider: dataProvider,
@@ -1021,7 +1021,8 @@ struct StudentProfileEditView: View {
 // MARK: - Edit Student Profile Sheet
 
 struct EditStudentProfileSheet: View {
-    let student: Student
+    /// Students to edit (supports single or multiple)
+    let students: [Student]
     let timeslot: TimeOfDay
     let dayString: String
     let dataProvider: StudentAppProfileDataProvider
@@ -1042,9 +1043,9 @@ struct EditStudentProfileSheet: View {
     /// Current filter category for app list
     @State private var selectedCategory: AppFilterCategory = .all
     
-    /// Whether this student has an existing profile
+    /// Whether any of the students has an existing profile
     private var hasProfile: Bool {
-        dataProvider.hasProfile(for: student.id)
+        students.contains { dataProvider.hasProfile(for: $0.id) }
     }
     
     private var timeslotLabel: String {
@@ -1056,7 +1057,11 @@ struct EditStudentProfileSheet: View {
     }
     
     private var navigationTitle: String {
-        hasProfile ? "Edit \(timeslotLabel)" : "Add Profile - \(timeslotLabel)"
+        let base = hasProfile ? "Edit \(timeslotLabel)" : "Add Profile - \(timeslotLabel)"
+        if students.count > 1 {
+            return "\(base) (\(students.count) students)"
+        }
+        return base
     }
     
     /// Apps filtered by the selected category
@@ -1285,13 +1290,14 @@ struct EditStudentProfileSheet: View {
     
     // MARK: - Helper Methods
     
-    /// Load current session values
+    /// Load current session values from the first student (for session length default)
     private func loadCurrentValues() {
         // Start with no apps selected - user will select apps fresh each time
         selectedBundleIds = []
         
-        // Get current session to load session length (if profile exists)
-        if let session = dataProvider.getSession(for: student.id, day: dayString, timeslot: timeslot) {
+        // Get current session from first student to load session length (if profile exists)
+        if let firstStudent = students.first,
+           let session = dataProvider.getSession(for: firstStudent.id, day: dayString, timeslot: timeslot) {
             // Only load the session length, not the previously selected apps
             sessionLength = session.sessionLength > 0 ? session.sessionLength : 30
         } else {
@@ -1300,20 +1306,22 @@ struct EditStudentProfileSheet: View {
         }
     }
     
-    /// Save the profile to Firestore
+    /// Save the profile to Firestore for all selected students
     private func saveProfile() async {
         isSaving = true
         saveError = nil
         
         do {
-            // Update the session in the data provider and save
-            try await dataProvider.updateAndSaveSession(
-                for: student.id,
-                day: dayString,
-                timeslot: timeslot,
-                apps: Array(selectedBundleIds),
-                sessionLength: sessionLength
-            )
+            // Update the session for all students
+            for student in students {
+                try await dataProvider.updateAndSaveSession(
+                    for: student.id,
+                    day: dayString,
+                    timeslot: timeslot,
+                    apps: Array(selectedBundleIds),
+                    sessionLength: sessionLength
+                )
+            }
             
             await MainActor.run {
                 isSaving = false

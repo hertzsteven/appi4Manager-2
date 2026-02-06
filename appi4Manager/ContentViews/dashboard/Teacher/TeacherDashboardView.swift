@@ -43,8 +43,7 @@ struct TeacherDashboardView: View {
     /// Prevents loading animation on first render before task runs
     @State private var hasAttemptedLoad = false
     
-    /// The class the teacher has explicitly selected (for multi-class teachers)
-    @State private var selectedClass: TeacherClassInfo?
+    // NOTE: selectedClass is now shared via teacherItems.selectedClass for sync across sidebar
     
     /// Controls the class selector sheet visibility
     @State private var showClassSelector = false
@@ -74,6 +73,9 @@ struct TeacherDashboardView: View {
     /// Controls the Planning sheet visibility (weekly scheduling)
     @State private var showPlanningSheet = false
     
+    /// Controls the Set App sheet visibility (for selected students)
+    @State private var showSetAppSheet = false
+    
     /// Whether selection mode is active (Photos-style multi-select)
     @State private var isSelectionMode = false
     
@@ -93,7 +95,7 @@ struct TeacherDashboardView: View {
     
     /// The currently active class - either explicitly selected or defaults to first class
     private var activeClass: TeacherClassInfo? {
-        selectedClass ?? teacherClasses.first
+        teacherItems.selectedClass ?? teacherClasses.first
     }
     
     /// Students filtered to exclude dummy students (those with lastName matching the class UUID)
@@ -129,7 +131,7 @@ struct TeacherDashboardView: View {
                     errorView(message: error)
                 } else if teacherClasses.isEmpty {
                     emptyClassesView
-                } else if teacherClasses.count > 1 && selectedClass == nil {
+                } else if teacherClasses.count > 1 && teacherItems.selectedClass == nil {
                     // Multiple classes but none selected - show class selection prompt
                     classSelectionPromptView
                 } else {
@@ -160,7 +162,7 @@ struct TeacherDashboardView: View {
                             Menu {
                                 ForEach(classesWithDevices) { cls in
                                     Button {
-                                        selectedClass = cls
+                                        teacherItems.selectedClass = cls
                                     } label: {
                                         HStack {
                                             Text(cls.className)
@@ -225,7 +227,10 @@ struct TeacherDashboardView: View {
         .sheet(isPresented: $showClassSelector) {
             ClassSelectorSheet(
                 classes: teacherClasses,
-                selectedClass: $selectedClass,
+                selectedClass: Binding(
+                    get: { teacherItems.selectedClass },
+                    set: { teacherItems.selectedClass = $0 }
+                ),
                 isPresented: $showClassSelector
             )
         }
@@ -299,6 +304,22 @@ struct TeacherDashboardView: View {
                     onDismiss: {
                         showPlanningSheet = false
                     }
+                )
+            }
+        }
+        .sheet(isPresented: $showSetAppSheet) {
+            // Reset selection mode after sheet closes
+            isSelectionMode = false
+            selectedStudentIds.removeAll()
+        } content: {
+            if let activeClass = activeClass {
+                let selectedStudents = filteredStudents.filter { selectedStudentIds.contains($0.id) }
+                EditStudentProfileSheet(
+                    students: selectedStudents,
+                    timeslot: selectedTimeslot,
+                    dayString: currentDayString,
+                    dataProvider: dataProvider,
+                    deviceApps: activeClass.devices.first?.apps ?? []
                 )
             }
         }
@@ -431,7 +452,7 @@ struct TeacherDashboardView: View {
                     let isDisabled = !hasDevices(classInfo)
                     
                     Button {
-                        selectedClass = classInfo
+                        teacherItems.selectedClass = classInfo
                     } label: {
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
@@ -517,7 +538,7 @@ struct TeacherDashboardView: View {
         .onChange(of: selectedDate) { _, _ in
             startSessionListener()
         }
-        .onChange(of: selectedClass) { _, _ in
+        .onChange(of: teacherItems.selectedClass) { _, _ in
             startSessionListener()
         }
         .onDisappear {
@@ -641,7 +662,7 @@ struct TeacherDashboardView: View {
                     Menu {
                         ForEach(classesWithDevices) { cls in
                             Button {
-                                selectedClass = cls
+                                teacherItems.selectedClass = cls
                             } label: {
                                 HStack {
                                     Text(cls.className)
@@ -820,8 +841,7 @@ struct TeacherDashboardView: View {
     
     /// Handle Set App action for selected students
     private func handleSetApp() {
-        // TODO: Implement bulk app assignment sheet
-        print("Set App for \(selectedStudentIds.count) students")
+        showSetAppSheet = true
     }
     
     /// Handle Lock action for selected students
@@ -1022,10 +1042,10 @@ struct TeacherDashboardView: View {
                 teacherClasses = classInfos
                 
                 // Keep selectedClass in sync with freshly fetched data
-                if let current = selectedClass {
-                    selectedClass = classInfos.first(where: { $0.id == current.id }) ?? classInfos.first
+                if let current = teacherItems.selectedClass {
+                    teacherItems.selectedClass = classInfos.first(where: { $0.id == current.id }) ?? classInfos.first
                 } else {
-                    selectedClass = classInfos.first
+                    teacherItems.selectedClass = classInfos.first
                 }
                 
                 isLoading = false
