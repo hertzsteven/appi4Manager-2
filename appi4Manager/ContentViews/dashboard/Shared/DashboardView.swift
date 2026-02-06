@@ -42,7 +42,7 @@ struct DashboardView: View {
                 case .admin:
                     AdminDashboardView()
                 case .teacher:
-                    TeacherDashboardView()
+                    TeacherSidebarContainerView()
                 }
             } else {
                 // No role selected - show role selection
