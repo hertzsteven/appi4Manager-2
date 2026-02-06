@@ -131,8 +131,7 @@ struct TeacherDashboardView: View {
                     classesContentView
                 }
             }
-            .navigationTitle("My Students")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 // Left side - action buttons
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -177,10 +176,28 @@ struct TeacherDashboardView: View {
                     .disabled(activeClass == nil)
                 }
                 
-                // Right side - settings only
+                // Right side - greeting + settings
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: SettingsView()) {
-                        Image(systemName: "gearshape")
+                    HStack(spacing: 12) {
+                        // Compact greeting with class count
+                        HStack(spacing: 4) {
+                            Text("Hi \(authManager.authenticatedUser?.firstName ?? "Teacher")")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                            
+                            // Class count badge
+                            HStack(spacing: 2) {
+                                Image(systemName: "graduationcap.fill")
+                                Text("\(classesWithDevices.count)")
+                            }
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        }
+                        
+                        // Settings gear
+                        NavigationLink(destination: SettingsView()) {
+                            Image(systemName: "gearshape")
+                        }
                     }
                 }
             }
@@ -446,16 +463,13 @@ struct TeacherDashboardView: View {
     /// - Students grid with profile cards
     private var classesContentView: some View {
         VStack(spacing: 0) {
-            // Fixed header section
-            ScrollView {
-                VStack(spacing: 16) {
-                    welcomeHeader
-                    classInfoCard
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 20)
+            // Fixed header section - class info card only
+            VStack(spacing: 16) {
+                classInfoCard
             }
-            .frame(height: 140) // Compact since welcome header is now horizontal
+            .padding(.horizontal, 20)
+            .padding(.top, 12)
+            .padding(.bottom, 8)
             
             // Date Navigation + Time Period Picker section
             VStack(spacing: 12) {
@@ -603,19 +617,43 @@ struct TeacherDashboardView: View {
     
     // MARK: - Class Info Card
     
-    /// Compact bar showing current class name with student/device counts.
+    /// Compact bar showing current class name with dropdown picker and student/device counts.
     private var classInfoCard: some View {
         Group {
             if let classInfo = activeClass {
                 HStack {
-                    // Class name with icon
-                    HStack(spacing: 8) {
-                        Image(systemName: "book.closed.fill")
-                            .foregroundColor(.accentColor)
-                        Text(classInfo.className)
-                            .font(.headline)
-                            .fontWeight(.semibold)
+                    // Class name with dropdown picker
+                    Menu {
+                        ForEach(classesWithDevices) { cls in
+                            Button {
+                                selectedClass = cls
+                            } label: {
+                                HStack {
+                                    Text(cls.className)
+                                    if cls.id == classInfo.id {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "book.closed.fill")
+                                .foregroundStyle(Color.accentColor)
+                            Text(classInfo.className)
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.primary)
+                            
+                            // Show chevron only if multiple classes
+                            if classesWithDevices.count > 1 {
+                                Image(systemName: "chevron.down")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
                     }
+                    .disabled(classesWithDevices.count <= 1)
                     
                     Spacer()
                     
@@ -625,11 +663,11 @@ struct TeacherDashboardView: View {
                         Label("\(classInfo.devices.count)", systemImage: "ipad.landscape")
                     }
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                 }
                 .padding()
                 .background(Color(.systemBackground))
-                .cornerRadius(12)
+                .clipShape(.rect(cornerRadius: 12))
             }
         }
     }
