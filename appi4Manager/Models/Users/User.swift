@@ -98,6 +98,23 @@ extension User {
         let appi4Teacheremail             = "appi4Teacher\(locationId)and\(rn)@gmail.com"
         return User(locationId: locationId, email: appi4Teacheremail, firstName: appi4TeacherName, lastName: appi4TeacherName, username: appi4TeacherNameWithLocation)
     }
+
+    /// Creates a per-device mock student for locking the device back to the login screen.
+    /// Username is the device UDID so each device has a unique mock student.
+    static func createDeviceMockStudent(
+        deviceUDID: String,
+        classUUID: String,
+        locationId: Int,
+        classGroupId: Int
+    ) -> User {
+        var user = User.makeDefault()
+        user.username = deviceUDID
+        user.firstName = "device"
+        user.lastName = classUUID
+        user.locationId = locationId
+        user.groupIds = [classGroupId]
+        return user
+    }
 }
 
 

@@ -76,6 +76,18 @@ struct TeacherDashboardView: View {
     /// Controls the Set App sheet visibility (for selected students)
     @State private var showSetAppSheet = false
     
+    /// Manages device actions (unlock, lock, restart, assign)
+    @State private var actionsManager = DeviceActionsManager()
+    
+    /// Controls the unlock result alert visibility
+    @State private var showUnlockAlert = false
+    
+    /// Title for the unlock result alert
+    @State private var unlockAlertTitle = ""
+    
+    /// Message for the unlock result alert
+    @State private var unlockAlertMessage = ""
+    
     /// Whether selection mode is active (Photos-style multi-select)
     @State private var isSelectionMode = false
     
@@ -322,6 +334,11 @@ struct TeacherDashboardView: View {
                     deviceApps: activeClass.devices.first?.apps ?? []
                 )
             }
+        }
+        .alert(unlockAlertTitle, isPresented: $showUnlockAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(unlockAlertMessage)
         }
         .task {
             if authManager.isAuthenticated {
@@ -844,16 +861,124 @@ struct TeacherDashboardView: View {
         showSetAppSheet = true
     }
     
-    /// Handle Lock action for selected students
+    /// Handle Lock action for selected students. Ends their sessions and locks their device to the Student Login app.
     private func handleLock() {
-        // TODO: Implement device locking for selected students
-        print("Lock \(selectedStudentIds.count) students")
+        Task {
+            guard let token = authManager.token else {
+                await showUnlockError("Not authenticated. Please sign in again.")
+                return
+            }
+            guard let activeClass = activeClass else {
+                await showUnlockError("No active class selected.")
+                return
+            }
+            
+            actionsManager.setAuthToken(token)
+            let result = await actionsManager.endStudentSessions(
+                studentIds: Array(selectedStudentIds),
+                devices: activeClass.devices,
+                classUUID: activeClass.classUUID,
+                classGroupId: activeClass.userGroupID,
+                locationId: activeClass.locationId,
+                timeslot: selectedTimeslot,
+                lockToLogin: true
+            )
+            
+            await MainActor.run {
+                if result.isFullSuccess {
+                    unlockAlertTitle = "Devices Locked"
+                    unlockAlertMessage = "\(result.successCount) device\(result.successCount == 1 ? " has" : "s have") been locked to the Student Login app."
+                } else if result.isPartialSuccess {
+                    unlockAlertTitle = "Partial Success"
+                    var msg = "\(result.successCount) device\(result.successCount == 1 ? "" : "s") locked. \(result.failCount) failed."
+                    if !result.failedDeviceNames.isEmpty {
+                        msg += " Failed: \(result.failedDeviceNames.joined(separator: ", "))."
+                    }
+                    unlockAlertMessage = msg
+                } else {
+                    unlockAlertTitle = "Lock Failed"
+                    unlockAlertMessage = result.failedDeviceNames.isEmpty
+                        ? "Failed to lock devices. Please try again."
+                        : "Failed: \(result.failedDeviceNames.joined(separator: ", "))."
+                }
+                if (result.noDeviceCount ?? 0) > 0 {
+                    let n = result.noDeviceCount!
+                    let noDeviceText = n == 1
+                        ? "1 student had no device assigned, so nothing was done for them."
+                        : "\(n) students had no device assigned, so nothing was done for them."
+                    unlockAlertMessage += (unlockAlertMessage.isEmpty ? "" : "\n\n") + noDeviceText
+                }
+                showUnlockAlert = true
+                selectedStudentIds.removeAll()
+                isSelectionMode = false
+            }
+            
+            await loadTeacherData()
+        }
     }
     
-    /// Handle Unlock action for selected students
+    /// Handle Unlock action for selected students. Clears restrictions, reassigns each device to its per-device mock student, and sets cancelRequested on ActiveSessions.
     private func handleUnlock() {
-        // TODO: Implement device unlocking for selected students
-        print("Unlock \(selectedStudentIds.count) students")
+        Task {
+            guard let token = authManager.token else {
+                await showUnlockError("Not authenticated. Please sign in again.")
+                return
+            }
+            guard let activeClass = activeClass else {
+                await showUnlockError("No active class selected.")
+                return
+            }
+            
+            actionsManager.setAuthToken(token)
+            let result = await actionsManager.endStudentSessions(
+                studentIds: Array(selectedStudentIds),
+                devices: activeClass.devices,
+                classUUID: activeClass.classUUID,
+                classGroupId: activeClass.userGroupID,
+                locationId: activeClass.locationId,
+                timeslot: selectedTimeslot,
+                lockToLogin: false
+            )
+            
+            await MainActor.run {
+                if result.isFullSuccess {
+                    unlockAlertTitle = "Devices Unlocked"
+                    unlockAlertMessage = "\(result.successCount) device\(result.successCount == 1 ? " has" : "s have") been unlocked and released."
+                } else if result.isPartialSuccess {
+                    unlockAlertTitle = "Partial Success"
+                    var msg = "\(result.successCount) device\(result.successCount == 1 ? "" : "s") unlocked. \(result.failCount) failed."
+                    if !result.failedDeviceNames.isEmpty {
+                        msg += " Failed: \(result.failedDeviceNames.joined(separator: ", "))."
+                    }
+                    unlockAlertMessage = msg
+                } else {
+                    unlockAlertTitle = "Unlock Failed"
+                    unlockAlertMessage = result.failedDeviceNames.isEmpty
+                        ? "Failed to unlock devices. Please try again."
+                        : "Failed: \(result.failedDeviceNames.joined(separator: ", "))."
+                }
+                if (result.noDeviceCount ?? 0) > 0 {
+                    let n = result.noDeviceCount!
+                    let noDeviceText = n == 1
+                        ? "1 student had no device assigned, so nothing was done for them."
+                        : "\(n) students had no device assigned, so nothing was done for them."
+                    unlockAlertMessage += (unlockAlertMessage.isEmpty ? "" : "\n\n") + noDeviceText
+                }
+                showUnlockAlert = true
+                selectedStudentIds.removeAll()
+                isSelectionMode = false
+            }
+            
+            await loadTeacherData()
+        }
+    }
+    
+    /// Shows an error alert for unlock operations
+    @MainActor
+    private func showUnlockError(_ message: String) {
+        unlockAlertTitle = "Error"
+        unlockAlertMessage = message
+        showUnlockAlert = true
     }
     
     /// Handle Activity action for selected students

@@ -769,7 +769,18 @@ struct ClassEditorView: View {
                         devicesViewModel.devices[index].assetTag = String(schoolClass.userGroupId)
                     }
                 }
-                
+                do {
+                    try await DeviceMockStudentService.getOrCreate(
+                        deviceUDID: device.UDID,
+                        classUUID: schoolClass.uuid,
+                        locationId: schoolClass.locationId,
+                        classGroupId: schoolClass.userGroupId
+                    )
+                } catch {
+                    #if DEBUG
+                    print("⚠️ Failed to create device mock student for \(device.name): \(error)")
+                    #endif
+                }
                 #if DEBUG
                 print("✅ Assigned device \(device.name) to class")
                 #endif
@@ -782,6 +793,10 @@ struct ClassEditorView: View {
     }
     
     private func unassignDevice(_ device: TheDevice) async {
+        await DeviceMockStudentService.deleteIfExists(
+            deviceUDID: device.UDID,
+            classGroupId: schoolClass.userGroupId
+        )
         do {
             _ = try await ApiManager.shared.getDataNoDecode(
                 from: .updateDevice(uuid: device.UDID, assetTag: "None")

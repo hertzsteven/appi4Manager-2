@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4608AC342EEA305B000523F0 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC332EEA305B000523F0 /* AuthenticationManager.swift */; };
 		4608AC362EEA30E5000523F0 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC352EEA30E5000523F0 /* KeychainHelper.swift */; };
+		46D53F1A2EFEB9240099A79D /* DeviceMockStudentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D53F192EFEB9240099A79D /* DeviceMockStudentService.swift */; };
 		4608AC3A2EEA3179000523F0 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC372EEA3179000523F0 /* SettingsView.swift */; };
 		4608AC3B2EEA3179000523F0 /* TeacherLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC382EEA3179000523F0 /* TeacherLoginView.swift */; };
 		4608AC3D2EEA34C4000523F0 /* TeacherClassInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC3C2EEA34C4000523F0 /* TeacherClassInfoView.swift */; };
@@ -115,6 +116,7 @@
 		03960D07E203EAC8294C58AD /* MockStudentAppProfileProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockStudentAppProfileProvider.swift; sourceTree = "<group>"; };
 		4608AC332EEA305B000523F0 /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
 		4608AC352EEA30E5000523F0 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
+		46D53F192EFEB9240099A79D /* DeviceMockStudentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceMockStudentService.swift; sourceTree = "<group>"; };
 		4608AC372EEA3179000523F0 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4608AC382EEA3179000523F0 /* TeacherLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherLoginView.swift; sourceTree = "<group>"; };
 		4608AC3C2EEA34C4000523F0 /* TeacherClassInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherClassInfoView.swift; sourceTree = "<group>"; };
@@ -356,6 +358,7 @@
 				46D53F182EFEB9230099A79D /* ActiveSessionListener.swift */,
 				4608AC352EEA30E5000523F0 /* KeychainHelper.swift */,
 				4608AC332EEA305B000523F0 /* AuthenticationManager.swift */,
+				46D53F192EFEB9240099A79D /* DeviceMockStudentService.swift */,
 				4634419B2AEB59530074741D /* FirestoreManager.swift */,
 			);
 			path = Services;
@@ -856,6 +859,7 @@
 				46CEE1B42AADF11500EDDC96 /* StudentAppProfileWorkingView.swift in Sources */,
 				4698CA282A2D600A00D8A888 /* ImageProcessingError.swift in Sources */,
 				4608AC342EEA305B000523F0 /* AuthenticationManager.swift in Sources */,
+				46D53F1A2EFEB9240099A79D /* DeviceMockStudentService.swift in Sources */,
 				46AEA64129C8E57900D2B994 /* LocationsResponse.swift in Sources */,
 				46BAB4852B30949A00C155B9 /* TimeOfDay.swift in Sources */,
 				469EFF212A6ED33F0047E8BC /* AppResponse.swift in Sources */,

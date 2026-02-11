@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FirebaseFirestore
 
 /// Response model for restart device API call
 struct RestartDeviceResponse: Codable {
@@ -45,6 +46,15 @@ struct DeviceActionResult {
     let successCount: Int
     let failCount: Int
     let failedDeviceNames: [String]
+    /// Number of students skipped because they had no assigned device (only set by endStudentSessions).
+    let noDeviceCount: Int?
+    
+    init(successCount: Int, failCount: Int, failedDeviceNames: [String], noDeviceCount: Int? = nil) {
+        self.successCount = successCount
+        self.failCount = failCount
+        self.failedDeviceNames = failedDeviceNames
+        self.noDeviceCount = noDeviceCount
+    }
     
     var isFullSuccess: Bool { failCount == 0 }
     var isPartialSuccess: Bool { successCount > 0 && failCount > 0 }
@@ -162,6 +172,121 @@ final class DeviceActionsManager {
         }
         
         return DeviceActionResult(successCount: successCount, failCount: failedNames.count, failedDeviceNames: failedNames)
+    }
+    
+    /// Ends selected students' sessions: clears restrictions, reassigns each device to its per-device mock student, sets cancelRequested on ActiveSessions, and optionally locks the device to the Student Login app.
+    ///
+    /// - Parameter lockToLogin: When true, after reassigning the device, locks it to the Student Login app so the student sees the login screen. When false, the device is only cleared and reassigned (unlock behavior).
+    /// - Parameter studentIds: Student IDs to process.
+    /// - Parameter devices: Class devices (used to find device owned by each student).
+    /// - Parameter classUUID: Class UUID (used for mock student lookup/creation).
+    /// - Parameter classGroupId: Class group ID for mock student lookup/creation.
+    /// - Parameter locationId: Location ID for ActiveSession document ID and mock student creation.
+    /// - Parameter timeslot: Current timeslot for ActiveSession document ID.
+    /// - Returns: Result with success/fail counts and optional noDeviceCount.
+    func endStudentSessions(
+        studentIds: [Int],
+        devices: [TheDevice],
+        classUUID: String,
+        classGroupId: Int,
+        locationId: Int,
+        timeslot: TimeOfDay,
+        lockToLogin: Bool = false
+    ) async -> DeviceActionResult {
+        guard let token = authToken else {
+            print("🔓 [EndStudentSessions] No auth token available")
+            return DeviceActionResult(successCount: 0, failCount: studentIds.count, failedDeviceNames: studentIds.map { "Student \($0)" })
+        }
+        guard !studentIds.isEmpty else {
+            return DeviceActionResult(successCount: 0, failCount: 0, failedDeviceNames: [])
+        }
+        
+        let progressVerb = lockToLogin ? "Locking" : "Unlocking"
+        await setProcessingState(true, message: "\(progressVerb) students...")
+        var successCount = 0
+        var failedNames: [String] = []
+        var noDeviceCount = 0
+        
+        let date = ActiveSession.todayDateString()
+        let timeslotStr = ActiveSession.timeslotString(from: timeslot)
+        let companyId = APISchoolInfo.shared.companyId
+        
+        for (index, studentId) in studentIds.enumerated() {
+            await updateProgress("\(progressVerb) \(index + 1) of \(studentIds.count)...")
+            
+            // First resolve the device; skip entirely if student has no device
+            guard let device = devices.first(where: { $0.owner?.id == studentId }) else {
+                print("🔓 [EndStudentSessions] No device for student \(studentId), skipping")
+                noDeviceCount += 1
+                continue
+            }
+            
+            do {
+                // Step A — Signal cancellation to student app before taking any device action
+                await setCancelRequested(studentId: studentId, locationId: locationId, date: date, timeslotStr: timeslotStr, companyId: companyId)
+                
+                // Step B — Clear restrictions
+                let _: ClearRestrictionsResponse = try await ApiManager.shared.getData(
+                    from: .clearRestrictionsStudent(teachAuth: token, students: String(studentId))
+                )
+                
+                // Step C — Resolve per-device mock student (create if needed), then reassign device to it
+                let mockStudentId = try await DeviceMockStudentService.getOrCreate(
+                    deviceUDID: device.UDID,
+                    classUUID: classUUID,
+                    locationId: locationId,
+                    classGroupId: classGroupId
+                )
+                let _: SetDeviceOwnerResponse = try await ApiManager.shared.getData(
+                    from: .setDeviceOwner(udid: device.UDID, userId: mockStudentId)
+                )
+                
+                // Step D — Optionally lock device to Student Login app (using mock student as current owner)
+                if lockToLogin {
+                    let _: LockIntoAppResponse = try await ApiManager.shared.getData(
+                        from: .lockIntoApp(
+                            appBundleId: AppConstants.studentLoginBundleId,
+                            studentID: String(mockStudentId),
+                            teachAuth: token
+                        )
+                    )
+                }
+                
+                successCount += 1
+            } catch {
+                failedNames.append("Student \(studentId)")
+                print("🔓 [EndStudentSessions] ❌ Failed for student \(studentId): \(error)")
+            }
+        }
+        
+        await setProcessingState(false, message: "")
+        return DeviceActionResult(
+            successCount: successCount,
+            failCount: failedNames.count,
+            failedDeviceNames: failedNames,
+            noDeviceCount: noDeviceCount > 0 ? noDeviceCount : nil
+        )
+    }
+    
+    /// Writes cancelRequested, status "completed", and completedAt to the ActiveSession document for the given student. Logs warning on failure; does not throw.
+    private func setCancelRequested(studentId: Int, locationId: Int, date: String, timeslotStr: String, companyId: Int) async {
+        let docId = ActiveSession.makeDocumentId(
+            companyId: companyId,
+            locationId: locationId,
+            studentId: studentId,
+            date: date,
+            timeslot: timeslotStr
+        )
+        let db = Firestore.firestore()
+        do {
+            try await db.collection("ActiveSessions").document(docId).updateData([
+                "cancelRequested": true,
+                "status": "completed",
+                "completedAt": FieldValue.serverTimestamp()
+            ])
+        } catch {
+            print("🔓 [EndStudentSessions] ⚠️ Could not set cancelRequested for student \(studentId): \(error)")
+        }
     }
     
     // MARK: - Restart Devices
