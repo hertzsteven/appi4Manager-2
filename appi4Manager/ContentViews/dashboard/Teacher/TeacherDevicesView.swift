@@ -115,8 +115,8 @@ struct TeacherDevicesView: View {
                 // Devices grid
                 ScrollView {
                     LazyVGrid(columns: [
-                        GridItem(.adaptive(minimum: 150), spacing: 16)
-                    ], spacing: 16) {
+                        GridItem(.adaptive(minimum: 160), spacing: 24)
+                    ], spacing: 24) {
                         ForEach(allDevices, id: \.UDID) { device in
                             SelectableDeviceCard(
                                 device: device,
@@ -132,7 +132,7 @@ struct TeacherDevicesView: View {
                             }
                         }
                     }
-                    .padding()
+                    .padding(24)
                 }
                 .background(Color(.systemGray6))
                 
@@ -262,67 +262,130 @@ struct TeacherDevicesView: View {
     
     // MARK: - Device Actions
     
-    /// Lock selected devices to the Student Login app
+    /// Lock selected devices: signals session end, clears restrictions, reassigns to mock student, locks to Student Login app.
     private func lockSelectedDevices() async {
-        let devices = selectedDevicesWithOwners
-        guard !devices.isEmpty else {
-            actionAlertTitle = "No Eligible Devices"
-            actionAlertMessage = "None of the selected devices have an assigned owner. Lock requires a device owner."
-            showActionAlert = true
+        let devices = selectedDevicesArray
+        guard !devices.isEmpty else { return }
+        guard let token = authManager.token else {
+            await MainActor.run {
+                actionAlertTitle = "Error"
+                actionAlertMessage = "Not authenticated. Please sign in again."
+                showActionAlert = true
+            }
+            return
+        }
+        guard let activeClass = activeClass else {
+            await MainActor.run {
+                actionAlertTitle = "Error"
+                actionAlertMessage = "No active class selected."
+                showActionAlert = true
+            }
             return
         }
         
-        let result = await actionsManager.lockDevicesToApp(
-            devices,
-            appBundleId: AppConstants.studentLoginBundleId
+        let timeslot = StudentAppProfileDataProvider.currentTimeslot()
+        let effectiveTimeslot = timeslot == .blocked ? TimeOfDay.am : timeslot
+        actionsManager.setAuthToken(token)
+        let result = await actionsManager.endDeviceSessions(
+            devices: devices,
+            classUUID: activeClass.classUUID,
+            classGroupId: activeClass.userGroupID,
+            locationId: activeClass.locationId,
+            timeslot: effectiveTimeslot,
+            lockToLogin: true
         )
         
         await MainActor.run {
             if result.isFullSuccess {
-                actionAlertTitle = "Success"
-                actionAlertMessage = "All \(result.successCount) device\(result.successCount == 1 ? "" : "s") will be locked to the Student Login app in a few seconds."
+                actionAlertTitle = "Devices Locked"
+                actionAlertMessage = "\(result.successCount) device\(result.successCount == 1 ? " has" : "s have") been locked to the Student Login app."
             } else if result.isPartialSuccess {
                 actionAlertTitle = "Partial Success"
-                actionAlertMessage = "\(result.successCount) device\(result.successCount == 1 ? "" : "s") locked. \(result.failCount) failed."
+                var msg = "\(result.successCount) device\(result.successCount == 1 ? "" : "s") locked. \(result.failCount) failed."
+                if !result.failedDeviceNames.isEmpty {
+                    msg += " Failed: \(result.failedDeviceNames.joined(separator: ", "))."
+                }
+                actionAlertMessage = msg
             } else {
-                actionAlertTitle = "Error"
-                actionAlertMessage = "Failed to lock devices. Please try again."
+                actionAlertTitle = "Lock Failed"
+                actionAlertMessage = result.failedDeviceNames.isEmpty
+                    ? "Failed to lock devices. Please try again."
+                    : "Failed: \(result.failedDeviceNames.joined(separator: ", "))."
+            }
+            if (result.noDeviceCount ?? 0) > 0 {
+                let n = result.noDeviceCount!
+                let noDeviceText = n == 1
+                    ? "1 device had no owner assigned, so nothing was done for it."
+                    : "\(n) devices had no owner assigned, so nothing was done for them."
+                actionAlertMessage += (actionAlertMessage.isEmpty ? "" : "\n\n") + noDeviceText
             }
             showActionAlert = true
         }
         
-        // Refresh lock status after action
         try? await Task.sleep(for: .milliseconds(500))
         await loadRestrictionProfiles()
     }
     
-    /// Unlock selected devices (clear restrictions)
+    /// Unlock selected devices: signals session end, clears restrictions, reassigns to mock student.
     private func unlockSelectedDevices() async {
-        let devices = selectedDevicesWithOwners
-        guard !devices.isEmpty else {
-            actionAlertTitle = "No Eligible Devices"
-            actionAlertMessage = "None of the selected devices have an assigned owner. Unlock requires a device owner."
-            showActionAlert = true
+        let devices = selectedDevicesArray
+        guard !devices.isEmpty else { return }
+        guard let token = authManager.token else {
+            await MainActor.run {
+                actionAlertTitle = "Error"
+                actionAlertMessage = "Not authenticated. Please sign in again."
+                showActionAlert = true
+            }
+            return
+        }
+        guard let activeClass = activeClass else {
+            await MainActor.run {
+                actionAlertTitle = "Error"
+                actionAlertMessage = "No active class selected."
+                showActionAlert = true
+            }
             return
         }
         
-        let result = await actionsManager.unlockDevices(devices)
+        let timeslot = StudentAppProfileDataProvider.currentTimeslot()
+        let effectiveTimeslot = timeslot == .blocked ? TimeOfDay.am : timeslot
+        actionsManager.setAuthToken(token)
+        let result = await actionsManager.endDeviceSessions(
+            devices: devices,
+            classUUID: activeClass.classUUID,
+            classGroupId: activeClass.userGroupID,
+            locationId: activeClass.locationId,
+            timeslot: effectiveTimeslot,
+            lockToLogin: false
+        )
         
         await MainActor.run {
             if result.isFullSuccess {
                 actionAlertTitle = "Devices Unlocked"
-                actionAlertMessage = "All \(result.successCount) device\(result.successCount == 1 ? " has" : "s have") been unlocked."
+                actionAlertMessage = "\(result.successCount) device\(result.successCount == 1 ? " has" : "s have") been unlocked and released."
             } else if result.isPartialSuccess {
                 actionAlertTitle = "Partial Success"
-                actionAlertMessage = "\(result.successCount) device\(result.successCount == 1 ? "" : "s") unlocked. \(result.failCount) failed."
+                var msg = "\(result.successCount) device\(result.successCount == 1 ? "" : "s") unlocked. \(result.failCount) failed."
+                if !result.failedDeviceNames.isEmpty {
+                    msg += " Failed: \(result.failedDeviceNames.joined(separator: ", "))."
+                }
+                actionAlertMessage = msg
             } else {
-                actionAlertTitle = "Error"
-                actionAlertMessage = "Failed to unlock devices. Please try again."
+                actionAlertTitle = "Unlock Failed"
+                actionAlertMessage = result.failedDeviceNames.isEmpty
+                    ? "Failed to unlock devices. Please try again."
+                    : "Failed: \(result.failedDeviceNames.joined(separator: ", "))."
+            }
+            if (result.noDeviceCount ?? 0) > 0 {
+                let n = result.noDeviceCount!
+                let noDeviceText = n == 1
+                    ? "1 device had no owner assigned, so nothing was done for it."
+                    : "\(n) devices had no owner assigned, so nothing was done for them."
+                actionAlertMessage += (actionAlertMessage.isEmpty ? "" : "\n\n") + noDeviceText
             }
             showActionAlert = true
         }
         
-        // Refresh lock status after action
         try? await Task.sleep(for: .milliseconds(500))
         await loadRestrictionProfiles()
     }
@@ -489,57 +552,63 @@ struct SelectableDeviceCard: View {
                     showingDetail = true
                 }
             } label: {
-                VStack(spacing: 6) {
+                VStack(spacing: 12) {
                     // Device icon with colored ring
                     ZStack {
                         Circle()
-                            .stroke(ringColor, lineWidth: 4)
-                            .frame(width: 70, height: 70)
+                            .stroke(ringColor.opacity(0.3), lineWidth: 4)
+                            .frame(width: 80, height: 80)
                         
                         Image(systemName: "ipad.landscape")
-                            .font(.system(size: 28))
+                            .font(.system(size: 32))
                             .foregroundStyle(.primary)
+                        
+                        // Active Restrictions Lock Icon
+                        if isLocked {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 14))
+                                .foregroundStyle(.white)
+                                .padding(5)
+                                .background(Color.orange)
+                                .clipShape(Circle())
+                                .offset(x: 28, y: -28) // Top-right of circle
+                        }
                         
                         // Battery indicator
                         HStack(spacing: 2) {
                             Image(systemName: "battery.100.bolt")
-                                .font(.system(size: 10))
+                                .font(.system(size: 12))
                                 .foregroundStyle(.green)
                         }
-                        .offset(y: 45)
+                        .offset(y: 38)
                     }
-                    .frame(height: 90)
+                    .frame(height: 100)
                     
                     // Device name
                     Text(device.name)
-                        .font(.subheadline)
-                        .bold()
+                        .font(.headline)
                         .foregroundStyle(.primary)
-                        .lineLimit(1)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .padding(.horizontal, 4)
                 }
-                .frame(width: 150, height: 160)
-                .padding()
-                .background(Color(.systemBackground))
-                .clipShape(.rect(cornerRadius: 12))
-                .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 2)
+                .frame(width: 140, height: 140)
+                .padding(12)
             }
             .buttonStyle(.plain)
             
             // Selection checkmark overlay — top-trailing, matching student card style
             if isMultiSelectMode {
-                Circle()
-                    .fill(isSelected ? Color.accentColor : Color(.systemGray4))
-                    .frame(width: 26, height: 26)
-                    .overlay {
-                        if isSelected {
-                            Image(systemName: "checkmark")
-                                .font(.caption.bold())
-                                .foregroundStyle(.white)
-                        }
-                    }
-                    .padding(8)
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 28))
+                    .foregroundStyle(isSelected ? Color.accentColor : Color(.systemGray4))
+                    .background(Circle().fill(.white))
+                    .padding(12)
             }
         }
+        .background(Color(.systemBackground))
+        .clipShape(.rect(cornerRadius: 12))
+        .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 2)
         // Blue border when selected
         .overlay {
             if isMultiSelectMode && isSelected {

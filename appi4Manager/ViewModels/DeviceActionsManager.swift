@@ -222,36 +222,18 @@ final class DeviceActionsManager {
             }
             
             do {
-                // Step A — Signal cancellation to student app before taking any device action
-                await setCancelRequested(studentId: studentId, locationId: locationId, date: date, timeslotStr: timeslotStr, companyId: companyId)
-                
-                // Step B — Clear restrictions
-                let _: ClearRestrictionsResponse = try await ApiManager.shared.getData(
-                    from: .clearRestrictionsStudent(teachAuth: token, students: String(studentId))
-                )
-                
-                // Step C — Resolve per-device mock student (create if needed), then reassign device to it
-                let mockStudentId = try await DeviceMockStudentService.getOrCreate(
-                    deviceUDID: device.UDID,
+                try await endSingleSession(
+                    studentId: studentId,
+                    device: device,
+                    token: token,
                     classUUID: classUUID,
+                    classGroupId: classGroupId,
                     locationId: locationId,
-                    classGroupId: classGroupId
+                    date: date,
+                    timeslotStr: timeslotStr,
+                    companyId: companyId,
+                    lockToLogin: lockToLogin
                 )
-                let _: SetDeviceOwnerResponse = try await ApiManager.shared.getData(
-                    from: .setDeviceOwner(udid: device.UDID, userId: mockStudentId)
-                )
-                
-                // Step D — Optionally lock device to Student Login app (using mock student as current owner)
-                if lockToLogin {
-                    let _: LockIntoAppResponse = try await ApiManager.shared.getData(
-                        from: .lockIntoApp(
-                            appBundleId: AppConstants.studentLoginBundleId,
-                            studentID: String(mockStudentId),
-                            teachAuth: token
-                        )
-                    )
-                }
-                
                 successCount += 1
             } catch {
                 failedNames.append("Student \(studentId)")
@@ -266,6 +248,50 @@ final class DeviceActionsManager {
             failedDeviceNames: failedNames,
             noDeviceCount: noDeviceCount > 0 ? noDeviceCount : nil
         )
+    }
+    
+    /// Performs the full session teardown for one student/device: set cancelRequested, clear restrictions, reassign to mock student, optionally lock to login app. Throws on API or Firestore failure.
+    private func endSingleSession(
+        studentId: Int,
+        device: TheDevice,
+        token: String,
+        classUUID: String,
+        classGroupId: Int,
+        locationId: Int,
+        date: String,
+        timeslotStr: String,
+        companyId: Int,
+        lockToLogin: Bool
+    ) async throws {
+        // Step A — Signal cancellation to student app before taking any device action
+        await setCancelRequested(studentId: studentId, locationId: locationId, date: date, timeslotStr: timeslotStr, companyId: companyId)
+        
+        // Step B — Clear restrictions
+        let _: ClearRestrictionsResponse = try await ApiManager.shared.getData(
+            from: .clearRestrictionsStudent(teachAuth: token, students: String(studentId))
+        )
+        
+        // Step C — Resolve per-device mock student (create if needed), then reassign device to it
+        let mockStudentId = try await DeviceMockStudentService.getOrCreate(
+            deviceUDID: device.UDID,
+            classUUID: classUUID,
+            locationId: locationId,
+            classGroupId: classGroupId
+        )
+        let _: SetDeviceOwnerResponse = try await ApiManager.shared.getData(
+            from: .setDeviceOwner(udid: device.UDID, userId: mockStudentId)
+        )
+        
+        // Step D — Optionally lock device to Student Login app (using mock student as current owner)
+        if lockToLogin {
+            let _: LockIntoAppResponse = try await ApiManager.shared.getData(
+                from: .lockIntoApp(
+                    appBundleId: AppConstants.studentLoginBundleId,
+                    studentID: String(mockStudentId),
+                    teachAuth: token
+                )
+            )
+        }
     }
     
     /// Writes cancelRequested, status "completed", and completedAt to the ActiveSession document for the given student. Logs warning on failure; does not throw.
@@ -287,6 +313,74 @@ final class DeviceActionsManager {
         } catch {
             print("🔓 [EndStudentSessions] ⚠️ Could not set cancelRequested for student \(studentId): \(error)")
         }
+    }
+    
+    /// Ends sessions for the given devices: sets cancelRequested, clears restrictions, reassigns each device to its per-device mock student, and optionally locks to the Student Login app. Devices without an owner are skipped (counted in noDeviceCount).
+    func endDeviceSessions(
+        devices: [TheDevice],
+        classUUID: String,
+        classGroupId: Int,
+        locationId: Int,
+        timeslot: TimeOfDay,
+        lockToLogin: Bool = false
+    ) async -> DeviceActionResult {
+        guard let token = authToken else {
+            print("🔓 [EndDeviceSessions] No auth token available")
+            return DeviceActionResult(successCount: 0, failCount: devices.count, failedDeviceNames: devices.map { $0.name })
+        }
+        guard !devices.isEmpty else {
+            return DeviceActionResult(successCount: 0, failCount: 0, failedDeviceNames: [])
+        }
+        
+        let progressVerb = lockToLogin ? "Locking" : "Unlocking"
+        await setProcessingState(true, message: "\(progressVerb) devices...")
+        var successCount = 0
+        var failedNames: [String] = []
+        var noDeviceCount = 0
+        
+        let date = ActiveSession.todayDateString()
+        let timeslotStr = ActiveSession.timeslotString(from: timeslot)
+        let companyId = APISchoolInfo.shared.companyId
+        
+        let devicesWithOwners = devices.compactMap { device -> (studentId: Int, device: TheDevice)? in
+            guard let ownerId = device.owner?.id else { return nil }
+            return (studentId: ownerId, device: device)
+        }
+        
+        for (index, pair) in devicesWithOwners.enumerated() {
+            await updateProgress("\(progressVerb) \(index + 1) of \(devicesWithOwners.count)...")
+            do {
+                try await endSingleSession(
+                    studentId: pair.studentId,
+                    device: pair.device,
+                    token: token,
+                    classUUID: classUUID,
+                    classGroupId: classGroupId,
+                    locationId: locationId,
+                    date: date,
+                    timeslotStr: timeslotStr,
+                    companyId: companyId,
+                    lockToLogin: lockToLogin
+                )
+                successCount += 1
+            } catch {
+                failedNames.append(pair.device.name)
+                print("🔓 [EndDeviceSessions] ❌ Failed for device \(pair.device.name): \(error)")
+            }
+        }
+        
+        noDeviceCount = devices.count - devicesWithOwners.count
+        if noDeviceCount > 0 {
+            print("🔓 [EndDeviceSessions] \(noDeviceCount) device(s) had no owner, skipped")
+        }
+        
+        await setProcessingState(false, message: "")
+        return DeviceActionResult(
+            successCount: successCount,
+            failCount: failedNames.count,
+            failedDeviceNames: failedNames,
+            noDeviceCount: noDeviceCount > 0 ? noDeviceCount : nil
+        )
     }
     
     // MARK: - Restart Devices
