@@ -46,6 +46,9 @@ struct TeacherStudentManagementSheet: View {
     
     var body: some View {
         VStack(spacing: 0) {
+            // Premium Action Header
+            actionHeader
+            
             // Student list
             if localStudents.isEmpty {
                 emptyStateView
@@ -167,8 +170,67 @@ struct TeacherStudentManagementSheet: View {
         }
     }
     
-    // MARK: - Header View
+    // MARK: - Action Header
     
+    private var actionHeader: some View {
+        HStack(spacing: 12) {
+            actionCard(
+                title: "Add New Student",
+                subtitle: "Create profile",
+                icon: "person.badge.plus",
+                color: .brandIndigo
+            ) {
+                showAddStudent = true
+            }
+            
+            actionCard(
+                title: "Assign Student",
+                subtitle: "From library",
+                icon: "person.2.badge.gearshape",
+                color: .brandIndigo
+            ) {
+                showAssignExisting = true
+            }
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 16)
+        .background(Color(.systemGray5))
+    }
+    
+    private func actionCard(title: String, subtitle: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(color.opacity(0.1))
+                        .frame(width: 40, height: 40)
+                    
+                    Image(systemName: icon)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(color)
+                }
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.subheadline)
+                        .bold()
+                        .foregroundStyle(.primary)
+                    
+                    Text(subtitle)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Spacer(minLength: 0)
+            }
+            .padding(12)
+            .background(Color(.systemBackground))
+            .clipShape(.rect(cornerRadius: 16))
+            .shadow(color: .black.opacity(0.04), radius: 10, x: 0, y: 5)
+        }
+        .buttonStyle(.plain)
+    }
+
     // MARK: - Header View (Removed - replaced by toolbar)
     
     // MARK: - Empty State
@@ -201,26 +263,31 @@ struct TeacherStudentManagementSheet: View {
     
     private var studentListView: some View {
         List {
-            ForEach(localStudents, id: \.id) { student in
-                studentRow(student)
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button(role: .destructive) {
-                            studentToDelete = student
-                            showDeleteConfirmation = true
-                        } label: {
-                            Label("Delete", systemImage: "trash")
+            // Student rows
+            Section {
+                ForEach(localStudents, id: \.id) { student in
+                    studentRow(student)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                studentToDelete = student
+                                showDeleteConfirmation = true
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                            
+                            Button {
+                                studentToEdit = student
+                            } label: {
+                                Label("Edit", systemImage: "pencil")
+                            }
+                            .tint(.blue)
                         }
-                        
-                        Button {
-                            studentToEdit = student
-                        } label: {
-                            Label("Edit", systemImage: "pencil")
-                        }
-                        .tint(.blue)
-                    }
+                }
+            } header: {
+                Text("Students (\(localStudents.count))")
             }
         }
-        .listStyle(.plain)
+        .listStyle(.insetGrouped)
     }
     
     // MARK: - Student Row
@@ -229,41 +296,39 @@ struct TeacherStudentManagementSheet: View {
         Button {
             studentToEdit = student
         } label: {
-            HStack(spacing: 12) {
-                // Student photo
+            HStack(spacing: 14) {
+                // Student photo — matches Activity screen size
                 AsyncImage(url: cacheBustedURL(for: student.photo)) { phase in
                     switch phase {
                     case .success(let image):
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: 44, height: 44)
-                            .clipShape(Circle())
+                            .frame(width: 50, height: 50)
+                            .clipShape(.circle)
                     default:
                         Image(systemName: "person.circle.fill")
                             .resizable()
-                            .frame(width: 44, height: 44)
-                            .foregroundColor(.gray)
+                            .frame(width: 50, height: 50)
+                            .foregroundStyle(.gray)
                     }
                 }
                 
                 // Student info
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(student.name)
-                        .font(.body)
-                        .foregroundColor(.primary)
+                        .font(.headline)
                     
                     Text(student.email)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
                 
                 Spacer()
                 
-                // Disclosure indicator
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
             .padding(.vertical, 4)
         }
