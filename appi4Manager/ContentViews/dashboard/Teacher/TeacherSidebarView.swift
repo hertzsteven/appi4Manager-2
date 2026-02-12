@@ -84,10 +84,12 @@ private struct SidebarButton: View {
             VStack(spacing: 4) {
                 Image(systemName: section.iconName)
                     .font(.title2)
+                    .bold()
                     .frame(height: 24)
                 
                 Text(section.label)
                     .font(.caption2)
+                    .bold()
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }

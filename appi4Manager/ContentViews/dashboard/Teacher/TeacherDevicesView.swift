@@ -144,6 +144,7 @@ struct TeacherDevicesView: View {
                         onUnlock: { Task { await unlockSelectedDevices() } },
                         onRestart: { showRestartConfirmation = true }
                     )
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
             
@@ -170,9 +171,11 @@ struct TeacherDevicesView: View {
             // Left side — Select / Cancel button
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
-                    isMultiSelectMode.toggle()
-                    if !isMultiSelectMode {
-                        selectedDevices.removeAll()
+                    withAnimation(.spring()) {
+                        isMultiSelectMode.toggle()
+                        if !isMultiSelectMode {
+                            selectedDevices.removeAll()
+                        }
                     }
                 } label: {
                     Text(isMultiSelectMode ? "Cancel" : "Select")
@@ -309,7 +312,7 @@ struct TeacherDevicesView: View {
             } else {
                 actionAlertTitle = "Lock Failed"
                 actionAlertMessage = result.failedDeviceNames.isEmpty
-                    ? "Failed to lock devices. Please try again."
+                    ? "Failed to unlock devices. Please try again."
                     : "Failed: \(result.failedDeviceNames.joined(separator: ", "))."
             }
             if (result.noDeviceCount ?? 0) > 0 {
@@ -320,6 +323,10 @@ struct TeacherDevicesView: View {
                 actionAlertMessage += (actionAlertMessage.isEmpty ? "" : "\n\n") + noDeviceText
             }
             showActionAlert = true
+            withAnimation(.spring()) {
+                selectedDevices.removeAll()
+                isMultiSelectMode = false
+            }
         }
         
         try? await Task.sleep(for: .milliseconds(500))
@@ -384,6 +391,10 @@ struct TeacherDevicesView: View {
                 actionAlertMessage += (actionAlertMessage.isEmpty ? "" : "\n\n") + noDeviceText
             }
             showActionAlert = true
+            withAnimation(.spring()) {
+                selectedDevices.removeAll()
+                isMultiSelectMode = false
+            }
         }
         
         try? await Task.sleep(for: .milliseconds(500))
@@ -406,6 +417,10 @@ struct TeacherDevicesView: View {
                 actionAlertMessage = "Failed to restart devices. Please try again."
             }
             showActionAlert = true
+            withAnimation(.spring()) {
+                selectedDevices.removeAll()
+                isMultiSelectMode = false
+            }
         }
     }
     

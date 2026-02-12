@@ -32,14 +32,14 @@ struct DeviceSelectionActionBar: View {
         HStack(spacing: 0) {
             DeviceActionButton(
                 title: "Lock",
-                systemImage: "lock.fill",
+                systemImage: "lock",
                 isEnabled: isEnabled,
                 action: onLock
             )
             
             DeviceActionButton(
                 title: "Unlock",
-                systemImage: "lock.open.fill",
+                systemImage: "lock.open",
                 isEnabled: isEnabled,
                 action: onUnlock
             )
@@ -51,8 +51,8 @@ struct DeviceSelectionActionBar: View {
                 action: onRestart
             )
         }
-        .frame(height: 60)
-        .background(.bar)
+        .frame(height: 72)
+        .background(.background)
         .overlay(alignment: .top) {
             Divider()
         }
@@ -70,15 +70,18 @@ private struct DeviceActionButton: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 4) {
+            VStack(spacing: 6) {
                 Image(systemName: systemImage)
                     .font(.title2)
+                    .contentTransition(.symbolEffect(.replace))
                 
                 Text(title)
-                    .font(.caption2)
+                    .font(.caption)
+                    .bold()
             }
             .frame(maxWidth: .infinity)
-            .foregroundStyle(isEnabled ? .blue : .secondary.opacity(0.5))
+            .foregroundStyle(isEnabled ? .blue : .secondary.opacity(0.3))
+            .animation(.easeInOut(duration: 0.2), value: isEnabled)
         }
         .disabled(!isEnabled)
         .buttonStyle(.plain)

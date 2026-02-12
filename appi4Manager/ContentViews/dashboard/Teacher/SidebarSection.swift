@@ -21,9 +21,9 @@ enum SidebarSection: String, CaseIterable, Identifiable {
     /// The SF Symbol icon name for each section
     var iconName: String {
         switch self {
-        case .liveClass: "video.fill"
-        case .reports: "chart.bar.doc.horizontal"
-        case .students: "person.2.fill"
+        case .liveClass: "video"
+        case .reports: "chart.bar"
+        case .students: "person.2"
         case .devices: "ipad.landscape"
         case .calendar: "calendar"
         case .setup: "gearshape"
