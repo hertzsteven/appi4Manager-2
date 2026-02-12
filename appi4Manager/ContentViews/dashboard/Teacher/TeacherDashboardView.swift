@@ -202,38 +202,54 @@ struct TeacherDashboardView: View {
                             }
                             .disabled(classesWithDevices.count <= 1)
                             
-                            // Stats grouped with class (student + device counts)
-                            HStack(spacing: 8) {
-                                HStack(spacing: 3) {
-                                    Image(systemName: "person.2.fill")
+                            // Stats grouped with class (student + device counts in subtle pills)
+                            HStack(spacing: 6) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "person.2")
                                     Text("\(filteredStudentCount(for: classInfo))")
                                 }
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(Color(.systemGray5))
+                                .clipShape(.capsule)
                                 
-                                HStack(spacing: 3) {
-                                    Image(systemName: "ipad.landscape")
+                                HStack(spacing: 4) {
+                                    Image(systemName: "ipad")
                                     Text("\(classInfo.devices.count)")
                                 }
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(Color(.systemGray5))
+                                .clipShape(.capsule)
                             }
                             .font(.caption)
+                            .bold()
                             .foregroundStyle(.secondary)
                         }
-                        .padding(.horizontal, 12)
+                        .padding(.leading, 12)
+                        .padding(.trailing, 8)
                         .padding(.vertical, 6)
                         .background(Color(.systemGray6))
                         .clipShape(.capsule)
                     }
                 }
                 
-                // Right side - Greeting + Settings (separate from class info)
+                // Right side - Greeting + Profile + Settings
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    // Greeting
-                    Text("Hi \(authManager.authenticatedUser?.firstName ?? "Teacher")")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                    
-                    // Settings Gear
-                    NavigationLink(destination: SettingsView()) {
-                        Image(systemName: "gearshape")
+                    HStack(spacing: 12) {
+                        // Greeting
+                        Text("Hi \(authManager.authenticatedUser?.firstName ?? "Teacher")")
+                            .font(.subheadline)
+                            .bold()
+                        
+                        // Profile Initials Circle
+                        profileInitialsCircle
+                        
+                        // Settings Gear
+                        NavigationLink(destination: SettingsView()) {
+                            Image(systemName: "gearshape")
+                                .bold()
+                        }
                     }
                 }
             }
@@ -426,6 +442,25 @@ struct TeacherDashboardView: View {
                 }
             }
             .buttonStyle(.borderedProminent)
+        }
+    }
+    
+    // MARK: - Header Components
+    
+    /// A subtle circle containing user initials for the header
+    private var profileInitialsCircle: some View {
+        let name = authManager.authenticatedUser?.firstName ?? "Teacher"
+        let initial = String(name.prefix(1)).uppercased()
+        
+        return ZStack {
+            Circle()
+                .fill(Color.accentColor.opacity(0.15))
+                .frame(width: 32, height: 32)
+            
+            Text(initial)
+                .font(.subheadline)
+                .bold()
+                .foregroundStyle(Color.accentColor)
         }
     }
     
@@ -1312,3 +1347,4 @@ struct TeacherDashboardView: View {
         ])
     }
 }
+

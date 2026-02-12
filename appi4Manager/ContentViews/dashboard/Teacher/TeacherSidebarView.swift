@@ -69,7 +69,7 @@ struct TeacherSidebarView: View {
         }
         .padding(.vertical)
         .frame(width: 80)
-        .background(Color(.systemGray6))
+        .background(.ultraThinMaterial)
     }
 }
 
@@ -95,12 +95,37 @@ private struct SidebarButton: View {
             }
             .foregroundStyle(isSelected ? Color.accentColor : .secondary)
             .frame(width: 70, height: 60)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(isSelected ? Color.accentColor.opacity(0.12) : .clear)
-            )
+            .background {
+                if isSelected {
+                    ZStack {
+                        // The glass/glow base
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color.accentColor.opacity(0.2), Color.accentColor.opacity(0.05)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                        
+                        // Thin glowing border
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(
+                                LinearGradient(
+                                    colors: [Color.accentColor.opacity(0.5), Color.clear],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1
+                            )
+                    }
+                    .shadow(color: Color.accentColor.opacity(0.25), radius: 8)
+                    .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                }
+            }
         }
         .buttonStyle(.plain)
+        .animation(.spring(duration: 0.3), value: isSelected)
     }
 }
 
