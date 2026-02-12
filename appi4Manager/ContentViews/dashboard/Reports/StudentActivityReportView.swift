@@ -12,6 +12,8 @@ import SwiftUI
 struct StudentActivityReportView: View {
     let students: [Student]
     let deviceApps: [DeviceApp]
+    let activeClass: TeacherClassInfo?
+    let classesWithDevices: [TeacherClassInfo]
     
     @State private var viewModel = StudentActivityReportViewModel()
     @State private var searchText = ""
@@ -66,9 +68,13 @@ struct StudentActivityReportView: View {
             // Main content
             reportContent
         }
-        .background(Color(.systemGray6))
-        .navigationTitle("Activity Report")
-        .navigationBarTitleDisplayMode(.large)
+        .background(Color(.systemGray5))
+        .navigationTitle("Activity")
+        .navigationBarTitleDisplayMode(.inline)
+        .teacherDashboardToolbar(
+            activeClass: activeClass,
+            classesWithDevices: classesWithDevices
+        )
         .searchable(text: $searchText, prompt: "Search students")
         .task {
             await viewModel.loadActivityForStudents(students)
@@ -346,7 +352,9 @@ struct StatCard: View {
     return NavigationStack {
         StudentActivityReportView(
             students: mockStudents,
-            deviceApps: []
+            deviceApps: [],
+            activeClass: nil,
+            classesWithDevices: []
         )
     }
 }

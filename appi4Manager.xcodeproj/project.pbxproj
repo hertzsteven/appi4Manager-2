@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		4608AC342EEA305B000523F0 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC332EEA305B000523F0 /* AuthenticationManager.swift */; };
 		4608AC362EEA30E5000523F0 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC352EEA30E5000523F0 /* KeychainHelper.swift */; };
-		46D53F1A2EFEB9240099A79D /* DeviceMockStudentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D53F192EFEB9240099A79D /* DeviceMockStudentService.swift */; };
 		4608AC3A2EEA3179000523F0 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC372EEA3179000523F0 /* SettingsView.swift */; };
 		4608AC3B2EEA3179000523F0 /* TeacherLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC382EEA3179000523F0 /* TeacherLoginView.swift */; };
 		4608AC3D2EEA34C4000523F0 /* TeacherClassInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4608AC3C2EEA34C4000523F0 /* TeacherClassInfoView.swift */; };
@@ -98,6 +97,7 @@
 		46D07D8F2B742A7100D04B5B /* LiteralThings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D07D8E2B742A7100D04B5B /* LiteralThings.swift */; };
 		46D2A9A429DB4D12007B134E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D2A9A329DB4D12007B134E /* ImagePicker.swift */; };
 		46D53F192EFEB9230099A79D /* ActiveSessionListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D53F182EFEB9230099A79D /* ActiveSessionListener.swift */; };
+		46D53F1A2EFEB9240099A79D /* DeviceMockStudentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D53F192EFEB9240099A79D /* DeviceMockStudentService.swift */; };
 		46E1D49B2F34374700019144 /* StudentProfileDocumentId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E1D4992F34374700019144 /* StudentProfileDocumentId.swift */; };
 		46E1D49C2F34374700019144 /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E1D4982F34374700019144 /* Color+Extensions.swift */; };
 		46E1D49D2F34374700019144 /* CachedAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E1D4972F34374700019144 /* CachedAsyncImage.swift */; };
@@ -116,7 +116,6 @@
 		03960D07E203EAC8294C58AD /* MockStudentAppProfileProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockStudentAppProfileProvider.swift; sourceTree = "<group>"; };
 		4608AC332EEA305B000523F0 /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
 		4608AC352EEA30E5000523F0 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
-		46D53F192EFEB9240099A79D /* DeviceMockStudentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceMockStudentService.swift; sourceTree = "<group>"; };
 		4608AC372EEA3179000523F0 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4608AC382EEA3179000523F0 /* TeacherLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherLoginView.swift; sourceTree = "<group>"; };
 		4608AC3C2EEA34C4000523F0 /* TeacherClassInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeacherClassInfoView.swift; sourceTree = "<group>"; };
@@ -203,6 +202,7 @@
 		46D07D8E2B742A7100D04B5B /* LiteralThings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiteralThings.swift; sourceTree = "<group>"; };
 		46D2A9A329DB4D12007B134E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		46D53F182EFEB9230099A79D /* ActiveSessionListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionListener.swift; sourceTree = "<group>"; };
+		46D53F192EFEB9240099A79D /* DeviceMockStudentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceMockStudentService.swift; sourceTree = "<group>"; };
 		46E1D4972F34374700019144 /* CachedAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedAsyncImage.swift; sourceTree = "<group>"; };
 		46E1D4982F34374700019144 /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
 		46E1D4992F34374700019144 /* StudentProfileDocumentId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentProfileDocumentId.swift; sourceTree = "<group>"; };

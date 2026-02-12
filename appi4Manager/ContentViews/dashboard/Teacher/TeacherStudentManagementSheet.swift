@@ -12,6 +12,7 @@ import SwiftUI
 /// Sheet for managing students in a class (viewing, editing, adding, deleting)
 struct TeacherStudentManagementSheet: View {
     let classInfo: TeacherClassInfo
+    let classesWithDevices: [TeacherClassInfo]
     
     /// Callback to refresh student data after changes (updates parent view)
     var onStudentChanged: (() -> Void)?
@@ -34,8 +35,9 @@ struct TeacherStudentManagementSheet: View {
     
     // MARK: - Initialization
     
-    init(classInfo: TeacherClassInfo, onStudentChanged: (() -> Void)? = nil) {
+    init(classInfo: TeacherClassInfo, classesWithDevices: [TeacherClassInfo], onStudentChanged: (() -> Void)? = nil) {
         self.classInfo = classInfo
+        self.classesWithDevices = classesWithDevices
         self.onStudentChanged = onStudentChanged
         // Initialize local students with the passed-in data (excluding dummy students)
         let filtered = classInfo.students.filter { $0.lastName != classInfo.classUUID }
@@ -44,9 +46,6 @@ struct TeacherStudentManagementSheet: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header with student count
-            headerView
-            
             // Student list
             if localStudents.isEmpty {
                 emptyStateView
@@ -56,6 +55,11 @@ struct TeacherStudentManagementSheet: View {
         }
         .navigationTitle("Students")
         .navigationBarTitleDisplayMode(.inline)
+        .background(Color(.systemGray5))
+        .teacherDashboardToolbar(
+            activeClass: classInfo,
+            classesWithDevices: classesWithDevices
+        )
         .toolbar {
             if !localStudents.isEmpty {
                 ToolbarItem(placement: .primaryAction) {
@@ -165,29 +169,7 @@ struct TeacherStudentManagementSheet: View {
     
     // MARK: - Header View
     
-    private var headerView: some View {
-        VStack(spacing: 4) {
-            Text("Manage Students")
-                .font(.headline)
-            
-            HStack(spacing: 8) {
-                Text(classInfo.className)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                
-                Text("•")
-                    .foregroundColor(.secondary)
-                
-                // Count excludes dummy students (already filtered in localStudents)
-                Text("\(localStudents.count) student\(localStudents.count == 1 ? "" : "s")")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-        }
-        .padding()
-        .frame(maxWidth: .infinity)
-        .background(Color(.systemBackground))
-    }
+    // MARK: - Header View (Removed - replaced by toolbar)
     
     // MARK: - Empty State
     

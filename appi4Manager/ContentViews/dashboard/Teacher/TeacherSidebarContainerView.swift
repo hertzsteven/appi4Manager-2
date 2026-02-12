@@ -40,6 +40,11 @@ struct TeacherSidebarContainerView: View {
         activeClass?.devices.flatMap { $0.apps ?? [] } ?? []
     }
     
+    /// Classes that have devices assigned
+    private var classesWithDevices: [TeacherClassInfo] {
+        teacherClasses.filter { !$0.devices.isEmpty }
+    }
+    
     var body: some View {
         HStack(spacing: 0) {
             // Sidebar
@@ -86,7 +91,9 @@ struct TeacherSidebarContainerView: View {
                 } else if activeClass != nil {
                     StudentActivityReportView(
                         students: filteredStudents,
-                        deviceApps: deviceApps
+                        deviceApps: deviceApps,
+                        activeClass: activeClass,
+                        classesWithDevices: classesWithDevices
                     )
                 } else {
                     noClassView
@@ -105,6 +112,7 @@ struct TeacherSidebarContainerView: View {
                     // Student management for the active class (add/edit/delete)
                     TeacherStudentManagementSheet(
                         classInfo: activeClass,
+                        classesWithDevices: classesWithDevices,
                         onStudentChanged: {
                             // Refresh teacher data when a student is added/edited/deleted
                             Task {
@@ -127,7 +135,10 @@ struct TeacherSidebarContainerView: View {
                     errorView(message: error)
                 } else if let activeClass = activeClass {
                     // Show devices for the active class only (same as old toolbar button)
-                    TeacherDevicesView(teacherClasses: [activeClass])
+                    TeacherDevicesView(
+                        teacherClasses: [activeClass],
+                        classesWithDevices: classesWithDevices
+                    )
                 } else {
                     noClassView
                 }
@@ -147,9 +158,11 @@ struct TeacherSidebarContainerView: View {
                         students: filteredStudents,
                         devices: activeClass.devices,
                         locationId: activeClass.locationId,
+                        activeClass: activeClass,
+                        classesWithDevices: classesWithDevices,
                         dataProvider: StudentAppProfileDataProvider(),
                         bulkSetupDataProvider: StudentAppProfileDataProvider(),
-                        onDismiss: { }  // No dismiss action needed for embedded view
+                        onDismiss: nil  // No dismiss action needed for embedded view
                     )
                 } else {
                     noClassView
@@ -158,7 +171,10 @@ struct TeacherSidebarContainerView: View {
             
         case .setup:
             NavigationStack {
-                TeacherSetupView()
+                TeacherSetupView(
+                    activeClass: activeClass,
+                    classesWithDevices: classesWithDevices
+                )
             }
         }
     }

@@ -152,107 +152,11 @@ struct TeacherDashboardView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                // Left side - Select button for selection mode
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        withAnimation(.spring()) {
-                            isSelectionMode.toggle()
-                            if !isSelectionMode {
-                                selectedStudentIds.removeAll()
-                            }
-                        }
-                    } label: {
-                        Text(isSelectionMode ? "Cancel" : "Select")
-                    }
-                    .disabled(activeClass == nil)
-                }
-                
-                // Center - Class Switcher with Stats grouped together
-                ToolbarItem(placement: .principal) {
-                    if let classInfo = activeClass {
-                        HStack(spacing: 12) {
-                            // Class name with dropdown
-                            Menu {
-                                ForEach(classesWithDevices) { cls in
-                                    Button {
-                                        teacherItems.selectedClass = cls
-                                    } label: {
-                                        HStack {
-                                            Text(cls.className)
-                                            if cls.id == classInfo.id {
-                                                Image(systemName: "checkmark")
-                                            }
-                                        }
-                                    }
-                                }
-                            } label: {
-                                HStack(spacing: 4) {
-                                    Text(classInfo.className)
-                                        .font(.headline)
-                                        .foregroundStyle(.primary)
-                                    
-                                    if classesWithDevices.count > 1 {
-                                        Image(systemName: "chevron.down")
-                                            .font(.caption2)
-                                            .bold()
-                                            .foregroundStyle(.secondary)
-                                    }
-                                }
-                            }
-                            .disabled(classesWithDevices.count <= 1)
-                            
-                            // Stats grouped with class (student + device counts in subtle pills)
-                            HStack(spacing: 6) {
-                                HStack(spacing: 6) {
-                                    Image(systemName: "person.2")
-                                    Text("\(filteredStudentCount(for: classInfo))")
-                                }
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Color(.systemGray5))
-                                .clipShape(.capsule)
-                                
-                                HStack(spacing: 4) {
-                                    Image(systemName: "ipad")
-                                    Text("\(classInfo.devices.count)")
-                                }
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Color(.systemGray5))
-                                .clipShape(.capsule)
-                            }
-                            .font(.caption)
-                            .bold()
-                            .foregroundStyle(.secondary)
-                        }
-                        .padding(.leading, 12)
-                        .padding(.trailing, 8)
-                        .padding(.vertical, 6)
-                        .background(Color(.systemGray6))
-                        .clipShape(.capsule)
-                    }
-                }
-                
-                // Right side - Greeting + Profile + Settings
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    HStack(spacing: 12) {
-                        // Greeting
-                        Text("Hi \(authManager.authenticatedUser?.firstName ?? "Teacher")")
-                            .font(.subheadline)
-                            .bold()
-                        
-                        // Profile Initials Circle
-                        profileInitialsCircle
-                        
-                        // Settings Gear
-                        NavigationLink(destination: SettingsView()) {
-                            Image(systemName: "gearshape")
-                                .bold()
-                        }
-                    }
-                }
-            }
+            .teacherDashboardToolbar(
+                activeClass: activeClass,
+                classesWithDevices: classesWithDevices,
+                isSelectionMode: $isSelectionMode
+            )
         }
         .sheet(isPresented: $showClassSelector) {
             ClassSelectorSheet(
@@ -282,7 +186,7 @@ struct TeacherDashboardView: View {
         .sheet(isPresented: $showDevicesSheet) {
             if let activeClass = activeClass {
                 NavigationStack {
-                    TeacherDevicesView(teacherClasses: [activeClass])
+                    TeacherDevicesView(teacherClasses: [activeClass], classesWithDevices: classesWithDevices)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
                                 Button("Done") {
@@ -298,6 +202,7 @@ struct TeacherDashboardView: View {
                 NavigationStack {
                     TeacherStudentManagementSheet(
                         classInfo: activeClass,
+                        classesWithDevices: classesWithDevices,
                         onStudentChanged: {
                             // Refresh teacher data when a student is added/edited/deleted
                             Task {
@@ -329,6 +234,8 @@ struct TeacherDashboardView: View {
                     students: filteredStudents,
                     devices: activeClass.devices,
                     locationId: activeClass.locationId,
+                    activeClass: activeClass,
+                    classesWithDevices: classesWithDevices,
                     dataProvider: dataProvider,
                     bulkSetupDataProvider: bulkSetupDataProvider,
                     onDismiss: {
@@ -442,25 +349,6 @@ struct TeacherDashboardView: View {
                 }
             }
             .buttonStyle(.borderedProminent)
-        }
-    }
-    
-    // MARK: - Header Components
-    
-    /// A subtle circle containing user initials for the header
-    private var profileInitialsCircle: some View {
-        let name = authManager.authenticatedUser?.firstName ?? "Teacher"
-        let initial = String(name.prefix(1)).uppercased()
-        
-        return ZStack {
-            Circle()
-                .fill(Color.brandIndigo.opacity(0.15))
-                .frame(width: 32, height: 32)
-            
-            Text(initial)
-                .font(.subheadline)
-                .bold()
-                .foregroundStyle(Color.brandIndigo)
         }
     }
     

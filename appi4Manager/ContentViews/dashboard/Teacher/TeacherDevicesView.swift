@@ -26,8 +26,9 @@ struct TeacherDevicesView: View {
     
     @Environment(AuthenticationManager.self) private var authManager
     
-    /// The classes this teacher manages — typically a single active class from the sidebar container
+    /// The classes this teacher manages
     let teacherClasses: [TeacherClassInfo]
+    let classesWithDevices: [TeacherClassInfo]
     
     // MARK: - Selection State
     
@@ -123,7 +124,7 @@ struct TeacherDevicesView: View {
                         }
                         .padding(24)
                     }
-                    .background(Color(.systemGray6))
+                    .background(Color(.systemGray5))
                     
                     // Loading indicator for restriction profiles — overlay avoids layout shift
                     if isLoadingProfiles {
@@ -175,63 +176,11 @@ struct TeacherDevicesView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            // Left side — Select / Cancel button
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    withAnimation(.spring()) {
-                        isMultiSelectMode.toggle()
-                        if !isMultiSelectMode {
-                            selectedDevices.removeAll()
-                        }
-                    }
-                } label: {
-                    Text(isMultiSelectMode ? "Cancel" : "Select")
-                }
-            }
-            
-            // Center — Static class name with student/device counts
-            ToolbarItem(placement: .principal) {
-                if let classInfo = activeClass {
-                    HStack(spacing: 12) {
-                        // Class name (static label, no dropdown)
-                        Text(classInfo.className)
-                            .font(.headline)
-                            .foregroundStyle(.primary)
-                        
-                        // Stats: student count + device count
-                        HStack(spacing: 8) {
-                            HStack(spacing: 3) {
-                                Image(systemName: "person.2.fill")
-                                Text("\(filteredStudentCount)")
-                            }
-                            
-                            HStack(spacing: 3) {
-                                Image(systemName: "ipad.landscape")
-                                Text("\(classInfo.devices.count)")
-                            }
-                        }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color(.systemGray6))
-                    .clipShape(.capsule)
-                }
-            }
-            
-            // Right side — Greeting + Settings gear
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                Text("Hi \(authManager.authenticatedUser?.firstName ?? "Teacher")")
-                    .font(.subheadline)
-                    .bold()
-                
-                NavigationLink(destination: SettingsView()) {
-                    Image(systemName: "gearshape")
-                }
-            }
-        }
+        .teacherDashboardToolbar(
+            activeClass: activeClass,
+            classesWithDevices: classesWithDevices,
+            isSelectionMode: $isMultiSelectMode
+        )
         .alert(actionAlertTitle, isPresented: $showActionAlert) {
             Button("OK", role: .cancel) { }
         } message: {

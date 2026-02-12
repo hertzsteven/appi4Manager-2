@@ -17,9 +17,11 @@ struct PlanningSheet: View {
     let students: [Student]
     let devices: [TheDevice]
     let locationId: Int
+    let activeClass: TeacherClassInfo?
+    let classesWithDevices: [TeacherClassInfo]
     let dataProvider: StudentAppProfileDataProvider
     let bulkSetupDataProvider: StudentAppProfileDataProvider
-    let onDismiss: () -> Void
+    let onDismiss: (() -> Void)?
     
     // MARK: - State
     
@@ -35,37 +37,41 @@ struct PlanningSheet: View {
     // MARK: - Body
     
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                // Day picker
-                dayPicker
-                
-                // Timeslot picker
-                timeslotPicker
-                
-                // Students grid
-                studentsGrid
-            }
-            .background(Color(.systemGray6))
-            .navigationTitle("Weekly Planning")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
+        VStack(spacing: 0) {
+            // Day picker
+            dayPicker
+            
+            // Timeslot picker
+            timeslotPicker
+            
+            // Students grid
+            studentsGrid
+        }
+        .background(Color(.systemGray5))
+        .navigationTitle("Planning")
+        .navigationBarTitleDisplayMode(.inline)
+        .teacherDashboardToolbar(
+            activeClass: activeClass,
+            classesWithDevices: classesWithDevices
+        )
+        .toolbar {
+            if let onDismiss = onDismiss {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") {
                         onDismiss()
                     }
                 }
-                
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        showBulkSetup = true
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "slider.horizontal.3")
-                            Text("Bulk Setup")
-                        }
-                        .font(.subheadline)
+            }
+            
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    showBulkSetup = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "slider.horizontal.3")
+                        Text("Bulk Setup")
                     }
+                    .font(.subheadline)
                 }
             }
         }
