@@ -156,9 +156,11 @@ struct TeacherDashboardView: View {
                 // Left side - Select button for selection mode
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
-                        isSelectionMode.toggle()
-                        if !isSelectionMode {
-                            selectedStudentIds.removeAll()
+                        withAnimation(.spring()) {
+                            isSelectionMode.toggle()
+                            if !isSelectionMode {
+                                selectedStudentIds.removeAll()
+                            }
                         }
                     } label: {
                         Text(isSelectionMode ? "Cancel" : "Select")
@@ -321,8 +323,10 @@ struct TeacherDashboardView: View {
         }
         .sheet(isPresented: $showSetAppSheet) {
             // Reset selection mode after sheet closes
-            isSelectionMode = false
-            selectedStudentIds.removeAll()
+            withAnimation(.spring()) {
+                isSelectionMode = false
+                selectedStudentIds.removeAll()
+            }
         } content: {
             if let activeClass = activeClass {
                 let selectedStudents = filteredStudents.filter { selectedStudentIds.contains($0.id) }
@@ -841,6 +845,7 @@ struct TeacherDashboardView: View {
                     onUnlock: handleUnlock,
                     onActivity: handleActivity
                 )
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
     }
@@ -909,8 +914,10 @@ struct TeacherDashboardView: View {
                     unlockAlertMessage += (unlockAlertMessage.isEmpty ? "" : "\n\n") + noDeviceText
                 }
                 showUnlockAlert = true
-                selectedStudentIds.removeAll()
-                isSelectionMode = false
+                withAnimation {
+                    selectedStudentIds.removeAll()
+                    isSelectionMode = false
+                }
             }
             
             await loadTeacherData()
@@ -965,8 +972,10 @@ struct TeacherDashboardView: View {
                     unlockAlertMessage += (unlockAlertMessage.isEmpty ? "" : "\n\n") + noDeviceText
                 }
                 showUnlockAlert = true
-                selectedStudentIds.removeAll()
-                isSelectionMode = false
+                withAnimation {
+                    selectedStudentIds.removeAll()
+                    isSelectionMode = false
+                }
             }
             
             await loadTeacherData()
@@ -1075,8 +1084,40 @@ struct TeacherDashboardView: View {
         .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
     }
     
+    // MARK: - Data Loading Helpers
+
+    /// Fetch students for a class, returning empty array on failure
+    private static func fetchStudents(for schoolClass: SchoolClass) async -> [Student] {
+        do {
+            let response: ClassDetailResponse = try await ApiManager.shared.getData(
+                from: .getStudents(uuid: schoolClass.uuid)
+            )
+            return response.class.students
+        } catch {
+            #if DEBUG
+            print("⚠️ Failed to fetch students for class \(schoolClass.name): \(error)")
+            #endif
+            return []
+        }
+    }
+
+    /// Fetch devices (with apps) for a class, returning empty array on failure
+    private static func fetchDevices(for schoolClass: SchoolClass) async -> [TheDevice] {
+        do {
+            let response: DeviceListResponse = try await ApiManager.shared.getData(
+                from: .getDevicesWithApps(assettag: String(schoolClass.userGroupId))
+            )
+            return response.devices
+        } catch {
+            #if DEBUG
+            print("⚠️ Failed to fetch devices for class \(schoolClass.name): \(error)")
+            #endif
+            return []
+        }
+    }
+
     // MARK: - Data Loading
-    
+
     private func loadTeacherData() async {
         await MainActor.run {
             isLoading = true
@@ -1115,62 +1156,46 @@ struct TeacherDashboardView: View {
                 from: .getGroups
             )
             
-            // 5. Build the TeacherClassInfo array with students and devices
-            var classInfos: [TeacherClassInfo] = []
-            
-            for schoolClass in matchingClasses {
-                let groupName = groupsResponse.groups.first { $0.id == schoolClass.userGroupId }?.name
-                
-                // Fetch students for this class
-                var students: [Student] = []
-                do {
-                    let classDetailResponse: ClassDetailResponse = try await ApiManager.shared.getData(
-                        from: .getStudents(uuid: schoolClass.uuid)
-                    )
-                    students = classDetailResponse.class.students
-                } catch {
-                    #if DEBUG
-                    print("⚠️ Failed to fetch students for class \(schoolClass.name): \(error)")
-                    #endif
+            // 5. Build the TeacherClassInfo array with students and devices (in parallel)
+            let classInfos: [TeacherClassInfo] = await withTaskGroup(of: TeacherClassInfo.self) { group in
+                for schoolClass in matchingClasses {
+                    let groupName = groupsResponse.groups.first { $0.id == schoolClass.userGroupId }?.name
+
+                    group.addTask {
+                        async let students = Self.fetchStudents(for: schoolClass)
+                        async let devices  = Self.fetchDevices(for: schoolClass)
+
+                        var info = TeacherClassInfo(
+                            id: schoolClass.uuid,
+                            className: schoolClass.name,
+                            classUUID: schoolClass.uuid,
+                            userGroupID: schoolClass.userGroupId,
+                            userGroupName: groupName,
+                            locationId: schoolClass.locationId
+                        )
+                        info.students = await students
+                        info.devices  = await devices
+                        return info
+                    }
                 }
-                
-                // Fetch devices for this class (with apps included for Edit Profile functionality)
-                var devices: [TheDevice] = []
-                do {
-                    let deviceResponse: DeviceListResponse = try await ApiManager.shared.getData(
-                        from: .getDevicesWithApps(assettag: String(schoolClass.userGroupId))
-                    )
-                    devices = deviceResponse.devices
-                } catch {
-                    #if DEBUG
-                    print("⚠️ Failed to fetch devices for class \(schoolClass.name): \(error)")
-                    #endif
+
+                var results: [TeacherClassInfo] = []
+                for await info in group {
+                    results.append(info)
                 }
-                
-                var info = TeacherClassInfo(
-                    id: schoolClass.uuid,
-                    className: schoolClass.name,
-                    classUUID: schoolClass.uuid,
-                    userGroupID: schoolClass.userGroupId,
-                    userGroupName: groupName,
-                    locationId: schoolClass.locationId
-                )
-                info.students = students
-                info.devices = devices
-                
-                classInfos.append(info)
+                return results
             }
             
-            classInfos.sort { $0.className < $1.className }
+            let sortedClassInfos = classInfos.sorted { $0.className < $1.className }
             
             await MainActor.run {
-                teacherClasses = classInfos
-                
+                teacherClasses = sortedClassInfos
+
                 // Keep selectedClass in sync with freshly fetched data
                 if let current = teacherItems.selectedClass {
-                    teacherItems.selectedClass = classInfos.first(where: { $0.id == current.id }) ?? classInfos.first
+                    teacherItems.selectedClass = sortedClassInfos.first(where: { $0.id == current.id }) ?? sortedClassInfos.first
                 } else {
-                    teacherItems.selectedClass = classInfos.first
+                    teacherItems.selectedClass = sortedClassInfos.first
                 }
                 
                 isLoading = false
