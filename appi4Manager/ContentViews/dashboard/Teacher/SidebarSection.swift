@@ -9,7 +9,7 @@ import SwiftUI
 
 /// Represents the different sections accessible from the teacher sidebar.
 enum SidebarSection: String, CaseIterable, Identifiable {
-    case home
+    case classroom
     case activity
     case students
     case devices
@@ -21,7 +21,7 @@ enum SidebarSection: String, CaseIterable, Identifiable {
     /// The SF Symbol icon name for each section
     var iconName: String {
         switch self {
-        case .home: "house"
+        case .classroom: "graduationcap"
         case .activity: "chart.bar"
         case .students: "person.2"
         case .devices: "ipad.landscape"
@@ -33,7 +33,7 @@ enum SidebarSection: String, CaseIterable, Identifiable {
     /// The display label shown below the icon
     var label: String {
         switch self {
-        case .home: "Home"
+        case .classroom: "Classroom"
         case .activity: "Activity"
         case .students: "Students"
         case .devices: "Devices"

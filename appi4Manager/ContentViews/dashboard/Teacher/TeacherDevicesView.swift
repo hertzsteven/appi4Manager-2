@@ -200,6 +200,12 @@ struct TeacherDevicesView: View {
         } message: {
             Text("Are you sure you want to restart \(selectedDevices.count) device\(selectedDevices.count == 1 ? "" : "s")? This will interrupt any work on the devices.")
         }
+        .onChange(of: isMultiSelectMode) { oldValue, newValue in
+            // Clear selections when exiting selection mode (Cancel pressed)
+            if oldValue == true && newValue == false {
+                selectedDevices.removeAll()
+            }
+        }
         .onAppear {
             actionsManager.setAuthToken(authManager.token)
         }

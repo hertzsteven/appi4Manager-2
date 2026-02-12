@@ -134,6 +134,19 @@ struct TeacherDashboardView: View {
         teacherClasses.filter { !$0.devices.isEmpty }
     }
     
+    /// Re-login state of the first selected student who has a session.
+    /// - `nil` if no selected student has a session (button disabled).
+    /// - `false` if re-login is not yet allowed → button shows "Re-login".
+    /// - `true` if re-login is already allowed → button shows "Stop Re-login".
+    private var firstSelectedReloginAllowed: Bool? {
+        for id in selectedStudentIds {
+            if let session = sessionListener.session(for: id) {
+                return session.allowRelogin
+            }
+        }
+        return nil
+    }
+    
     var body: some View {
         NavigationStack {
             Group {
@@ -304,6 +317,12 @@ struct TeacherDashboardView: View {
             Button("OK", role: .cancel) { }
         } message: {
             Text(unlockAlertMessage)
+        }
+        .onChange(of: isSelectionMode) { oldValue, newValue in
+            // Clear selections when exiting selection mode (Cancel pressed)
+            if oldValue == true && newValue == false {
+                selectedStudentIds.removeAll()
+            }
         }
         .task {
             if authManager.isAuthenticated {
@@ -829,9 +848,11 @@ struct TeacherDashboardView: View {
             if isSelectionMode {
                 StudentSelectionActionBar(
                     selectedCount: selectedStudentIds.count,
+                    reloginAllowed: firstSelectedReloginAllowed,
                     onSetApp: handleSetApp,
                     onLock: handleLock,
                     onUnlock: handleUnlock,
+                    onRelogin: handleRelogin,
                     onActivity: handleActivity
                 )
                 .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -982,6 +1003,45 @@ struct TeacherDashboardView: View {
     /// Handle Activity action for selected students
     private func handleActivity() {
         showActivitySheet = true
+    }
+    
+    /// Handle Re-login action: toggles allowRelogin for all selected students who have a session.
+    /// The new value is the opposite of the first qualifying student's current `allowRelogin`.
+    private func handleRelogin() {
+        guard let currentValue = firstSelectedReloginAllowed else { return }
+        let newValue = !currentValue
+        
+        let documentIds: [String] = selectedStudentIds.compactMap { id -> String? in
+            guard let session = sessionListener.session(for: id), let docId = session.id else { return nil }
+            return docId
+        }
+        guard !documentIds.isEmpty else { return }
+        
+        Task {
+            let firestoreManager = FirestoreManager()
+            let (successCount, failCount) = await firestoreManager.updateAllowReloginBulk(documentIds: documentIds, allowRelogin: newValue)
+            
+            await MainActor.run {
+                if failCount == 0 {
+                    unlockAlertTitle = newValue ? "Re-login Allowed" : "Re-login Stopped"
+                    let action = newValue ? "can log in again" : "can no longer re-login"
+                    unlockAlertMessage = successCount == 1
+                        ? "1 student \(action) during this time slot."
+                        : "\(successCount) students \(action) during this time slot."
+                } else if successCount > 0 {
+                    unlockAlertTitle = "Partial Success"
+                    unlockAlertMessage = "\(successCount) updated. \(failCount) failed. Please try again for failed students."
+                } else {
+                    unlockAlertTitle = "Update Failed"
+                    unlockAlertMessage = "Could not update. Please try again."
+                }
+                showUnlockAlert = true
+                withAnimation {
+                    selectedStudentIds.removeAll()
+                    isSelectionMode = false
+                }
+            }
+        }
     }
     
     // MARK: - Helper Computed Properties

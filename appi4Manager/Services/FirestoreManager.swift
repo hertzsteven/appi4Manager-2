@@ -922,6 +922,21 @@ extension FirestoreManager {
         }
     }
     
+    /// Updates allowRelogin for multiple active session documents.
+    /// - Parameters:
+    ///   - documentIds: Document IDs of the ActiveSessions to update.
+    ///   - allowRelogin: The value to set for allowRelogin.
+    /// - Returns: Tuple of (successCount, failCount).
+    func updateAllowReloginBulk(documentIds: [String], allowRelogin: Bool) async -> (successCount: Int, failCount: Int) {
+        var successCount = 0
+        var failCount = 0
+        for docId in documentIds {
+            let ok = await updateAllowRelogin(documentId: docId, allowRelogin: allowRelogin)
+            if ok { successCount += 1 } else { failCount += 1 }
+        }
+        return (successCount, failCount)
+    }
+    
     /// Convenience method to get active session using TimeOfDay enum
     func getActiveSession(
         studentId: Int,

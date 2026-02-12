@@ -17,10 +17,10 @@ struct TeacherSidebarView: View {
         VStack(spacing: 8) {
             // Primary action at top
             SidebarButton(
-                section: .home,
-                isSelected: selectedSection == .home
+                section: .classroom,
+                isSelected: selectedSection == .classroom
             ) {
-                selectedSection = .home
+                selectedSection = .classroom
             }
             
             // Divider separating Live Class from utility items
@@ -130,5 +130,5 @@ private struct SidebarButton: View {
 }
 
 #Preview {
-    TeacherSidebarView(selectedSection: .constant(.home))
+    TeacherSidebarView(selectedSection: .constant(.classroom))
 }

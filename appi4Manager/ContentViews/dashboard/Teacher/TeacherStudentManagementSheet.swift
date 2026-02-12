@@ -46,9 +46,6 @@ struct TeacherStudentManagementSheet: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Premium Action Header
-            actionHeader
-            
             // Student list
             if localStudents.isEmpty {
                 emptyStateView
@@ -64,31 +61,31 @@ struct TeacherStudentManagementSheet: View {
             classesWithDevices: classesWithDevices
         )
         .toolbar {
-            if !localStudents.isEmpty {
-                ToolbarItem(placement: .primaryAction) {
-                    Menu {
-                        Button {
-                            showAddStudent = true
-                        } label: {
-                            Label("Add New Student", systemImage: "person.badge.plus")
-                        }
-                        
-                        Button {
-                            showAssignExisting = true
-                        } label: {
-                            Label("Assign Existing Student", systemImage: "person.2.badge.gearshape")
-                        }
-                        
-                        Divider()
-                        
-                        Button(role: .destructive) {
-                            showUnassignStudents = true
-                        } label: {
-                            Label("Unassign Students", systemImage: "person.badge.minus")
-                        }
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    Button {
+                        showAddStudent = true
                     } label: {
-                        Image(systemName: "ellipsis.circle")
+                        Label("Add New Student", systemImage: "person.badge.plus")
                     }
+                    
+                    Button {
+                        showAssignExisting = true
+                    } label: {
+                        Label("Assign Existing Student", systemImage: "person.2.badge.gearshape")
+                    }
+                    
+//                    if !localStudents.isEmpty {
+//                        Divider()
+//                        
+//                        Button(role: .destructive) {
+//                            showUnassignStudents = true
+//                        } label: {
+//                            Label("Unassign Students", systemImage: "person.badge.minus")
+//                        }
+//                    }
+                } label: {
+                    Image(systemName: "plus")
                 }
             }
         }
@@ -170,66 +167,7 @@ struct TeacherStudentManagementSheet: View {
         }
     }
     
-    // MARK: - Action Header
-    
-    private var actionHeader: some View {
-        HStack(spacing: 12) {
-            actionCard(
-                title: "Add New Student",
-                subtitle: "Create profile",
-                icon: "person.badge.plus",
-                color: .brandIndigo
-            ) {
-                showAddStudent = true
-            }
-            
-            actionCard(
-                title: "Assign Student",
-                subtitle: "From library",
-                icon: "person.2.badge.gearshape",
-                color: .brandIndigo
-            ) {
-                showAssignExisting = true
-            }
-        }
-        .padding(.horizontal)
-        .padding(.vertical, 16)
-        .background(Color(.systemGray5))
-    }
-    
-    private func actionCard(title: String, subtitle: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                ZStack {
-                    Circle()
-                        .fill(color.opacity(0.1))
-                        .frame(width: 40, height: 40)
-                    
-                    Image(systemName: icon)
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(color)
-                }
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.subheadline)
-                        .bold()
-                        .foregroundStyle(.primary)
-                    
-                    Text(subtitle)
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
-                
-                Spacer(minLength: 0)
-            }
-            .padding(12)
-            .background(Color(.systemBackground))
-            .clipShape(.rect(cornerRadius: 16))
-            .shadow(color: .black.opacity(0.04), radius: 10, x: 0, y: 5)
-        }
-        .buttonStyle(.plain)
-    }
+    // MARK: - Action Header (Removed — replaced by toolbar "+" menu)
 
     // MARK: - Header View (Removed - replaced by toolbar)
     
