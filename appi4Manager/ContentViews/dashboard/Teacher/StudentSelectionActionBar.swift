@@ -81,7 +81,7 @@ private struct ActionButton: View {
                     .bold()
             }
             .frame(maxWidth: .infinity)
-            .foregroundStyle(isEnabled ? .blue : .secondary.opacity(0.3))
+            .foregroundStyle(isEnabled ? Color.brandIndigo : .secondary.opacity(0.3))
             .animation(.easeInOut(duration: 0.2), value: isEnabled)
         }
         .disabled(!isEnabled)

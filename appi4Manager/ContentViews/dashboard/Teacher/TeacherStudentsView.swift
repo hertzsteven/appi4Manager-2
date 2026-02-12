@@ -181,7 +181,7 @@ struct SelectableStudentCard: View {
                 }
                 .overlay(
                     Circle()
-                        .stroke(Color.accentColor, lineWidth: 3)
+                        .stroke(Color.brandIndigo, lineWidth: 3)
                 )
                 
                 // Student Name
@@ -231,7 +231,7 @@ struct StudentDetailView: View {
                         .clipShape(Circle())
                         .overlay(
                             Circle()
-                                .stroke(Color.accentColor, lineWidth: 4)
+                                .stroke(Color.brandIndigo, lineWidth: 4)
                         )
                 case .failure:
                     Image(systemName: "person.circle.fill")

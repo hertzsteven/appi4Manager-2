@@ -161,7 +161,7 @@ struct TeacherStudentEditorView: View {
                             .clipShape(Circle())
                             .overlay(
                                 Circle()
-                                    .stroke(Color.accentColor, lineWidth: 2)
+                                    .stroke(Color.brandIndigo, lineWidth: 2)
                             )
                     } else if let student = student {
                         AsyncImage(url: student.photo) { phase in
@@ -174,7 +174,7 @@ struct TeacherStudentEditorView: View {
                                     .clipShape(Circle())
                                     .overlay(
                                         Circle()
-                                            .stroke(Color.accentColor, lineWidth: 2)
+                                            .stroke(Color.brandIndigo, lineWidth: 2)
                                     )
                             default:
                                 editorDefaultPhotoView

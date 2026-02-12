@@ -616,7 +616,7 @@ struct SelectableDeviceCard: View {
             if isMultiSelectMode {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 28))
-                    .foregroundStyle(isSelected ? Color.accentColor : Color(.systemGray4))
+                    .foregroundStyle(isSelected ? Color.brandIndigo : Color(.systemGray4))
                     .background(Circle().fill(.white))
                     .padding(12)
             }
@@ -628,7 +628,7 @@ struct SelectableDeviceCard: View {
         .overlay {
             if isMultiSelectMode && isSelected {
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.accentColor, lineWidth: 3)
+                    .stroke(Color.brandIndigo, lineWidth: 3)
             }
         }
         .navigationDestination(isPresented: $showingDetail) {
@@ -663,7 +663,7 @@ struct DeviceDetailView: View {
         VStack(spacing: 24) {
             ZStack {
                 Circle()
-                    .stroke(Color.accentColor, lineWidth: 4)
+                    .stroke(Color.brandIndigo, lineWidth: 4)
                     .frame(width: 100, height: 100)
                 
                 Image(systemName: "ipad.landscape")
@@ -697,7 +697,7 @@ struct DeviceDetailView: View {
                     Label("Lock to App", systemImage: "lock.fill")
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.accentColor)
+                        .background(Color.brandIndigo)
                         .foregroundStyle(.white)
                         .clipShape(.rect(cornerRadius: 12))
                 }

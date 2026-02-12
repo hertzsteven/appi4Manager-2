@@ -5,7 +5,7 @@
 //  Created by Steven Hertz on 12/18/23.
 //
 
-import Foundation
+import SwiftUI
 
 enum TimeOfDay {
     case am
@@ -16,10 +16,30 @@ enum TimeOfDay {
     /// Human-readable display name for the timeslot
     var displayName: String {
         switch self {
-        case .am: return "AM"
-        case .pm: return "PM"
-        case .home: return "Home"
-        case .blocked: return "Overnight"
+        case .am: "AM"
+        case .pm: "PM"
+        case .home: "Home"
+        case .blocked: "Overnight"
+        }
+    }
+    
+    /// The SF Symbol icon for the timeslot
+    var symbolName: String {
+        switch self {
+        case .am: "sun.max"
+        case .pm: "sun.horizon"
+        case .home: "house"
+        case .blocked: "moon.stars"
+        }
+    }
+    
+    /// The semantic color for the timeslot
+    var color: Color {
+        switch self {
+        case .am: .brandAmber
+        case .pm: .brandIndigo
+        case .home: .brandEmerald
+        case .blocked: .secondary
         }
     }
 }

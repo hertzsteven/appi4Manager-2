@@ -10,6 +10,21 @@ import SwiftUI
 extension Color {
     /// Generates a consistent random color based on a seed string.
     /// This ensures that the same "Class Name" always gets the same color.
+    ///     // MARK: - Brand Colors
+    
+    /// A premium indigo shade for primary branding
+    static let brandIndigo = Color(red: 0.35, green: 0.34, blue: 0.84)
+    
+    /// A sophisticated emerald green for success states
+    static let brandEmerald = Color(red: 0.1, green: 0.6, blue: 0.45)
+    
+    /// A rich amber for warning or standby states
+    static let brandAmber = Color(red: 0.95, green: 0.6, blue: 0.1)
+    
+    // MARK: - Utilities
+    
+    /// Generates a consistent random color based on a seed string.
+    /// This ensures that the same "Class Name" always gets the same color.
     static func random(seed: String) -> Color {
         var total: Int = 0
         for u in seed.unicodeScalars {

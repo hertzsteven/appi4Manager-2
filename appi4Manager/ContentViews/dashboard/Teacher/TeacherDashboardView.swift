@@ -383,7 +383,7 @@ struct TeacherDashboardView: View {
         VStack(spacing: 24) {
             Image(systemName: "person.crop.circle.badge.questionmark")
                 .font(.system(size: 80))
-                .foregroundColor(.accentColor)
+                .foregroundStyle(Color.brandIndigo)
             
             Text("Sign In Required")
                 .font(.title2)
@@ -400,7 +400,7 @@ struct TeacherDashboardView: View {
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
                     .frame(width: 200, height: 50)
-                    .background(Color.accentColor)
+                    .background(Color.brandIndigo)
                     .cornerRadius(12)
             }
         }
@@ -454,13 +454,13 @@ struct TeacherDashboardView: View {
         
         return ZStack {
             Circle()
-                .fill(Color.accentColor.opacity(0.15))
+                .fill(Color.brandIndigo.opacity(0.15))
                 .frame(width: 32, height: 32)
             
             Text(initial)
                 .font(.subheadline)
                 .bold()
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.brandIndigo)
         }
     }
     
@@ -487,7 +487,7 @@ struct TeacherDashboardView: View {
             // Icon
             Image(systemName: "square.stack.3d.up.fill")
                 .font(.system(size: 64))
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.brandIndigo)
             
             // Title
             VStack(spacing: 8) {
@@ -619,7 +619,7 @@ struct TeacherDashboardView: View {
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.title3)
-                    .foregroundColor(.accentColor)
+                    .foregroundStyle(Color.brandIndigo)
             }
             
             Spacer()
@@ -635,7 +635,7 @@ struct TeacherDashboardView: View {
             } label: {
                 Image(systemName: "chevron.right")
                     .font(.title3)
-                    .foregroundColor(.accentColor)
+                    .foregroundStyle(Color.brandIndigo)
             }
         }
         .padding(.horizontal, 20)
@@ -646,12 +646,40 @@ struct TeacherDashboardView: View {
     /// Segmented control for selecting AM, PM, or After School time period.
     /// The current time period is auto-selected on view load.
     private var timePeriodPicker: some View {
-        Picker("Time Period", selection: $selectedTimeslot) {
-            Text("A.M.").tag(TimeOfDay.am)
-            Text("P.M.").tag(TimeOfDay.pm)
-            Text("After School").tag(TimeOfDay.home)
+        HStack(spacing: 8) {
+            ForEach([TimeOfDay.am, TimeOfDay.pm, TimeOfDay.home], id: \.self) { timeslot in
+                let isSelected = selectedTimeslot == timeslot
+                
+                Button {
+                    withAnimation(.spring(duration: 0.3)) {
+                        selectedTimeslot = timeslot
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: timeslot.symbolName)
+                            .font(.subheadline)
+                        Text(timeslot.displayName)
+                            .font(.subheadline)
+                            .bold()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .foregroundStyle(isSelected ? .white : .secondary)
+                    .background {
+                        if isSelected {
+                            Capsule()
+                                .fill(timeslot.color)
+                                .shadow(color: timeslot.color.opacity(0.3), radius: 4, y: 2)
+                                .transition(.scale.combined(with: .opacity))
+                        } else {
+                            Capsule()
+                                .fill(Color(.systemGray6))
+                        }
+                    }
+                }
+                .buttonStyle(.plain)
+            }
         }
-        .pickerStyle(.segmented)
         .padding(.horizontal, 20)
     }
     
@@ -692,10 +720,10 @@ struct TeacherDashboardView: View {
                                 .bold()
                         }
                         .font(.caption)
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Color.brandIndigo)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
-                        .background(Color.accentColor.opacity(0.1))
+                        .background(Color.brandIndigo.opacity(0.1))
                         .clipShape(.rect(cornerRadius: 6))
                     }
                 }
@@ -731,7 +759,7 @@ struct TeacherDashboardView: View {
                     } label: {
                         HStack(spacing: 8) {
                             Image(systemName: "book.closed.fill")
-                                .foregroundStyle(Color.accentColor)
+                                .foregroundStyle(Color.brandIndigo)
                             Text(classInfo.className)
                                 .font(.headline)
                                 .fontWeight(.semibold)
@@ -1067,7 +1095,7 @@ struct TeacherDashboardView: View {
             // Class Header
             HStack {
                 Image(systemName: "book.closed.fill")
-                    .foregroundColor(.accentColor)
+                    .foregroundStyle(Color.brandIndigo)
                 Text(classInfo.className)
                     .font(.title3)
                     .fontWeight(.semibold)

@@ -93,7 +93,7 @@ private struct SidebarButton: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
-            .foregroundStyle(isSelected ? Color.accentColor : .secondary)
+            .foregroundStyle(isSelected ? Color.brandIndigo : .secondary)
             .frame(width: 70, height: 60)
             .background {
                 if isSelected {
@@ -102,7 +102,7 @@ private struct SidebarButton: View {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(
                                 LinearGradient(
-                                    colors: [Color.accentColor.opacity(0.2), Color.accentColor.opacity(0.05)],
+                                    colors: [Color.brandIndigo.opacity(0.2), Color.brandIndigo.opacity(0.05)],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 )
@@ -112,14 +112,14 @@ private struct SidebarButton: View {
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(
                                 LinearGradient(
-                                    colors: [Color.accentColor.opacity(0.5), Color.clear],
+                                    colors: [Color.brandIndigo.opacity(0.5), Color.clear],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 ),
                                 lineWidth: 1
                             )
                     }
-                    .shadow(color: Color.accentColor.opacity(0.25), radius: 8)
+                    .shadow(color: Color.brandIndigo.opacity(0.25), radius: 8)
                     .transition(.opacity.combined(with: .scale(scale: 0.95)))
                 }
             }

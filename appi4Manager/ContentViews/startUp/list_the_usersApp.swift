@@ -73,6 +73,7 @@ struct list_the_usersApp: App {
                     .environmentObject(teacherItems)
                     .environmentObject(studentAppProfileManager)
                     .environmentObject(devicesViewModel)
+                    .tint(.brandIndigo)
                     // TEMP: Config debug alert - remove when done testing
                     .alert("App Configuration", isPresented: $showConfigAlert) {
                         Button("OK") { }

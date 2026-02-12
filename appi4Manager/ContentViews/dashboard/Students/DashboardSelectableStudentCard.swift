@@ -67,7 +67,7 @@ struct DashboardSelectableStudentCard: View {
             // Selection checkmark overlay
             if isSelectionMode {
                 Circle()
-                    .fill(isSelected ? Color.accentColor : Color(.systemGray4))
+                    .fill(isSelected ? Color.brandIndigo : Color(.systemGray4))
                     .frame(width: 26, height: 26)
                     .overlay {
                         if isSelected {
@@ -79,11 +79,11 @@ struct DashboardSelectableStudentCard: View {
                     .padding(8)
             }
         }
-        .overlay {
+        .overlay(alignment: .center) {
             // Blue border when selected
             if isSelectionMode && isSelected {
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.accentColor, lineWidth: 3)
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.brandIndigo, lineWidth: 3)
             }
         }
     }

@@ -57,45 +57,82 @@ struct StudentProfileCard: View {
                 locationId: locationId
             )
         } label: {
-            VStack(spacing: 10) {
+            VStack(spacing: 8) {
                 // Student Photo
                 studentPhotoView
                 
                 // Student Name
-                VStack(spacing: 2) {
+                VStack(spacing: 0) {
                     Text(student.firstName)
                         .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.primary)
+                        .bold()
+                        .foregroundStyle(.primary)
                         .lineLimit(1)
                     
                     Text(student.lastName)
                         .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
                 
-                Divider()
-                    .padding(.horizontal, 8)
-                
-                // App Icons Row or No Profile Placeholder
+                // App Icons Row or No Profile
                 if hasProfile {
                     appIconsRow
+                        .padding(.top, 2)
                     sessionLengthBar
                 } else {
                     noProfileView
                 }
                 
-                // Session Activity Section - always show for consistent card height
-                sessionStatusOverlay
+                // Compact Session Status (Active or Placeholder)
+                if activeSession != nil {
+                    Divider()
+                        .padding(.horizontal, 12)
+                    sessionStatusOverlay
+                } else {
+                    // Placeholder to maintain visual weight (Option C)
+                    Divider()
+                        .padding(.horizontal, 12)
+                        .opacity(0.3)
+                    
+                    VStack(spacing: 6) {
+                        // Placeholder App Row
+                        HStack(spacing: 6) {
+                            Image(systemName: "app.dashed")
+                                .foregroundStyle(.tertiary)
+                                .frame(width: 20, height: 20)
+                            
+                            Text("No active session")
+                                .font(.caption)
+                                .foregroundStyle(.tertiary)
+                            
+                            Spacer()
+                        }
+                        
+                        // Placeholder Status Row
+                        HStack(spacing: 4) {
+                            Circle()
+                                .strokeBorder(.tertiary, lineWidth: 1)
+                                .frame(width: 6, height: 6)
+                            
+                            Text("--:--")
+                                .font(.caption2)
+                                .foregroundStyle(.tertiary)
+                            
+                            Spacer()
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 4)
+                }
             }
             .frame(maxWidth: .infinity)
-            .frame(minHeight: 260)
-            .padding(.vertical, 8)
+            .frame(height: 240) // Fixed height for consistent grid alignment
+            .padding(.vertical, 12)
             .padding(.horizontal, 4)
             .background(Color(.systemBackground))
-            .cornerRadius(12)
-            .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 2)
+            .clipShape(.rect(cornerRadius: 16))
+            .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 4)
         }
         .buttonStyle(.plain)
         .onAppear {
@@ -152,7 +189,7 @@ struct StudentProfileCard: View {
         }
         .overlay(
             Circle()
-                .stroke(hasProfile ? Color.accentColor : Color.gray, lineWidth: 2)
+                .stroke(hasProfile ? Color.brandIndigo : Color(.systemGray4), lineWidth: 2)
         )
     }
     
@@ -275,100 +312,58 @@ struct StudentProfileCard: View {
     /// Shows real-time session status when active, or placeholder when not
     @ViewBuilder
     private var sessionStatusOverlay: some View {
-        VStack(spacing: 6) {
-            Divider()
-                .padding(.horizontal, 8)
-            
-            // Section title - always visible
-            HStack {
-                Text("Session Activity")
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.secondary)
-                Spacer()
-            }
-            .padding(.horizontal, 8)
-            
-            if let session = activeSession {
-                // Active/completed session content
-                VStack(spacing: 4) {
-                    // App icon and name on same line (matching appIconsRow style)
-                    if let bundleId = session.appBundleId, !bundleId.isEmpty {
-                        let deviceApp = findDeviceApp(bundleId: bundleId)
-                        
-                        HStack(spacing: 6) {
-                            AsyncImage(url: deviceApp?.iconURL) { phase in
-                                switch phase {
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 28, height: 28)
-                                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                                default:
-                                    Image(systemName: "app.fill")
-                                        .font(.system(size: 20))
-                                        .foregroundColor(.accentColor)
-                                        .frame(width: 28, height: 28)
-                                }
-                            }
-                            
-                            Text(deviceApp?.displayName ?? appDisplayName(from: bundleId))
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(.primary)
-                                .lineLimit(1)
-                        }
-                    }
+        if let session = activeSession {
+            VStack(spacing: 6) {
+                // Active App Info
+                if let bundleId = session.appBundleId, !bundleId.isEmpty {
+                    let deviceApp = findDeviceApp(bundleId: bundleId)
                     
-                    // Status indicator + time
-                    HStack(spacing: 4) {
-                        Circle()
-                            .fill(session.isActive ? Color.green : Color.blue)
-                            .frame(width: 6, height: 6)
-                        
-                        if session.isCompleted {
-                            // Completed: show checkmark and completion time
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.caption2)
-                                .foregroundColor(.blue)
-                            if let endTime = session.endTimeString {
-                                Text(endTime)
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                            }
-                        } else if session.isActive {
-                            // Active: show clock and estimated end time
-                            Text("Active")
-                                .font(.caption2)
-                                .fontWeight(.medium)
-                                .foregroundColor(.green)
-                            if let endTime = session.endTimeString {
-                                Image(systemName: "clock")
-                                    .font(.caption2)
-                                    .foregroundColor(.orange)
-                                Text("~\(endTime)")
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
+                    HStack(spacing: 6) {
+                        AsyncImage(url: deviceApp?.iconURL) { phase in
+                            if let image = phase.image {
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                            } else {
+                                Image(systemName: "app.fill")
+                                    .foregroundStyle(.secondary)
                             }
                         }
+                        .frame(width: 20, height: 20)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                        
+                        Text(deviceApp?.displayName ?? appDisplayName(from: bundleId))
+                            .font(.caption)
+                            .bold()
+                            .lineLimit(1)
+                        
+                        Spacer()
                     }
                 }
-                .padding(.vertical, 2)
-            } else {
-                // Placeholder when no session - same height as active content
-                VStack(spacing: 4) {
-                    Image(systemName: "clock.badge.questionmark")
-                        .font(.system(size: 24))
-                        .foregroundColor(.secondary.opacity(0.5))
+                
+                // Session Status Row
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(session.isActive ? Color.brandEmerald : Color.brandIndigo)
+                        .frame(width: 6, height: 6)
                     
-                    Text("No session yet")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
+                    if session.isActive {
+                        Text("Live")
+                            .font(.caption2.bold())
+                            .foregroundStyle(Color.brandEmerald)
+                    }
+                    
+                    Spacer()
+                    
+                    if let endTime = session.endTimeString {
+                        Text(session.isActive ? "~\(endTime)" : endTime)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
                 }
-                .frame(height: 50)  // Match approximate height of active session content
-                .padding(.vertical, 2)
             }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 4)
         }
     }
     
