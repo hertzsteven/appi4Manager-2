@@ -16,6 +16,10 @@ struct TeacherToolbarModifier: ViewModifier {
     let activeClass: TeacherClassInfo?
     let classesWithDevices: [TeacherClassInfo]
     
+    /// When `true`, the class name is shown as a tappable dropdown menu for switching classes.
+    /// When `false`, the class name is displayed as a static label with no interaction.
+    var isClassSwitchable: Bool = false
+    
     /// Optional binding for selection mode (e.g. for bulk actions in Live Class)
     var isSelectionMode: Binding<Bool>? = nil
     
@@ -39,66 +43,57 @@ struct TeacherToolbarModifier: ViewModifier {
                 // MARK: - Center: Class Switcher & Stats
                 ToolbarItem(placement: .principal) {
                     if let classInfo = activeClass {
-                        HStack(spacing: 12) {
-                            // Class name with dropdown
-                            Menu {
-                                ForEach(classesWithDevices) { cls in
-                                    Button {
-                                        teacherItems.selectedClass = cls
-                                    } label: {
-                                        HStack {
-                                            Text(cls.className)
-                                            if cls.id == classInfo.id {
-                                                Image(systemName: "checkmark")
+                        HStack(spacing: 8) {
+                            // Class name — interactive dropdown on Home, static label elsewhere
+                            if isClassSwitchable {
+                                Menu {
+                                    ForEach(classesWithDevices) { cls in
+                                        Button {
+                                            teacherItems.selectedClass = cls
+                                        } label: {
+                                            HStack {
+                                                Text(cls.className)
+                                                if cls.id == classInfo.id {
+                                                    Image(systemName: "checkmark")
+                                                }
                                             }
                                         }
                                     }
+                                } label: {
+                                    classNameCapsule(classInfo: classInfo, showChevron: classesWithDevices.count > 1)
                                 }
-                            } label: {
-                                HStack(spacing: 4) {
-                                    Text(classInfo.className)
-                                        .font(.headline)
-                                        .foregroundStyle(.primary)
-                                    
-                                    if classesWithDevices.count > 1 {
-                                        Image(systemName: "chevron.down")
-                                            .font(.caption2)
-                                            .bold()
-                                            .foregroundStyle(.secondary)
-                                    }
-                                }
+                                .disabled(classesWithDevices.count <= 1)
+                            } else {
+                                classNameCapsule(classInfo: classInfo, showChevron: false)
                             }
-                            .disabled(classesWithDevices.count <= 1)
                             
-                            // Stats grouped with class (student + device counts in subtle pills)
-                            HStack(spacing: 6) {
-                                HStack(spacing: 6) {
-                                    Image(systemName: "person.2")
-                                    Text("\(filteredStudentCount(for: classInfo))")
-                                }
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Color(.systemGray5))
-                                .clipShape(.capsule)
-                                
-                                HStack(spacing: 4) {
-                                    Image(systemName: "ipad")
-                                    Text("\(classInfo.devices.count)")
-                                }
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Color(.systemGray5))
-                                .clipShape(.capsule)
+                            // Stats pills — separate from class capsule so they never get compressed
+                            HStack(spacing: 4) {
+                                Image(systemName: "person.2")
+                                Text("\(filteredStudentCount(for: classInfo))")
                             }
                             .font(.caption)
                             .bold()
                             .foregroundStyle(.secondary)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color(.systemGray5))
+                            .clipShape(.capsule)
+                            .fixedSize()
+                            
+                            HStack(spacing: 4) {
+                                Image(systemName: "ipad")
+                                Text("\(classInfo.devices.count)")
+                            }
+                            .font(.caption)
+                            .bold()
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color(.systemGray5))
+                            .clipShape(.capsule)
+                            .fixedSize()
                         }
-                        .padding(.leading, 12)
-                        .padding(.trailing, 8)
-                        .padding(.vertical, 6)
-                        .background(Color(.systemGray6))
-                        .clipShape(.capsule)
                     }
                 }
                 
@@ -126,6 +121,26 @@ struct TeacherToolbarModifier: ViewModifier {
     
     // MARK: - Helper Views
     
+    /// Capsule displaying the class name, optionally with a dropdown chevron.
+    private func classNameCapsule(classInfo: TeacherClassInfo, showChevron: Bool) -> some View {
+        HStack(spacing: 4) {
+            Text(classInfo.className)
+                .font(.headline)
+                .foregroundStyle(.primary)
+            
+            if showChevron {
+                Image(systemName: "chevron.down")
+                    .font(.caption2)
+                    .bold()
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(Color(.systemGray6))
+        .clipShape(.capsule)
+    }
+    
     private var profileInitialsCircle: some View {
         let name = authManager.authenticatedUser?.firstName ?? "Teacher"
         let initial = String(name.prefix(1)).uppercased()
@@ -149,14 +164,19 @@ struct TeacherToolbarModifier: ViewModifier {
 
 extension View {
     /// Applies the standard teacher dashboard toolbar with class switching and profile info.
+    ///
+    /// - Parameter isClassSwitchable: When `true`, the class name acts as a dropdown to switch classes.
+    ///   Defaults to `false`, showing the class name as a static label.
     func teacherDashboardToolbar(
         activeClass: TeacherClassInfo?,
         classesWithDevices: [TeacherClassInfo],
+        isClassSwitchable: Bool = false,
         isSelectionMode: Binding<Bool>? = nil
     ) -> some View {
         self.modifier(TeacherToolbarModifier(
             activeClass: activeClass,
             classesWithDevices: classesWithDevices,
+            isClassSwitchable: isClassSwitchable,
             isSelectionMode: isSelectionMode
         ))
     }

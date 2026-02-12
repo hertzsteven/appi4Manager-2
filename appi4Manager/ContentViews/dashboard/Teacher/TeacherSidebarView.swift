@@ -30,10 +30,10 @@ struct TeacherSidebarView: View {
             
             // Utility items
             SidebarButton(
-                section: .reports,
-                isSelected: selectedSection == .reports
+                section: .activity,
+                isSelected: selectedSection == .activity
             ) {
-                selectedSection = .reports
+                selectedSection = .activity
             }
             
             SidebarButton(

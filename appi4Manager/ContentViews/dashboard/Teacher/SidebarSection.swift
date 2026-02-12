@@ -10,7 +10,7 @@ import SwiftUI
 /// Represents the different sections accessible from the teacher sidebar.
 enum SidebarSection: String, CaseIterable, Identifiable {
     case home
-    case reports
+    case activity
     case students
     case devices
     case calendar
@@ -22,7 +22,7 @@ enum SidebarSection: String, CaseIterable, Identifiable {
     var iconName: String {
         switch self {
         case .home: "house"
-        case .reports: "chart.bar"
+        case .activity: "chart.bar"
         case .students: "person.2"
         case .devices: "ipad.landscape"
         case .calendar: "calendar"
@@ -34,7 +34,7 @@ enum SidebarSection: String, CaseIterable, Identifiable {
     var label: String {
         switch self {
         case .home: "Home"
-        case .reports: "Reports"
+        case .activity: "Activity"
         case .students: "Students"
         case .devices: "Devices"
         case .calendar: "Calendar"

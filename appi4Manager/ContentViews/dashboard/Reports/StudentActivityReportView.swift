@@ -150,7 +150,10 @@ struct StudentActivityReportView: View {
                         NavigationLink {
                             StudentActivityDetailView(
                                 student: summary.student,
-                                deviceApps: deviceApps
+                                deviceApps: deviceApps,
+                                initialFilter: viewModel.selectedFilter,
+                                initialCustomStartDate: viewModel.selectedFilter == .custom ? viewModel.customStartDate : nil,
+                                initialCustomEndDate: viewModel.selectedFilter == .custom ? viewModel.customEndDate : nil
                             )
                         } label: {
                             StudentActivitySummaryRow(
@@ -171,7 +174,10 @@ struct StudentActivityReportView: View {
                         NavigationLink {
                             StudentActivityDetailView(
                                 student: summary.student,
-                                deviceApps: deviceApps
+                                deviceApps: deviceApps,
+                                initialFilter: viewModel.selectedFilter,
+                                initialCustomStartDate: viewModel.selectedFilter == .custom ? viewModel.customStartDate : nil,
+                                initialCustomEndDate: viewModel.selectedFilter == .custom ? viewModel.customEndDate : nil
                             )
                         } label: {
                             StudentActivitySummaryRow(

@@ -13,6 +13,13 @@ struct StudentActivityDetailView: View {
     let student: Student
     let deviceApps: [DeviceApp]
     
+    /// The filter to apply when the view first loads.
+    /// Defaults to `.today` but can be overridden by the presenting view
+    /// to preserve the user's previous selection.
+    var initialFilter: ActivityDateFilter = .today
+    var initialCustomStartDate: Date?
+    var initialCustomEndDate: Date?
+    
     @State private var viewModel = StudentActivityReportViewModel()
     
     var body: some View {
@@ -46,6 +53,13 @@ struct StudentActivityDetailView: View {
         .navigationTitle("Activity History")
         .navigationBarTitleDisplayMode(.inline)
         .task {
+            viewModel.selectedFilter = initialFilter
+            if let start = initialCustomStartDate {
+                viewModel.customStartDate = start
+            }
+            if let end = initialCustomEndDate {
+                viewModel.customEndDate = end
+            }
             await viewModel.loadActivityForStudent(studentId: student.id)
         }
     }

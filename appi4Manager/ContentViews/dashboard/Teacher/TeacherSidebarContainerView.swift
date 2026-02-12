@@ -80,7 +80,7 @@ struct TeacherSidebarContainerView: View {
             // Use the existing TeacherDashboardView for Live Class
             TeacherDashboardView()
             
-        case .reports:
+        case .activity:
             NavigationStack {
                 if !authManager.isAuthenticated {
                     loginPromptView

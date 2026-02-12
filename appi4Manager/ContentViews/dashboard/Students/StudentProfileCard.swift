@@ -1025,8 +1025,8 @@ struct EditStudentProfileSheet: View {
     
     @Environment(\.dismiss) private var dismiss
     
-    /// Selected app bundle IDs
-    @State private var selectedBundleIds: Set<String> = []
+    /// Selected app bundle ID (single selection only)
+    @State private var selectedBundleId: String?
     
     /// Session duration in minutes
     @State private var sessionLength: Double = 30
@@ -1105,12 +1105,12 @@ struct EditStudentProfileSheet: View {
                 
                 // App Selection Header
                 HStack {
-                    Text("Select Apps")
+                    Text("Select App")
                         .font(.headline)
                     Spacer()
-                    Text("\(selectedBundleIds.count) selected")
+                    Text(selectedBundleId != nil ? "1 selected" : "0 selected")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
                 .padding()
                 .background(Color(.systemBackground))
@@ -1225,13 +1225,14 @@ struct EditStudentProfileSheet: View {
     @ViewBuilder
     private func appRow(for app: DeviceApp) -> some View {
         let bundleId = app.identifier ?? ""
-        let isSelected = selectedBundleIds.contains(bundleId)
+        let isSelected = selectedBundleId == bundleId
         
         Button {
+            // Single selection: tap to select, tap again to deselect
             if isSelected {
-                selectedBundleIds.remove(bundleId)
+                selectedBundleId = nil
             } else {
-                selectedBundleIds.insert(bundleId)
+                selectedBundleId = bundleId
             }
         } label: {
             HStack(spacing: 12) {
@@ -1285,18 +1286,16 @@ struct EditStudentProfileSheet: View {
     
     // MARK: - Helper Methods
     
-    /// Load current session values from the first student (for session length default)
+    /// Load current session values from the first student, including the previously saved app
     private func loadCurrentValues() {
-        // Start with no apps selected - user will select apps fresh each time
-        selectedBundleIds = []
-        
-        // Get current session from first student to load session length (if profile exists)
         if let firstStudent = students.first,
            let session = dataProvider.getSession(for: firstStudent.id, day: dayString, timeslot: timeslot) {
-            // Only load the session length, not the previously selected apps
+            // Pre-select the previously saved app (first one in the array)
+            selectedBundleId = session.apps.first
             sessionLength = session.sessionLength > 0 ? session.sessionLength : 30
         } else {
             // Default values for new profiles
+            selectedBundleId = nil
             sessionLength = 30
         }
     }
@@ -1307,13 +1306,15 @@ struct EditStudentProfileSheet: View {
         saveError = nil
         
         do {
-            // Update the session for all students
+            // Wrap the single selected app into an array for the data provider
+            let apps: [String] = if let selectedBundleId { [selectedBundleId] } else { [] }
+            
             for student in students {
                 try await dataProvider.updateAndSaveSession(
                     for: student.id,
                     day: dayString,
                     timeslot: timeslot,
-                    apps: Array(selectedBundleIds),
+                    apps: apps,
                     sessionLength: sessionLength
                 )
             }

@@ -76,6 +76,9 @@ struct TeacherDashboardView: View {
     /// Controls the Set App sheet visibility (for selected students)
     @State private var showSetAppSheet = false
     
+    /// Controls the activity sheet visibility (for selected students)
+    @State private var showActivitySheet = false
+    
     /// Manages device actions (unlock, lock, restart, assign)
     @State private var actionsManager = DeviceActionsManager()
     
@@ -155,6 +158,7 @@ struct TeacherDashboardView: View {
             .teacherDashboardToolbar(
                 activeClass: activeClass,
                 classesWithDevices: classesWithDevices,
+                isClassSwitchable: true,
                 isSelectionMode: $isSelectionMode
             )
         }
@@ -260,6 +264,40 @@ struct TeacherDashboardView: View {
                     dataProvider: dataProvider,
                     deviceApps: activeClass.devices.first?.apps ?? []
                 )
+                .presentationSizing(.page)
+            }
+        }
+        .sheet(isPresented: $showActivitySheet) {
+            withAnimation(.spring()) {
+                isSelectionMode = false
+                selectedStudentIds.removeAll()
+            }
+        } content: {
+            if let activeClass = activeClass {
+                let selected = filteredStudents.filter { selectedStudentIds.contains($0.id) }
+                NavigationStack {
+                    if selected.count == 1, let student = selected.first {
+                        StudentActivityDetailView(
+                            student: student,
+                            deviceApps: activeClass.devices.first?.apps ?? []
+                        )
+                    } else {
+                        StudentActivityReportView(
+                            students: selected,
+                            deviceApps: activeClass.devices.first?.apps ?? [],
+                            activeClass: activeClass,
+                            classesWithDevices: classesWithDevices
+                        )
+                    }
+                }
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Done") {
+                            showActivitySheet = false
+                        }
+                    }
+                }
+                .presentationSizing(.page)
             }
         }
         .alert(unlockAlertTitle, isPresented: $showUnlockAlert) {
@@ -943,8 +981,7 @@ struct TeacherDashboardView: View {
     
     /// Handle Activity action for selected students
     private func handleActivity() {
-        // TODO: Implement activity view for selected students
-        print("View activity for \(selectedStudentIds.count) students")
+        showActivitySheet = true
     }
     
     // MARK: - Helper Computed Properties
