@@ -109,6 +109,7 @@ struct TeacherToolbarModifier: ViewModifier {
                         Text("Hi \(authManager.authenticatedUser?.firstName ?? "Teacher")")
                             .font(.subheadline)
                             .bold()
+                            .padding(.leading , 8)
                         
                         // Profile Initials Circle
                         profileInitialsCircle

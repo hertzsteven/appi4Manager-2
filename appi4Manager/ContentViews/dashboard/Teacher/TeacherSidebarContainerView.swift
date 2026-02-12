@@ -15,7 +15,7 @@ struct TeacherSidebarContainerView: View {
     @EnvironmentObject var teacherItems: TeacherItems
     
     /// Currently selected sidebar section
-    @State private var selectedSection: SidebarSection = .liveClass
+    @State private var selectedSection: SidebarSection = .home
     
     /// Teacher class data, shared across sections
     @State private var teacherClasses: [TeacherClassInfo] = []
@@ -76,7 +76,7 @@ struct TeacherSidebarContainerView: View {
     @ViewBuilder
     private var contentView: some View {
         switch selectedSection {
-        case .liveClass:
+        case .home:
             // Use the existing TeacherDashboardView for Live Class
             TeacherDashboardView()
             
