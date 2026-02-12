@@ -100,41 +100,49 @@ struct TeacherDevicesView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                // Loading indicator for restriction profiles
-                if isLoadingProfiles {
-                    HStack(spacing: 8) {
-                        ProgressView()
-                            .scaleEffect(0.8)
-                        Text("Loading device status...")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.vertical, 8)
-                }
-                
-                // Devices grid
-                ScrollView {
-                    LazyVGrid(columns: [
-                        GridItem(.adaptive(minimum: 160), spacing: 24)
-                    ], spacing: 24) {
-                        ForEach(allDevices, id: \.UDID) { device in
-                            SelectableDeviceCard(
-                                device: device,
-                                isSelected: selectedDevices.contains(device.UDID),
-                                isMultiSelectMode: isMultiSelectMode,
-                                isLocked: isDeviceLocked(device),
-                                allStudents: allStudents,
-                                onRefreshNeeded: {
-                                    await loadRestrictionProfiles()
+                ZStack(alignment: .top) {
+                    // Devices grid
+                    ScrollView {
+                        LazyVGrid(columns: [
+                            GridItem(.adaptive(minimum: 160), spacing: 24)
+                        ], spacing: 24) {
+                            ForEach(allDevices, id: \.UDID) { device in
+                                SelectableDeviceCard(
+                                    device: device,
+                                    isSelected: selectedDevices.contains(device.UDID),
+                                    isMultiSelectMode: isMultiSelectMode,
+                                    isLocked: isDeviceLocked(device),
+                                    allStudents: allStudents,
+                                    onRefreshNeeded: {
+                                        await loadRestrictionProfiles()
+                                    }
+                                ) {
+                                    toggleDeviceSelection(device.UDID)
                                 }
-                            ) {
-                                toggleDeviceSelection(device.UDID)
                             }
                         }
+                        .padding(24)
                     }
-                    .padding(24)
+                    .background(Color(.systemGray6))
+                    
+                    // Loading indicator for restriction profiles — overlay avoids layout shift
+                    if isLoadingProfiles {
+                        HStack(spacing: 8) {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                            Text("Loading device status...")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(.ultraThinMaterial)
+                        .clipShape(.capsule)
+                        .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                        .padding(.top, 12)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
                 }
-                .background(Color(.systemGray6))
                 
                 // Bottom action bar — visible whenever selection mode is active
                 if isMultiSelectMode {
