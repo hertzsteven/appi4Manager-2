@@ -45,7 +45,7 @@ struct TeacherStudentDetailView: View {
             notesSection
             deleteSection
         }
-        .navigationTitle("Student")
+        .navigationTitle(student.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
