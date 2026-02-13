@@ -284,12 +284,12 @@ struct BulkProfileSetupView: View {
     private var appListSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Label("Select Apps", systemImage: "app.badge")
+                Label("Select App", systemImage: "app.badge")
                     .font(.headline)
                 
                 Spacer()
                 
-                Text("\(viewModel.selectedBundleIds.count) selected")
+                Text(viewModel.selectedBundleId != nil ? "1 selected" : "None selected")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -301,7 +301,7 @@ struct BulkProfileSetupView: View {
                     ForEach(viewModel.filteredApps) { app in
                         AppSelectionRow(
                             app: app,
-                            isSelected: viewModel.isAppSelected(app.identifier ?? "")
+                            isSelected: viewModel.selectedBundleId == app.identifier
                         ) {
                             if let bundleId = app.identifier {
                                 viewModel.toggleApp(bundleId)

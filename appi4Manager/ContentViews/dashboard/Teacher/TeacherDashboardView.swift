@@ -70,9 +70,7 @@ struct TeacherDashboardView: View {
     /// Controls the restrictions sheet visibility (shows current device locks)
     @State private var showRestrictionsSheet = false
     
-    /// Controls the Planning sheet visibility (weekly scheduling)
-    @State private var showPlanningSheet = false
-    
+
     /// Controls the Set App sheet visibility (for selected students)
     @State private var showSetAppSheet = false
     
@@ -245,22 +243,7 @@ struct TeacherDashboardView: View {
                 )
             }
         }
-        .sheet(isPresented: $showPlanningSheet) {
-            if let activeClass = activeClass {
-                PlanningSheet(
-                    students: filteredStudents,
-                    devices: activeClass.devices,
-                    locationId: activeClass.locationId,
-                    activeClass: activeClass,
-                    classesWithDevices: classesWithDevices,
-                    dataProvider: dataProvider,
-                    bulkSetupDataProvider: bulkSetupDataProvider,
-                    onDismiss: {
-                        showPlanningSheet = false
-                    }
-                )
-            }
-        }
+
         .sheet(isPresented: $showSetAppSheet) {
             // Reset selection mode after sheet closes
             withAnimation(.spring()) {

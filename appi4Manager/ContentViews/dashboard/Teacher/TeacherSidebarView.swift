@@ -51,10 +51,10 @@ struct TeacherSidebarView: View {
             }
             
             SidebarButton(
-                section: .calendar,
-                isSelected: selectedSection == .calendar
+                section: .planning,
+                isSelected: selectedSection == .planning
             ) {
-                selectedSection = .calendar
+                selectedSection = .planning
             }
             
             Spacer()

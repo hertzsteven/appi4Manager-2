@@ -13,7 +13,7 @@ enum SidebarSection: String, CaseIterable, Identifiable {
     case activity
     case students
     case devices
-    case calendar
+    case planning
     case setup
     
     var id: String { rawValue }
@@ -25,7 +25,7 @@ enum SidebarSection: String, CaseIterable, Identifiable {
         case .activity: "chart.bar"
         case .students: "person.2"
         case .devices: "ipad.landscape"
-        case .calendar: "calendar"
+        case .planning: "calendar.badge.clock"
         case .setup: "gearshape"
         }
     }
@@ -37,7 +37,7 @@ enum SidebarSection: String, CaseIterable, Identifiable {
         case .activity: "Activity"
         case .students: "Students"
         case .devices: "Devices"
-        case .calendar: "Calendar"
+        case .planning: "Planning"
         case .setup: "Setup"
         }
     }

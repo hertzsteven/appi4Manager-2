@@ -144,7 +144,7 @@ struct TeacherSidebarContainerView: View {
                 }
             }
             
-        case .calendar:
+        case .planning:
             NavigationStack {
                 if !authManager.isAuthenticated {
                     loginPromptView
@@ -153,16 +153,11 @@ struct TeacherSidebarContainerView: View {
                 } else if let error = errorMessage {
                     errorView(message: error)
                 } else if let activeClass = activeClass {
-                    // Planning view for the active class (same as old toolbar button)
-                    PlanningSheet(
+                    PlanningView(
                         students: filteredStudents,
                         devices: activeClass.devices,
-                        locationId: activeClass.locationId,
                         activeClass: activeClass,
-                        classesWithDevices: classesWithDevices,
-                        dataProvider: StudentAppProfileDataProvider(),
-                        bulkSetupDataProvider: StudentAppProfileDataProvider(),
-                        onDismiss: nil  // No dismiss action needed for embedded view
+                        classesWithDevices: classesWithDevices
                     )
                 } else {
                     noClassView

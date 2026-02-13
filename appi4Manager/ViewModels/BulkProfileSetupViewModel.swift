@@ -24,8 +24,8 @@ final class BulkProfileSetupViewModel {
     /// Selected timeslots
     var selectedTimeslots: Set<TimeOfDay> = []
     
-    /// Selected app bundle IDs
-    var selectedBundleIds: Set<String> = []
+    /// Selected app bundle ID (single selection per timeslot)
+    var selectedBundleId: String?
     
     /// Current filter category
     var selectedCategory: AppFilterCategory = .all
@@ -80,36 +80,63 @@ final class BulkProfileSetupViewModel {
         !selectedStudentIds.isEmpty &&
         !selectedDays.isEmpty &&
         !selectedTimeslots.isEmpty &&
-        !selectedBundleIds.isEmpty
+        selectedBundleId != nil
     }
     
-    /// Human-readable summary of the current selection
+    /// Human-readable summary showing actual student names, days, and timeslots.
+    ///
+    /// Displays up to 3 student first names, abbreviated day names, timeslot labels,
+    /// and the selected app count so teachers see exactly what they're about to apply.
     var summaryText: String {
         let studentCount = selectedStudentIds.count
-        let dayCount = selectedDays.count
-        let timeslotCount = selectedTimeslots.count
-        let appCount = selectedBundleIds.count
         
         if studentCount == 0 {
             return "Select students to configure"
         }
         
         var parts: [String] = []
-        parts.append("\(studentCount) student\(studentCount == 1 ? "" : "s")")
         
-        if dayCount > 0 {
-            parts.append("\(dayCount) day\(dayCount == 1 ? "" : "s")")
+        // Student names — show up to 3, then "+N more"
+        let selectedNames = allStudents
+            .filter { selectedStudentIds.contains($0.id) }
+            .map(\.firstName)
+        if selectedNames.count <= 3 {
+            parts.append(selectedNames.joined(separator: ", "))
+        } else {
+            let first3 = selectedNames.prefix(3).joined(separator: ", ")
+            parts.append("\(first3) +\(selectedNames.count - 3) more")
         }
         
-        if timeslotCount > 0 {
-            parts.append("\(timeslotCount) timeslot\(timeslotCount == 1 ? "" : "s")")
+        // Day abbreviations
+        if !selectedDays.isEmpty {
+            let dayOrder: [DayOfWeek] = [.monday, .tuesday, .wednesday, .thursday, .friday]
+            let sorted = dayOrder.filter { selectedDays.contains($0) }
+            let abbreviations = sorted.map { day in
+                switch day {
+                case .monday: "Mon"
+                case .tuesday: "Tue"
+                case .wednesday: "Wed"
+                case .thursday: "Thu"
+                case .friday: "Fri"
+                case .saturday: "Sat"
+                case .sunday: "Sun"
+                }
+            }
+            parts.append(abbreviations.joined(separator: ", "))
         }
         
-        if appCount > 0 {
-            parts.append("\(appCount) app\(appCount == 1 ? "" : "s")")
+        // Timeslot labels — sorted in natural display order
+        if !selectedTimeslots.isEmpty {
+            let timeslotOrder: [TimeOfDay] = [.am, .pm, .home, .blocked]
+            let sorted = timeslotOrder.filter { selectedTimeslots.contains($0) }
+            let labels = sorted.map(\.displayName)
+            parts.append(labels.joined(separator: ", "))
         }
         
-        return parts.joined(separator: " • ")
+        // Duration
+        parts.append("\(Int(sessionLength)) min")
+        
+        return parts.joined(separator: " · ")
     }
     
     // MARK: - Student Selection
@@ -183,18 +210,31 @@ final class BulkProfileSetupViewModel {
         selectedTimeslots.contains(timeslot)
     }
     
-    // MARK: - App Selection
+    func selectAllTimeslots() {
+        selectedTimeslots = Set(Self.allTimeslots)
+    }
     
+    func deselectAllTimeslots() {
+        selectedTimeslots.removeAll()
+    }
+    
+    var allTimeslotsSelected: Bool {
+        Self.allTimeslots.allSatisfy { selectedTimeslots.contains($0) }
+    }
+    
+    // MARK: - App Selection (Single)
+    
+    /// Selects a single app. Tapping the already-selected app deselects it.
     func toggleApp(_ bundleId: String) {
-        if selectedBundleIds.contains(bundleId) {
-            selectedBundleIds.remove(bundleId)
+        if selectedBundleId == bundleId {
+            selectedBundleId = nil
         } else {
-            selectedBundleIds.insert(bundleId)
+            selectedBundleId = bundleId
         }
     }
     
     func isAppSelected(_ bundleId: String) -> Bool {
-        selectedBundleIds.contains(bundleId)
+        selectedBundleId == bundleId
     }
     
     // MARK: - Apply Configuration
@@ -207,7 +247,8 @@ final class BulkProfileSetupViewModel {
         isSaving = true
         saveError = nil
         
-        let appsList = Array(selectedBundleIds)
+        guard let bundleId = selectedBundleId else { return }
+        let appsList = [bundleId]
         var successCount = 0
         var totalOperations = selectedStudentIds.count * selectedDays.count * selectedTimeslots.count
         
@@ -241,6 +282,13 @@ final class BulkProfileSetupViewModel {
         }
         
         isSaving = false
+    }
+    
+    /// Resets transient state after a successful save so the view can be reused inline.
+    func resetAfterSave() {
+        didSaveSuccessfully = false
+        selectedBundleId = nil
+        saveError = nil
     }
 }
 

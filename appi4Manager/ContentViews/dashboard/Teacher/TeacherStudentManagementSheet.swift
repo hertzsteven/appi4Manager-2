@@ -46,6 +46,12 @@ struct TeacherStudentManagementSheet: View {
     
     var body: some View {
         VStack(spacing: 0) {
+            Text("Student Management")
+                .font(.title3)
+                .bold()
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.horizontal)
+                .padding(.bottom , 18)
             // Student list
             if localStudents.isEmpty {
                 emptyStateView
@@ -263,10 +269,13 @@ struct TeacherStudentManagementSheet: View {
                 }
                 
                 Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                Image(systemName: "info.circle")
+                    .font(.title3)
+                    .foregroundStyle(Color.brandIndigo)
+
+//                Image(systemName: "chevron.right")
+//                    .font(.caption)
+//                    .foregroundStyle(.secondary)
             }
             .padding(.vertical, 4)
         }
@@ -383,4 +392,48 @@ private extension TeacherStudentManagementSheet {
         components?.queryItems = queryItems
         return components?.url ?? url
     }
+}
+
+// MARK: - Preview
+
+#Preview("Student Management") {
+    let sampleStudents = [
+        Student(
+            id: 1,
+            name: "David Grossman",
+            email: "QWERTY@gmail.com",
+            username: "david.g",
+            firstName: "David",
+            lastName: "Grossman",
+            photo: URL(string: "https://placehold.co/100")!
+        ),
+        Student(
+            id: 2,
+            name: "Yehuda Grossman",
+            email: "Ytrewq@gmail.com",
+            username: "yehuda.g",
+            firstName: "Yehuda",
+            lastName: "Grossman",
+            photo: URL(string: "https://placehold.co/100")!
+        )
+    ]
+
+    let sampleClass = TeacherClassInfo(
+        id: "preview-uuid",
+        className: "Grossman",
+        classUUID: "preview-uuid",
+        userGroupID: 1,
+        userGroupName: "Group A",
+        locationId: 1,
+        students: sampleStudents
+    )
+
+    NavigationStack {
+        TeacherStudentManagementSheet(
+            classInfo: sampleClass,
+            classesWithDevices: [sampleClass]
+        )
+    }
+    .environment(AuthenticationManager())
+    .environmentObject(TeacherItems())
 }
