@@ -45,7 +45,7 @@ struct TeacherStudentDetailView: View {
             notesSection
             deleteSection
         }
-        .navigationTitle(student.name)
+        .navigationTitle("\(firstName) \(lastName)")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -152,8 +152,8 @@ struct TeacherStudentDetailView: View {
 
     private var notesSection: some View {
         Section(header: Text("Details")) {
-            LabeledContent("Email", value: student.email)
-            LabeledContent("Username", value: student.username)
+//            LabeledContent("Email", value: student.email)
+//            LabeledContent("Username", value: student.username)
 
             if isLoading {
                 HStack {
@@ -281,5 +281,37 @@ struct TeacherStudentDetailView: View {
                 isDeleting = false
             }
         }
+    }
+}
+
+// MARK: - Preview
+
+#Preview("Student Detail") {
+    let sampleStudent = Student(
+        id: 1,
+        name: "Sean Fran",
+        email: "sean@example.com",
+        username: "sean.f",
+        firstName: "Sean",
+        lastName: "Fran",
+        photo: URL(string: "https://placehold.co/100")!
+    )
+
+    let sampleClass = TeacherClassInfo(
+        id: "preview-uuid",
+        className: "Grossman",
+        classUUID: "preview-uuid",
+        userGroupID: 1,
+        userGroupName: "Group A",
+        locationId: 1,
+        students: [sampleStudent]
+    )
+
+    NavigationStack {
+        TeacherStudentDetailView(
+            student: sampleStudent,
+            classInfo: sampleClass,
+            onComplete: { }
+        )
     }
 }
