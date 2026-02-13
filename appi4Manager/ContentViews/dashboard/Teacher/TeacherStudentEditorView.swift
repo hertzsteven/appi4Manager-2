@@ -23,8 +23,9 @@ struct TeacherStudentEditorView: View {
     /// The class information (used for adding new students to the class)
     let classInfo: TeacherClassInfo
     
-    /// Callback when save/delete completes to refresh parent view
-    let onComplete: () -> Void
+    /// Callback when save/delete completes to refresh parent view.
+    /// The Bool indicates whether the student's photo was changed.
+    let onComplete: (_ photoChanged: Bool) -> Void
     
     /// Whether this is a new student (create mode)
     var isNew: Bool { student == nil }
@@ -60,6 +61,7 @@ struct TeacherStudentEditorView: View {
     // MARK: - Body
     
     var body: some View {
+        // NavigationStack required: this view is always presented in a sheet, and sheet content is the root of that context.
         NavigationStack {
             Form {
                 // Photo Section
@@ -333,6 +335,8 @@ struct TeacherStudentEditorView: View {
             isSaving = true
         }
         
+        let photoWasChanged = imagePicker.thereIsAPicToUpdate
+        
         do {
             if isNew {
                 try await createStudent()
@@ -342,7 +346,7 @@ struct TeacherStudentEditorView: View {
             
             await MainActor.run {
                 isSaving = false
-                onComplete()
+                onComplete(photoWasChanged)
                 dismiss()
             }
         } catch {
@@ -380,7 +384,7 @@ struct TeacherStudentEditorView: View {
         
         // Upload photo if selected
         if imagePicker.thereIsAPicToUpdate, let token = authManager.token {
-            await imagePicker.loadTransferable2Update(teachAuth: token, studentId: newStudentId)
+            try await imagePicker.loadTransferable2Update(teachAuth: token, studentId: newStudentId)
         }
         
         // Create default app profile
@@ -424,7 +428,7 @@ struct TeacherStudentEditorView: View {
         
         // Upload photo if changed
         if imagePicker.thereIsAPicToUpdate, let token = authManager.token {
-            await imagePicker.loadTransferable2Update(teachAuth: token, studentId: student.id)
+            try await imagePicker.loadTransferable2Update(teachAuth: token, studentId: student.id)
         }
         
         #if DEBUG
@@ -450,7 +454,7 @@ struct TeacherStudentEditorView: View {
             
             await MainActor.run {
                 isSaving = false
-                onComplete()
+                onComplete(false)
                 dismiss()
             }
         } catch {

@@ -141,14 +141,21 @@ func loadTransferable2(from imageSelection: PhotosPickerItem?) async throws {
     }
 }
 
-// TODO: It does not work for most of the types
-    func loadTransferable2Update(teachAuth: String, studentId: Int ) async  {
+    /// Resizes and uploads the selected photo to the server.
+    /// - Throws: Propagates errors so the caller can show an alert if the upload fails.
+    func loadTransferable2Update(teachAuth: String, studentId: Int) async throws {
     
     guard thereIsAPicToUpdate else {
+        #if DEBUG
+        print("📸 No photo to update — skipping upload")
+        #endif
         return
     }
     
     guard inUpdate == false else {
+        #if DEBUG
+        print("📸 Upload already in progress — skipping")
+        #endif
         return
     }
     
@@ -160,40 +167,28 @@ func loadTransferable2(from imageSelection: PhotosPickerItem?) async throws {
          inUpdate = false
      }
 
-    do {
- 
-//        image = Image(uiImage: uiImg)
-//        theUIImage = uiImg
-//        try await Task.sleep(nanoseconds: 8 * 1_000_000_000) // 1 second = 1_000_000_000 nanoseconds
-        
-//        guard let studentId = self.studentId, let teachAuth = self.teachAuth else {
-//           throw ImageProcessingError.missingInformation
-//       }
-//        print("-*- After getting the student \(self.studentId) and teacher auth \(self.teachAuth)")
-
-        // resize the image
-        guard let theUIImageToWork  = theUIImage,
-              let resizedImageData  = resizeImage(image: theUIImageToWork, toSizeInKB: 500),
-              let resizedUIImage    = UIImage(data: resizedImageData) else {
-            throw ImageProcessingError.invalidResizedImageData
-        }
-        print("-*- After resize image and teacher auth \(resizedImageData.count)")
-
-        
-        // take the UIImage and make it a SwiftUI Image
-        image       = Image(uiImage: resizedUIImage)
-        theUIImage  = resizedUIImage
-        
-        // do api Update
-        try await updatePhoto(id: studentId, teachAuth: teachAuth, data: resizedImageData)
-        print("-*- After Update photo ")
-        savedImage = image
-
-    } catch let error as ImageProcessingError {
-         print(error.errorDescription ?? "An error occurred")
-    } catch {
-        print("not defined  error occured")
+    // Resize the image
+    guard let theUIImageToWork  = theUIImage,
+          let resizedImageData  = resizeImage(image: theUIImageToWork, toSizeInKB: 500),
+          let resizedUIImage    = UIImage(data: resizedImageData) else {
+        throw ImageProcessingError.invalidResizedImageData
     }
+    
+    #if DEBUG
+    print("📸 Resized photo to \(resizedImageData.count) bytes for student \(studentId)")
+    #endif
+    
+    // Keep the resized image for display
+    image       = Image(uiImage: resizedUIImage)
+    theUIImage  = resizedUIImage
+    
+    // Upload to server — errors propagate to the caller
+    try await updatePhoto(id: studentId, teachAuth: teachAuth, data: resizedImageData)
+    
+    #if DEBUG
+    print("📸 Photo upload complete for student \(studentId)")
+    #endif
+    savedImage = image
 }
 
 // resize the image
@@ -214,15 +209,12 @@ func resizeImage(image: UIImage, toSizeInKB maxSizeKB: Double) -> Data? {
 
 // Using api Update Student Photo
 func updatePhoto(id: Int, teachAuth: String, data: Data) async throws {
-    do {
-        let networkResponse: ApiManager.NetworkResponse = try await ApiManager.shared.getDataNoDecode(from: .updatePhoto(id: id,
-                                                                                                                         teachAuth: teachAuth,
-                                                                                                                         data: data))
-        dump(networkResponse)
-        // try classDetailViewModel.reloadData()
-    } catch {
-        print(error)
-        print(error.localizedDescription)
-    }
+    let networkResponse: ApiManager.NetworkResponse = try await ApiManager.shared.getDataNoDecode(from: .updatePhoto(id: id,
+                                                                                                                     teachAuth: teachAuth,
+                                                                                                                     data: data))
+    #if DEBUG
+    let statusCode = (networkResponse.response as? HTTPURLResponse)?.statusCode ?? -1
+    print("📸 Photo upload response for student \(id): status \(statusCode)")
+    #endif
 }
 }

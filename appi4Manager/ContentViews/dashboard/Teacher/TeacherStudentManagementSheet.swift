@@ -24,7 +24,7 @@ struct TeacherStudentManagementSheet: View {
     @State private var showAddStudent = false
     @State private var showAssignExisting = false
     @State private var showUnassignStudents = false
-    @State private var studentToEdit: Student?
+    @State private var selectedStudent: Student?
     @State private var studentToDelete: Student?
     @State private var showDeleteConfirmation = false
     @State private var isDeleting = false
@@ -99,7 +99,7 @@ struct TeacherStudentManagementSheet: View {
             TeacherStudentEditorView(
                 student: nil,
                 classInfo: classInfo,
-                onComplete: {
+                onComplete: { _ in
                     // Refresh local students list
                     Task {
                         await refreshStudents()
@@ -109,17 +109,18 @@ struct TeacherStudentManagementSheet: View {
                 }
             )
         }
-        .sheet(item: $studentToEdit) { student in
-            TeacherStudentEditorView(
+        .navigationDestination(item: $selectedStudent) { student in
+            TeacherStudentDetailView(
                 student: student,
                 classInfo: classInfo,
                 onComplete: {
-                    // Refresh local students list
                     Task {
                         await refreshStudents()
                     }
-                    // Also notify parent to refresh its data
                     onStudentChanged?()
+                },
+                onDismiss: {
+                    selectedStudent = nil
                 }
             )
         }
@@ -220,7 +221,7 @@ struct TeacherStudentManagementSheet: View {
                             }
                             
                             Button {
-                                studentToEdit = student
+                                selectedStudent = student
                             } label: {
                                 Label("Edit", systemImage: "pencil")
                             }
@@ -238,7 +239,7 @@ struct TeacherStudentManagementSheet: View {
     
     private func studentRow(_ student: Student) -> some View {
         Button {
-            studentToEdit = student
+            selectedStudent = student
         } label: {
             HStack(spacing: 14) {
                 // Student photo — matches Activity screen size

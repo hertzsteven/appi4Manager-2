@@ -448,7 +448,7 @@ extension CategoryEditorContView {
                      let resposnseaddAAppCategory: AddAAppCategoryResponse = try await ApiManager.shared.getData(from: .addUsr(user: user))
                      
                      user.id = resposnseaddAAppCategory.id
-                     await imagePicker.loadTransferable2Update(teachAuth: appWorkViewModel.getTeacherAuth(), studentId: user.id)
+                     try await imagePicker.loadTransferable2Update(teachAuth: appWorkViewModel.getTeacherAuth(), studentId: user.id)
 
 
  //                   add user into existing user array
